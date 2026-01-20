@@ -1,4 +1,4 @@
-package org.vaadin.example;
+package com.clbooster.app;
 
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.server.PWA;
@@ -14,7 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  */
 @SpringBootApplication
-@PWA(name = "Project Base for Vaadin with Spring", shortName = "Project Base")
+@PWA(name = "CL Booster", shortName = "CLBooster")
 @Theme("my-theme")
 public class Application implements AppShellConfigurator {
 

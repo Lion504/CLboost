@@ -1,99 +1,112 @@
-# Project Base for Vaadin and Spring Boot
+# CL Booster - AI-Powered Cover Letter Generator
 
-This project can be used as a starting point to create your own Vaadin application with Spring Boot.
-It contains all the necessary configuration and some placeholder files to get you started.
+[![Java](https://img.shields.io/badge/Java-21+-blue.svg)](https://openjdk.java.net/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5+-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Vaadin](https://img.shields.io/badge/Vaadin-24.9+-blue.svg)](https://vaadin.com/)
 
-The best way to create your own project based on this starter is [start.vaadin.com](https://start.vaadin.com/) - you can get only the necessary parts and choose the package naming you want to use.
+CL Booster is an intelligent cover letter generation tool that leverages AI to create personalized, professional cover letters
 
-## Running the Application
-There are two ways to run the application :  using `mvn spring-boot:run` or by running the `Application` class directly from your IDE.
+## 🚀 Quick Start
 
-You can use any IDE of your preference,but we suggest Eclipse or Intellij IDEA.
-Below are the configuration details to start the project using a `spring-boot:run` command. Both Eclipse and Intellij IDEA are covered.
+### Prerequisites
 
-#### Eclipse
-- Right click on a project folder and select `Run As` --> `Maven build..` . After that a configuration window is opened.
-- In the window set the value of the **Goals** field to `spring-boot:run` 
-- You can optionally select `Skip tests` checkbox
-- All the other settings can be left to default
+- Java 21+
+- Maven 3.6+
+- Docker & Docker Compose
+- Google Gemini API key
 
-Once configurations are set clicking `Run` will start the application
+### Local Development
 
-#### Intellij IDEA
-- On the right side of the window, select Maven --> Plugins--> `spring-boot` --> `spring-boot:run` goal
-- Optionally, you can disable tests by clicking on a `Skip Tests mode` blue button.
+1. **Clone the repository**
 
-Clicking on the green run button will start the application.
+   ```bash
+   git clone ...
+   cd cl-booster
+   ```
 
-After the application has started, you can view your it at http://localhost:8080/ in your browser.
+2. **Configure environment**
 
+   ```bash
+   cp .env.example .env
+   # Edit .env with your Gemini API key
+   ```
 
-If you want to run the application locally in the production mode, use `spring-boot:run -Pproduction` command instead.
-### Running Integration Tests
+3. **Start with Docker Compose**
 
-Integration tests are implemented using [Vaadin TestBench](https://vaadin.com/testbench). The tests take a few minutes to run and are therefore included in a separate Maven profile. We recommend running tests with a production build to minimize the chance of development time toolchains affecting test stability. To run the tests using Google Chrome, execute
+   ```bash
+   docker-compose up -d
+   ```
 
-`mvn verify -Pit,production`
+4. **Access the application**
+   - Open http://localhost:8080 in your browser
 
-and make sure you have a valid TestBench license installed.
+### Manual Setup
 
-Profile `it` adds the following parameters to run integration tests:
-```sh
--Dwebdriver.chrome.driver=path_to_driver
--Dcom.vaadin.testbench.Parameters.runLocally=chrome
+1. **Build and run**
+   ```bash
+   mvn clean install
+   mvn spring-boot:run
+   ```
+
+## 🏗️ Architecture
+
+### Backend
+
+- **Spring Boot 3.5+**: Application framework
+- **Vaadin Flow 24.9+**: Modern web UI framework
+- **Spring AI**: Google Gemini integration
+- **MariaDB**: Database infrastructure prepared (uncomment to activate)
+- **In-memory Storage**: Current data persistence (upgradeable to database)
+
+### Frontend
+
+- **Vaadin Components**: Rich UI components
+
+### DevOps
+
+- **Docker**: Containerization
+- **GitHub Actions**: CI/CD pipeline
+- **Maven**: Build automation
+- **Spotless**: Code formatting
+
+## 📁 Project Structure
+
+```
+cl-booster/
+├── src/main/java/com/clbooster/app/
+│   ├── Application.java                    # Spring Boot entry point
+│   ├── backend/
+│   │   ├── config/                         # SecurityConfig, AiConfig
+│   │   ├── entity/                         # User, Resume, CoverLetter
+│   │   ├── repository/                     # Interfaces for DB access
+│   │   ├── service/                        # ResumeService, AiService
+│   │   └── util/
+│   └── views/                              # Java UI views
+├── src/main/frontend/                      # Vaadin client-side resources
+│   ├── index.ts                            # Entry point
+│   ├── themes/                             # Custom themes
+│   └── generated/                          # Generated frontend files
+├── src/main/resources/
+│   ├── application.properties              # Configuration
+│   └── META-INF/resources/                 # Static assets
+├── docker-compose.yml                      # Development environment
+└── Dockerfile                              # Container build
 ```
 
-If you would like to run a separate test make sure you have added these parameters to VM Options of JUnit run configuration
+## 🔧 Development
 
-### Live Reload (optional)
+See [dev_instructions.md](dev_instructions.md) for detailed development setup and guidelines.
 
-With live reload, you can see the results of your code changes immediately. 
-When you edit your Java code and recompile it, the application changes will be automatically reloaded and the browser is refreshed.
-This is done by leveraging [Spring Boot Developer Tools](https://docs.spring.io/spring-boot/docs/2.1.5.RELEASE/reference/html/using-boot-devtools.html). 
-To be able to see the changes in the browser tab, the page still needs to be reloaded. 
-That can also  be automated via a LiveReload browser extension. 
-One such extension for Google Chrome is [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei). 
-In Firefox, [LiveReload - Web extension](https://addons.mozilla.org/en-US/firefox/addon/livereload-web-extension/) can be used.
-You can find such similar extensions for other major browsers too.
-These extensions add an icon to your browser next to the address bar.
-To enable the extension, you should click that icon after you opened your application. 
+## 📄 License
 
-You can find more information at [Live Reload in Spring Boot Applications](https://vaadin.com/docs/flow/workflow/tutorial-spring-boot-live-reload.html) document.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## Structure
+## 🙏 Acknowledgments
 
-Vaadin web applications are full-stack and include both client-side and server-side code in the same project.
+- [Vaadin](https://vaadin.com/) for the excellent web framework
+- [Spring Boot](https://spring.io/projects/spring-boot) for the application framework
+- [Google Gemini](https://ai.google.dev/) for the AI capabilities
 
-| Directory                                  | Description |
-|:-------------------------------------------| :--- |
-| `src/main/frontend/`                       | Client-side source directory |
-| &nbsp;&nbsp;&nbsp;&nbsp;`index.html`       | HTML template |
-| &nbsp;&nbsp;&nbsp;&nbsp;`index.ts`         | Frontend entrypoint |
-| &nbsp;&nbsp;&nbsp;&nbsp;`main-layout.ts`   | Main layout Web Component (optional) |
-| &nbsp;&nbsp;&nbsp;&nbsp;`views/`           | UI views Web Components (TypeScript / HTML) |
-| &nbsp;&nbsp;&nbsp;&nbsp;`styles/`          | Styles directory (CSS) |
-| `src/main/java/<groupId>/`                 | Server-side source directory |
-| &nbsp;&nbsp;&nbsp;&nbsp;`Application.java` | Server entrypoint |
-| &nbsp;&nbsp;&nbsp;&nbsp;`AppShell.java`    | application-shell configuration |
+---
 
-## Code Formatting
-
-The project includes the Spotless code formatter.
-
-To use it in IntelliJ, install the [https://plugins.jetbrains.com/plugin/22455-spotless-applier](IntelliJ plugin)
-To use it in VS Code, install the [https://marketplace.visualstudio.com/items?itemName=richardwillis.vscode-spotless-gradle ](VS Code extension)
-To use it from the command line, run `mvn spotless:apply`
-
-## Useful links
-
-- Read the documentation at [vaadin.com/docs](https://vaadin.com/docs).
-- Follow the tutorials at [vaadin.com/tutorials](https://vaadin.com/tutorials).
-- Watch training videos and get certified at [vaadin.com/learn/training](https://vaadin.com/learn/training).
-- Create new projects at [start.vaadin.com](https://start.vaadin.com/).
-- Search UI components and their usage examples at [vaadin.com/components](https://vaadin.com/components).
-- View use case applications that demonstrate Vaadin capabilities at [vaadin.com/examples-and-demos](https://vaadin.com/examples-and-demos).
-- Discover Vaadin's set of CSS utility classes that enable building any UI without custom CSS in the [docs](https://vaadin.com/docs/latest/ds/foundation/utility-classes). 
-- Find a collection of solutions to common use cases in [Vaadin Cookbook](https://cookbook.vaadin.com/).
-- Find Add-ons at [vaadin.com/directory](https://vaadin.com/directory).
-- Ask questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/vaadin) or join our [Discord channel](https://discord.gg/MYFq5RTbBn).
-- Report issues, create pull requests in [GitHub](https://github.com/vaadin/platform).
+**Made with ❤️ with Vaadin**
