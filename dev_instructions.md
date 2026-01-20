@@ -137,11 +137,3 @@ docker build -t cl-booster:latest .
 3. Add tests for new functionality
 4. Ensure CI passes
 5. Submit pull request
-
-## Support
-
-For issues or questions:
-
-- Check existing issues on GitHub
-- Review this documentation
-- Contact the development team
