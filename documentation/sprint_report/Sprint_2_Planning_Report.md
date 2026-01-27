@@ -38,7 +38,7 @@ Implement core CV management and generation features to provide users with basic
 
 ### Team Members
 
-- Wang Yongzhi: hours/week
+- Wang Yongzhi: 8 hours/week
 - Taysa Abinader: 8 hours/week
 - Tamseela Mahmood: 10 hours /week
 - Kiavash Montazeri: 8 hours/week
