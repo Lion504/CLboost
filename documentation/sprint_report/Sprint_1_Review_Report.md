@@ -57,8 +57,8 @@ During the sprint review, we demonstrated:
 
 ## What Could Be Improved
 
--
-- Scheduale for tasks was not always
+- Communication among group members
+- Schedule for tasks was not always
 
 ## Next Sprint Focus
 
