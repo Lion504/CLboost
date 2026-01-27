@@ -38,11 +38,12 @@ Implement core CV management and generation features to provide users with basic
 
 - Wang Yongzhi: hours/week
 - Taysa Abinader: hours/week
-- Tamseela Mahmood: hours/week
+- Tamseela Mahmood: 10 hours /week
 - Kiavash Montazeri: hours/week
 
 ### Total Capacity
 
+Each member can spend an hour per Day for the project.
 - Sprint duration: working days
 - Total available hours: hours
 
@@ -56,4 +57,4 @@ Implement core CV management and generation features to provide users with basic
 
 ## Definition of Done
 
--
+Sprint 2 will be concidered done when database is created and tested, the backend  performs resume parsing, form partial auto-filling, cover letter generation, and cover letter document download, the frontend application runs and allows users to execute most of the features and frontend follow the prototype that it was designed on, all related frontend and backend core logic is covered by passing unit tests, and an code coverage report has been done for the project.
