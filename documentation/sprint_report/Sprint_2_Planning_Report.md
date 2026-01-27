@@ -20,18 +20,18 @@ Implement core CV management and generation features to provide users with basic
 
 ### 5. UI prototype on Figma
 
-
 ## Planned Tasks / Breakdown
 
 ### CV Information Scanning
-
+    Find a scanning API and integrate with our backend logic
 ### Personal Information Storage
-
+    Create a form or any other type of container to hold the user's personal information
 ### CV History Management
-
+    Save the most important information on the user's resume and save it
 ### Cover Letter Generation
-
+    Use an LLM API to create a Cover Letter
 ## Team Capacity & Assumptions
+    Design the UI prototype on Figma
 
 
 ### Team Members
