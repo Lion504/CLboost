@@ -30,9 +30,11 @@ Implement core CV management and generation features to provide users with basic
     Save the most important information on the user's resume and save it
 ### Cover Letter Generation
     Use an LLM API to create a Cover Letter
-## Team Capacity & Assumptions
+### UI prototype on Figma
     Design the UI prototype on Figma
 
+
+## Team Capacity & Assumptions
 
 ### Team Members
 
@@ -41,15 +43,12 @@ Implement core CV management and generation features to provide users with basic
 - Tamseela Mahmood: 10 hours /week
 - Kiavash Montazeri: hours/week
 
-### Total Capacity
+### Capacity
 
-Each member can spend an hour per Day for the project.
-- Sprint duration: working days
-- Total available hours: hours
+It is agreed that each member can spend an average 1 hour per Day for the project.
 
 ### Assumptions
 
-- All team members \*\*\*
 - No major external dependencies or blockers
 - Sprint 1 planning phase provides clear technical foundation
 - Basic infrastructure (Git, Jira, development environment) is established
