@@ -18,6 +18,9 @@ Implement core CV management and generation features to provide users with basic
 
 ### 4. Cover Letter Generation
 
+### 5. UI prototype on Figma
+
+
 ## Planned Tasks / Breakdown
 
 ### CV Information Scanning
@@ -29,6 +32,7 @@ Implement core CV management and generation features to provide users with basic
 ### Cover Letter Generation
 
 ## Team Capacity & Assumptions
+
 
 ### Team Members
 
