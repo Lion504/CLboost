@@ -51,9 +51,11 @@ During the sprint review, we demonstrated:
 
 ## What Went Well
 
--
-- Create the GitHub Repo and initallize the project.
+- Create the GitHub Repo and initallize the project
 - Good collaboration between frontend and backend teams
+- Creation of user stories
+- Creation of the project environment on Jira (product backlog, board, etc)
+- Elaboration of Project Vision and Project Plan reports
 
 ## What Could Be Improved
 
@@ -62,10 +64,12 @@ During the sprint review, we demonstrated:
 
 ## Next Sprint Focus
 
--
--
--
--
+- Plan the database structure
+- Develop the database structure
+- Develop a basic and functional backend structure
+- Develop a UI prototype
+- Create Junit tests
+- Check the coverage of the tests
 
 ## Time Tracking
 
