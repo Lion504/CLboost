@@ -3,9 +3,9 @@ USE CL_generator;
 
 CREATE TABLE IF NOT EXISTS identification (
     Pin INT PRIMARY KEY AUTO_INCREMENT,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
+    Identity_email VARCHAR(100) UNIQUE NOT NULL,
+    Username VARCHAR(50) UNIQUE NOT NULL,
+    Password VARCHAR(255) NOT NULL,
     First_Name VARCHAR(50),
     Last_Name VARCHAR(50)
     );
@@ -16,14 +16,15 @@ CREATE TABLE IF NOT EXISTS profile (
     Tools TEXT,
     Skills TEXT,
     Link VARCHAR(255),
-    Email VARCHAR(100),
+    Profile_Email VARCHAR(100),
+    CV_Last_Updated TIMESTAMP NULL,
     FOREIGN KEY (Pin) REFERENCES identification(Pin) ON DELETE CASCADE
     );
 
 CREATE TABLE IF NOT EXISTS coverletter (
-    Pin INT PRIMARY KEY,
-    Timestamp_CV TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    Pin INT NOT NULL,
     Timestamp_edited TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    Location VARCHAR(100),
+    FilePath VARCHAR(300),
     FOREIGN KEY (Pin) REFERENCES identification(Pin) ON DELETE CASCADE
     );
