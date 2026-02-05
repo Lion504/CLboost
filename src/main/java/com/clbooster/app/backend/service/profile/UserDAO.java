@@ -1,4 +1,6 @@
-package com.clbooster.app.backend.service.database;
+package com.clbooster.app.backend.service.profile;
+
+import com.clbooster.app.backend.service.database.DatabaseConnection;
 
 import java.sql.*;
 import java.security.MessageDigest;

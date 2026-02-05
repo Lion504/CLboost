@@ -1,5 +1,7 @@
 package com.clbooster.app.backend.service.database;
 
+import com.clbooster.app.backend.service.profile.User;
+import com.clbooster.app.backend.service.profile.UserDAO;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 

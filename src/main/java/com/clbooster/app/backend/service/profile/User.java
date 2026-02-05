@@ -1,4 +1,4 @@
-package com.clbooster.app.backend.service.database;
+package com.clbooster.app.backend.service.profile;
 
 public class User {
     private int pin;

@@ -1,6 +1,7 @@
 package com.clbooster.app.backend.service.authentication;
 
-import com.clbooster.app.backend.service.database.*;
+import com.clbooster.app.backend.service.profile.User;
+import com.clbooster.app.backend.service.profile.UserDAO;
 
 public class AuthenticationService {
     private UserDAO userDAO;
