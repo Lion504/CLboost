@@ -86,19 +86,4 @@ public class ProfileDAO {
             return false;
         }
     }
-
-    public boolean deleteProfile(int pin) {
-        String sql = "DELETE FROM profile WHERE Pin = ?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, pin);
-            return pstmt.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 }
