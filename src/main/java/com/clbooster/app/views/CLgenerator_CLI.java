@@ -160,7 +160,9 @@ public class CLgenerator_CLI {
         System.out.print("Username: ");
         String username = scanner.nextLine().trim();
 
-        System.out.print("Password (min 6 characters): ");
+        AuthenticationService.showPasswordRequirements();
+        System.out.println();
+        System.out.print("Password: ");
         String password = scanner.nextLine().trim();
 
         System.out.print("Confirm Password: ");
