@@ -1,5 +1,8 @@
 package com.clbooster.app.views;
 
+import com.clbooster.aiservice.AIService;
+import com.clbooster.aiservice.Exporter;
+import com.clbooster.aiservice.Parser;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.*;
 
@@ -10,12 +13,15 @@ public class CLgenerator_CLI {
     private static ProfileService profileService;
     private static UserDAO userDAO;
     private static Scanner scanner;
+    private static AIService aiService;
 
     public static void main(String[] args) {
         authService = new AuthenticationService();
         profileService = new ProfileService();
         userDAO = new UserDAO();
         scanner = new Scanner(System.in);
+        //String apiKey = System.getenv("API_KEY");
+        //aiService = new AIService(apiKey);
 
         System.out.println("_______________________________________");
         System.out.println("   CL GENERATOR - COMMAND LINE");
@@ -83,7 +89,7 @@ public class CLgenerator_CLI {
                 }
                 break;
             case "2":
-                System.out.println("Generation functionality in progress.");
+                handleCoverLetterGeneration();
                 break;
             case "3":
                 authService.logout();
@@ -287,6 +293,37 @@ public class CLgenerator_CLI {
         } else {
             System.out.println("Error: Failed to delete account. Please try again later.");
             return false;
+        }
+    }
+
+    private static void handleCoverLetterGeneration() {
+        System.out.println("\n=== COVER LETTER GENERATOR ===");
+
+        System.out.print("Path to your Resume PDF: ");
+        String rawPath = scanner.nextLine();
+        String resumePath = rawPath.replace("\"", "").replace("'", "").trim();
+
+        System.out.println("Paste the Job Description here:");
+        String jobDetails = scanner.nextLine().trim();
+
+        System.out.print("Name the output file (e.g., final_cl.docx): ");
+        String outputPath = scanner.nextLine().trim();
+
+        try {
+            Parser parser = new Parser();
+            String resumeText = parser.parseFileToJson(resumePath);
+
+            // Use the consistent name 'aiService'
+            String coverLetter = aiService.generateCoverLetter(resumeText, jobDetails);
+
+            Exporter exporter = new Exporter();
+            exporter.saveAsDoc(coverLetter, outputPath);
+
+            System.out.println("\n File saved as: " + outputPath);
+
+        } catch (Exception e) {
+            System.out.println("\n Error during generation: " + e.getMessage());
+            e.printStackTrace(); // This helps you see WHERE it failed during debugging
         }
     }
 }
