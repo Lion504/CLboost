@@ -20,8 +20,8 @@ public class CLgenerator_CLI {
         profileService = new ProfileService();
         userDAO = new UserDAO();
         scanner = new Scanner(System.in);
-        //String apiKey = System.getenv("API_KEY");
-        //aiService = new AIService(apiKey);
+        String apiKey = System.getenv("AI_API_KEY");
+        aiService = new AIService(apiKey);
 
         System.out.println("_______________________________________");
         System.out.println("   CL GENERATOR - COMMAND LINE");

@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
     private static final String URL = "jdbc:mariadb://localhost:3306/cl_generator";
-    private static final String USER = "root/usually root";
-    private static final String PASSWORD = "mariadb_password";
+    private static final String USER = "clboost_user";
+    private static final String PASSWORD = "your_strong_password";
 
     public static Connection getConnection() throws SQLException {
         try {
