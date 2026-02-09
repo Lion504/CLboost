@@ -84,7 +84,7 @@ public class AuthenticationService {
             this.currentUser = user;
             System.out.println("✓ Login successful!");
             System.out.println("✓ Welcome, " + user.getFirstName() + " " + user.getLastName());
-            System.out.println("✓ PIN: " + user.getPin());
+            //System.out.println("✓ PIN: " + user.getPin());
             return true;
         } else {
             System.out.println("Error: Invalid username or password");

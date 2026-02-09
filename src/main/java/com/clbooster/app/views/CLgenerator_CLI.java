@@ -66,7 +66,7 @@ public class CLgenerator_CLI {
         System.out.println("\n=== USER MENU ===");
         System.out.println("1. Profile");
         //System.out.println("2. Edit Profile");
-        System.out.println("2. Generate Cover latter");
+        System.out.println("2. Generate Cover letter");
         System.out.println("3. Logout");
         System.out.println("4. Exit");
         System.out.print("Choose an option: ");
