@@ -1,6 +1,6 @@
 package com.clbooster.app.views;
 
-import com.clbooster.app.backend.service.ai.AIService;
+import com.clbooster.aiservice.AIService;
 import com.clbooster.app.backend.service.document.DocumentService;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
