@@ -1,4 +1,4 @@
-# Sprint 2 Review Report
+# Sprint 1 Review Report
 
 ## Sprint Goal
 
