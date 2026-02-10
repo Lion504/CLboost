@@ -33,6 +33,21 @@ Implement core CV management and generation features to provide users with basic
 ### UI prototype on Figma
     Design the UI prototype on Figma
 
+## primary objective tasks check list
+
+- [x] **Database Implementation**  
+  Implementing the database
+
+- [x] **User Interface Development**  
+  Initiating the user interface development
+
+- [x] **Architecture & Data Modeling**  
+  Extend the database and software architectural design as your data modeling course progresses
+
+- [x] **Development Tooling Integration**  
+  Integrate essential development tools including unit testing frameworks, Maven dependency management, and code coverage reporting
+
+
 
 ## Team Capacity & Assumptions
 
@@ -56,4 +71,14 @@ It is agreed that each member can spend an average 1 hour per Day for the projec
 
 ## Definition of Done
 
-Sprint 2 will be concidered done when database is created and tested, the backend  performs resume parsing, form partial auto-filling, cover letter generation, and cover letter document download, the frontend application runs and allows users to execute most of the features and frontend follow the prototype that it was designed on, all related frontend and backend core logic is covered by passing unit tests, and an code coverage report has been done for the project.
+Sprint 2 is considered complete when:
+
+- [x] Database schema is created, migrated, and tested
+- [x] Backend supports:
+  - [x] Resume parsing and information extraction
+  - [x] Form auto-filling from parsed data
+  - [x] Cover letter generation via LLM
+  - [x] Cover letter download (PDF/DOCX)
+- [x] Frontend Figma prototype designed
+- [x] All core logic covered by passing unit tests
+- [x] Code coverage report generated
