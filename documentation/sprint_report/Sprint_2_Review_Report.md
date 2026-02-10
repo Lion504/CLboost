@@ -1,16 +1,15 @@
-# Sprint 1 Review Report
+# Sprint 2 Review Report
 
 ## Sprint Goal
 
-[x] Implementing the database
-[x] Initiating the user interface development
-[x] Extend the database and software architectural design as your data modeling course progresses.
-[x] Integrating essential development tools such as unit testing, Maven dependencies, and code coverage reporting
-
+[1] Implementing the database
+[2] Initiating the user interface development, create the figma prototype.
+[3] Create Database ER model and Software activity diagram for modelling.
+[4] Integrating essential development tools such as unit testing, Maven dependencies, and code coverage reporting
+[5] Implement the core backend functionalities
+[6] Connect database with the backend
 
 ## Completed User Stories / Tasks
-
----
 
 - Configure a database to ensure data persistence;
 - Create JUnit Tests;
