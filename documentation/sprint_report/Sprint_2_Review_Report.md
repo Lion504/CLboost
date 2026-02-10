@@ -25,12 +25,12 @@
 
 ## Demo Summary
 
-During the sprint review, we demonstrated: 
+During the sprint review, we demonstrated:
 
 - Presented the Backend Comand line interface
 - Presented the Coverage code
 - Presented the Unit tests
-  
+
 - Entity Relation Diagram ( Database ER model)
   <img width="3492" height="1218" alt="Database_ER_model" src="https://github.com/user-attachments/assets/848224ed-3d72-4610-9090-dac21f261c7f" />
 - Activity Diagram ( System flow )
@@ -41,15 +41,18 @@ During the sprint review, we demonstrated:
 
 ## What Went Well
 
--
+- The support among team members was excellent;
 
 ## What Could Be Improved
 
--
+- There are still some room for improvement in communication;
 
 ## Next Sprint Focus
 
--
+- Create a functional prototype;
+- Integrate Jenkins for CI/CD;
+- Enhance automated testing with code coverage;
+- Prepare for a functional review.
 
 ## Time Tracking
 
@@ -57,7 +60,7 @@ During the sprint review, we demonstrated:
 | ----------------- | ----------- | --------------------------------------------------------------------------------------------------------------------- |
 | Wang Yongzhi      | 9           | Project Planning report, Product Vision, usecase diagram, sprint meeting, user stories                                |
 | Taysa Abinader    | 12          | Scrum Master, Project planing report, Product Vision, sprint meeting, user stories, organization of Jira envinronment |
-| Tamseela Mahmood  | 18        | Scrum master, worked on the code for (Authentication(Register Login in, out), Profile Management, Database(model, DAO, service), Comand line interface), Database (define and ER Diagram), System activity diagram , JUnit Test, Jira backlog setup and updates                                              |
+| Tamseela Mahmood  | 19        | Scrum master, worked on the code for (Authentication(Register Login in, out), Profile Management, Database(model, DAO, service), Comand line interface), Database (define and ER Diagram), System activity diagram , JUnit Test, Jira backlog setup and updates                                              |
 | Kiavash Montazeri | 6           | Helped with Usecase Diagram, Presentation                                                                             |
 
 **Total Sprint Hours:** 36.45
