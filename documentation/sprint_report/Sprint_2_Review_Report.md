@@ -37,7 +37,7 @@ During the sprint review, we demonstrated:
   <img width="475" height="395" alt="structure" src="https://github.com/user-attachments/assets/09eb0f3c-7a05-4920-bc57-dfc2b4dcf3b6" />
 - Showed the Frontend Figma Prototype:
   https://www.figma.com/proto/LFr0EooJ9Nmnfztwv4pO3F/CLbooster?node-id=4-2492&p=f&t=vZzS39YYiB2ldEY4-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=4%3A2492
-- Presented the Sprint 2 backlog: https://taysa-ferreira-abinader.atlassian.net/jira/software/projects/CLGEN/boards/67/backlog?selectedIssue=CLGEN-73
+- Presented the Sprint 2 backlog: https://taysa-ferreira-abinader.atlassian.net/jira/software/projects/CLGEN/boards/67/backlog
 
 ## What Went Well
 
@@ -63,4 +63,4 @@ During the sprint review, we demonstrated:
 | Tamseela Mahmood  | 19        | Scrum master, worked on the code for (Authentication(Register Login in, out), Profile Management, Database(model, DAO, service), Comand line interface), Database (define and ER Diagram), System activity diagram , JUnit Test, Jira backlog setup and updates                                              |
 | Kiavash Montazeri | 6           | Helped with Usecase Diagram, Presentation                                                                             |
 
-**Total Sprint Hours:** 36.45
+**Total Sprint Hours:** 46 hours
