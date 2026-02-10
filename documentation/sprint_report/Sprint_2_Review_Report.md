@@ -7,7 +7,8 @@
 [3] Create Database ER model and Software activity diagram for modelling.
 [4] Integrating essential development tools such as unit testing, Maven dependencies, and code coverage reporting
 [5] Implement the core backend functionalities
-[6] Connect database with the backend
+[6] User authentication implemented
+[7] Connect database with the backend
 
 ## Completed User Stories / Tasks
 
@@ -24,9 +25,19 @@
 
 ## Demo Summary
 
-During the sprint review, we demonstrated:
+During the sprint review, we demonstrated: 
 
--
+- Presented the Backend Comand line interface
+- Presented the Coverage code
+- Presented the Unit tests
+  
+- Entity Relation Diagram ( Database ER model)
+  <img width="3492" height="1218" alt="Database_ER_model" src="https://github.com/user-attachments/assets/848224ed-3d72-4610-9090-dac21f261c7f" />
+- Activity Diagram ( System flow )
+  <img width="475" height="395" alt="structure" src="https://github.com/user-attachments/assets/09eb0f3c-7a05-4920-bc57-dfc2b4dcf3b6" />
+- Showed the Frontend Figma Prototype:
+  https://www.figma.com/proto/LFr0EooJ9Nmnfztwv4pO3F/CLbooster?node-id=4-2492&p=f&t=vZzS39YYiB2ldEY4-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=4%3A2492
+- Presented the Sprint 2 backlog: https://taysa-ferreira-abinader.atlassian.net/jira/software/projects/CLGEN/boards/67/backlog?selectedIssue=CLGEN-73
 
 ## What Went Well
 
@@ -46,7 +57,7 @@ During the sprint review, we demonstrated:
 | ----------------- | ----------- | --------------------------------------------------------------------------------------------------------------------- |
 | Wang Yongzhi      | 9           | Project Planning report, Product Vision, usecase diagram, sprint meeting, user stories                                |
 | Taysa Abinader    | 12          | Scrum Master, Project planing report, Product Vision, sprint meeting, user stories, organization of Jira envinronment |
-| Tamseela Mahmood  | 9.45        | Project Planning report, usecase diagram, sprint meeting, user stories                                                |
+| Tamseela Mahmood  | 18        | Project Planning report, usecase diagram, sprint meeting, user stories                                                |
 | Kiavash Montazeri | 6           | Helped with Usecase Diagram, Presentation                                                                             |
 
 **Total Sprint Hours:** 36.45
