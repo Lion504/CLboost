@@ -2,13 +2,13 @@
 
 ## Sprint Goal
 
-[1] Implementing the database
-[2] Initiating the user interface development, create the figma prototype.
-[3] Create Database ER model and Software activity diagram for modelling.
-[4] Integrating essential development tools such as unit testing, Maven dependencies, and code coverage reporting
-[5] Implement the core backend functionalities
-[6] User authentication implemented
-[7] Connect database with the backend
+1. Implementing the database
+2. Initiating the user interface development, create the figma prototype.
+3. Create Database ER model and Software activity diagram for modelling.
+4. tegrating essential development tools such as unit testing, Maven dependencies, and code coverage reporting
+5. Implement the core backend functionalities
+6. User authentication implemented
+7. Connect database with the backend
 
 ## Completed User Stories / Tasks
 
@@ -57,7 +57,7 @@ During the sprint review, we demonstrated:
 | ----------------- | ----------- | --------------------------------------------------------------------------------------------------------------------- |
 | Wang Yongzhi      | 9           | Project Planning report, Product Vision, usecase diagram, sprint meeting, user stories                                |
 | Taysa Abinader    | 12          | Scrum Master, Project planing report, Product Vision, sprint meeting, user stories, organization of Jira envinronment |
-| Tamseela Mahmood  | 18        | Project Planning report, usecase diagram, sprint meeting, user stories                                                |
+| Tamseela Mahmood  | 18        | Scrum master, worked on the code for (Authentication(Register Login in, out), Profile Management, Database(model, DAO, service), Comand line interface), Database (define and ER Diagram), System activity diagram , JUnit Test, Jira backlog setup and updates                                              |
 | Kiavash Montazeri | 6           | Helped with Usecase Diagram, Presentation                                                                             |
 
 **Total Sprint Hours:** 36.45
