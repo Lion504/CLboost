@@ -34,7 +34,7 @@ During the sprint review, we demonstrated:
 - Entity Relation Diagram ( Database ER model)
   <img width="3492" height="1218" alt="Database_ER_model" src="https://github.com/user-attachments/assets/848224ed-3d72-4610-9090-dac21f261c7f" />
 - Activity Diagram ( System flow )
-  <img width="475" height="395" alt="structure" src="https://github.com/user-attachments/assets/09eb0f3c-7a05-4920-bc57-dfc2b4dcf3b6" />
+  <img width="565" height="441" alt="structure" src="https://github.com/user-attachments/assets/e02bd43f-0d21-4708-9d84-dacb7327e025" />
 - Showed the Frontend Figma Prototype:
   https://www.figma.com/proto/LFr0EooJ9Nmnfztwv4pO3F/CLbooster?node-id=4-2492&p=f&t=vZzS39YYiB2ldEY4-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=4%3A2492
 - Presented the Sprint 2 backlog: https://taysa-ferreira-abinader.atlassian.net/jira/software/projects/CLGEN/boards/67/backlog
