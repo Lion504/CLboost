@@ -20,7 +20,7 @@ public class AIService {
     private final ChatLanguageModel languageModel;
 
     public AIService(@Value("${spring.ai.google.api-key:}") String apiKey) {
-        // Use provided API key, fall back to environment variable if empty
+        // do not manually create the env file, Instead, setx GOOGLE_API_KEY "your_API_key"
         String finalApiKey = apiKey != null && !apiKey.isEmpty() ? 
             apiKey : System.getenv("GOOGLE_API_KEY");
         
