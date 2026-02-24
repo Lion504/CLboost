@@ -5,6 +5,10 @@ import com.clbooster.aiservice.Exporter;
 import com.clbooster.aiservice.Parser;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.*;
+import com.clbooster.app.backend.service.CoverLetterService;
+import com.clbooster.app.backend.service.ResumeService;
+import com.clbooster.app.backend.service.document.DocumentService;
+import com.clbooster.aiservice.AIService;
 
 import java.util.Scanner;
 
@@ -12,6 +16,7 @@ public class CLgenerator_CLI {
     private static AuthenticationService authService;
     private static ProfileService profileService;
     private static UserDAO userDAO;
+    private static CoverLetterService coverLetterService;
     private static Scanner scanner;
     private static AIService aiService;
 
@@ -19,6 +24,13 @@ public class CLgenerator_CLI {
         authService = new AuthenticationService();
         profileService = new ProfileService();
         userDAO = new UserDAO();
+        
+        // Initialize AI and backend services
+        aiService = new AIService(System.getenv("GOOGLE_API_KEY"));
+        DocumentService documentService = new DocumentService(null);
+        ResumeService resumeService = new ResumeService(aiService, null);
+        coverLetterService = new CoverLetterService(aiService, documentService, profileService, resumeService);
+        
         scanner = new Scanner(System.in);
         String apiKey = System.getenv("AI_API_KEY");
         aiService = new AIService(apiKey);
@@ -81,28 +93,59 @@ public class CLgenerator_CLI {
 
         switch (choice) {
             case "1":
-                // Show profile submenu
-                boolean continueAfterProfile = handleProfileMenu();
-                if (!continueAfterProfile) {
-                    // User deleted account, return to main menu
-                    return true;
-                }
+                handleProfileMenu();
                 break;
             case "2":
                 handleCoverLetterGeneration();
                 break;
             case "3":
-                authService.logout();
+                handleGenerateFromFile(aiService);
                 break;
             case "4":
                 authService.logout();
+                break;
+            case "5":
+                authService.logout();
                 return false;
             default:
-                System.out.println("Invalid option. Please try again.");
+                System.out.println("Invalid option.");
         }
         return true;
     }
+    private static void handleGenerateFromFile(AIService aiService) {
+        // 1. Get Resume File
+        System.out.print("\nEnter the full path to your Resume (.pdf or .txt): ");
+        String resumePath = scanner.nextLine().trim();
 
+        // 2. Get Job Description File
+        System.out.print("Enter the full path to the Job Description (.pdf or .txt): ");
+        String jobPath = scanner.nextLine().trim();
+
+        try {
+            System.out.println("⏳ Processing files and generating letter...");
+            
+            // Extract Resume Text
+            String extractedResume = aiService.extractTextFromFile(resumePath, 
+                "Extract the full content of this resume accurately.");
+
+            // Extract Job Description Text
+            String extractedJob = aiService.extractTextFromFile(jobPath, 
+                "Extract the key requirements and responsibilities from this job description.");
+
+            if (extractedResume.startsWith("Error") || extractedJob.startsWith("Error")) {
+                System.out.println("Extraction Error: " + 
+                    (extractedResume.startsWith("Error") ? extractedResume : extractedJob));
+                return;
+            }
+
+            // 3. Generate Cover Letter
+            String coverLetter = coverLetterService.generateCoverLetter(extractedResume, extractedJob);
+
+            System.out.println("\n=== GENERATED COVER LETTER ===\n" + coverLetter);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
     // Profile submenu
     private static boolean handleProfileMenu() {
         int pin = authService.getCurrentUserPin();
@@ -252,6 +295,99 @@ public class CLgenerator_CLI {
             profileService.updateProfile(pin, experienceLevel, tools, skills, link, profileEmail);
         } else {
             System.out.println("Changes discarded.");
+        }
+    }
+
+    private static void handleGenerateCoverLetter() {
+        int pin = authService.getCurrentUserPin();
+        if (pin == -1) {
+            System.out.println("Error: Not logged in");
+            return;
+        }
+
+        System.out.println("\n=== COVER LETTER GENERATOR ===");
+
+        // Get resume text
+        System.out.println("Please provide your resume information.");
+        System.out.println("(You can paste your resume text, formatted resume content, or key information)");
+        System.out.print("Paste your resume here (press Enter twice when done): ");
+        
+        StringBuilder resumeText = new StringBuilder();
+        String line;
+        int emptyLines = 0;
+        
+        while (emptyLines < 1) {
+            line = scanner.nextLine().trim();
+            if (line.isEmpty()) {
+                emptyLines++;
+            } else {
+                emptyLines = 0;
+                resumeText.append(line).append("\n");
+            }
+        }
+
+        if (resumeText.length() == 0) {
+            System.out.println("Error: Resume cannot be empty");
+            return;
+        }
+
+        // Get job description
+        System.out.println("\nNow paste the job description or job posting.");
+        System.out.print("Paste job description here (press Enter twice when done): ");
+        
+        StringBuilder jobDescription = new StringBuilder();
+        emptyLines = 0;
+        
+        while (emptyLines < 1) {
+            line = scanner.nextLine().trim();
+            if (line.isEmpty()) {
+                emptyLines++;
+            } else {
+                emptyLines = 0;
+                jobDescription.append(line).append("\n");
+            }
+        }
+
+        if (jobDescription.length() == 0) {
+            System.out.println("Error: Job description cannot be empty");
+            return;
+        }
+
+        // Generate cover letter
+        try {
+            System.out.println("\n⏳ Generating your cover letter... Please wait.");
+            String generatedLetter = coverLetterService.generateCoverLetter(
+                    resumeText.toString().trim(),
+                    jobDescription.toString().trim()
+            );
+
+            if (generatedLetter == null || generatedLetter.isEmpty()) {
+                System.out.println("Error: Failed to generate cover letter. Please check your API key and try again.");
+                return;
+            }
+
+            // Display the generated letter
+            System.out.println("\n=== GENERATED COVER LETTER ===");
+            System.out.println(generatedLetter);
+            System.out.println("\n==============================");
+
+            // Ask if user wants to save it
+            System.out.print("\nWould you like to save this cover letter? (y/n): ");
+            String savechoice = scanner.nextLine().trim().toLowerCase();
+
+            if (savechoice.equals("y") || savechoice.equals("yes")) {
+                try {
+                    String storagePath = coverLetterService.storeCoverLetter(generatedLetter, pin);
+                    System.out.println("✓ Cover letter saved to: " + storagePath);
+                } catch (Exception e) {
+                    System.out.println("⚠ Warning: Could not save file, but cover letter was generated successfully.");
+                    System.out.println("You can copy the text above manually.");
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error: Failed to generate cover letter");
+            System.out.println("Details: " + e.getMessage());
         }
     }
 
