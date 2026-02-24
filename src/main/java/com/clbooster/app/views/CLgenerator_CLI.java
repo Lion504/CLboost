@@ -46,7 +46,7 @@ public class CLgenerator_CLI {
     }
     
     private static void initializeAIServices() {
-        String apiKey = System.getenv("API_KEY");
+        String apiKey = System.getenv("GOOGLE_API_KEY");
         if (apiKey == null || apiKey.isEmpty()) {
             System.out.print("⚠️ API Key not found in environment. Please paste your Google API Key: ");
             apiKey = scanner.nextLine();
