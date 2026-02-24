@@ -1,14 +1,10 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.backend.service.authentication.AuthenticationService;
+import com.clbooster.app.backend.service.profile.*;
 import com.clbooster.aiservice.AIService;
 import com.clbooster.aiservice.Exporter;
 import com.clbooster.aiservice.Parser;
-import com.clbooster.app.backend.service.authentication.AuthenticationService;
-import com.clbooster.app.backend.service.profile.*;
-import com.clbooster.app.backend.service.CoverLetterService;
-import com.clbooster.app.backend.service.ResumeService;
-import com.clbooster.app.backend.service.document.DocumentService;
-import com.clbooster.aiservice.AIService;
 
 import java.util.Scanner;
 
@@ -16,24 +12,19 @@ public class CLgenerator_CLI {
     private static AuthenticationService authService;
     private static ProfileService profileService;
     private static UserDAO userDAO;
-    private static CoverLetterService coverLetterService;
     private static Scanner scanner;
     private static AIService aiService;
+    private static Parser parser;
+    private static Exporter exporter;
 
     public static void main(String[] args) {
         authService = new AuthenticationService();
         profileService = new ProfileService();
         userDAO = new UserDAO();
-        
-        // Initialize AI and backend services
-        aiService = new AIService(System.getenv("GOOGLE_API_KEY"));
-        DocumentService documentService = new DocumentService(null);
-        ResumeService resumeService = new ResumeService(aiService, null);
-        coverLetterService = new CoverLetterService(aiService, documentService, profileService, resumeService);
-        
         scanner = new Scanner(System.in);
-        String apiKey = System.getenv("AI_API_KEY");
-        aiService = new AIService(apiKey);
+        
+        // Initialize AI services
+        initializeAIServices();
 
         System.out.println("_______________________________________");
         System.out.println("   CL GENERATOR - COMMAND LINE");
@@ -52,6 +43,18 @@ public class CLgenerator_CLI {
 
         scanner.close();
         System.out.println("\nThank you for using CL Generator. Goodbye!");
+    }
+    
+    private static void initializeAIServices() {
+        String apiKey = System.getenv("API_KEY");
+        if (apiKey == null || apiKey.isEmpty()) {
+            System.out.print("⚠️ API Key not found in environment. Please paste your Google API Key: ");
+            apiKey = scanner.nextLine();
+        }
+        
+        parser = new Parser();
+        aiService = new AIService(apiKey);
+        exporter = new Exporter();
     }
 
     // Main menu (not logged in)
@@ -83,8 +86,7 @@ public class CLgenerator_CLI {
     private static boolean showUserMenu() {
         System.out.println("\n=== USER MENU ===");
         System.out.println("1. Profile");
-        //System.out.println("2. Edit Profile");
-        System.out.println("2. Generate Cover letter");
+        System.out.println("2. Generate Cover Letter");
         System.out.println("3. Logout");
         System.out.println("4. Exit");
         System.out.print("Choose an option: ");
@@ -93,59 +95,90 @@ public class CLgenerator_CLI {
 
         switch (choice) {
             case "1":
-                handleProfileMenu();
+                // Show profile submenu
+                boolean continueAfterProfile = handleProfileMenu();
+                if (!continueAfterProfile) {
+                    // User deleted account, return to main menu
+                    return true;
+                }
                 break;
             case "2":
                 handleCoverLetterGeneration();
                 break;
             case "3":
-                handleGenerateFromFile(aiService);
+                authService.logout();
                 break;
             case "4":
                 authService.logout();
-                break;
-            case "5":
-                authService.logout();
                 return false;
             default:
-                System.out.println("Invalid option.");
+                System.out.println("Invalid option. Please try again.");
         }
         return true;
     }
-    private static void handleGenerateFromFile(AIService aiService) {
-        // 1. Get Resume File
-        System.out.print("\nEnter the full path to your Resume (.pdf or .txt): ");
-        String resumePath = scanner.nextLine().trim();
-
-        // 2. Get Job Description File
-        System.out.print("Enter the full path to the Job Description (.pdf or .txt): ");
-        String jobPath = scanner.nextLine().trim();
-
+    
+    private static void handleCoverLetterGeneration() {
+        int pin = authService.getCurrentUserPin();
+        if (pin == -1) {
+            System.out.println("Error: Not logged in");
+            return;
+        }
+        
+        System.out.println("\n=== COVER LETTER GENERATION ===");
+        
+        // Check if profile exists
+        Profile profile = profileService.getProfile(pin);
+        if (profile == null) {
+            System.out.println("⚠️ No profile found. Please create a profile first.");
+            return;
+        }
+        
+        // Ask for resume path
+        System.out.print("Enter path to your resume (PDF format): ");
+        String rawPath = scanner.nextLine();
+        String resumePath = rawPath.replace("\"", "").replace("'", "").trim();
+        
+        // Ask for job description
+        System.out.println("Paste the job description (press Enter twice when done):");
+        StringBuilder jobDescription = new StringBuilder();
+        String line;
+        while (!(line = scanner.nextLine()).isEmpty()) {
+            jobDescription.append(line).append("\n");
+        }
+        
+        // Ask for output filename
+        System.out.print("Enter output filename (e.g., MyCoverLetter.docx): ");
+        String outputPath = scanner.nextLine().trim();
+        if (!outputPath.endsWith(".docx")) {
+            outputPath += ".docx";
+        }
+        
+        System.out.println("\n📄 Reading resume...");
         try {
-            System.out.println("⏳ Processing files and generating letter...");
+            String resumeText = parser.parseFileToJson(resumePath);
             
-            // Extract Resume Text
-            String extractedResume = aiService.extractTextFromFile(resumePath, 
-                "Extract the full content of this resume accurately.");
-
-            // Extract Job Description Text
-            String extractedJob = aiService.extractTextFromFile(jobPath, 
-                "Extract the key requirements and responsibilities from this job description.");
-
-            if (extractedResume.startsWith("Error") || extractedJob.startsWith("Error")) {
-                System.out.println("Extraction Error: " + 
-                    (extractedResume.startsWith("Error") ? extractedResume : extractedJob));
-                return;
+            System.out.println("🤖 Analyzing resume and job description...");
+            System.out.println("✍️ Generating cover letter...");
+            
+            String coverLetter = aiService.generateCoverLetter(resumeText, jobDescription.toString());
+            
+            System.out.println("💾 Saving cover letter...");
+            exporter.saveAsDoc(coverLetter, outputPath);
+            
+            System.out.println("\n✅ Cover letter generated successfully!");
+            System.out.println("📁 Saved to: " + outputPath);
+            
+            // Ask if user wants to preview the letter
+            System.out.print("\nPreview the generated cover letter? (y/n): ");
+            if (scanner.nextLine().trim().toLowerCase().startsWith("y")) {
+                System.out.println("\n" + coverLetter);
             }
-
-            // 3. Generate Cover Letter
-            String coverLetter = coverLetterService.generateCoverLetter(extractedResume, extractedJob);
-
-            System.out.println("\n=== GENERATED COVER LETTER ===\n" + coverLetter);
+            
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("❌ Error generating cover letter: " + e.getMessage());
         }
     }
+
     // Profile submenu
     private static boolean handleProfileMenu() {
         int pin = authService.getCurrentUserPin();
@@ -161,8 +194,9 @@ public class CLgenerator_CLI {
 
             System.out.println("\n=== PROFILE MENU ===");
             System.out.println("1. Edit Profile");
-            System.out.println("2. Delete Account");
-            System.out.println("3. Back to Main Menu");
+            System.out.println("2. View Profile Details");
+            System.out.println("3. Delete Account");
+            System.out.println("4. Back to Main Menu");
             System.out.print("Choose an option: ");
 
             String choice = scanner.nextLine().trim();
@@ -172,13 +206,16 @@ public class CLgenerator_CLI {
                     handleEditProfile();
                     break;
                 case "2":
+                    viewProfileDetails(pin);
+                    break;
+                case "3":
                     boolean accountDeleted = handleDeleteAccount();
                     if (accountDeleted) {
                         // Account deleted, logout and return false
                         return false;
                     }
                     break;
-                case "3":
+                case "4":
                     // Go back to user menu
                     inProfileMenu = false;
                     break;
@@ -187,6 +224,26 @@ public class CLgenerator_CLI {
             }
         }
         return true; // Continue in user menu
+    }
+    
+    private static void viewProfileDetails(int pin) {
+        Profile profile = profileService.getProfile(pin);
+        if (profile != null) {
+            System.out.println("\n=== PROFILE DETAILS ===");
+            System.out.println("Experience Level: " + profile.getExperienceLevel());
+            System.out.println("Tools: " + profile.getTools());
+            System.out.println("Skills: " + profile.getSkills());
+            System.out.println("Portfolio/Link: " + profile.getLink());
+            System.out.println("Profile Email: " + profile.getProfileEmail());
+            
+            // Ask if user wants to use profile data for cover letter generation
+            System.out.print("\nUse this profile data to enhance cover letter generation? (y/n): ");
+            if (scanner.nextLine().trim().toLowerCase().startsWith("y")) {
+                System.out.println("✓ Profile data will be used when generating cover letters.");
+            }
+        } else {
+            System.out.println("No profile data found.");
+        }
     }
 
     private static void handleLogin() {
@@ -198,6 +255,10 @@ public class CLgenerator_CLI {
         String password = scanner.nextLine().trim();
 
         authService.login(username, password);
+        
+        if (authService.isLoggedIn()) {
+            System.out.println("✓ Login successful! Welcome, " + username);
+        }
     }
 
     private static void handleRegistration() {
@@ -228,7 +289,11 @@ public class CLgenerator_CLI {
         System.out.print("Last Name: ");
         String lastName = scanner.nextLine().trim();
 
-        authService.register(email, username, password, firstName, lastName);
+        boolean registered = authService.register(email, username, password, firstName, lastName);
+        
+        if (registered) {
+            System.out.println("✓ Registration successful! You can now log in.");
+        }
     }
 
     private static void handleEditProfile() {
@@ -256,7 +321,7 @@ public class CLgenerator_CLI {
         }
 
         // Tools
-        System.out.print("Tools (current: " +
+        System.out.print("Tools/Technologies (current: " +
                 (currentProfile.getTools() != null ? currentProfile.getTools() : "Not set") + "): ");
         String tools = scanner.nextLine().trim();
         if (tools.isEmpty()) {
@@ -293,101 +358,9 @@ public class CLgenerator_CLI {
 
         if (confirm.equals("y") || confirm.equals("yes")) {
             profileService.updateProfile(pin, experienceLevel, tools, skills, link, profileEmail);
+            System.out.println("✓ Profile updated successfully!");
         } else {
             System.out.println("Changes discarded.");
-        }
-    }
-
-    private static void handleGenerateCoverLetter() {
-        int pin = authService.getCurrentUserPin();
-        if (pin == -1) {
-            System.out.println("Error: Not logged in");
-            return;
-        }
-
-        System.out.println("\n=== COVER LETTER GENERATOR ===");
-
-        // Get resume text
-        System.out.println("Please provide your resume information.");
-        System.out.println("(You can paste your resume text, formatted resume content, or key information)");
-        System.out.print("Paste your resume here (press Enter twice when done): ");
-        
-        StringBuilder resumeText = new StringBuilder();
-        String line;
-        int emptyLines = 0;
-        
-        while (emptyLines < 1) {
-            line = scanner.nextLine().trim();
-            if (line.isEmpty()) {
-                emptyLines++;
-            } else {
-                emptyLines = 0;
-                resumeText.append(line).append("\n");
-            }
-        }
-
-        if (resumeText.length() == 0) {
-            System.out.println("Error: Resume cannot be empty");
-            return;
-        }
-
-        // Get job description
-        System.out.println("\nNow paste the job description or job posting.");
-        System.out.print("Paste job description here (press Enter twice when done): ");
-        
-        StringBuilder jobDescription = new StringBuilder();
-        emptyLines = 0;
-        
-        while (emptyLines < 1) {
-            line = scanner.nextLine().trim();
-            if (line.isEmpty()) {
-                emptyLines++;
-            } else {
-                emptyLines = 0;
-                jobDescription.append(line).append("\n");
-            }
-        }
-
-        if (jobDescription.length() == 0) {
-            System.out.println("Error: Job description cannot be empty");
-            return;
-        }
-
-        // Generate cover letter
-        try {
-            System.out.println("\n⏳ Generating your cover letter... Please wait.");
-            String generatedLetter = coverLetterService.generateCoverLetter(
-                    resumeText.toString().trim(),
-                    jobDescription.toString().trim()
-            );
-
-            if (generatedLetter == null || generatedLetter.isEmpty()) {
-                System.out.println("Error: Failed to generate cover letter. Please check your API key and try again.");
-                return;
-            }
-
-            // Display the generated letter
-            System.out.println("\n=== GENERATED COVER LETTER ===");
-            System.out.println(generatedLetter);
-            System.out.println("\n==============================");
-
-            // Ask if user wants to save it
-            System.out.print("\nWould you like to save this cover letter? (y/n): ");
-            String savechoice = scanner.nextLine().trim().toLowerCase();
-
-            if (savechoice.equals("y") || savechoice.equals("yes")) {
-                try {
-                    String storagePath = coverLetterService.storeCoverLetter(generatedLetter, pin);
-                    System.out.println("✓ Cover letter saved to: " + storagePath);
-                } catch (Exception e) {
-                    System.out.println("⚠ Warning: Could not save file, but cover letter was generated successfully.");
-                    System.out.println("You can copy the text above manually.");
-                }
-            }
-
-        } catch (Exception e) {
-            System.out.println("Error: Failed to generate cover letter");
-            System.out.println("Details: " + e.getMessage());
         }
     }
 
@@ -429,37 +402,6 @@ public class CLgenerator_CLI {
         } else {
             System.out.println("Error: Failed to delete account. Please try again later.");
             return false;
-        }
-    }
-
-    private static void handleCoverLetterGeneration() {
-        System.out.println("\n=== COVER LETTER GENERATOR ===");
-
-        System.out.print("Path to your Resume PDF: ");
-        String rawPath = scanner.nextLine();
-        String resumePath = rawPath.replace("\"", "").replace("'", "").trim();
-
-        System.out.println("Paste the Job Description here:");
-        String jobDetails = scanner.nextLine().trim();
-
-        System.out.print("Name the output file (e.g., final_cl.docx): ");
-        String outputPath = scanner.nextLine().trim();
-
-        try {
-            Parser parser = new Parser();
-            String resumeText = parser.parseFileToJson(resumePath);
-
-            // Use the consistent name 'aiService'
-            String coverLetter = aiService.generateCoverLetter(resumeText, jobDetails);
-
-            Exporter exporter = new Exporter();
-            exporter.saveAsDoc(coverLetter, outputPath);
-
-            System.out.println("\n File saved as: " + outputPath);
-
-        } catch (Exception e) {
-            System.out.println("\n Error during generation: " + e.getMessage());
-            e.printStackTrace(); // This helps you see WHERE it failed during debugging
         }
     }
 }
