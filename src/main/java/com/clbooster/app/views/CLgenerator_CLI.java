@@ -1,5 +1,8 @@
 package com.clbooster.app.views;
 
+import com.clbooster.aiservice.AIService;
+import com.clbooster.aiservice.Exporter;
+import com.clbooster.aiservice.Parser;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.*;
 import com.clbooster.app.backend.service.CoverLetterService;
@@ -29,6 +32,8 @@ public class CLgenerator_CLI {
         coverLetterService = new CoverLetterService(aiService, documentService, profileService, resumeService);
         
         scanner = new Scanner(System.in);
+        String apiKey = System.getenv("AI_API_KEY");
+        aiService = new AIService(apiKey);
 
         System.out.println("_______________________________________");
         System.out.println("   CL GENERATOR - COMMAND LINE");
@@ -78,10 +83,10 @@ public class CLgenerator_CLI {
     private static boolean showUserMenu() {
         System.out.println("\n=== USER MENU ===");
         System.out.println("1. Profile");
-        System.out.println("2. Generate Cover Letter (Manual Paste)");
-        System.out.println("3. Generate Cover Letter (Upload PDF or TXT Resume)");
-        System.out.println("4. Logout");
-        System.out.println("5. Exit");
+        //System.out.println("2. Edit Profile");
+        System.out.println("2. Generate Cover letter");
+        System.out.println("3. Logout");
+        System.out.println("4. Exit");
         System.out.print("Choose an option: ");
 
         String choice = scanner.nextLine().trim();
@@ -91,7 +96,7 @@ public class CLgenerator_CLI {
                 handleProfileMenu();
                 break;
             case "2":
-                handleGenerateCoverLetter();
+                handleCoverLetterGeneration();
                 break;
             case "3":
                 handleGenerateFromFile(aiService);
@@ -424,6 +429,37 @@ public class CLgenerator_CLI {
         } else {
             System.out.println("Error: Failed to delete account. Please try again later.");
             return false;
+        }
+    }
+
+    private static void handleCoverLetterGeneration() {
+        System.out.println("\n=== COVER LETTER GENERATOR ===");
+
+        System.out.print("Path to your Resume PDF: ");
+        String rawPath = scanner.nextLine();
+        String resumePath = rawPath.replace("\"", "").replace("'", "").trim();
+
+        System.out.println("Paste the Job Description here:");
+        String jobDetails = scanner.nextLine().trim();
+
+        System.out.print("Name the output file (e.g., final_cl.docx): ");
+        String outputPath = scanner.nextLine().trim();
+
+        try {
+            Parser parser = new Parser();
+            String resumeText = parser.parseFileToJson(resumePath);
+
+            // Use the consistent name 'aiService'
+            String coverLetter = aiService.generateCoverLetter(resumeText, jobDetails);
+
+            Exporter exporter = new Exporter();
+            exporter.saveAsDoc(coverLetter, outputPath);
+
+            System.out.println("\n File saved as: " + outputPath);
+
+        } catch (Exception e) {
+            System.out.println("\n Error during generation: " + e.getMessage());
+            e.printStackTrace(); // This helps you see WHERE it failed during debugging
         }
     }
 }

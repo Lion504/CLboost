@@ -45,7 +45,7 @@ public class ProfileService {
         System.out.println("\n_____________________________________");
         System.out.println("           YOUR PROFILE");
         System.out.println("______________________________________");
-        System.out.println("PIN:              " + profile.getPin());
+        //System.out.println("PIN:              " + profile.getPin());
         System.out.println("Experience Level: " + (profile.getExperienceLevel() != null ? profile.getExperienceLevel() : "(Not set)"));
         System.out.println("Tools:            " + (profile.getTools() != null ? profile.getTools() : "(Not set)"));
         System.out.println("Skills:           " + (profile.getSkills() != null ? profile.getSkills() : "(Not set)"));
