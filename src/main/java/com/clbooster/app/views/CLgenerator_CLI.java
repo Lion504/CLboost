@@ -15,6 +15,7 @@ public class CLgenerator_CLI {
     private static UserDAO userDAO;
     private static CoverLetterService coverLetterService;
     private static Scanner scanner;
+    private static AIService aiService;
 
     public static void main(String[] args) {
         authService = new AuthenticationService();
@@ -22,7 +23,7 @@ public class CLgenerator_CLI {
         userDAO = new UserDAO();
         
         // Initialize AI and backend services
-        AIService aiService = new AIService(System.getenv("GOOGLE_API_KEY"));
+        aiService = new AIService(System.getenv("GOOGLE_API_KEY"));
         DocumentService documentService = new DocumentService(null);
         ResumeService resumeService = new ResumeService(aiService, null);
         coverLetterService = new CoverLetterService(aiService, documentService, profileService, resumeService);
@@ -77,38 +78,69 @@ public class CLgenerator_CLI {
     private static boolean showUserMenu() {
         System.out.println("\n=== USER MENU ===");
         System.out.println("1. Profile");
-        //System.out.println("2. Edit Profile");
-        System.out.println("2. Generate Cover latter");
-        System.out.println("3. Logout");
-        System.out.println("4. Exit");
+        System.out.println("2. Generate Cover Letter (Manual Paste)");
+        System.out.println("3. Generate Cover Letter (Upload PDF or TXT Resume)");
+        System.out.println("4. Logout");
+        System.out.println("5. Exit");
         System.out.print("Choose an option: ");
 
         String choice = scanner.nextLine().trim();
 
         switch (choice) {
             case "1":
-                // Show profile submenu
-                boolean continueAfterProfile = handleProfileMenu();
-                if (!continueAfterProfile) {
-                    // User deleted account, return to main menu
-                    return true;
-                }
+                handleProfileMenu();
                 break;
             case "2":
                 handleGenerateCoverLetter();
                 break;
             case "3":
-                authService.logout();
+                handleGenerateFromFile(aiService);
                 break;
             case "4":
                 authService.logout();
+                break;
+            case "5":
+                authService.logout();
                 return false;
             default:
-                System.out.println("Invalid option. Please try again.");
+                System.out.println("Invalid option.");
         }
         return true;
     }
+    private static void handleGenerateFromFile(AIService aiService) {
+        // 1. Get Resume File
+        System.out.print("\nEnter the full path to your Resume (.pdf or .txt): ");
+        String resumePath = scanner.nextLine().trim();
 
+        // 2. Get Job Description File
+        System.out.print("Enter the full path to the Job Description (.pdf or .txt): ");
+        String jobPath = scanner.nextLine().trim();
+
+        try {
+            System.out.println("⏳ Processing files and generating letter...");
+            
+            // Extract Resume Text
+            String extractedResume = aiService.extractTextFromFile(resumePath, 
+                "Extract the full content of this resume accurately.");
+
+            // Extract Job Description Text
+            String extractedJob = aiService.extractTextFromFile(jobPath, 
+                "Extract the key requirements and responsibilities from this job description.");
+
+            if (extractedResume.startsWith("Error") || extractedJob.startsWith("Error")) {
+                System.out.println("Extraction Error: " + 
+                    (extractedResume.startsWith("Error") ? extractedResume : extractedJob));
+                return;
+            }
+
+            // 3. Generate Cover Letter
+            String coverLetter = coverLetterService.generateCoverLetter(extractedResume, extractedJob);
+
+            System.out.println("\n=== GENERATED COVER LETTER ===\n" + coverLetter);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
     // Profile submenu
     private static boolean handleProfileMenu() {
         int pin = authService.getCurrentUserPin();

@@ -1,13 +1,28 @@
 package com.clbooster.aiservice;
 
+import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.data.message.PdfFileContent;
+import dev.langchain4j.data.message.TextContent;
+import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
+import dev.langchain4j.model.output.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.logging.Logger;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
 
 /**
  * AI Service for resume processing and cover letter generation.
@@ -18,21 +33,59 @@ public class AIService {
 
     private static final Logger logger = Logger.getLogger(AIService.class.getName());
     private final ChatLanguageModel languageModel;
+    private final String apiKey;
 
     public AIService(@Value("${spring.ai.google.api-key:}") String apiKey) {
-        // do not manually create the env file, Instead, setx GOOGLE_API_KEY "your_API_key"
-        String finalApiKey = apiKey != null && !apiKey.isEmpty() ? 
+        this.apiKey = (apiKey != null && !apiKey.isEmpty()) ? 
             apiKey : System.getenv("GOOGLE_API_KEY");
         
-        if (finalApiKey == null || finalApiKey.isEmpty()) {
+        if (this.apiKey == null || this.apiKey.isEmpty()) {
             logger.warning("No Google API Key provided. AI features may not work.");
             this.languageModel = null;
         } else {
             this.languageModel = GoogleAiGeminiChatModel.builder()
-                .apiKey(finalApiKey)
+                .apiKey(this.apiKey)
                 .modelName("gemini-2.5-flash-lite")
                 .temperature(0.7)
                 .build();
+        }
+    }
+
+    /**
+     * Extracts text from a file (PDF or TXT) using Gemini.
+     * This can be used for both resumes and job descriptions.
+     */
+    /**
+     * Extracts text from a file (PDF or TXT) using Gemini.
+     */
+    public String extractTextFromFile(String filePath, String prompt) {
+        if (languageModel == null) return "Error: AI Model not initialized.";
+
+        try {
+            Path path = Path.of(filePath);
+            String fileName = path.getFileName().toString().toLowerCase();
+
+            if (fileName.endsWith(".pdf")) {
+                // Read PDF and encode for multimodal processing
+                byte[] fileBytes = Files.readAllBytes(path);
+                String base64Data = Base64.getEncoder().encodeToString(fileBytes);
+
+                UserMessage userMessage = UserMessage.from(
+                    TextContent.from(prompt),
+                    PdfFileContent.from(base64Data)
+                );
+
+                Response<AiMessage> response = languageModel.generate(userMessage);
+                return response.content().text();
+            } else if (fileName.endsWith(".txt")) {
+                // Read text file as a standard string
+                String fileContent = Files.readString(path);
+                return languageModel.generate(prompt + "\n\n" + fileContent);
+            } else {
+                return "Error: Unsupported file type. Please use .pdf or .txt";
+            }
+        } catch (IOException e) {
+            return "Error reading file: " + e.getMessage();
         }
     }
 
