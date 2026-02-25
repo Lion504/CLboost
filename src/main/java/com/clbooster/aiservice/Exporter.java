@@ -3,9 +3,12 @@ package com.clbooster.aiservice;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.springframework.stereotype.Service;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+@Service
 public class Exporter {
 
     public void saveAsDoc (String content, String outputPath) {
