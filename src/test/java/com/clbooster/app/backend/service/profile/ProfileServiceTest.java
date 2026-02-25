@@ -52,9 +52,7 @@ class ProfileServiceTest {
     void updateProfile_success() {
         when(profileDAOMock.updateProfile(any(Profile.class))).thenReturn(true);
 
-        boolean result = service.updateProfile(
-                1, "Senior", "Java", "Backend", "link", "test@mail.com"
-        );
+        boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "test@mail.com");
 
         assertTrue(result);
         verify(profileDAOMock).updateProfile(any(Profile.class));
@@ -62,9 +60,7 @@ class ProfileServiceTest {
 
     @Test
     void updateProfile_invalidEmail() {
-        boolean result = service.updateProfile(
-                1, "Senior", "Java", "Backend", "link", "invalid-email"
-        );
+        boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "invalid-email");
 
         assertFalse(result);
         verify(profileDAOMock, never()).updateProfile(any());
@@ -74,9 +70,7 @@ class ProfileServiceTest {
     void updateProfile_daoFailure() {
         when(profileDAOMock.updateProfile(any(Profile.class))).thenReturn(false);
 
-        boolean result = service.updateProfile(
-                1, "Senior", "Java", "Backend", "link", "test@mail.com"
-        );
+        boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "test@mail.com");
 
         assertFalse(result);
     }

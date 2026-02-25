@@ -11,11 +11,11 @@ import java.io.IOException;
 @Service
 public class Exporter {
 
-    public void saveAsDoc (String content, String outputPath) {
+    public void saveAsDoc(String content, String outputPath) {
         try (XWPFDocument document = new XWPFDocument()) {
             String[] paragraphs = content.split("\n");
             for (String line : paragraphs) {
-                if(!line.trim().isEmpty()) {
+                if (!line.trim().isEmpty()) {
                     XWPFParagraph paragraph = document.createParagraph();
                     XWPFRun run = paragraph.createRun();
                     run.setText(line);
@@ -25,8 +25,7 @@ public class Exporter {
                 document.write(out);
             }
             System.out.println("File saved on path: " + outputPath);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Failed to save document.");
         }
     }

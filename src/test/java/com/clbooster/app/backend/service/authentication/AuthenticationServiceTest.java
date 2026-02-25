@@ -29,10 +29,7 @@ class AuthenticationServiceTest {
 
     @Test
     void register_invalidPassword() {
-        boolean result = service.register(
-                "test@mail.com", "user", "weak",
-                "John", "Doe"
-        );
+        boolean result = service.register("test@mail.com", "user", "weak", "John", "Doe");
 
         assertFalse(result);
         verify(userDAOMock, never()).registerUser(any());
@@ -42,10 +39,7 @@ class AuthenticationServiceTest {
     void register_usernameExists() {
         when(userDAOMock.usernameExists("user")).thenReturn(true);
 
-        boolean result = service.register(
-                "test@mail.com", "user", "StrongPass1!",
-                "John", "Doe"
-        );
+        boolean result = service.register("test@mail.com", "user", "StrongPass1!", "John", "Doe");
 
         assertFalse(result);
     }
@@ -55,10 +49,7 @@ class AuthenticationServiceTest {
         when(userDAOMock.usernameExists("user")).thenReturn(false);
         when(userDAOMock.emailExists("test@mail.com")).thenReturn(true);
 
-        boolean result = service.register(
-                "test@mail.com", "user", "StrongPass1!",
-                "John", "Doe"
-        );
+        boolean result = service.register("test@mail.com", "user", "StrongPass1!", "John", "Doe");
 
         assertFalse(result);
     }
@@ -69,10 +60,7 @@ class AuthenticationServiceTest {
         when(userDAOMock.emailExists("test@mail.com")).thenReturn(false);
         when(userDAOMock.registerUser(any(User.class))).thenReturn(true);
 
-        boolean result = service.register(
-                "test@mail.com", "user", "StrongPass1!",
-                "John", "Doe"
-        );
+        boolean result = service.register("test@mail.com", "user", "StrongPass1!", "John", "Doe");
 
         assertTrue(result);
         verify(userDAOMock).registerUser(any(User.class));

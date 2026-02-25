@@ -39,12 +39,7 @@ class DocumentServiceTest {
     @DisplayName("Should store resume file")
     void testStoreResumeFile() throws IOException {
         byte[] content = "Resume content test".getBytes(StandardCharsets.UTF_8);
-        MultipartFile file = new MockMultipartFile(
-                "file",
-                "resume.txt",
-                "text/plain",
-                content
-        );
+        MultipartFile file = new MockMultipartFile("file", "resume.txt", "text/plain", content);
 
         String storagePath = documentService.storeResumeFile(file, "user123");
 
@@ -62,7 +57,7 @@ class DocumentServiceTest {
 
         assertNotNull(storagePath);
         assertTrue(Files.exists(Paths.get(storagePath)));
-        
+
         // Verify content
         String stored = new String(Files.readAllBytes(Paths.get(storagePath)), StandardCharsets.UTF_8);
         assertEquals(resumeText, stored);
@@ -72,12 +67,7 @@ class DocumentServiceTest {
     @DisplayName("Should retrieve stored resume file")
     void testRetrieveResumeFile() throws IOException {
         byte[] originalContent = "Test resume content for retrieval".getBytes(StandardCharsets.UTF_8);
-        MultipartFile file = new MockMultipartFile(
-                "file",
-                "resume.txt",
-                "text/plain",
-                originalContent
-        );
+        MultipartFile file = new MockMultipartFile("file", "resume.txt", "text/plain", originalContent);
 
         String storagePath = documentService.storeResumeFile(file, "user123");
         byte[] retrieved = documentService.retrieveResumeFile(storagePath);
@@ -134,12 +124,7 @@ class DocumentServiceTest {
     @DisplayName("Should delete resume file")
     void testDeleteResumeFile() throws IOException {
         byte[] content = "Resume to delete".getBytes(StandardCharsets.UTF_8);
-        MultipartFile file = new MockMultipartFile(
-                "file",
-                "resume.txt",
-                "text/plain",
-                content
-        );
+        MultipartFile file = new MockMultipartFile("file", "resume.txt", "text/plain", content);
 
         String storagePath = documentService.storeResumeFile(file, "user123");
         assertTrue(Files.exists(Paths.get(storagePath)));
@@ -153,12 +138,7 @@ class DocumentServiceTest {
     @Test
     @DisplayName("Should reject empty file upload")
     void testStoreResumeFile_EmptyFile() {
-        MultipartFile emptyFile = new MockMultipartFile(
-                "file",
-                "resume.txt",
-                "text/plain",
-                new byte[0]
-        );
+        MultipartFile emptyFile = new MockMultipartFile("file", "resume.txt", "text/plain", new byte[0]);
 
         assertThrows(IllegalArgumentException.class, () -> {
             documentService.storeResumeFile(emptyFile, "user123");

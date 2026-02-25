@@ -16,7 +16,8 @@ public class UserDAO {
             StringBuilder hexString = new StringBuilder();
             for (byte b : hash) {
                 String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
+                if (hex.length() == 1)
+                    hexString.append('0');
                 hexString.append(hex);
             }
             return hexString.toString();
@@ -29,7 +30,7 @@ public class UserDAO {
         String sql = "INSERT INTO identification (Identity_email, Username, Password, First_Name, Last_Name) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setString(1, user.getIdentityEmail());
             pstmt.setString(2, user.getUsername());
@@ -65,10 +66,10 @@ public class UserDAO {
         String sql = "INSERT INTO profile (Pin, Profile_Email) VALUES (?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, pin);
-            pstmt.setString(2, identityEmail);  // Initially same as identity email
+            pstmt.setString(2, identityEmail); // Initially same as identity email
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -80,7 +81,7 @@ public class UserDAO {
         String sql = "SELECT Pin, Identity_email, Username, Password, First_Name, Last_Name FROM identification WHERE Username = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
@@ -110,7 +111,7 @@ public class UserDAO {
         String sql = "SELECT Pin FROM identification WHERE Username = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
@@ -126,7 +127,7 @@ public class UserDAO {
         String sql = "SELECT Pin FROM identification WHERE Identity_email = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, email);
             ResultSet rs = pstmt.executeQuery();
@@ -142,7 +143,7 @@ public class UserDAO {
         String sql = "SELECT Pin, Identity_email, Username, First_Name, Last_Name FROM identification WHERE Pin = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, pin);
             ResultSet rs = pstmt.executeQuery();
@@ -162,11 +163,12 @@ public class UserDAO {
             return null;
         }
     }
+
     public boolean deleteUser(User user) {
         String sql = "DELETE FROM identification WHERE Pin = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, user.getPin());
 

@@ -10,7 +10,7 @@ public class ProfileDAO {
         String sql = "SELECT Pin, Experience_Level, Tools, Skills, Link, Profile_Email, CV_Last_Updated FROM profile WHERE Pin = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, pin);
             ResultSet rs = pstmt.executeQuery();
@@ -38,7 +38,7 @@ public class ProfileDAO {
         String sql = "UPDATE profile SET Experience_Level = ?, Tools = ?, Skills = ?, Link = ?, Profile_Email = ? WHERE Pin = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, profile.getExperienceLevel());
             pstmt.setString(2, profile.getTools());
@@ -60,7 +60,7 @@ public class ProfileDAO {
         String sql = "UPDATE profile SET CV_Last_Updated = CURRENT_TIMESTAMP WHERE Pin = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, pin);
             return pstmt.executeUpdate() > 0;
@@ -75,7 +75,7 @@ public class ProfileDAO {
         String sql = "SELECT Pin FROM profile WHERE Pin = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, pin);
             ResultSet rs = pstmt.executeQuery();

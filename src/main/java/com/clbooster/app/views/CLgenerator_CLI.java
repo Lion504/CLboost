@@ -22,7 +22,7 @@ public class CLgenerator_CLI {
         profileService = new ProfileService();
         userDAO = new UserDAO();
         scanner = new Scanner(System.in);
-        
+
         // Initialize AI services
         initializeAIServices();
 
@@ -44,14 +44,14 @@ public class CLgenerator_CLI {
         scanner.close();
         System.out.println("\nThank you for using CL Generator. Goodbye!");
     }
-    
+
     private static void initializeAIServices() {
         String apiKey = System.getenv("GOOGLE_API_KEY");
         if (apiKey == null || apiKey.isEmpty()) {
             System.out.print("⚠️ API Key not found in environment. Please paste your Google API Key: ");
             apiKey = scanner.nextLine();
         }
-        
+
         parser = new Parser();
         aiService = new AIService(apiKey);
         exporter = new Exporter();
@@ -68,16 +68,16 @@ public class CLgenerator_CLI {
         String choice = scanner.nextLine().trim();
 
         switch (choice) {
-            case "1":
-                handleLogin();
-                break;
-            case "2":
-                handleRegistration();
-                break;
-            case "3":
-                return false;
-            default:
-                System.out.println("Invalid option. Please try again.");
+        case "1":
+            handleLogin();
+            break;
+        case "2":
+            handleRegistration();
+            break;
+        case "3":
+            return false;
+        default:
+            System.out.println("Invalid option. Please try again.");
         }
         return true;
     }
@@ -94,50 +94,50 @@ public class CLgenerator_CLI {
         String choice = scanner.nextLine().trim();
 
         switch (choice) {
-            case "1":
-                // Show profile submenu
-                boolean continueAfterProfile = handleProfileMenu();
-                if (!continueAfterProfile) {
-                    // User deleted account, return to main menu
-                    return true;
-                }
-                break;
-            case "2":
-                handleCoverLetterGeneration();
-                break;
-            case "3":
-                authService.logout();
-                break;
-            case "4":
-                authService.logout();
-                return false;
-            default:
-                System.out.println("Invalid option. Please try again.");
+        case "1":
+            // Show profile submenu
+            boolean continueAfterProfile = handleProfileMenu();
+            if (!continueAfterProfile) {
+                // User deleted account, return to main menu
+                return true;
+            }
+            break;
+        case "2":
+            handleCoverLetterGeneration();
+            break;
+        case "3":
+            authService.logout();
+            break;
+        case "4":
+            authService.logout();
+            return false;
+        default:
+            System.out.println("Invalid option. Please try again.");
         }
         return true;
     }
-    
+
     private static void handleCoverLetterGeneration() {
         int pin = authService.getCurrentUserPin();
         if (pin == -1) {
             System.out.println("Error: Not logged in");
             return;
         }
-        
+
         System.out.println("\n=== COVER LETTER GENERATION ===");
-        
+
         // Check if profile exists
         Profile profile = profileService.getProfile(pin);
         if (profile == null) {
             System.out.println("⚠️ No profile found. Please create a profile first.");
             return;
         }
-        
+
         // Ask for resume path
         System.out.print("Enter path to your resume (PDF format): ");
         String rawPath = scanner.nextLine();
         String resumePath = rawPath.replace("\"", "").replace("'", "").trim();
-        
+
         // Ask for job description
         System.out.println("Paste the job description (press Enter twice when done):");
         StringBuilder jobDescription = new StringBuilder();
@@ -145,35 +145,35 @@ public class CLgenerator_CLI {
         while (!(line = scanner.nextLine()).isEmpty()) {
             jobDescription.append(line).append("\n");
         }
-        
+
         // Ask for output filename
         System.out.print("Enter output filename (e.g., MyCoverLetter.docx): ");
         String outputPath = scanner.nextLine().trim();
         if (!outputPath.endsWith(".docx")) {
             outputPath += ".docx";
         }
-        
+
         System.out.println("\n📄 Reading resume...");
         try {
             String resumeText = parser.parseFileToJson(resumePath);
-            
+
             System.out.println("🤖 Analyzing resume and job description...");
             System.out.println("✍️ Generating cover letter...");
-            
+
             String coverLetter = aiService.generateCoverLetter(resumeText, jobDescription.toString());
-            
+
             System.out.println("💾 Saving cover letter...");
             exporter.saveAsDoc(coverLetter, outputPath);
-            
+
             System.out.println("\n✅ Cover letter generated successfully!");
             System.out.println("📁 Saved to: " + outputPath);
-            
+
             // Ask if user wants to preview the letter
             System.out.print("\nPreview the generated cover letter? (y/n): ");
             if (scanner.nextLine().trim().toLowerCase().startsWith("y")) {
                 System.out.println("\n" + coverLetter);
             }
-            
+
         } catch (Exception e) {
             System.out.println("❌ Error generating cover letter: " + e.getMessage());
         }
@@ -202,30 +202,30 @@ public class CLgenerator_CLI {
             String choice = scanner.nextLine().trim();
 
             switch (choice) {
-                case "1":
-                    handleEditProfile();
-                    break;
-                case "2":
-                    viewProfileDetails(pin);
-                    break;
-                case "3":
-                    boolean accountDeleted = handleDeleteAccount();
-                    if (accountDeleted) {
-                        // Account deleted, logout and return false
-                        return false;
-                    }
-                    break;
-                case "4":
-                    // Go back to user menu
-                    inProfileMenu = false;
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again.");
+            case "1":
+                handleEditProfile();
+                break;
+            case "2":
+                viewProfileDetails(pin);
+                break;
+            case "3":
+                boolean accountDeleted = handleDeleteAccount();
+                if (accountDeleted) {
+                    // Account deleted, logout and return false
+                    return false;
+                }
+                break;
+            case "4":
+                // Go back to user menu
+                inProfileMenu = false;
+                break;
+            default:
+                System.out.println("Invalid option. Please try again.");
             }
         }
         return true; // Continue in user menu
     }
-    
+
     private static void viewProfileDetails(int pin) {
         Profile profile = profileService.getProfile(pin);
         if (profile != null) {
@@ -235,7 +235,7 @@ public class CLgenerator_CLI {
             System.out.println("Skills: " + profile.getSkills());
             System.out.println("Portfolio/Link: " + profile.getLink());
             System.out.println("Profile Email: " + profile.getProfileEmail());
-            
+
             // Ask if user wants to use profile data for cover letter generation
             System.out.print("\nUse this profile data to enhance cover letter generation? (y/n): ");
             if (scanner.nextLine().trim().toLowerCase().startsWith("y")) {
@@ -255,7 +255,7 @@ public class CLgenerator_CLI {
         String password = scanner.nextLine().trim();
 
         authService.login(username, password);
-        
+
         if (authService.isLoggedIn()) {
             System.out.println("✓ Login successful! Welcome, " + username);
         }
@@ -290,7 +290,7 @@ public class CLgenerator_CLI {
         String lastName = scanner.nextLine().trim();
 
         boolean registered = authService.register(email, username, password, firstName, lastName);
-        
+
         if (registered) {
             System.out.println("✓ Registration successful! You can now log in.");
         }
@@ -313,40 +313,41 @@ public class CLgenerator_CLI {
         }
 
         // Experience Level
-        System.out.print("Experience Level (current: " +
-                (currentProfile.getExperienceLevel() != null ? currentProfile.getExperienceLevel() : "Not set") + "): ");
+        System.out.print("Experience Level (current: "
+                + (currentProfile.getExperienceLevel() != null ? currentProfile.getExperienceLevel() : "Not set")
+                + "): ");
         String experienceLevel = scanner.nextLine().trim();
         if (experienceLevel.isEmpty()) {
             experienceLevel = currentProfile.getExperienceLevel();
         }
 
         // Tools
-        System.out.print("Tools/Technologies (current: " +
-                (currentProfile.getTools() != null ? currentProfile.getTools() : "Not set") + "): ");
+        System.out.print("Tools/Technologies (current: "
+                + (currentProfile.getTools() != null ? currentProfile.getTools() : "Not set") + "): ");
         String tools = scanner.nextLine().trim();
         if (tools.isEmpty()) {
             tools = currentProfile.getTools();
         }
 
         // Skills
-        System.out.print("Skills (current: " +
-                (currentProfile.getSkills() != null ? currentProfile.getSkills() : "Not set") + "): ");
+        System.out.print("Skills (current: "
+                + (currentProfile.getSkills() != null ? currentProfile.getSkills() : "Not set") + "): ");
         String skills = scanner.nextLine().trim();
         if (skills.isEmpty()) {
             skills = currentProfile.getSkills();
         }
 
         // Link
-        System.out.print("Link/Portfolio URL (current: " +
-                (currentProfile.getLink() != null ? currentProfile.getLink() : "Not set") + "): ");
+        System.out.print("Link/Portfolio URL (current: "
+                + (currentProfile.getLink() != null ? currentProfile.getLink() : "Not set") + "): ");
         String link = scanner.nextLine().trim();
         if (link.isEmpty()) {
             link = currentProfile.getLink();
         }
 
         // Profile Email
-        System.out.print("Profile Email (current: " +
-                (currentProfile.getProfileEmail() != null ? currentProfile.getProfileEmail() : "Not set") + "): ");
+        System.out.print("Profile Email (current: "
+                + (currentProfile.getProfileEmail() != null ? currentProfile.getProfileEmail() : "Not set") + "): ");
         String profileEmail = scanner.nextLine().trim();
         if (profileEmail.isEmpty()) {
             profileEmail = currentProfile.getProfileEmail();

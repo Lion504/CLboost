@@ -15,7 +15,8 @@ public class ProfileService {
         return profile;
     }
 
-    public boolean updateProfile(int pin, String experienceLevel, String tools, String skills, String link, String profileEmail) {
+    public boolean updateProfile(int pin, String experienceLevel, String tools, String skills, String link,
+            String profileEmail) {
         if (profileEmail != null && !profileEmail.trim().isEmpty()) {
             if (!isValidEmail(profileEmail)) {
                 System.out.println("Error: Invalid email format");
@@ -45,12 +46,14 @@ public class ProfileService {
         System.out.println("\n_____________________________________");
         System.out.println("           YOUR PROFILE");
         System.out.println("______________________________________");
-        //System.out.println("PIN:              " + profile.getPin());
-        System.out.println("Experience Level: " + (profile.getExperienceLevel() != null ? profile.getExperienceLevel() : "(Not set)"));
+        // System.out.println("PIN: " + profile.getPin());
+        System.out.println("Experience Level: "
+                + (profile.getExperienceLevel() != null ? profile.getExperienceLevel() : "(Not set)"));
         System.out.println("Tools:            " + (profile.getTools() != null ? profile.getTools() : "(Not set)"));
         System.out.println("Skills:           " + (profile.getSkills() != null ? profile.getSkills() : "(Not set)"));
         System.out.println("Link:             " + (profile.getLink() != null ? profile.getLink() : "(Not set)"));
-        System.out.println("Profile Email:    " + (profile.getProfileEmail() != null ? profile.getProfileEmail() : "(Not set)"));
+        System.out.println(
+                "Profile Email:    " + (profile.getProfileEmail() != null ? profile.getProfileEmail() : "(Not set)"));
         System.out.println("_____________________________________\n");
     }
 

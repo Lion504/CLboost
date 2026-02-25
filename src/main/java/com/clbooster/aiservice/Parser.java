@@ -14,8 +14,7 @@ public class Parser {
             ApacheTikaDocumentParser documentToParse = new ApacheTikaDocumentParser();
             Document document = FileSystemDocumentLoader.loadDocument(path, documentToParse);
             return document.text();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("Unable to parse file" + filePath, e);
         }
     }
