@@ -1,19 +1,45 @@
-/*
-   CSS styling examples for the Vaadin app.
+/* CLbooster Theme — matches Figma design */
+:root {
+  --lumo-primary-color: #2563EB;
+  --lumo-primary-color-50pct: rgba(37, 99, 235, 0.5);
+  --lumo-primary-color-10pct: rgba(37, 99, 235, 0.1);
+  --lumo-primary-text-color: #2563EB;
+  --lumo-primary-contrast-color: #ffffff;
 
-   Visit https://vaadin.com/docs/styling/application-theme/ for more information.
-*/
+  --lumo-base-color: #ffffff;
+  --lumo-contrast-5pct: #F5F5F7;   /* auth page background */
 
-/* Example: CSS class name to center align the content . */
-.centered-content {
-  margin: 0 auto;
-  max-width: 250px;
+  --lumo-font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --lumo-border-radius-m: 10px;
+  --lumo-border-radius-l: 14px;
+  --lumo-box-shadow-s: 0 2px 8px rgba(0,0,0,0.09);
 }
 
-/* Example: the style is applied only to the textfields which have the `bordered` class name. */
-vaadin-text-field.bordered::part(input-field) {
-  box-shadow: inset 0 0 0 1px var(--lumo-contrast-30pct);
-  background-color: var(--lumo-base-color);
+/* Sidebar dark style matching Figma dashboard */
+.sidebar {
+  background-color: #111827;
+  color: #ffffff;
+  min-height: 100vh;
+  padding: 16px;
 }
 
+/* Card style */
+.cl-card {
+  background: white;
+  border-radius: var(--lumo-border-radius-l);
+  box-shadow: var(--lumo-box-shadow-s);
+  padding: 24px;
+}
 
+/* Dark performance card from dashboard */
+.performance-card {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: white;
+  border-radius: var(--lumo-border-radius-l);
+  padding: 28px;
+}
+
+/* Status badges */
+.badge-sent    { background: #dcfce7; color: #16a34a; }
+.badge-draft   { background: #f3f4f6; color: #6b7280; }
+.badge-archived{ background: #fef9c3; color: #ca8a04; }
