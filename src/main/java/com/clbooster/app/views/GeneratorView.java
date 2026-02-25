@@ -86,7 +86,7 @@ public class GeneratorView extends VerticalLayout {
         add(createStepBar(3));
         add(new H2("Your Cover Letter"));
 
-        // Call your existing AIService
+        // Call existing AIService
         Div resultCard = new Div();
         resultCard.addClassName("cl-card");
         resultCard.setWidthFull();
