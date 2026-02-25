@@ -39,9 +39,8 @@ class AIServiceTest {
         String mockFinalCL = "Dear Hiring Manager, I love Java...";
 
         // Define behavior for the two internal calls to languageModel.generate()
-        when(mockModel.generate(anyString()))
-            .thenReturn(mockAnalysis) // First call (matchQualification)
-            .thenReturn(mockFinalCL); // Second call (writeCoverLetter)
+        when(mockModel.generate(anyString())).thenReturn(mockAnalysis) // First call (matchQualification)
+                .thenReturn(mockFinalCL); // Second call (writeCoverLetter)
 
         // Act
         String result = aiService.generateCoverLetter(resume, jobDetails);

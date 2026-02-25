@@ -21,8 +21,7 @@ class UserDAOTest {
         ResultSet keys = mock(ResultSet.class);
 
         // FIRST INSERT (identification)
-        when(conn.prepareStatement(anyString(), eq(Statement.RETURN_GENERATED_KEYS)))
-                .thenReturn(insertUserStmt);
+        when(conn.prepareStatement(anyString(), eq(Statement.RETURN_GENERATED_KEYS))).thenReturn(insertUserStmt);
 
         when(insertUserStmt.executeUpdate()).thenReturn(1);
         when(insertUserStmt.getGeneratedKeys()).thenReturn(keys);
@@ -30,16 +29,13 @@ class UserDAOTest {
         when(keys.getInt(1)).thenReturn(42);
 
         // SECOND INSERT (profile)
-        when(conn.prepareStatement(anyString()))
-                .thenReturn(insertProfileStmt);
+        when(conn.prepareStatement(anyString())).thenReturn(insertProfileStmt);
 
         when(insertProfileStmt.executeUpdate()).thenReturn(1);
 
-        try (MockedStatic<DatabaseConnection> mocked =
-                     mockStatic(DatabaseConnection.class)) {
+        try (MockedStatic<DatabaseConnection> mocked = mockStatic(DatabaseConnection.class)) {
 
-            mocked.when(DatabaseConnection::getConnection)
-                    .thenReturn(conn);
+            mocked.when(DatabaseConnection::getConnection).thenReturn(conn);
 
             User user = new User("john", "password");
             user.setIdentityEmail("john@test.com");
@@ -53,7 +49,6 @@ class UserDAOTest {
         }
     }
 
-
     @Test
     void loginUser_success() throws Exception {
         UserDAO dao = new UserDAO();
@@ -66,16 +61,16 @@ class UserDAOTest {
         when(stmt.executeQuery()).thenReturn(rs);
 
         when(rs.next()).thenReturn(true);
-        when(rs.getString("Password"))
-                .thenReturn("5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"); // hash of "password"
+        when(rs.getString("Password")).thenReturn("5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"); // hash
+                                                                                                                       // of
+                                                                                                                       // "password"
         when(rs.getInt("Pin")).thenReturn(1);
         when(rs.getString("Identity_email")).thenReturn("john@test.com");
         when(rs.getString("Username")).thenReturn("john");
         when(rs.getString("First_Name")).thenReturn("John");
         when(rs.getString("Last_Name")).thenReturn("Doe");
 
-        try (MockedStatic<DatabaseConnection> mocked =
-                     mockStatic(DatabaseConnection.class)) {
+        try (MockedStatic<DatabaseConnection> mocked = mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection).thenReturn(conn);
 
@@ -98,8 +93,7 @@ class UserDAOTest {
         when(stmt.executeQuery()).thenReturn(rs);
         when(rs.next()).thenReturn(true);
 
-        try (MockedStatic<DatabaseConnection> mocked =
-                     mockStatic(DatabaseConnection.class)) {
+        try (MockedStatic<DatabaseConnection> mocked = mockStatic(DatabaseConnection.class)) {
 
             mocked.when(DatabaseConnection::getConnection).thenReturn(conn);
 

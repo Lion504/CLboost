@@ -21,8 +21,7 @@ class ProfileDAOTest {
         PreparedStatement stmt = mock(PreparedStatement.class);
         ResultSet rs = mock(ResultSet.class);
 
-        try (MockedStatic<DatabaseConnection> dbMock =
-                     mockStatic(DatabaseConnection.class)) {
+        try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
 
             dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
             when(conn.prepareStatement(anyString())).thenReturn(stmt);
@@ -35,8 +34,7 @@ class ProfileDAOTest {
             when(rs.getString("Skills")).thenReturn("Backend");
             when(rs.getString("Link")).thenReturn("linkedin");
             when(rs.getString("Profile_Email")).thenReturn("test@mail.com");
-            when(rs.getTimestamp("CV_Last_Updated"))
-                    .thenReturn(new Timestamp(System.currentTimeMillis()));
+            when(rs.getTimestamp("CV_Last_Updated")).thenReturn(new Timestamp(System.currentTimeMillis()));
 
             Profile profile = dao.getProfileByPin(123);
 
@@ -54,8 +52,7 @@ class ProfileDAOTest {
         PreparedStatement stmt = mock(PreparedStatement.class);
         ResultSet rs = mock(ResultSet.class);
 
-        try (MockedStatic<DatabaseConnection> dbMock =
-                     mockStatic(DatabaseConnection.class)) {
+        try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
 
             dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
             when(conn.prepareStatement(anyString())).thenReturn(stmt);
@@ -76,8 +73,7 @@ class ProfileDAOTest {
         PreparedStatement stmt = mock(PreparedStatement.class);
         ResultSet rs = mock(ResultSet.class);
 
-        try (MockedStatic<DatabaseConnection> dbMock =
-                     mockStatic(DatabaseConnection.class)) {
+        try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
 
             dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
             when(conn.prepareStatement(anyString())).thenReturn(stmt);
@@ -97,8 +93,7 @@ class ProfileDAOTest {
         Connection conn = mock(Connection.class);
         PreparedStatement stmt = mock(PreparedStatement.class);
 
-        try (MockedStatic<DatabaseConnection> dbMock =
-                     mockStatic(DatabaseConnection.class)) {
+        try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
 
             dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
             when(conn.prepareStatement(anyString())).thenReturn(stmt);
@@ -115,8 +110,7 @@ class ProfileDAOTest {
         Connection conn = mock(Connection.class);
         PreparedStatement stmt = mock(PreparedStatement.class);
 
-        try (MockedStatic<DatabaseConnection> dbMock =
-                     mockStatic(DatabaseConnection.class)) {
+        try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
 
             dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
             when(conn.prepareStatement(anyString())).thenReturn(stmt);

@@ -13,17 +13,13 @@ public abstract class FileUploadService {
     }
 
     /**
-     * Template method: validates and prepares the file,
-     * delegates actual persistence to subclasses.
+     * Template method: validates and prepares the file, delegates actual
+     * persistence to subclasses.
      */
     public void saveFile(MultipartFile file) throws Exception {
         validate(file);
 
-        StoredFile storedFile = new StoredFile(
-                file.getOriginalFilename(),
-                file.getContentType(),
-                file.getBytes()
-        );
+        StoredFile storedFile = new StoredFile(file.getOriginalFilename(), file.getContentType(), file.getBytes());
 
         persist(storedFile);
     }
@@ -35,9 +31,9 @@ public abstract class FileUploadService {
     }
 
     /**
-     * Hook for subclasses to define how the file is stored
-     * (DB, cloud, filesystem, etc.)
+     * Hook for subclasses to define how the file is stored (DB, cloud, filesystem,
+     * etc.)
      */
-    
+
     protected abstract void persist(StoredFile file);
 }

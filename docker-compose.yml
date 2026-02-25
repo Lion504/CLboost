@@ -8,28 +8,27 @@ services:
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - PORT=8080
-      # Database configuration (uncomment when ready to use MariaDB)
-      # - DB_HOST=db
-      # - DB_PORT=3306
-      # - DB_NAME=clbooster
-      # - DB_USERNAME=root
-      # - DB_PASSWORD=password
-    # depends_on:
-    #   - db
+      # Database configuration
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=CL_generator
+      - DB_USERNAME=root
+      - DB_PASSWORD=${DB_PASSWORD:-password}
+    depends_on:
+      - db
 
-  # MariaDB database (uncomment when ready to use database)
-  # db:
-  #   image: mariadb:10.11
-  #   restart: unless-stopped
-  #   environment:
-  #     - MYSQL_ROOT_PASSWORD=password
-  #     - MYSQL_DATABASE=clbooster
-  #     - MYSQL_USER=clbooster
-  #     - MYSQL_PASSWORD=password
-  #   ports:
-  #     - '3306:3306'
-  #   volumes:
-  #     - mariadb_data:/var/lib/mysql
+  # MariaDB database for CLI backend
+  db:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-password}
+      - MYSQL_DATABASE=CL_generator
+    ports:
+      - '3306:3306'
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./src/main/java/com/clbooster/app/backend/service/database/coverletter_generator_script.sql:/docker-entrypoint-initdb.d/init.sql
 
-# volumes:
-#   mariadb_data:
+volumes:
+  mariadb_data:

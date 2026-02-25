@@ -25,3 +25,8 @@ webpack.generated.js
 *.log
 target/
 src/main/java/com/clbooster/app/backend/service/database/DatabaseConnection.java
+uploads/resumes/*
+test-jobads.md
+*.docx
+*.pdf
+

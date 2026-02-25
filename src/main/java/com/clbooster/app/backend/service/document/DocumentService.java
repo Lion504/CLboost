@@ -41,10 +41,13 @@ public class DocumentService {
     /**
      * Stores an uploaded resume file.
      * 
-     * @param file The resume file to store
-     * @param userId User identifier for organizing files
+     * @param file
+     *            The resume file to store
+     * @param userId
+     *            User identifier for organizing files
      * @return The storage path of the file
-     * @throws IOException if storage fails
+     * @throws IOException
+     *             if storage fails
      */
     public String storeResumeFile(MultipartFile file, String userId) throws IOException {
         if (file.isEmpty()) {
@@ -69,10 +72,13 @@ public class DocumentService {
     /**
      * Stores raw resume text to a file.
      * 
-     * @param resumeText The resume text content
-     * @param userId User identifier
+     * @param resumeText
+     *            The resume text content
+     * @param userId
+     *            User identifier
      * @return The storage path of the file
-     * @throws IOException if storage fails
+     * @throws IOException
+     *             if storage fails
      */
     public String storeResumeText(String resumeText, String userId) throws IOException {
         try {
@@ -93,8 +99,10 @@ public class DocumentService {
     /**
      * Exports resume data as a formatted document.
      * 
-     * @param resumeData The parsed resume data
-     * @param outputPath Path where the document should be saved
+     * @param resumeData
+     *            The parsed resume data
+     * @param outputPath
+     *            Path where the document should be saved
      * @return true if export was successful
      */
     public boolean exportResumeAsDocument(ResumeData resumeData, String outputPath) {
@@ -102,7 +110,7 @@ public class DocumentService {
             logger.info("Exporting resume as document: " + outputPath);
 
             String formattedContent = formatResumeContent(resumeData);
-            
+
             // Use the injected Exporter to save as DOCX
             exporter.saveAsDoc(formattedContent, outputPath);
 
@@ -119,9 +127,11 @@ public class DocumentService {
     /**
      * Retrieves a stored resume file.
      * 
-     * @param storagePath The path of the stored file
+     * @param storagePath
+     *            The path of the stored file
      * @return Byte array of the file content
-     * @throws IOException if retrieval fails
+     * @throws IOException
+     *             if retrieval fails
      */
     public byte[] retrieveResumeFile(String storagePath) throws IOException {
         try {
@@ -143,7 +153,8 @@ public class DocumentService {
     /**
      * Deletes a stored resume file.
      * 
-     * @param storagePath The path of the file to delete
+     * @param storagePath
+     *            The path of the file to delete
      * @return true if deletion was successful
      */
     public boolean deleteResumeFile(String storagePath) {
@@ -230,7 +241,7 @@ public class DocumentService {
                     content.append(" at ").append(exp.getCompany());
                 }
                 content.append("\n");
-                
+
                 if (exp.getStartDate() != null || exp.getEndDate() != null) {
                     if (exp.getStartDate() != null) {
                         content.append(exp.getStartDate());
@@ -269,4 +280,3 @@ public class DocumentService {
         return content.toString();
     }
 }
-

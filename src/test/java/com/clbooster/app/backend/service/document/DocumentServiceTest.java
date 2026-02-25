@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,32 +14,32 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @DisplayName("DocumentService Tests")
 class DocumentServiceTest {
 
     @Autowired
     private DocumentService documentService;
 
+    private Path testOutputDir;
+
     @BeforeEach
-    void setUp() {
-        // Setup before each test
+    void setUp() throws IOException {
+        // Create test output directory
+        testOutputDir = Files.createTempDirectory("test_output");
     }
 
     @Test
     @DisplayName("Should store resume file")
     void testStoreResumeFile() throws IOException {
         byte[] content = "Resume content test".getBytes(StandardCharsets.UTF_8);
-        MultipartFile file = new MockMultipartFile(
-                "file",
-                "resume.txt",
-                "text/plain",
-                content
-        );
+        MultipartFile file = new MockMultipartFile("file", "resume.txt", "text/plain", content);
 
         String storagePath = documentService.storeResumeFile(file, "user123");
 
@@ -56,7 +57,7 @@ class DocumentServiceTest {
 
         assertNotNull(storagePath);
         assertTrue(Files.exists(Paths.get(storagePath)));
-        
+
         // Verify content
         String stored = new String(Files.readAllBytes(Paths.get(storagePath)), StandardCharsets.UTF_8);
         assertEquals(resumeText, stored);
@@ -66,12 +67,7 @@ class DocumentServiceTest {
     @DisplayName("Should retrieve stored resume file")
     void testRetrieveResumeFile() throws IOException {
         byte[] originalContent = "Test resume content for retrieval".getBytes(StandardCharsets.UTF_8);
-        MultipartFile file = new MockMultipartFile(
-                "file",
-                "resume.txt",
-                "text/plain",
-                originalContent
-        );
+        MultipartFile file = new MockMultipartFile("file", "resume.txt", "text/plain", originalContent);
 
         String storagePath = documentService.storeResumeFile(file, "user123");
         byte[] retrieved = documentService.retrieveResumeFile(storagePath);
@@ -82,7 +78,7 @@ class DocumentServiceTest {
 
     @Test
     @DisplayName("Should export resume as document")
-    void testExportResumeAsDocument() {
+    void testExportResumeAsDocument() throws IOException {
         ResumeData resumeData = new ResumeData();
         resumeData.setFullName("John Doe");
         resumeData.setEmail("john@example.com");
@@ -94,7 +90,7 @@ class DocumentServiceTest {
         resumeData.getSkills().add("Spring Boot");
         resumeData.getSkills().add("SQL");
 
-        String outputPath = "test_output/resume_export_" + System.currentTimeMillis() + ".docx";
+        String outputPath = testOutputDir.resolve("resume_export_" + System.currentTimeMillis() + ".docx").toString();
         boolean success = documentService.exportResumeAsDocument(resumeData, outputPath);
 
         assertTrue(success);
@@ -103,7 +99,7 @@ class DocumentServiceTest {
 
     @Test
     @DisplayName("Should export resume with work experience")
-    void testExportResumeWithExperience() {
+    void testExportResumeWithExperience() throws IOException {
         ResumeData resumeData = new ResumeData();
         resumeData.setFullName("Jane Smith");
         resumeData.setEmail("jane@example.com");
@@ -118,7 +114,7 @@ class DocumentServiceTest {
 
         resumeData.getWorkExperience().add(exp);
 
-        String outputPath = "test_output/resume_with_exp_" + System.currentTimeMillis() + ".docx";
+        String outputPath = testOutputDir.resolve("resume_with_exp_" + System.currentTimeMillis() + ".docx").toString();
         boolean success = documentService.exportResumeAsDocument(resumeData, outputPath);
 
         assertTrue(success);
@@ -128,12 +124,7 @@ class DocumentServiceTest {
     @DisplayName("Should delete resume file")
     void testDeleteResumeFile() throws IOException {
         byte[] content = "Resume to delete".getBytes(StandardCharsets.UTF_8);
-        MultipartFile file = new MockMultipartFile(
-                "file",
-                "resume.txt",
-                "text/plain",
-                content
-        );
+        MultipartFile file = new MockMultipartFile("file", "resume.txt", "text/plain", content);
 
         String storagePath = documentService.storeResumeFile(file, "user123");
         assertTrue(Files.exists(Paths.get(storagePath)));
@@ -147,12 +138,7 @@ class DocumentServiceTest {
     @Test
     @DisplayName("Should reject empty file upload")
     void testStoreResumeFile_EmptyFile() {
-        MultipartFile emptyFile = new MockMultipartFile(
-                "file",
-                "resume.txt",
-                "text/plain",
-                new byte[0]
-        );
+        MultipartFile emptyFile = new MockMultipartFile("file", "resume.txt", "text/plain", new byte[0]);
 
         assertThrows(IllegalArgumentException.class, () -> {
             documentService.storeResumeFile(emptyFile, "user123");
@@ -177,7 +163,7 @@ class DocumentServiceTest {
 
     @Test
     @DisplayName("Should format resume with all sections")
-    void testFormatResumeComplete() {
+    void testFormatResumeComplete() throws IOException {
         ResumeData resumeData = new ResumeData();
         resumeData.setFullName("Complete Resume");
         resumeData.setEmail("complete@example.com");
@@ -197,7 +183,7 @@ class DocumentServiceTest {
         exp.setEndDate("2023");
         resumeData.getWorkExperience().add(exp);
 
-        String outputPath = "test_output/complete_" + System.currentTimeMillis() + ".docx";
+        String outputPath = testOutputDir.resolve("complete_" + System.currentTimeMillis() + ".docx").toString();
         boolean success = documentService.exportResumeAsDocument(resumeData, outputPath);
 
         assertTrue(success);

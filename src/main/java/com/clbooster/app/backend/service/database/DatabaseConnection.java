@@ -5,9 +5,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
-    private static final String URL = "jdbc:mariadb://localhost:3306/cl_generator";
-    private static final String USER = "root";
-    private static final String PASSWORD = "kia101188251388!";
+    private static final String URL = System.getenv().getOrDefault("DB_URL",
+            "jdbc:mariadb://" + System.getenv().getOrDefault("DB_HOST", "localhost") + ":"
+                    + System.getenv().getOrDefault("DB_PORT", "3306") + "/"
+                    + System.getenv().getOrDefault("DB_NAME", "CL_generator"));
+    private static final String USER = System.getenv().getOrDefault("DB_USERNAME", "root");
+    private static final String PASSWORD = System.getenv().getOrDefault("DB_PASSWORD", "password");
 
     public static Connection getConnection() throws SQLException {
         try {

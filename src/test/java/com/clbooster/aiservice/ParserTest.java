@@ -29,7 +29,8 @@ class ParserTest {
 
         // 2. Mock the static call to FileSystemDocumentLoader
         try (MockedStatic<FileSystemDocumentLoader> loaderMock = Mockito.mockStatic(FileSystemDocumentLoader.class)) {
-            loaderMock.when(() -> FileSystemDocumentLoader.loadDocument(any(Path.class), any(ApacheTikaDocumentParser.class)))
+            loaderMock.when(
+                    () -> FileSystemDocumentLoader.loadDocument(any(Path.class), any(ApacheTikaDocumentParser.class)))
                     .thenReturn(mockDocument);
 
             // Act
@@ -46,7 +47,8 @@ class ParserTest {
 
         // Mock the static call to throw an exception
         try (MockedStatic<FileSystemDocumentLoader> loaderMock = Mockito.mockStatic(FileSystemDocumentLoader.class)) {
-            loaderMock.when(() -> FileSystemDocumentLoader.loadDocument(any(Path.class), any(ApacheTikaDocumentParser.class)))
+            loaderMock.when(
+                    () -> FileSystemDocumentLoader.loadDocument(any(Path.class), any(ApacheTikaDocumentParser.class)))
                     .thenThrow(new RuntimeException("File not found"));
 
             // Act & Assert
