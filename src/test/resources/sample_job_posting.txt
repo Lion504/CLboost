@@ -1,0 +1,39 @@
+Senior Java Backend Engineer
+Remote - Full Time
+
+About the Role:
+We are seeking a Senior Java Backend Engineer to join our growing engineering team. 
+You will be responsible for designing and implementing scalable microservices
+that power our platform serving millions of users worldwide.
+
+Key Responsibilities:
+* Design and develop RESTful APIs and microservices using Spring Boot
+* Collaborate with product and frontend teams to define technical requirements
+* Implement CI/CD pipelines and DevOps best practices
+* Mentor junior engineers and conduct code reviews
+* Optimize database performance and implement caching strategies
+* Participate in system architecture discussions and design reviews
+* Contribute to technical documentation and knowledge sharing
+
+Required Qualifications:
+* 5+ years of professional Java development experience
+* Strong experience with Spring Boot and Spring Cloud
+* Experience with microservices architecture and design patterns
+* Proficiency in SQL and relational databases (PostgreSQL preferred)
+* Experience with Docker and Kubernetes
+* Familiarity with cloud platforms (AWS, Azure, or GCP)
+* Experience with CI/CD tools and agile methodologies
+* Excellent communication and collaborative skills
+
+Preferred Qualifications:
+* Experience with reactive programming (Project Reactor, RxJava)
+* Knowledge of message queues (RabbitMQ, Kafka)
+* AWS Solutions Architect certification or equivalent
+* Experience with Redis or other caching solutions
+* Open source contributions
+
+What We Offer:
+* Competitive salary and benefits
+* Remote work flexibility
+* Professional development opportunities
+* Collaborative team environment

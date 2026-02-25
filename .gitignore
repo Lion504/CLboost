@@ -4,6 +4,7 @@
 .settings
 .project
 .classpath
+.env
 
 *.iml
 .DS_Store
@@ -23,3 +24,9 @@ webpack.generated.js
 # Log files
 *.log
 target/
+src/main/java/com/clbooster/app/backend/service/database/DatabaseConnection.java
+uploads/resumes/*
+test-jobads.md
+*.docx
+*.pdf
+

@@ -1,0 +1,30 @@
+CREATE DATABASE IF NOT EXISTS CL_generator;
+USE CL_generator;
+
+CREATE TABLE IF NOT EXISTS identification (
+    Pin INT PRIMARY KEY AUTO_INCREMENT,
+    Identity_email VARCHAR(100) UNIQUE NOT NULL,
+    Username VARCHAR(50) UNIQUE NOT NULL,
+    Password VARCHAR(255) NOT NULL,
+    First_Name VARCHAR(50),
+    Last_Name VARCHAR(50)
+    );
+
+CREATE TABLE IF NOT EXISTS profile (
+    Pin INT PRIMARY KEY,
+    Experience_Level VARCHAR(50),
+    Tools TEXT,
+    Skills TEXT,
+    Link VARCHAR(255),
+    Profile_Email VARCHAR(100),
+    CV_Last_Updated TIMESTAMP NULL,
+    FOREIGN KEY (Pin) REFERENCES identification(Pin) ON DELETE CASCADE
+    );
+
+CREATE TABLE IF NOT EXISTS coverletter (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    Pin INT NOT NULL,
+    Timestamp_edited TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FilePath VARCHAR(300),
+    FOREIGN KEY (Pin) REFERENCES identification(Pin) ON DELETE CASCADE
+    );
