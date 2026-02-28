@@ -13,9 +13,7 @@ public class SecurityConfig extends VaadinWebSecurity {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // Allow public access to static assets and landing page
-        http.authorizeHttpRequests(auth ->
-            auth.requestMatchers("/", "/signup", "/images/**").permitAll()
-        );
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/", "/signup", "/images/**").permitAll());
         super.configure(http);
         // Redirect to LoginView for protected routes
         setLoginView(http, LoginView.class);

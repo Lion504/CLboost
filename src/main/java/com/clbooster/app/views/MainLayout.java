@@ -56,13 +56,12 @@ public class MainLayout extends AppLayout {
 
         // Navigation
         SideNav nav = new SideNav();
-        nav.addItem(new SideNavItem("Dashboard",  DashboardView.class,  VaadinIcon.DASHBOARD.create()));
-        nav.addItem(new SideNavItem("Generate",   GeneratorView.class,  VaadinIcon.MAGIC.create()));
-        nav.addItem(new SideNavItem("Resumes",    HistoryView.class,    VaadinIcon.FILE_TEXT.create()));
-        nav.addItem(new SideNavItem("History",    HistoryView.class,    VaadinIcon.CLOCK.create()));
+        nav.addItem(new SideNavItem("Dashboard", DashboardView.class, VaadinIcon.DASHBOARD.create()));
+        nav.addItem(new SideNavItem("Generate", GeneratorView.class, VaadinIcon.MAGIC.create()));
+        nav.addItem(new SideNavItem("Resumes", HistoryView.class, VaadinIcon.FILE_TEXT.create()));
+        nav.addItem(new SideNavItem("History", HistoryView.class, VaadinIcon.CLOCK.create()));
         nav.getStyle().set("color", "white");
 
         addToDrawer(logo, nav);
-        getDrawer().addClassName("sidebar");
     }
 }

@@ -9,7 +9,7 @@ import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
-@Route("login")          // NO layout = MainLayout — this is a standalone page
+@Route("login") // NO layout = MainLayout — this is a standalone page
 @PageTitle("Login | CL Booster")
 @AnonymousAllowed
 public class LoginView extends VerticalLayout {
@@ -21,12 +21,8 @@ public class LoginView extends VerticalLayout {
         getStyle().set("background", "var(--lumo-contrast-5pct)");
 
         Div card = new Div();
-        card.getStyle()
-            .set("background", "white")
-            .set("border-radius", "16px")
-            .set("padding", "48px 40px")
-            .set("width", "420px")
-            .set("box-shadow", "var(--lumo-box-shadow-s)");
+        card.getStyle().set("background", "white").set("border-radius", "16px").set("padding", "48px 40px")
+                .set("width", "420px").set("box-shadow", "var(--lumo-box-shadow-s)");
 
         Anchor back = new Anchor("/", "← Back to home");
         back.getStyle().set("font-size", "13px").set("color", "#6b7280");
@@ -50,8 +46,7 @@ public class LoginView extends VerticalLayout {
         rememberRow.setWidthFull();
         rememberRow.setAlignItems(FlexComponent.Alignment.CENTER);
 
-        Button signIn = new Button("Sign In",
-            e -> getUI().ifPresent(ui -> ui.navigate(DashboardView.class)));
+        Button signIn = new Button("Sign In", e -> getUI().ifPresent(ui -> ui.navigate(DashboardView.class)));
         signIn.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_LARGE);
         signIn.setWidthFull();
 

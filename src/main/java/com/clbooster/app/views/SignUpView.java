@@ -20,12 +20,8 @@ public class SignUpView extends VerticalLayout {
         getStyle().set("background", "var(--lumo-contrast-5pct)");
 
         Div card = new Div();
-        card.getStyle()
-            .set("background", "white")
-            .set("border-radius", "16px")
-            .set("padding", "48px 40px")
-            .set("width", "420px")
-            .set("box-shadow", "var(--lumo-box-shadow-s)");
+        card.getStyle().set("background", "white").set("border-radius", "16px").set("padding", "48px 40px")
+                .set("width", "420px").set("box-shadow", "var(--lumo-box-shadow-s)");
 
         Anchor back = new Anchor("/", "← Back to home");
         back.getStyle().set("font-size", "13px").set("color", "#6b7280");
@@ -51,8 +47,7 @@ public class SignUpView extends VerticalLayout {
         terms.add(new Anchor("#", "Privacy Policy"));
         terms.getStyle().set("font-size", "13px").set("color", "#6b7280");
 
-        Button create = new Button("Create Account",
-            e -> getUI().ifPresent(ui -> ui.navigate(DashboardView.class)));
+        Button create = new Button("Create Account", e -> getUI().ifPresent(ui -> ui.navigate(DashboardView.class)));
         create.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_LARGE);
         create.setWidthFull();
 

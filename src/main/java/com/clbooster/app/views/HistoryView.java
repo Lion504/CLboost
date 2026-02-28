@@ -22,8 +22,7 @@ public class HistoryView extends VerticalLayout {
         Paragraph sub = new Paragraph("Review, refine, or regenerate your previous successful applications.");
         Button exportAll = new Button("Export All", VaadinIcon.DOWNLOAD.create());
         exportAll.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        HorizontalLayout header = new HorizontalLayout(
-            new VerticalLayout(title, sub), exportAll);
+        HorizontalLayout header = new HorizontalLayout(new VerticalLayout(title, sub), exportAll);
         header.setWidthFull();
         header.setAlignItems(FlexComponent.Alignment.CENTER);
 
@@ -32,7 +31,7 @@ public class HistoryView extends VerticalLayout {
         search.setPlaceholder("Search by company or role...");
         search.setPrefixComponent(VaadinIcon.SEARCH.create());
         search.setWidth("320px");
-        Button dateFilter   = new Button("Date Range", VaadinIcon.CALENDAR.create());
+        Button dateFilter = new Button("Date Range", VaadinIcon.CALENDAR.create());
         Button statusFilter = new Button("Status", VaadinIcon.FILTER.create());
         dateFilter.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         statusFilter.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
@@ -47,33 +46,29 @@ public class HistoryView extends VerticalLayout {
         grid.addComponentColumn(r -> {
             Span badge = new Span(r[3]);
             String cls = switch (r[3]) {
-                case "SENT"      -> "badge-sent";
-                case "FINALIZED" -> "badge-draft";
-                default          -> "badge-archived";
+            case "SENT" -> "badge-sent";
+            case "FINALIZED" -> "badge-draft";
+            default -> "badge-archived";
             };
             badge.addClassName(cls);
-            badge.getStyle().set("padding", "2px 10px")
-                            .set("border-radius", "999px")
-                            .set("font-size", "12px")
-                            .set("font-weight", "600");
+            badge.getStyle().set("padding", "2px 10px").set("border-radius", "999px").set("font-size", "12px")
+                    .set("font-weight", "600");
             return badge;
         }).setHeader("STATUS").setAutoWidth(true);
         grid.addComponentColumn(r -> {
-            Button view     = new Button(VaadinIcon.EYE.create());
+            Button view = new Button(VaadinIcon.EYE.create());
             Button download = new Button(VaadinIcon.DOWNLOAD.create());
-            Button more     = new Button(VaadinIcon.ELLIPSIS_DOTS_V.create());
+            Button more = new Button(VaadinIcon.ELLIPSIS_DOTS_V.create());
             view.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY);
             download.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY);
             more.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY);
             return new HorizontalLayout(view, download, more);
         }).setHeader("ACTIONS");
 
-        grid.setItems(
-            new String[]{"Growth Product Manager",  "Feb 7, 2024", "PM MAIN",      "FINALIZED"},
-            new String[]{"Senior UX Designer",      "Feb 5, 2024", "DESIGN 2025",  "SENT"},
-            new String[]{"Lead Frontend Engineer",  "Jan 26, 2026","PM MAIN",      "ARCHIVED"},
-            new String[]{"Senior Product Manager",  "Jan 15, 2026","GENERIC TECH", "ARCHIVED"}
-        );
+        grid.setItems(new String[] { "Growth Product Manager", "Feb 7, 2024", "PM MAIN", "FINALIZED" },
+                new String[] { "Senior UX Designer", "Feb 5, 2024", "DESIGN 2025", "SENT" },
+                new String[] { "Lead Frontend Engineer", "Jan 26, 2026", "PM MAIN", "ARCHIVED" },
+                new String[] { "Senior Product Manager", "Jan 15, 2026", "GENERIC TECH", "ARCHIVED" });
         grid.setWidthFull();
 
         Button loadMore = new Button("Load more generations");

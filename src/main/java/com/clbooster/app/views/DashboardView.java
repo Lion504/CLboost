@@ -19,10 +19,9 @@ public class DashboardView extends VerticalLayout {
         H2 title = new H2("Dashboard");
         Paragraph subtitle = new Paragraph("Ready to land your next dream role, Alex?");
         Button startNew = new Button("+ Start New Generation",
-            e -> getUI().ifPresent(ui -> ui.navigate(GeneratorView.class)));
+                e -> getUI().ifPresent(ui -> ui.navigate(GeneratorView.class)));
         startNew.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        HorizontalLayout headerRow = new HorizontalLayout(
-            new VerticalLayout(title, subtitle), startNew);
+        HorizontalLayout headerRow = new HorizontalLayout(new VerticalLayout(title, subtitle), startNew);
         headerRow.setWidthFull();
         headerRow.setAlignItems(FlexComponent.Alignment.CENTER);
         headerRow.expand(new VerticalLayout(title, subtitle));
@@ -33,7 +32,8 @@ public class DashboardView extends VerticalLayout {
         perfCard.setWidthFull();
         H3 perfTitle = new H3("Your applications are performing 24% better.");
         perfTitle.getStyle().set("color", "white").set("margin", "0");
-        Paragraph perfSub = new Paragraph("Based on profile views and interview callbacks from your last 5 generations.");
+        Paragraph perfSub = new Paragraph(
+                "Based on profile views and interview callbacks from your last 5 generations.");
         perfSub.getStyle().set("color", "#94a3b8");
         Span sent = new Span("12 SENT");
         Span interviews = new Span("4 INTERVIEWS");
@@ -49,11 +49,9 @@ public class DashboardView extends VerticalLayout {
         grid.addColumn(r -> r[1]).setHeader("COMPANY");
         grid.addColumn(r -> r[2]).setHeader("MATCH");
         grid.addColumn(r -> r[3]).setHeader("STATUS");
-        grid.setItems(
-            new String[]{"Growth Product Manager", "NordicFin", "+98%", "DRAFT"},
-            new String[]{"Senior UX Designer", "Spotify", "+92%", "SENT"},
-            new String[]{"Lead Frontend Engineer", "Vercel", "+85%", "SENT"}
-        );
+        grid.setItems(new String[] { "Growth Product Manager", "NordicFin", "+98%", "DRAFT" },
+                new String[] { "Senior UX Designer", "Spotify", "+92%", "SENT" },
+                new String[] { "Lead Frontend Engineer", "Vercel", "+85%", "SENT" });
         grid.setWidthFull();
 
         add(headerRow, perfCard, recentTitle, grid);

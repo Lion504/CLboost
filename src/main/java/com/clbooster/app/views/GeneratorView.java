@@ -1,3 +1,24 @@
+package com.clbooster.app.views;
+
+import com.clbooster.aiservice.AIService;
+import com.clbooster.app.backend.service.document.DocumentService;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.Route;
+
 @Route(value = "generator", layout = MainLayout.class)
 @PageTitle("Generator | CL Booster")
 public class GeneratorView extends VerticalLayout {
@@ -26,12 +47,13 @@ public class GeneratorView extends VerticalLayout {
         bar.setSpacing(true);
         bar.setAlignItems(FlexComponent.Alignment.CENTER);
         for (int i = 1; i <= 3; i++) {
-            String[] labels = {"", "1. Input", "2. Review", "3. Result"};
+            String[] labels = { "", "1. Input", "2. Review", "3. Result" };
             Span badge = new Span(labels[i]);
-            badge.getElement().getThemeList().add(
-                i == currentStep ? "badge primary" : "badge contrast");
+            badge.getElement().getThemeList().add(i == currentStep ? "badge primary" : "badge contrast");
             bar.add(badge);
-            if (i < 3) bar.add(new Span("→"));
+            if (i < 3) {
+                bar.add(new Span("→"));
+            }
         }
         return bar;
     }
@@ -44,9 +66,7 @@ public class GeneratorView extends VerticalLayout {
         Paragraph sub = new Paragraph("Paste the job details below and let AI handle the heavy lifting.");
 
         FormLayout form = new FormLayout();
-        form.setResponsiveSteps(
-            new FormLayout.ResponsiveStep("0", 1),
-            new FormLayout.ResponsiveStep("600px", 2));
+        form.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 1), new FormLayout.ResponsiveStep("600px", 2));
         jobTitle.setPlaceholder("e.g. Growth Product Manager");
         companyName.setPlaceholder("e.g. NordicFin");
         jobUrl.setPlaceholder("job-site.com/jobs/...");
@@ -96,10 +116,8 @@ public class GeneratorView extends VerticalLayout {
         add(resultCard);
 
         // Trigger AI generation using the already-injected aiService
-        // (AIService already exists in com.clbooster.aiservice[screenshot:1])
         try {
-            String prompt = buildPrompt();
-            String result = aiService.generateCoverLetter(prompt);
+            String result = aiService.generateCoverLetter("User Resume", buildPrompt());
 
             resultCard.removeAll();
             TextArea output = new TextArea();
@@ -109,16 +127,16 @@ public class GeneratorView extends VerticalLayout {
             output.setReadOnly(false); // allow user to edit
 
             Button copyBtn = new Button("Copy to Clipboard",
-                e -> output.getElement().executeJs(
-                    "navigator.clipboard.writeText($0)", output.getValue()));
+                    e -> output.getElement().executeJs("navigator.clipboard.writeText($0)", output.getValue()));
             copyBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
-            Button exportBtn = new Button("Export as .docx",
-                e -> Notification.show("Export coming soon"));
+            Button exportBtn = new Button("Export as .docx", e -> Notification.show("Export coming soon"));
             exportBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-            Button startOver = new Button("Start New",
-                e -> { step = 1; showStep1(); });
+            Button startOver = new Button("Start New", e -> {
+                step = 1;
+                showStep1();
+            });
             startOver.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
             resultCard.add(output);
@@ -135,14 +153,8 @@ public class GeneratorView extends VerticalLayout {
 
     private String buildPrompt() {
         return String.format(
-            "Write a professional cover letter for the position of %s at %s. " +
-            "Location: %s. " +
-            "Job description: %s. " +
-            "Keep it concise, ATS-friendly, and use a confident tone.",
-            jobTitle.getValue(),
-            companyName.getValue(),
-            location.getValue(),
-            jobDesc.getValue()
-        );
+                "Write a professional cover letter for the position of %s at %s. " + "Location: %s. "
+                        + "Job description: %s. " + "Keep it concise, ATS-friendly, and use a confident tone.",
+                jobTitle.getValue(), companyName.getValue(), location.getValue(), jobDesc.getValue());
     }
 }

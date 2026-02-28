@@ -36,8 +36,7 @@ public class ProfileView extends VerticalLayout {
         Button saveChanges = new Button("Save Changes");
         saveChanges.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        HorizontalLayout userInfo = new HorizontalLayout(avatar,
-            new VerticalLayout(name, role, planBadge));
+        HorizontalLayout userInfo = new HorizontalLayout(avatar, new VerticalLayout(name, role, planBadge));
         userInfo.setAlignItems(FlexComponent.Alignment.CENTER);
         userInfo.setSpacing(true);
 
@@ -47,10 +46,10 @@ public class ProfileView extends VerticalLayout {
         headerRow.expand(userInfo);
 
         // Tab navigation
-        Tab general     = new Tab("General");
-        Tab security    = new Tab("Security");
-        Tab notifs      = new Tab("Notifications");
-        Tab privacy     = new Tab("Data & Privacy");
+        Tab general = new Tab("General");
+        Tab security = new Tab("Security");
+        Tab notifs = new Tab("Notifications");
+        Tab privacy = new Tab("Data & Privacy");
         Tabs profileTabs = new Tabs(general, security, notifs, privacy);
         profileTabs.setWidthFull();
 
@@ -64,9 +63,7 @@ public class ProfileView extends VerticalLayout {
         formSub.getStyle().set("color", "#6b7280").set("margin-top", "0");
 
         FormLayout form = new FormLayout();
-        form.setResponsiveSteps(
-            new FormLayout.ResponsiveStep("0", 1),
-            new FormLayout.ResponsiveStep("500px", 2));
+        form.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 1), new FormLayout.ResponsiveStep("500px", 2));
 
         TextField displayName = new TextField("Display Name");
         displayName.setValue("Alex Rivera");
