@@ -570,14 +570,48 @@ heroText.add(headline, description, ctaRow);
         samplesGrid.getStyle().set("gap", "16px");
         samplesGrid.getStyle().set("padding", "32px");
 
-        List<String[]> samples = List.of(
-            new String[]{"Senior Product Manager", "Tech Giant", "98%"},
-            new String[]{"Junior React Developer", "Modern Startup", "95%"},
-            new String[]{"Creative Director", "Design Agency", "92%"},
-            new String[]{"Customer Success Lead", "SaaS Corp", "96%"}
+        // Sample data with cover letter content
+        record Sample(String title, String company, String match, String letter) {}
+        
+        List<Sample> samples = List.of(
+            new Sample("Senior Product Manager", "Tech Giant", "98%",
+                "Dear Hiring Manager," + System.lineSeparator() + System.lineSeparator() +
+                "I am writing to express my strong interest in the Senior Product Manager position at Tech Giant. With over 8 years of experience driving product strategy and leading cross-functional teams, I am excited about the opportunity to contribute to your innovative platform." + System.lineSeparator() + System.lineSeparator() +
+                "At my current role, I have successfully launched three major product features that increased user engagement by 45% and revenue by $2M annually. My experience in Agile methodologies, user research, and data-driven decision making aligns perfectly with Tech Giant's mission to create world-class products." + System.lineSeparator() + System.lineSeparator() +
+                "I am particularly drawn to Tech Giant's commitment to innovation and user-centric design. I would welcome the opportunity to discuss how my background in product management and passion for technology can contribute to your team's continued success." + System.lineSeparator() + System.lineSeparator() +
+                "Thank you for your time and consideration." + System.lineSeparator() + System.lineSeparator() +
+                "Sincerely," + System.lineSeparator() +
+                "[Your Name]"),
+                
+            new Sample("Junior React Developer", "Modern Startup", "95%",
+                "Dear Hiring Team," + System.lineSeparator() + System.lineSeparator() +
+                "I am thrilled to apply for the Junior React Developer position at Modern Startup. As a recent graduate with a Computer Science degree and hands-on experience building responsive web applications, I am eager to contribute to your cutting-edge projects." + System.lineSeparator() + System.lineSeparator() +
+                "During my internship at XYZ Company, I developed React components that improved page load times by 30% and implemented Redux for state management in a production application. My portfolio includes several personal projects utilizing React, TypeScript, and modern CSS frameworks." + System.lineSeparator() + System.lineSeparator() +
+                "Modern Startup's focus on innovation and growth mindset resonates with my career goals. I am excited about the opportunity to learn from experienced developers while contributing fresh perspectives and strong problem-solving skills." + System.lineSeparator() + System.lineSeparator() +
+                "I would love to discuss how my technical skills and enthusiasm can add value to your development team." + System.lineSeparator() + System.lineSeparator() +
+                "Best regards," + System.lineSeparator() +
+                "[Your Name]"),
+                
+            new Sample("Creative Director", "Design Agency", "92%",
+                "Dear Creative Team," + System.lineSeparator() + System.lineSeparator() +
+                "I am excited to apply for the Creative Director position at Design Agency. With 10+ years of experience leading creative teams and delivering award-winning campaigns, I bring a unique blend of artistic vision and strategic thinking to every project." + System.lineSeparator() + System.lineSeparator() +
+                "In my current role, I have led rebranding initiatives for Fortune 500 clients, resulting in a 60% increase in brand recognition. My expertise spans brand strategy, visual design, motion graphics, and team mentorship. I am proficient in Adobe Creative Suite, Figma, and emerging AI design tools." + System.lineSeparator() + System.lineSeparator() +
+                "Design Agency's reputation for pushing creative boundaries and delivering exceptional work aligns perfectly with my professional values. I am eager to bring my leadership experience and creative expertise to elevate your client portfolio." + System.lineSeparator() + System.lineSeparator() +
+                "Thank you for considering my application." + System.lineSeparator() + System.lineSeparator() +
+                "Warm regards," + System.lineSeparator() +
+                "[Your Name]"),
+                
+            new Sample("Customer Success Lead", "SaaS Corp", "96%",
+                "Dear Hiring Manager," + System.lineSeparator() + System.lineSeparator() +
+                "I am writing to express my interest in the Customer Success Lead position at SaaS Corp. With 6 years of experience in customer-facing roles and a proven track record of reducing churn by 25%, I am confident in my ability to drive customer satisfaction and retention." + System.lineSeparator() + System.lineSeparator() +
+                "In my previous role, I managed a portfolio of 50+ enterprise accounts and implemented a proactive engagement strategy that increased NPS scores by 35 points. My experience with CRM platforms, data analysis, and team leadership has prepared me to excel in this role." + System.lineSeparator() + System.lineSeparator() +
+                "SaaS Corp's commitment to customer-centric innovation is inspiring. I am excited about the opportunity to build and lead a high-performing customer success team that drives growth and loyalty." + System.lineSeparator() + System.lineSeparator() +
+                "I look forward to discussing how my experience aligns with your team's goals." + System.lineSeparator() + System.lineSeparator() +
+                "Best regards," + System.lineSeparator() +
+                "[Your Name]")
         );
 
-        for (String[] sample : samples) {
+        for (Sample sample : samples) {
             Div sampleCard = new Div();
             sampleCard.getStyle().set("padding", "16px");
             sampleCard.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
@@ -600,20 +634,20 @@ heroText.add(headline, description, ctaRow);
             textGroup.getStyle().set("gap", "4px");
             textGroup.setWidthFull();
 
-            H4 jobTitle = new H4(sample[0]);
+            H4 jobTitle = new H4(sample.title());
             jobTitle.getStyle().set("font-size", "14px");
             jobTitle.getStyle().set("font-weight", "700");
             jobTitle.getStyle().set("color", TEXT_PRIMARY);
             jobTitle.getStyle().set("margin", "0");
 
-            Paragraph company = new Paragraph(sample[1]);
+            Paragraph company = new Paragraph(sample.company());
             company.getStyle().set("font-size", "12px");
             company.getStyle().set("color", TEXT_SECONDARY);
             company.getStyle().set("margin", "0");
 
             textGroup.add(jobTitle, company);
 
-            Span matchBadge = new Span(sample[2] + " MATCH");
+            Span matchBadge = new Span(sample.match() + " MATCH");
             matchBadge.getStyle().set("font-size", "11px");
             matchBadge.getStyle().set("font-weight", "900");
             matchBadge.getStyle().set("color", PRIMARY);
@@ -624,6 +658,9 @@ heroText.add(headline, description, ctaRow);
             cardContent.getStyle().set("gap", "12px");
 
             sampleCard.add(cardContent);
+
+            // Click listener to open cover letter
+            sampleCard.addClickListener(e -> openCoverLetterModal(sample.title(), sample.company(), sample.letter()));
 
             // Hover effects
             sampleCard.getElement().addEventListener("mouseenter", e -> {
@@ -808,6 +845,108 @@ heroText.add(headline, description, ctaRow);
         stepRow.expand(content);
 
         return stepRow;
+    }
+
+    private void openCoverLetterModal(String jobTitle, String company, String letterContent) {
+        Dialog dialog = new Dialog();
+        dialog.setModal(true);
+        dialog.setWidth("720px");
+        dialog.setMaxHeight("90vh");
+
+        VerticalLayout content = new VerticalLayout();
+        content.setPadding(false);
+        content.setSpacing(false);
+
+        // Header
+        HorizontalLayout header = new HorizontalLayout();
+        header.setWidthFull();
+        header.setAlignItems(FlexComponent.Alignment.CENTER);
+        header.setPadding(true);
+        header.getStyle().set("padding", "20px 24px");
+        header.getStyle().set("border-bottom", "1px solid rgba(0,0,0,0.05)");
+        header.getStyle().set("background", BG_LIGHT);
+
+        Div iconContainer = new Div();
+        iconContainer.getStyle().set("width", "36px");
+        iconContainer.getStyle().set("height", "36px");
+        iconContainer.getStyle().set("border-radius", "10px");
+        iconContainer.getStyle().set("background", "rgba(0,122,255,0.1)");
+        iconContainer.getStyle().set("display", "flex");
+        iconContainer.getStyle().set("align-items", "center");
+        iconContainer.getStyle().set("justify-content", "center");
+        iconContainer.add(VaadinIcon.FILE_TEXT_O.create());
+
+        VerticalLayout titleGroup = new VerticalLayout();
+        titleGroup.setPadding(false);
+        titleGroup.setSpacing(false);
+        H3 title = new H3(jobTitle);
+        title.getStyle().set("font-size", "16px");
+        title.getStyle().set("font-weight", "700");
+        title.getStyle().set("margin", "0");
+        Paragraph subtitle = new Paragraph(company);
+        subtitle.getStyle().set("font-size", "12px");
+        subtitle.getStyle().set("color", TEXT_SECONDARY);
+        subtitle.getStyle().set("margin", "2px 0 0");
+        titleGroup.add(title, subtitle);
+
+        Button closeBtn = new Button(VaadinIcon.CLOSE.create(), e -> dialog.close());
+        closeBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON);
+        closeBtn.getStyle().set("color", TEXT_SECONDARY);
+
+        header.add(iconContainer, titleGroup, closeBtn);
+        header.expand(titleGroup);
+
+        // Letter Content
+        Div letterContainer = new Div();
+        letterContainer.getStyle().set("padding", "32px");
+        letterContainer.getStyle().set("background", BG_WHITE);
+        letterContainer.getStyle().set("overflow-y", "auto");
+        letterContainer.getStyle().set("max-height", "60vh");
+
+        // Format letter with proper styling
+        Div letterText = new Div();
+        letterText.getStyle().set("font-family", "Georgia, 'Times New Roman', serif");
+        letterText.getStyle().set("font-size", "15px");
+        letterText.getStyle().set("line-height", "1.8");
+        letterText.getStyle().set("color", TEXT_PRIMARY);
+        letterText.getStyle().set("white-space", "pre-wrap");
+        letterText.setText(letterContent);
+
+        letterContainer.add(letterText);
+
+        // Footer with copy button
+        HorizontalLayout footer = new HorizontalLayout();
+        footer.setWidthFull();
+        footer.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        footer.setPadding(true);
+        footer.getStyle().set("padding", "16px 24px");
+        footer.getStyle().set("border-top", "1px solid rgba(0,0,0,0.05)");
+        footer.getStyle().set("background", BG_LIGHT);
+        footer.getStyle().set("gap", "12px");
+
+        Button copyBtn = new Button("Copy to Clipboard", VaadinIcon.COPY.create());
+        copyBtn.getStyle().set("background", "rgba(0,0,0,0.05)");
+        copyBtn.getStyle().set("color", TEXT_PRIMARY);
+        copyBtn.getStyle().set("font-weight", "600");
+        copyBtn.getStyle().set("border-radius", "9999px");
+        copyBtn.getStyle().set("padding", "10px 20px");
+        copyBtn.getStyle().set("cursor", "pointer");
+        copyBtn.addClickListener(e -> {
+            copyBtn.getElement().executeJs("navigator.clipboard.writeText($0)", letterContent);
+            copyBtn.setText("Copied!");
+            copyBtn.setIcon(VaadinIcon.CHECK.create());
+        });
+
+        Button useTemplateBtn = createPrimaryButton("Use This Template", () -> {
+            dialog.close();
+            getUI().ifPresent(ui -> ui.navigate(LoginView.class));
+        });
+
+        footer.add(copyBtn, useTemplateBtn);
+
+        content.add(header, letterContainer, footer);
+        dialog.add(content);
+        dialog.open();
     }
 
     // ============ FOOTER ============
