@@ -50,6 +50,7 @@ The application also provides a command-line interface for cover letter generati
 **Prerequisites: Start MariaDB Database**
 
 Option A - Using Docker (recommended):
+
 ```bash
 # Start Docker Desktop first, then:
 docker-compose up -d db
@@ -59,6 +60,7 @@ docker-compose up -d db
 ```
 
 Option B - Using local MariaDB installation:
+
 ```bash
 # Install MariaDB from https://mariadb.org/download/
 # Create the database and tables:
@@ -66,14 +68,16 @@ mysql -u root -p < src/main/java/com/clbooster/app/backend/service/database/cove
 ```
 
 **Run the CLI:**
- Set API key and run CLI in one command (environment variable persists only for this session)
+Set API key and run CLI in one command (environment variable persists only for this session)
 **Option A - PowerShell (recommended):**
+
 ```powershell
 
 $env:GOOGLE_API_KEY="your_api_key_here"; mvn exec:java "-Dexec.mainClass=com.clbooster.app.views.CLgenerator_CLI"
 ```
 
 **Option B - Command Prompt:**
+
 ```cmd
 set GOOGLE_API_KEY=your_api_key_here && mvn exec:java "-Dexec.mainClass=com.clbooster.app.views.CLgenerator_CLI"
 ```
@@ -83,6 +87,7 @@ Note: On Windows, quotes around `-Dexec.mainClass` are required for proper argum
 **Database Configuration:**
 
 The CLI uses environment variables for database connection:
+
 - `DB_HOST` - Database host (default: localhost)
 - `DB_PORT` - Database port (default: 3306)
 - `DB_NAME` - Database name (default: CL_generator)
@@ -176,6 +181,15 @@ mvn clean package -Pproduction
 
 # Build Docker image
 docker build -t cl-booster:latest .
+
+# kill java process
+taskkill /F /IM java.exe
+
+# Then rebuild
+mvn clean package -DskipTests -Pproduction
+
+# run java
+java -jar target/cl-booster-1.0-SNAPSHOT.jar
 ```
 
 ### Logs

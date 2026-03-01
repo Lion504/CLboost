@@ -30,3 +30,4 @@ test-jobads.md
 *.docx
 *.pdf
 
+bin/*
