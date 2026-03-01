@@ -52,6 +52,7 @@ public class MainLayout extends AppLayout {
 
         // Notification button
         Button notifBtn = createIconButton(VaadinIcon.BELL);
+        notifBtn.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(NotificationsView.class)));
         notifBtn.getElement().setAttribute("aria-label", "Notifications");
 
         // Settings button
@@ -146,7 +147,7 @@ public class MainLayout extends AppLayout {
         logoText.getStyle().set("letter-spacing", "-0.025em");
 
         logoSection.add(logoIcon, logoText);
-        logoSection.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(DashboardView.class)));
+        logoSection.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("dashboard")));
 
         // Navigation
         SideNav nav = new SideNav();
@@ -160,9 +161,9 @@ public class MainLayout extends AppLayout {
         mainLabel.getStyle().set("padding", "0 20px");
         mainLabel.getStyle().set("letter-spacing", "0.1em");
 
-        SideNavItem dashboard = createNavItem("Dashboard", DashboardView.class, VaadinIcon.DASHBOARD);
-        SideNavItem generate = createNavItem("Generate", GeneratorView.class, VaadinIcon.MAGIC);
-        SideNavItem history = createNavItem("History", HistoryView.class, VaadinIcon.CLOCK);
+        SideNavItem dashboard = createNavItem("Dashboard", "dashboard", VaadinIcon.DASHBOARD);
+        SideNavItem generate = createNavItem("Generate", "generator-wizard", VaadinIcon.MAGIC);
+        SideNavItem history = createNavItem("History", "history", VaadinIcon.CLOCK);
 
         // Account section
         Span accountLabel = new Span("ACCOUNT");
@@ -172,13 +173,46 @@ public class MainLayout extends AppLayout {
         accountLabel.getStyle().set("padding", "24px 20px 8px");
         accountLabel.getStyle().set("letter-spacing", "0.1em");
 
-        SideNavItem profile = createNavItem("Profile", ProfileView.class, VaadinIcon.USER);
-        SideNavItem settings = createNavItem("Settings", SettingsView.class, VaadinIcon.COG);
+        SideNavItem profile = createNavItem("Profile", "profile", VaadinIcon.USER);
+        SideNavItem settings = createNavItem("Settings", "settings", VaadinIcon.COG);
+
+        // Add Resume section
+        Span toolsLabel = new Span("TOOLS");
+        toolsLabel.getStyle().set("font-size", "11px");
+        toolsLabel.getStyle().set("font-weight", "700");
+        toolsLabel.getStyle().set("color", "rgba(255, 255, 255, 0.4)");
+        toolsLabel.getStyle().set("padding", "24px 20px 8px");
+        toolsLabel.getStyle().set("letter-spacing", "0.1em");
+
+        SideNavItem resume = createNavItem("Resume Manager", "resume", VaadinIcon.FILE_TEXT);
+        SideNavItem editor = createNavItem("Editor", "editor", VaadinIcon.EDIT);
+
+        // Support section
+        Span supportLabel = new Span("SUPPORT");
+        supportLabel.getStyle().set("font-size", "11px");
+        supportLabel.getStyle().set("font-weight", "700");
+        supportLabel.getStyle().set("color", "rgba(255, 255, 255, 0.4)");
+        supportLabel.getStyle().set("padding", "24px 20px 8px");
+        supportLabel.getStyle().set("letter-spacing", "0.1em");
+
+        SideNavItem help = createNavItem("Help", "help", VaadinIcon.QUESTION_CIRCLE);
 
         nav.addItem(dashboard, generate, history);
 
         // Add items with custom styling
-        drawer.add(logoSection, mainLabel, nav, accountLabel);
+        drawer.add(logoSection, mainLabel, nav, toolsLabel);
+
+        // Create separate nav for tools items
+        SideNav toolsNav = new SideNav();
+        toolsNav.addItem(resume, editor);
+        drawer.add(toolsNav);
+
+        drawer.add(supportLabel);
+        SideNav supportNav = new SideNav();
+        supportNav.addItem(help);
+        drawer.add(supportNav);
+
+        drawer.add(accountLabel);
 
         // Create separate nav for account items
         SideNav accountNav = new SideNav();
@@ -216,8 +250,8 @@ public class MainLayout extends AppLayout {
         addToDrawer(drawer);
     }
 
-    private SideNavItem createNavItem(String label, Class<? extends com.vaadin.flow.component.Component> view, VaadinIcon icon) {
-        SideNavItem item = new SideNavItem(label, view, icon.create());
+    private SideNavItem createNavItem(String label, String route, VaadinIcon icon) {
+        SideNavItem item = new SideNavItem(label, route, icon.create());
         item.getStyle().set("color", "rgba(255, 255, 255, 0.7)");
         item.getStyle().set("font-weight", "500");
         item.getStyle().set("font-size", "14px");

@@ -28,7 +28,7 @@ import java.util.Set;
  * Step 3: AI Customization
  * Step 4: Review
  */
-@Route(value = "generator", layout = MainLayout.class)
+@Route(value = "generator-wizard", layout = MainLayout.class)
 @PageTitle("Generate Cover Letter | CL Booster")
 public class GeneratorWizardView extends VerticalLayout {
 

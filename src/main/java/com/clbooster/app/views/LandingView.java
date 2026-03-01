@@ -101,7 +101,7 @@ public class LandingView extends VerticalLayout {
         navLinks.setSpacing(false);
         navLinks.getStyle().set("gap", "32px");
 
-        Button howItWorks = createNavButton("How it works", () -> scrollToSection("features"));
+        Button howItWorks = createNavButton("How it works", () -> openHowItWorksModal());
         Button faq = createNavButton("FAQ", () -> openFaqModal());
 
         navLinks.add(howItWorks, faq);
@@ -204,7 +204,7 @@ public class LandingView extends VerticalLayout {
         ctaRow.getStyle().set("gap", "16px");
         ctaRow.getStyle().set("padding-top", "16px");
 
-        Button generateBtn = createPrimaryButton("Generate Now", () -> getUI().ifPresent(ui -> ui.navigate(SignUpView.class)));
+        Button generateBtn = createPrimaryButton("Generate Now", () -> getUI().ifPresent(ui -> ui.navigate(LoginView.class)));
         generateBtn.getStyle().set("font-size", "16px");
         generateBtn.getStyle().set("padding", "16px 40px");
 
@@ -499,7 +499,7 @@ heroText.add(headline, description, ctaRow);
 
         Button ctaBtn = createPrimaryButton("Try it for free", () -> {
             dialog.close();
-            getUI().ifPresent(ui -> ui.navigate(SignUpView.class));
+            getUI().ifPresent(ui -> ui.navigate(LoginView.class));
         });
         footer.add(ctaBtn);
 
@@ -658,7 +658,7 @@ heroText.add(headline, description, ctaRow);
 
         Button ctaBtn = createPrimaryButton("Try it for free", () -> {
             dialog.close();
-            getUI().ifPresent(ui -> ui.navigate(SignUpView.class));
+            getUI().ifPresent(ui -> ui.navigate(LoginView.class));
         });
         footer.add(ctaBtn);
 
@@ -667,6 +667,147 @@ heroText.add(headline, description, ctaRow);
 
         activeModal = dialog;
         dialog.open();
+    }
+
+    private void openHowItWorksModal() {
+        if (activeModal != null && activeModal.isOpened()) {
+            activeModal.close();
+        }
+
+        Dialog dialog = new Dialog();
+        dialog.setModal(true);
+        dialog.setWidth("560px");
+        dialog.setMaxHeight("80vh");
+
+        VerticalLayout content = new VerticalLayout();
+        content.setPadding(false);
+        content.setSpacing(false);
+
+        // Header
+        HorizontalLayout header = new HorizontalLayout();
+        header.setWidthFull();
+        header.setAlignItems(FlexComponent.Alignment.CENTER);
+        header.setPadding(true);
+        header.getStyle().set("padding", "24px");
+        header.getStyle().set("border-bottom", "1px solid rgba(0,0,0,0.05)");
+        header.getStyle().set("background", BG_LIGHT);
+
+        Div iconContainer = new Div();
+        iconContainer.getStyle().set("width", "40px");
+        iconContainer.getStyle().set("height", "40px");
+        iconContainer.getStyle().set("border-radius", "12px");
+        iconContainer.getStyle().set("background", "rgba(0,122,255,0.1)");
+        iconContainer.getStyle().set("display", "flex");
+        iconContainer.getStyle().set("align-items", "center");
+        iconContainer.getStyle().set("justify-content", "center");
+        iconContainer.add(VaadinIcon.LIGHTBULB.create());
+
+        VerticalLayout titleGroup = new VerticalLayout();
+        titleGroup.setPadding(false);
+        titleGroup.setSpacing(false);
+        H3 title = new H3("How It Works");
+        title.getStyle().set("font-size", "20px");
+        title.getStyle().set("font-weight", "700");
+        title.getStyle().set("margin", "0");
+        Paragraph subtitle = new Paragraph("3 simple steps to your perfect cover letter");
+        subtitle.getStyle().set("font-size", "13px");
+        subtitle.getStyle().set("color", TEXT_SECONDARY);
+        subtitle.getStyle().set("margin", "4px 0 0");
+        titleGroup.add(title, subtitle);
+
+        Button closeBtn = new Button(VaadinIcon.CLOSE.create(), e -> dialog.close());
+        closeBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON);
+        closeBtn.getStyle().set("color", TEXT_SECONDARY);
+
+        header.add(iconContainer, titleGroup, closeBtn);
+        header.expand(titleGroup);
+
+        // Steps Content
+        VerticalLayout stepsContent = new VerticalLayout();
+        stepsContent.setPadding(true);
+        stepsContent.getStyle().set("padding", "32px");
+        stepsContent.getStyle().set("gap", "24px");
+
+        // Step 1
+        HorizontalLayout step1 = createStepItem("1", "Upload Your Resume",
+            "Upload your existing resume or create a new profile. Our AI will analyze your skills and experience.");
+        
+        // Step 2
+        HorizontalLayout step2 = createStepItem("2", "Paste Job Description",
+            "Copy and paste the job posting you're applying for. We'll extract key requirements and company details.");
+        
+        // Step 3
+        HorizontalLayout step3 = createStepItem("3", "Generate & Download",
+            "Our AI creates a tailored cover letter in seconds. Edit if needed, then download as PDF or copy to clipboard.");
+
+        stepsContent.add(step1, step2, step3);
+
+        // Footer
+        HorizontalLayout footer = new HorizontalLayout();
+        footer.setWidthFull();
+        footer.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        footer.setPadding(true);
+        footer.getStyle().set("padding", "24px");
+        footer.getStyle().set("border-top", "1px solid rgba(0,0,0,0.05)");
+        footer.getStyle().set("background", BG_LIGHT);
+
+        Button ctaBtn = createPrimaryButton("Get Started", () -> {
+            dialog.close();
+            getUI().ifPresent(ui -> ui.navigate(LoginView.class));
+        });
+        footer.add(ctaBtn);
+
+        content.add(header, stepsContent, footer);
+        dialog.add(content);
+
+        activeModal = dialog;
+        dialog.open();
+    }
+
+    private HorizontalLayout createStepItem(String number, String title, String description) {
+        HorizontalLayout stepRow = new HorizontalLayout();
+        stepRow.setWidthFull();
+        stepRow.getStyle().set("gap", "16px");
+        stepRow.setAlignItems(FlexComponent.Alignment.START);
+
+        // Step number circle
+        Div numberCircle = new Div();
+        numberCircle.getStyle().set("width", "32px");
+        numberCircle.getStyle().set("height", "32px");
+        numberCircle.getStyle().set("border-radius", "50%");
+        numberCircle.getStyle().set("background", PRIMARY);
+        numberCircle.getStyle().set("color", "white");
+        numberCircle.getStyle().set("display", "flex");
+        numberCircle.getStyle().set("align-items", "center");
+        numberCircle.getStyle().set("justify-content", "center");
+        numberCircle.getStyle().set("font-weight", "700");
+        numberCircle.getStyle().set("font-size", "14px");
+        numberCircle.getStyle().set("flex-shrink", "0");
+        numberCircle.add(new Span(number));
+
+        // Content
+        VerticalLayout content = new VerticalLayout();
+        content.setPadding(false);
+        content.setSpacing(false);
+        content.getStyle().set("gap", "4px");
+
+        H4 stepTitle = new H4(title);
+        stepTitle.getStyle().set("font-size", "16px");
+        stepTitle.getStyle().set("font-weight", "700");
+        stepTitle.getStyle().set("color", TEXT_PRIMARY);
+        stepTitle.getStyle().set("margin", "0");
+
+        Paragraph stepDesc = new Paragraph(description);
+        stepDesc.getStyle().set("font-size", "14px");
+        stepDesc.getStyle().set("color", TEXT_SECONDARY);
+        stepDesc.getStyle().set("line-height", "1.5");
+        stepDesc.getStyle().set("margin", "0");
+
+        content.add(stepTitle, stepDesc);
+        stepRow.add(numberCircle, content);
+        stepRow.expand(content);
+
+        return stepRow;
     }
 
     // ============ FOOTER ============

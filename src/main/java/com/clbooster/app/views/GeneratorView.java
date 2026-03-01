@@ -28,7 +28,7 @@ import java.util.List;
  * Real-time preview as user fills in details
  * Following Apple Design System
  */
-@Route(value = "generator-alt", layout = MainLayout.class)
+@Route(value = "generator-legacy", layout = MainLayout.class)
 @PageTitle("Generator | CL Booster")
 public class GeneratorView extends HorizontalLayout {
 

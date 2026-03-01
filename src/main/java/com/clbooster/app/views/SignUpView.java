@@ -60,7 +60,7 @@ public class SignUpView extends VerticalLayout {
         backText.getStyle().set("color", TEXT_SECONDARY);
 
         backLink.add(arrowLeft, backText);
-        backLink.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(LandingView.class)));
+        backLink.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("")));
         backLink.getElement().addEventListener("mouseenter", e -> backLink.getStyle().set("opacity", "0.7"));
         backLink.getElement().addEventListener("mouseleave", e -> backLink.getStyle().set("opacity", "1"));
 

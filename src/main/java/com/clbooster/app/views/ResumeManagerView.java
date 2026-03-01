@@ -24,7 +24,7 @@ import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
 import java.util.List;
 
-@Route(value = "resume-manager", layout = MainLayout.class)
+@Route(value = "resume", layout = MainLayout.class)
 @PageTitle("Resume Manager | CL Booster")
 public class ResumeManagerView extends VerticalLayout {
 
