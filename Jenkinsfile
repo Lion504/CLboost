@@ -58,17 +58,5 @@ pipeline {
                 }
             }
         }
-
-        stage('Push to Docker Hub') {
-            steps {
-                script {
-                    // This block handles the 'docker login' and 'docker logout' automatically
-                    withDockerRegistry([credentialsId: "${DOCKER_HUB_CREDS}", url: '']) {
-                        sh "docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}"
-                        sh "docker push ${DOCKER_IMAGE}:latest"
-                    }
-                }
-            }
-        }
     }
 }
