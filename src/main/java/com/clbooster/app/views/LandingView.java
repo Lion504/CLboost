@@ -130,13 +130,15 @@ public class LandingView extends VerticalLayout {
         navbar.setWidthFull();
         navbar.setAlignItems(FlexComponent.Alignment.CENTER);
         navbar.setPadding(true);
-        navbar.getStyle().set("padding", "16px 48px");
+        navbar.getStyle().set("padding", "0 48px"); // No vertical padding, use height instead
+        navbar.getStyle().set("height", "80px"); // h-20 = 80px like Figma
         navbar.getStyle().set("background", BG_WHITE + "cc"); // 80% opacity
         navbar.getStyle().set("backdrop-filter", "blur(12px)");
         navbar.getStyle().set("position", "sticky");
         navbar.getStyle().set("top", "0");
         navbar.getStyle().set("z-index", "40");
         navbar.getStyle().set("border-bottom", "1px solid rgba(0,0,0,0.05)");
+        navbar.getStyle().set("box-sizing", "border-box");
         navbar.expand(navLinks);
 
         return navbar;
@@ -166,42 +168,25 @@ public class LandingView extends VerticalLayout {
         heroText.setDefaultHorizontalComponentAlignment(Alignment.START);
 
         // NEW Badge
-        HorizontalLayout badge = new HorizontalLayout();
-        badge.setAlignItems(FlexComponent.Alignment.CENTER);
-        badge.setSpacing(false);
-        badge.getStyle().set("gap", "8px");
-        badge.getStyle().set("padding", "6px 16px");
-        badge.getStyle().set("background", BG_GRAY);
-        badge.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
-        badge.getStyle().set("border-radius", "9999px");
-        badge.getStyle().set("display", "inline-flex");
-        badge.getStyle().set("width", "fit-content");
 
-        Span newTag = new Span("NEW");
-        newTag.getStyle().set("background", PRIMARY);
-        newTag.getStyle().set("color", "white");
-        newTag.getStyle().set("font-size", "11px");
-        newTag.getStyle().set("font-weight", "900");
-        newTag.getStyle().set("padding", "2px 6px");
-        newTag.getStyle().set("border-radius", "4px");
 
-        Span versionText = new Span("AI Version 4.0 is here");
-        versionText.getStyle().set("font-size", "13px");
-        versionText.getStyle().set("font-weight", "700");
-        versionText.getStyle().set("color", TEXT_SECONDARY);
 
-        badge.add(newTag, versionText);
 
-        // Headline with gradient
-        H1 headline = new H1();
-        headline.setText("Elevate your job hunting with AI.");
+        // Headline with gradient text - using HTML for proper gradient rendering
+        Div headline = new Div();
         headline.getStyle().set("font-size", "clamp(40px, 5vw, 72px)");
         headline.getStyle().set("font-weight", "700");
         headline.getStyle().set("letter-spacing", "-0.025em");
         headline.getStyle().set("line-height", "1.1");
-        headline.getStyle().set("color", TEXT_PRIMARY);
         headline.getStyle().set("margin", "0");
-        headline.getStyle().set("max-width", "500px");
+        headline.getStyle().set("max-width", "600px");
+        
+        // Set HTML content directly for gradient text support
+        headline.getElement().setProperty("innerHTML",
+            "<div style='color: " + TEXT_PRIMARY + ";'>Elevate your</div>" +
+            "<span style='background: linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent; display: inline-block;'>job hunting</span>" +
+            "<span style='color: " + TEXT_PRIMARY + ";'> with AI.</span>"
+        );
 
         // Description
         Paragraph description = new Paragraph(
@@ -228,8 +213,8 @@ public class LandingView extends VerticalLayout {
         samplesBtn.getStyle().set("padding", "16px 40px");
 
         ctaRow.add(generateBtn, samplesBtn);
+heroText.add(headline, description, ctaRow);
 
-        heroText.add(badge, headline, description, ctaRow);
         heroText.getStyle().set("padding", "80px 0");
 
         // Right side - Hero Image
@@ -267,7 +252,7 @@ public class LandingView extends VerticalLayout {
         HorizontalLayout hero = new HorizontalLayout(heroText, imageContainer);
         hero.setWidthFull();
         hero.setAlignItems(FlexComponent.Alignment.CENTER);
-        hero.getStyle().set("padding", "40px 48px 80px");
+        hero.getStyle().set("padding", "80px 48px 128px"); // pt-20 (80px), pb-32 (128px) like Figma
         hero.getStyle().set("gap", "48px");
 
         return hero;
@@ -328,7 +313,7 @@ public class LandingView extends VerticalLayout {
         ));
 
         cards.add(createFeatureCard(
-            VaadinIcon.FILE_TEXT,
+            VaadinIcon.CHECK,
             "#34C759",
             "ATS Optimized",
             "Strategically place keywords to ensure you pass through modern filters."
@@ -578,18 +563,19 @@ public class LandingView extends VerticalLayout {
         header.add(iconContainer, titleGroup, closeBtn);
         header.expand(titleGroup);
 
-        // Samples Grid
-        VerticalLayout samplesContent = new VerticalLayout();
-        samplesContent.setPadding(true);
-        samplesContent.getStyle().set("padding", "32px");
-        samplesContent.getStyle().set("gap", "16px");
+        // Samples Grid - 2 columns like Figma
+        Div samplesGrid = new Div();
+        samplesGrid.getStyle().set("display", "grid");
+        samplesGrid.getStyle().set("grid-template-columns", "repeat(2, 1fr)");
+        samplesGrid.getStyle().set("gap", "16px");
+        samplesGrid.getStyle().set("padding", "32px");
 
         List<String[]> samples = List.of(
             new String[]{"Senior Product Manager", "Tech Giant", "98%"},
             new String[]{"Junior React Developer", "Modern Startup", "95%"},
             new String[]{"Creative Director", "Design Agency", "92%"},
             new String[]{"Customer Success Lead", "SaaS Corp", "96%"}
-        );;
+        );
 
         for (String[] sample : samples) {
             Div sampleCard = new Div();
@@ -652,8 +638,14 @@ public class LandingView extends VerticalLayout {
                 fileIcon.getStyle().set("color", TEXT_SECONDARY);
             });
 
-            samplesContent.add(sampleCard);
+            samplesGrid.add(sampleCard);
         }
+
+        // Wrap in scrollable container
+        Div scrollContainer = new Div();
+        scrollContainer.getStyle().set("overflow-y", "auto");
+        scrollContainer.getStyle().set("max-height", "50vh");
+        scrollContainer.add(samplesGrid);
 
         // Footer
         HorizontalLayout footer = new HorizontalLayout();
@@ -670,7 +662,7 @@ public class LandingView extends VerticalLayout {
         });
         footer.add(ctaBtn);
 
-        content.add(header, samplesContent, footer);
+        content.add(header, scrollContainer, footer);
         dialog.add(content);
 
         activeModal = dialog;
