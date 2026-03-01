@@ -1,5 +1,7 @@
 package com.clbooster.app.views;
 
+import com.vaadin.flow.theme.lumo.LumoUtility;
+
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
@@ -59,8 +61,6 @@ public class EditorView extends HorizontalLayout {
 
     private VerticalLayout createEditorPanel() {
         VerticalLayout panel = new VerticalLayout();
-        panel.setPadding(false);
-        panel.setSpacing(false);
         panel.getStyle().set("gap", "16px");
         panel.setHeightFull();
 
@@ -87,6 +87,8 @@ public class EditorView extends HorizontalLayout {
 
         panel.add(header, toolbar, editorArea);
         panel.expand(editorArea);
+panel.setSpacing(false);
+panel.addClassNames(LumoUtility.Padding.MEDIUM);
 
         return panel;
     }
@@ -202,9 +204,7 @@ public class EditorView extends HorizontalLayout {
 
     private VerticalLayout createSidebarPanel() {
         VerticalLayout panel = new VerticalLayout();
-        panel.setPadding(false);
-        panel.setSpacing(false);
-        panel.getStyle().set("gap", "20px");
+panel.getStyle().set("gap", "20px").setWidth("");
         panel.setHeightFull();
 
         // AI Suggestions Card
@@ -217,6 +217,10 @@ public class EditorView extends HorizontalLayout {
         Div tipsCard = createTipsCard();
 
         panel.add(suggestionsCard, scoreCard, tipsCard);
+panel.addClassNames(LumoUtility.Padding.Top.MEDIUM, LumoUtility.Padding.Right.MEDIUM, LumoUtility.Padding.Bottom.MEDIUM, LumoUtility.Padding.Left.MEDIUM);
+panel.setSpacing(false);
+panel.addClickListener(e -> {
+});
 
         return panel;
     }
