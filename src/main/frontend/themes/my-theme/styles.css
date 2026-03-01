@@ -1,45 +1,508 @@
-/* CLbooster Theme — matches Figma design */
+/* CL Booster Theme — Figma Design System */
+/* Apple-inspired design with precise styling */
+
+/* ============================================
+   CSS CUSTOM PROPERTIES (Design Tokens)
+   ============================================ */
 :root {
-  --lumo-primary-color: #2563EB;
-  --lumo-primary-color-50pct: rgba(37, 99, 235, 0.5);
-  --lumo-primary-color-10pct: rgba(37, 99, 235, 0.1);
-  --lumo-primary-text-color: #2563EB;
+  /* Primary Colors - Apple Blue */
+  --lumo-primary-color: #007aff;
+  --lumo-primary-color-50pct: rgba(0, 122, 255, 0.5);
+  --lumo-primary-color-10pct: rgba(0, 122, 255, 0.1);
+  --lumo-primary-text-color: #007aff;
   --lumo-primary-contrast-color: #ffffff;
+  --lumo-primary-light: #5ac8fa;
 
+  /* Text Colors */
+  --text-primary: #1d1d1f;
+  --text-secondary: #86868b;
+  --text-tertiary: #a1a1a6;
+
+  /* Background Colors */
   --lumo-base-color: #ffffff;
-  --lumo-contrast-5pct: #F5F5F7;   /* auth page background */
+  --bg-white: #ffffff;
+  --bg-gray: #f5f5f7;
+  --bg-light: #fbfbfb;
+  --lumo-contrast-5pct: #f5f5f7;
 
-  --lumo-font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --lumo-border-radius-m: 10px;
-  --lumo-border-radius-l: 14px;
-  --lumo-box-shadow-s: 0 2px 8px rgba(0,0,0,0.09);
+  /* Semantic Colors */
+  --color-success: #34c759;
+  --color-warning: #ff9500;
+  --color-error: #ff3b30;
+  --color-purple: #af52de;
+  --color-orange: #ff9500;
+
+  /* Typography */
+  --lumo-font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+  --font-sans: var(--lumo-font-family);
+
+  /* Spacing & Sizing */
+  --lumo-border-radius-s: 8px;
+  --lumo-border-radius-m: 12px;
+  --lumo-border-radius-l: 24px;
+  --lumo-border-radius-xl: 48px;
+
+  /* Shadows */
+  --lumo-box-shadow-s: 0 2px 12px rgba(0, 0, 0, 0.04);
+  --lumo-box-shadow-m: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --lumo-box-shadow-l: 0 10px 40px rgba(0, 0, 0, 0.1);
+  --shadow-primary: 0 10px 15px -3px rgba(0, 122, 255, 0.3);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.01);
+  --shadow-card-hover: 0 24px 48px rgba(0, 0, 0, 0.06);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+  --transition-slower: 0.5s ease;
 }
 
-/* Sidebar dark style matching Figma dashboard */
+/* ============================================
+   GLOBAL STYLES
+   ============================================ */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body {
+  font-family: var(--lumo-font-family);
+  color: var(--text-primary);
+  background: var(--bg-white);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animation utility classes */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease forwards;
+}
+
+/* ============================================
+   SIDEBAR (MainLayout)
+   ============================================ */
 .sidebar {
-  background-color: #111827;
+  background: linear-gradient(180deg, #1d1d1f 0%, #2d2d2f 100%);
   color: #ffffff;
   min-height: 100vh;
-  padding: 16px;
+  padding: 20px 16px;
 }
 
-/* Card style */
+.sidebar [class*='logo'] {
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.025em;
+}
+
+/* ============================================
+   CARD STYLES
+   ============================================ */
 .cl-card {
-  background: white;
+  background: var(--bg-white);
   border-radius: var(--lumo-border-radius-l);
-  box-shadow: var(--lumo-box-shadow-s);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-card);
+  padding: 32px;
+  transition: all var(--transition-slower);
+}
+
+.cl-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Feature card specific */
+.feature-card {
+  background: var(--bg-white);
+  border-radius: var(--lumo-border-radius-l);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 32px;
+  transition: all var(--transition-slower);
+}
+
+.feature-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.1);
+}
+
+.feature-icon {
+  transition: transform var(--transition-slow);
+}
+
+/* Performance card (gradient) */
+.performance-card {
+  background: linear-gradient(135deg, #007aff 0%, #0051d5 100%);
+  color: white;
+  border-radius: var(--lumo-border-radius-l);
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.performance-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+}
+
+.performance-card:hover::before {
+  opacity: 1;
+}
+
+/* ============================================
+   BUTTON STYLES
+   ============================================ */
+/* Primary Button (Gradient) */
+.btn-primary {
+  background: linear-gradient(135deg, #007aff 0%, #5ac8fa 100%);
+  color: white;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 12px 24px;
+  border: none;
+  box-shadow: var(--shadow-primary);
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 12px 24px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Tertiary Button */
+.btn-tertiary {
+  background: transparent;
+  color: var(--lumo-primary-color);
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 12px 24px;
+  border: none;
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.btn-tertiary:hover {
+  background: rgba(0, 122, 255, 0.05);
+}
+
+/* ============================================
+   FORM STYLES
+   ============================================ */
+.form-input {
+  background: var(--bg-light);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  transition: all var(--transition-base);
+  width: 100%;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--lumo-primary-color);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* ============================================
+   BADGES & TAGS
+   ============================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-primary {
+  background: var(--lumo-primary-color);
+  color: white;
+}
+
+.badge-success {
+  background: rgba(52, 199, 89, 0.1);
+  color: var(--color-success);
+}
+
+.badge-info {
+  background: rgba(0, 122, 255, 0.1);
+  color: var(--lumo-primary-color);
+}
+
+.badge-neutral {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   STATUS INDICATORS
+   ============================================ */
+.badge-sent {
+  background: rgba(52, 199, 89, 0.1);
+  color: #34c759;
+}
+
+.badge-draft {
+  background: rgba(0, 0, 0, 0.05);
+  color: #86868b;
+}
+
+.badge-optimized {
+  background: rgba(0, 122, 255, 0.1);
+  color: #007aff;
+}
+
+/* ============================================
+   GRADIENT TEXT
+   ============================================ */
+.gradient-text {
+  background: linear-gradient(135deg, #007aff 0%, #5ac8fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================
+   GLASSMORPHISM EFFECTS
+   ============================================ */
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-dark {
+  background: rgba(29, 29, 31, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ============================================
+   LOADING & SKELETON
+   ============================================ */
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(0, 122, 255, 0.2);
+  border-top-color: var(--lumo-primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ============================================
+   MODAL / DIALOG STYLES
+   ============================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 24px;
 }
 
-/* Dark performance card from dashboard */
-.performance-card {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  color: white;
+.modal-content {
+  background: var(--bg-white);
   border-radius: var(--lumo-border-radius-l);
-  padding: 28px;
+  box-shadow: var(--lumo-box-shadow-l);
+  max-width: 640px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  animation: scaleIn 0.3s ease;
 }
 
-/* Status badges */
-.badge-sent    { background: #dcfce7; color: #16a34a; }
-.badge-draft   { background: #f3f4f6; color: #6b7280; }
-.badge-archived{ background: #fef9c3; color: #ca8a04; }
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.text-gradient {
+  background: linear-gradient(135deg, #007aff 0%, #5ac8fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.shadow-primary {
+  box-shadow: 0 10px 15px -3px rgba(0, 122, 255, 0.3);
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection styling */
+::selection {
+  background: rgba(0, 122, 255, 0.2);
+  color: var(--text-primary);
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+  outline: 2px solid var(--lumo-primary-color);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   RESPONSIVE UTILITIES
+   ============================================ */
+@media (max-width: 768px) {
+  .cl-card {
+    padding: 24px;
+  }
+
+  .feature-card {
+    padding: 24px;
+  }
+
+  .performance-card {
+    padding: 24px;
+  }
+}

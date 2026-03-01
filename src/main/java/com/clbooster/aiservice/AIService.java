@@ -2,14 +2,32 @@ package com.clbooster.aiservice;
 
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 
+@Service
+@Lazy
 public class AIService {
 
-    private final ChatLanguageModel languageModel;
+    private ChatLanguageModel languageModel;
+    private final String apiKey;
 
-    public AIService(String apiKey) {
-        this.languageModel = GoogleAiGeminiChatModel.builder().apiKey(apiKey).modelName("gemini-2.5-flash-lite")
-                .temperature(0.7).build();
+    public AIService(@Value("${spring.ai.vertex.ai.gemini.api-key:}") String apiKey) {
+        this.apiKey = apiKey;
+        // Defer actual initialization to first use
+    }
+
+    private synchronized ChatLanguageModel getLanguageModel() {
+        if (languageModel == null) {
+            String actualApiKey = apiKey != null && !apiKey.isEmpty() ? apiKey : "dummy-key";
+            languageModel = GoogleAiGeminiChatModel.builder()
+                    .apiKey(actualApiKey)
+                    .modelName("gemini-2.5-flash-lite")
+                    .temperature(0.7)
+                    .build();
+        }
+        return languageModel;
     }
 
     private String matchQualification(String resume, String jobDetails) {
@@ -24,7 +42,7 @@ public class AIService {
 
         String finalPrompt = matchPrompt.replace("{{RESUME}}", resume).replace("{{JOBDETAILS}}", jobDetails);
 
-        return languageModel.generate(finalPrompt);
+        return getLanguageModel().generate(finalPrompt);
     }
 
     private String writeCoverLetter(String matchAnalysis, String jobDetails) {
@@ -45,7 +63,7 @@ public class AIService {
 
         String finalPrompt = coverLetterPrompt.replace("{{ANALYSIS}}", matchAnalysis).replace("{{JOB}}", jobDetails);
 
-        return languageModel.generate(finalPrompt);
+        return getLanguageModel().generate(finalPrompt);
     }
 
     public String generateCoverLetter(String resume, String jobDetails) {
