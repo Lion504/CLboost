@@ -42,7 +42,6 @@ public class ResumeManagerView extends VerticalLayout {
     // Sample data for uploaded resumes
     private final List<ResumeData> resumes = new ArrayList<>();
     private VerticalLayout contentArea;
-    private Div aiHighlightsPanel;
     private Div uploadZone;
 
     public ResumeManagerView() {
@@ -76,13 +75,9 @@ public class ResumeManagerView extends VerticalLayout {
 
         // Left panel - Upload and Resume List
         VerticalLayout leftPanel = createLeftPanel();
-        leftPanel.setWidth("60%");
+        leftPanel.setWidth("100%");
 
-        // Right panel - AI Highlights
-        aiHighlightsPanel = createAIHighlightsPanel();
-        aiHighlightsPanel.setWidth("40%");
-
-        mainContent.add(leftPanel, aiHighlightsPanel);
+        mainContent.add(leftPanel);
         mainContent.expand(leftPanel);
 
         add(header, tabs, mainContent);
@@ -232,7 +227,7 @@ public class ResumeManagerView extends VerticalLayout {
 
     private Div createUploadZone() {
         Div zone = new Div();
-        zone.getStyle().set("width", "100%");
+        zone.getStyle().set("width", "90%");
         zone.getStyle().set("background", "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)");
         zone.getStyle().set("border", "2px dashed " + PRIMARY + "40");
         zone.getStyle().set("border-radius", "24px");
@@ -320,7 +315,7 @@ public class ResumeManagerView extends VerticalLayout {
 
     private Div createResumeCard(ResumeData resume) {
         Div card = new Div();
-        card.getStyle().set("width", "100%");
+        card.getStyle().set("width", "95%");
         card.getStyle().set("background", BG_WHITE);
         card.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
         card.getStyle().set("border-radius", "20px");
@@ -464,18 +459,6 @@ public class ResumeManagerView extends VerticalLayout {
             card.getStyle().set("border-color", "rgba(0,0,0,0.05)");
         });
 
-        // Click to select and show highlights
-        card.getElement().addEventListener("click", e -> {
-            updateAIHighlights(resume);
-            // Visual selection indicator
-            for (int i = 0; i < getComponentCount(); i++) {
-                if (getComponentAt(i) instanceof HorizontalLayout) {
-                    HorizontalLayout main = (HorizontalLayout) getComponentAt(i);
-                    // Find and update selected state
-                }
-            }
-        });
-
         return card;
     }
 
@@ -492,94 +475,6 @@ public class ResumeManagerView extends VerticalLayout {
         if (score >= 90) return SUCCESS;
         if (score >= 70) return WARNING;
         return ERROR;
-    }
-
-    private Div createAIHighlightsPanel() {
-        Div panel = new Div();
-        panel.getStyle().set("background", BG_WHITE);
-        panel.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
-        panel.getStyle().set("border-radius", "24px");
-        panel.getStyle().set("padding", "32px");
-        panel.getStyle().set("box-shadow", "0 2px 12px rgba(0,0,0,0.04)");
-        panel.getStyle().set("position", "sticky");
-        panel.getStyle().set("top", "32px");
-
-        // Header
-        HorizontalLayout header = new HorizontalLayout();
-        header.setWidthFull();
-        header.setAlignItems(FlexComponent.Alignment.CENTER);
-        header.getStyle().set("gap", "12px");
-        header.getStyle().set("margin-bottom", "24px");
-
-        Div aiIconContainer = new Div();
-        aiIconContainer.getStyle().set("width", "44px");
-        aiIconContainer.getStyle().set("height", "44px");
-        aiIconContainer.getStyle().set("border-radius", "12px");
-        aiIconContainer.getStyle().set("background", "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)");
-        aiIconContainer.getStyle().set("display", "flex");
-        aiIconContainer.getStyle().set("align-items", "center");
-        aiIconContainer.getStyle().set("justify-content", "center");
-
-        Icon aiIcon = VaadinIcon.SPARK_LINE.create();
-        aiIcon.getStyle().set("color", "white");
-        aiIcon.getStyle().set("width", "22px");
-        aiIcon.getStyle().set("height", "22px");
-        aiIconContainer.add(aiIcon);
-
-        VerticalLayout titleGroup = new VerticalLayout();
-        titleGroup.setPadding(false);
-        titleGroup.setSpacing(false);
-        titleGroup.getStyle().set("gap", "2px");
-
-        H3 title = new H3("AI Highlights");
-        title.getStyle().set("font-size", "18px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0");
-
-        Paragraph subtitle = new Paragraph("Select a resume to view insights");
-        subtitle.getStyle().set("font-size", "13px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "0");
-
-        titleGroup.add(title, subtitle);
-
-        header.add(aiIconContainer, titleGroup);
-
-        // Content
-        VerticalLayout content = new VerticalLayout();
-        content.setPadding(false);
-        content.setSpacing(false);
-        content.getStyle().set("gap", "24px");
-
-        if (!resumes.isEmpty()) {
-            content.add(createScoreBreakdown(resumes.get(0)));
-            content.add(createStrengthsSection());
-            content.add(createSuggestionsSection());
-            content.add(createKeywordsSection());
-        } else {
-            Div emptyState = new Div();
-            emptyState.getStyle().set("text-align", "center");
-            emptyState.getStyle().set("padding", "48px 0");
-
-            Icon emptyIcon = VaadinIcon.FILE_TEXT_O.create();
-            emptyIcon.getStyle().set("color", TEXT_SECONDARY);
-            emptyIcon.getStyle().set("width", "48px");
-            emptyIcon.getStyle().set("height", "48px");
-            emptyIcon.getStyle().set("margin-bottom", "16px");
-
-            Paragraph emptyText = new Paragraph("Upload a resume to see AI insights and optimization suggestions");
-            emptyText.getStyle().set("font-size", "14px");
-            emptyText.getStyle().set("color", TEXT_SECONDARY);
-            emptyText.getStyle().set("margin", "0");
-
-            emptyState.add(emptyIcon, emptyText);
-            content.add(emptyState);
-        }
-
-        panel.add(header, content);
-
-        return panel;
     }
 
     private Div createScoreBreakdown(ResumeData resume) {
@@ -807,12 +702,6 @@ public class ResumeManagerView extends VerticalLayout {
         chip.getStyle().set("color", TEXT_SECONDARY);
         chip.getStyle().set("border-radius", "9999px");
         return chip;
-    }
-
-    private void updateAIHighlights(ResumeData resume) {
-        // In a real app, this would update the AI highlights panel
-        // based on the selected resume
-        Notification.show("Showing AI analysis for: " + resume.name, 2000, Notification.Position.BOTTOM_CENTER);
     }
 
     private Button createPrimaryButton(String text, Runnable action) {
