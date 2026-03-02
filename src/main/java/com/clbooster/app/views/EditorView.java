@@ -521,7 +521,7 @@ public class EditorView extends HorizontalLayout {
 
         try {
             AIService aiService = new AIService("");
-            String generated = aiService.generateCoverLetter(resumeContent, jobDetails.toString());
+            String generated = aiService.generateCoverLetter(resumeContent, jobDetails.toString(), selectedTone);
             return (generated != null && !generated.isBlank()) ? generated : getFallbackCoverLetter();
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "AI generation failed, using fallback: " + e.getMessage(), e);
