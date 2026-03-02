@@ -9,20 +9,26 @@ This directory contains comprehensive testing documentation for the Resume Scan 
 ## Quick Navigation
 
 ### 🚀 I want to run tests NOW
+
 → Start here: **01_QUICK_TEST.md**
+
 - Fast setup (2 minutes)
 - Copy-paste commands
 - Common issues & fixes
 
 ### 📊 I want to understand test results
+
 → Start here: **02_TESTING_SUMMARY.md**
+
 - What tests exist
 - Coverage statistics
 - How to read reports
 - Test distribution
 
 ### 📚 I want detailed test information
+
 → Start here: **03_TESTING_GUIDE.md**
+
 - Unit test examples (AIService, ResumeService, DocumentService)
 - Integration test walkthroughs
 - Manual testing scenarios
@@ -30,7 +36,9 @@ This directory contains comprehensive testing documentation for the Resume Scan 
 - Best practices
 
 ### 🏗️ I want to understand the architecture
+
 → Start here: **04_TESTING_ARCHITECTURE.md**
+
 - System design diagrams
 - Test pyramid structure
 - Component interaction flows
@@ -38,7 +46,9 @@ This directory contains comprehensive testing documentation for the Resume Scan 
 - Performance benchmarks
 
 ### ⚡ I want to get started in 5 minutes
+
 → Start here: **06_TESTING_QUICKSTART.md**
+
 - Comprehensive quick start
 - Project setup
 - Running first test
@@ -60,14 +70,14 @@ The Resume Manager feature allows users to:
 
 ### Technology Stack
 
-| Component | Technology | Version |
-|-----------|-----------|---------|
-| Backend | Spring Boot | 3.5.9 |
-| UI | Vaadin | 24.9.9 |
-| AI | Google Gemini | Latest |
-| Document Parsing | Apache Tika | 2.x |
-| Testing | JUnit 5 | Latest |
-| Coverage | JaCoCo | Latest |
+| Component        | Technology    | Version |
+| ---------------- | ------------- | ------- |
+| Backend          | Spring Boot   | 3.5.9   |
+| UI               | Vaadin        | 24.9.9  |
+| AI               | Google Gemini | Latest  |
+| Document Parsing | Apache Tika   | 2.x     |
+| Testing          | JUnit 5       | Latest  |
+| Coverage         | JaCoCo        | Latest  |
 
 ---
 
@@ -75,23 +85,23 @@ The Resume Manager feature allows users to:
 
 ### By the Numbers
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| Total Tests | 33 | ✅ |
-| Unit Tests | 25 | ✅ |
-| Integration Tests | 8 | ✅ |
-| Code Coverage | 87% | ✅ Excellent |
-| Execution Time | 35-45 sec | ✅ Good |
-| Pass Rate | 100% | ✅ Perfect |
+| Metric            | Value     | Status       |
+| ----------------- | --------- | ------------ |
+| Total Tests       | 33        | ✅           |
+| Unit Tests        | 25        | ✅           |
+| Integration Tests | 8         | ✅           |
+| Code Coverage     | 87%       | ✅ Excellent |
+| Execution Time    | 35-45 sec | ✅ Good      |
+| Pass Rate         | 100%      | ✅ Perfect   |
 
 ### Test Classes
 
-| Class | Tests | Coverage | Purpose |
-|-------|-------|----------|---------|
-| AIServiceTest | 4 | 93% | Gemini API integration |
-| ResumeServiceTest | 12 | 88% | Resume operations |
-| DocumentServiceTest | 9 | 84% | File handling |
-| ResumeWorkflowIntegrationTest | 8 | 90% | End-to-end workflows |
+| Class                         | Tests | Coverage | Purpose                |
+| ----------------------------- | ----- | -------- | ---------------------- |
+| AIServiceTest                 | 4     | 93%      | Gemini API integration |
+| ResumeServiceTest             | 12    | 88%      | Resume operations      |
+| DocumentServiceTest           | 9     | 84%      | File handling          |
+| ResumeWorkflowIntegrationTest | 8     | 90%      | End-to-end workflows   |
 
 ---
 
@@ -142,17 +152,17 @@ src/test/
 
 ### ✅ Feature Complete Coverage
 
-| Feature | Test | Manual | Status |
-|---------|------|--------|--------|
-| Resume Upload | ✓ | ✓ | ✅ |
-| Format Validation | ✓ | ✓ | ✅ |
-| Text Extraction | ✓ | - | ✅ |
-| AI Scanning | ✓ | ✓ | ✅ |
-| Data Review | - | ✓ | ✅ |
-| Resume Save | ✓ | ✓ | ✅ |
-| DOCX Export | ✓ | - | ✅ |
-| Job Match | ✓ | - | ✅ |
-| Error Handling | ✓ | ✓ | ✅ |
+| Feature           | Test | Manual | Status |
+| ----------------- | ---- | ------ | ------ |
+| Resume Upload     | ✓    | ✓      | ✅     |
+| Format Validation | ✓    | ✓      | ✅     |
+| Text Extraction   | ✓    | -      | ✅     |
+| AI Scanning       | ✓    | ✓      | ✅     |
+| Data Review       | -    | ✓      | ✅     |
+| Resume Save       | ✓    | ✓      | ✅     |
+| DOCX Export       | ✓    | -      | ✅     |
+| Job Match         | ✓    | -      | ✅     |
+| Error Handling    | ✓    | ✓      | ✅     |
 
 ---
 
@@ -241,6 +251,7 @@ mvn clean install -DskipTests
 [INFO] Tests run: 33, Failures: 0, Errors: 0, Skipped: 0
 [INFO] ---
 ```
+
 ✅ All tests passed!
 
 ### Failed Test
@@ -249,6 +260,7 @@ mvn clean install -DskipTests
 [ERROR] testUploadAndScanResume
 [ERROR] java.lang.NullPointerException: ChatModel is null
 ```
+
 ⚠️ See **01_QUICK_TEST.md** Troubleshooting section
 
 ### Coverage Report
@@ -267,6 +279,7 @@ OVERALL          87% ✅ EXCELLENT
 ### Prerequisites
 
 1. Start the application:
+
    ```bash
    mvn spring-boot:run
    ```
@@ -341,7 +354,7 @@ mvn test
 # <artifactId>spring-ai-google-ai-spring-boot-starter</artifactId>
 
 # Verify API key in application.properties
-# spring.ai.google.api-key=${GOOGLE_API_KEY}
+# spring.ai.google.api-key=${GEMINI_API_KEY}
 
 # Run tests again
 mvn test
@@ -402,6 +415,7 @@ Cleanup            < 50 MB
 ### GitHub Actions Integration
 
 Tests run automatically on:
+
 - Push to main
 - Pull request creation
 - Daily schedule (midnight)
@@ -429,14 +443,14 @@ See CI configuration in `.github/workflows/`
 class NewFeatureTest {
     @Autowired
     private SomeService service;
-    
+
     @Test
     @DisplayName("Should do something")
     void testNewFeature() {
         // Arrange
-        
+
         // Act
-        
+
         // Assert
     }
 }
@@ -510,7 +524,7 @@ Unit Tests:
   src/test/java/com/clbooster/app/backend/service/ai/AIServiceTest.java
   src/test/java/com/clbooster/app/backend/service/ResumeServiceTest.java
   src/test/java/com/clbooster/app/backend/service/document/DocumentServiceTest.java
-  
+
 Integration Tests:
   src/test/java/com/clbooster/app/ResumeWorkflowIntegrationTest.java
 
@@ -540,6 +554,7 @@ Test Data:
 ### Report Issues
 
 Include:
+
 - Error message (full stack trace)
 - Command used
 - Expected vs actual behavior
@@ -549,14 +564,14 @@ Include:
 
 ## Summary
 
-| Aspect | Status | Notes |
-|--------|--------|-------|
-| Test Coverage | ✅ 87% | Excellent |
-| Test Count | ✅ 33 tests | Complete |
-| Automation | ✅ CI/CD ready | GitHub Actions |
-| Documentation | ✅ Complete | 5 guides, 800+ lines |
-| Performance | ✅ 35-45 sec | Acceptable |
-| Reliability | ✅ 100% pass | No flaky tests |
+| Aspect        | Status         | Notes                |
+| ------------- | -------------- | -------------------- |
+| Test Coverage | ✅ 87%         | Excellent            |
+| Test Count    | ✅ 33 tests    | Complete             |
+| Automation    | ✅ CI/CD ready | GitHub Actions       |
+| Documentation | ✅ Complete    | 5 guides, 800+ lines |
+| Performance   | ✅ 35-45 sec   | Acceptable           |
+| Reliability   | ✅ 100% pass   | No flaky tests       |
 
 ---
 
