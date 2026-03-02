@@ -23,8 +23,7 @@ class CoverLetterDAOTest {
         try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
 
             dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
-            when(conn.prepareStatement(anyString(), eq(Statement.RETURN_GENERATED_KEYS)))
-                    .thenReturn(stmt);
+            when(conn.prepareStatement(anyString(), eq(Statement.RETURN_GENERATED_KEYS))).thenReturn(stmt);
             when(stmt.executeUpdate()).thenReturn(1);
             when(stmt.getGeneratedKeys()).thenReturn(rs);
             when(rs.next()).thenReturn(true);
@@ -45,8 +44,7 @@ class CoverLetterDAOTest {
         try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
 
             dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
-            when(conn.prepareStatement(anyString(), anyInt()))
-                    .thenThrow(new SQLException());
+            when(conn.prepareStatement(anyString(), anyInt())).thenThrow(new SQLException());
 
             int id = dao.addCoverLetter(123, "/file.pdf");
 
@@ -124,10 +122,8 @@ class CoverLetterDAOTest {
             when(rs.next()).thenReturn(true, true, false);
             when(rs.getInt("id")).thenReturn(1, 2);
             when(rs.getInt("Pin")).thenReturn(123, 123);
-            when(rs.getTimestamp("Timestamp_edited"))
-                    .thenReturn(new Timestamp(System.currentTimeMillis()));
-            when(rs.getString("FilePath"))
-                    .thenReturn("/a.pdf", "/b.pdf");
+            when(rs.getTimestamp("Timestamp_edited")).thenReturn(new Timestamp(System.currentTimeMillis()));
+            when(rs.getString("FilePath")).thenReturn("/a.pdf", "/b.pdf");
 
             List<CoverLetter> list = dao.getCoverLettersByPin(123);
 

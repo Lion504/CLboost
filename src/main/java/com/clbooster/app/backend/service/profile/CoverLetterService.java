@@ -6,10 +6,8 @@ import java.util.List;
 
 public class CoverLetterService {
 
-    private static String BASE_PATH =
-            System.getenv("STORAGE_PATH") != null
-                    ? System.getenv("STORAGE_PATH")
-                    : "storage/coverletters/";
+    private static String BASE_PATH = System.getenv("STORAGE_PATH") != null ? System.getenv("STORAGE_PATH")
+            : "storage/coverletters/";
 
     private CoverLetterDAO coverLetterDAO;
 
