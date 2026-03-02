@@ -314,22 +314,31 @@ public class HistoryView extends VerticalLayout {
         HorizontalLayout actions = new HorizontalLayout();
         actions.getStyle().set("gap", "4px");
 
-        // Eye: open preview dialog
+        // View button
         Button viewBtn = createIconButton(VaadinIcon.EYE);
+        viewBtn.getElement().setAttribute("title", "Preview");
         viewBtn.addClickListener(e -> openPreviewDialog(item));
 
         // Download button
         Button downloadBtn = createIconButton(VaadinIcon.DOWNLOAD);
+        downloadBtn.getElement().setAttribute("title", "Download");
         downloadBtn.addClickListener(e -> downloadCoverLetter(item));
 
-        // Three-dots replaced with Copy Path button
-        Button copyPathBtn = createIconButton(VaadinIcon.COPY);
-        copyPathBtn.addClickListener(e -> {
-            getElement().executeJs("navigator.clipboard.writeText($0)", item.filePath);
-            Notification.show("Path copied!", 2000, Notification.Position.TOP_CENTER);
+        // Edit button - navigates to editor
+        Button editBtn = createIconButton(VaadinIcon.EDIT);
+        editBtn.getElement().setAttribute("title", "Edit");
+        editBtn.addClickListener(e -> {
+            String encoded = java.net.URLEncoder.encode(item.filePath, java.nio.charset.StandardCharsets.UTF_8);
+            getUI().ifPresent(ui -> ui.navigate("editor/" + encoded));
         });
 
-        actions.add(viewBtn, downloadBtn, copyPathBtn);
+        // Delete button
+        Button deleteBtn = createIconButton(VaadinIcon.TRASH);
+        deleteBtn.getElement().setAttribute("title", "Delete");
+        deleteBtn.getStyle().set("color", "#FF3B30");
+        deleteBtn.addClickListener(e -> confirmAndDelete(item, card));
+
+        actions.add(viewBtn, downloadBtn, editBtn, deleteBtn);
         footer.add(dateRow, actions);
         footer.expand(dateRow);
 
@@ -345,6 +354,39 @@ public class HistoryView extends VerticalLayout {
         });
 
         return card;
+    }
+
+    private void confirmAndDelete(HistoryItem item, Div card) {
+        Dialog confirm = new Dialog();
+        confirm.setHeaderTitle("Delete Cover Letter");
+
+        VerticalLayout content = new VerticalLayout();
+        content.add(new Paragraph("Are you sure you want to delete \"" + item.title + "\"? This cannot be undone."));
+
+        HorizontalLayout buttons = new HorizontalLayout();
+        buttons.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+        buttons.setWidthFull();
+
+        Button cancelBtn = new Button("Cancel", e -> confirm.close());
+        cancelBtn.getStyle().set("color", TEXT_SECONDARY);
+
+        Button deleteBtn = new Button("Delete", e -> {
+            File file = new File(item.filePath);
+            if (file.exists() && file.delete()) {
+                allItems.remove(item);
+                applyFilters();
+                Notification.show("Cover letter deleted", 2000, Notification.Position.TOP_CENTER);
+            } else {
+                Notification.show("Failed to delete file", 3000, Notification.Position.TOP_CENTER);
+            }
+            confirm.close();
+        });
+        deleteBtn.getStyle().set("background", "#FF3B30").set("color", "white");
+
+        buttons.add(cancelBtn, deleteBtn);
+        content.add(buttons);
+        confirm.add(content);
+        confirm.open();
     }
 
     // ── Card actions ───────────────────────────────────────────────────────────
@@ -556,21 +598,21 @@ public class HistoryView extends VerticalLayout {
             }
             int userPin = currentUser.getPin();
 
-            Path[] directories = { Paths.get("uploads", "resumes"), Paths.get("uploads", "coverletters") };
-            for (Path dir : directories) {
-                if (!Files.exists(dir) || !Files.isDirectory(dir)) continue;
-                File[] files = dir.toFile().listFiles((d, name) -> {
-                    String lower = name.toLowerCase();
-                    return lower.endsWith(".txt") || lower.endsWith(".docx") || lower.endsWith(".pdf");
-                });
-                if (files == null) continue;
-                for (File file : files) {
-                    HistoryItem item = parseFilename(file.getName(), file.getAbsolutePath(), file.lastModified());
-                    if (item != null && item.pin == userPin) items.add(item);
-                }
+            // Only load from coverletters directory
+            Path dir = Paths.get("uploads", "coverletters");
+            if (!Files.exists(dir) || !Files.isDirectory(dir)) return items;
+
+            File[] files = dir.toFile().listFiles((d, name) -> {
+                String lower = name.toLowerCase();
+                return lower.endsWith(".txt") || lower.endsWith(".docx") || lower.endsWith(".pdf");
+            });
+            if (files == null) return items;
+            for (File file : files) {
+                HistoryItem item = parseFilename(file.getName(), file.getAbsolutePath(), file.lastModified());
+                if (item != null && item.pin == userPin) items.add(item);
             }
             items.sort((a, b) -> b.timestamp.compareTo(a.timestamp));
-            LOGGER.info("Loaded " + items.size() + " files for PIN: " + userPin);
+            LOGGER.info("Loaded " + items.size() + " cover letters for PIN: " + userPin);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error loading history: " + e.getMessage(), e);
         }
