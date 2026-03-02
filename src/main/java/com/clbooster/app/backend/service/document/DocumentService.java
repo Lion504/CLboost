@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,8 +40,41 @@ public class DocumentService {
     }
 
     /**
-     * Stores an uploaded resume file.
-     * 
+     * Stores a resume file from an InputStream.
+     *
+     * @param inputStream
+     *            The input stream of the file to store
+     * @param originalFilename
+     *            The original filename (used for extension and display)
+     * @param userId
+     *            User identifier for organizing files
+     * @return The storage path of the file
+     * @throws IOException
+     *             if storage fails
+     */
+    public String storeResumeFile(InputStream inputStream, String originalFilename, String userId) throws IOException {
+        if (inputStream == null) {
+            throw new IllegalArgumentException("Cannot store null input stream");
+        }
+        try {
+            String filename = generateStorageFilename(originalFilename, userId);
+            Path targetPath = Paths.get(DOCUMENT_STORAGE_DIR).resolve(filename);
+
+            Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+            logger.info("File stored successfully: " + targetPath);
+            return targetPath.toString();
+
+        } catch (IOException e) {
+            logger.severe("Failed to store resume file: " + e.getMessage());
+            throw new IOException("Failed to store resume file", e);
+        }
+    }
+
+    /**
+     * Stores an uploaded resume file (MultipartFile overload — delegates to
+     * {@link #storeResumeFile(InputStream, String, String)}).
+     *
      * @param file
      *            The resume file to store
      * @param userId
@@ -53,36 +87,28 @@ public class DocumentService {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("Cannot store empty file");
         }
-
-        try {
-            String filename = generateStorageFilename(file.getOriginalFilename(), userId);
-            Path targetPath = Paths.get(DOCUMENT_STORAGE_DIR).resolve(filename);
-
-            Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-
-            logger.info("File stored successfully: " + targetPath);
-            return targetPath.toString();
-
-        } catch (IOException e) {
-            logger.severe("Failed to store resume file: " + e.getMessage());
-            throw new IOException("Failed to store resume file", e);
-        }
+        return storeResumeFile(file.getInputStream(), file.getOriginalFilename(), userId);
     }
 
     /**
-     * Stores raw resume text to a file.
-     * 
+     * Stores raw resume text to a file with a custom filename.
+     *
      * @param resumeText
      *            The resume text content
+     * @param originalFilename
+     *            Desired filename (e.g. "my-cv.txt"); uses default if blank
      * @param userId
      *            User identifier
      * @return The storage path of the file
      * @throws IOException
      *             if storage fails
      */
-    public String storeResumeText(String resumeText, String userId) throws IOException {
+    public String storeResumeText(String resumeText, String originalFilename, String userId) throws IOException {
         try {
-            String filename = generateStorageFilename("resume_text.txt", userId);
+            String baseName = (originalFilename != null && !originalFilename.trim().isEmpty())
+                ? originalFilename.trim()
+                : "resume_text.txt";
+            String filename = generateStorageFilename(baseName, userId);
             Path targetPath = Paths.get(DOCUMENT_STORAGE_DIR).resolve(filename);
 
             Files.write(targetPath, resumeText.getBytes());
@@ -94,6 +120,22 @@ public class DocumentService {
             logger.severe("Failed to store resume text: " + e.getMessage());
             throw new IOException("Failed to store resume text", e);
         }
+    }
+
+    /**
+     * Stores raw resume text to a file (uses default filename).
+     * Delegates to {@link #storeResumeText(String, String, String)}.
+     *
+     * @param resumeText
+     *            The resume text content
+     * @param userId
+     *            User identifier
+     * @return The storage path of the file
+     * @throws IOException
+     *             if storage fails
+     */
+    public String storeResumeText(String resumeText, String userId) throws IOException {
+        return storeResumeText(resumeText, "resume_text.txt", userId);
     }
 
     /**
@@ -176,23 +218,16 @@ public class DocumentService {
     }
 
     /**
-     * Generates a unique filename for storage.
+     * Generates a unique filename for storage in the format:
+     * {@code userId_timestampMillis_safeOriginalFilename}.
+     * This three-part format is required by the resume list parser.
      */
     private String generateStorageFilename(String originalFilename, String userId) {
         String timestamp = String.valueOf(System.currentTimeMillis());
-        String extension = getFileExtension(originalFilename);
-        return userId + "_" + timestamp + extension;
-    }
-
-    /**
-     * Extracts file extension from filename.
-     */
-    private String getFileExtension(String filename) {
-        if (filename == null || filename.isEmpty()) {
-            return "";
-        }
-        int lastDot = filename.lastIndexOf('.');
-        return lastDot > 0 ? filename.substring(lastDot) : "";
+        String safeOriginalName = (originalFilename != null && !originalFilename.isEmpty())
+            ? originalFilename.replaceAll("[^a-zA-Z0-9._\\-]", "_")
+            : "resume";
+        return userId + "_" + timestamp + "_" + safeOriginalName;
     }
 
     /**

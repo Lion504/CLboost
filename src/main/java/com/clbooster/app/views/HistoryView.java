@@ -1,6 +1,7 @@
 package com.clbooster.app.views;
 
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -324,12 +325,17 @@ public class HistoryView extends VerticalLayout {
         downloadBtn.getElement().setAttribute("title", "Download");
         downloadBtn.addClickListener(e -> downloadCoverLetter(item));
 
-        // Edit button - navigates to editor
+        // Edit button - navigates to editor with item metadata in session
         Button editBtn = createIconButton(VaadinIcon.EDIT);
         editBtn.getElement().setAttribute("title", "Edit");
         editBtn.addClickListener(e -> {
-            String encoded = java.net.URLEncoder.encode(item.filePath, java.nio.charset.StandardCharsets.UTF_8);
-            getUI().ifPresent(ui -> ui.navigate("editor/" + encoded));
+            VaadinSession session = VaadinSession.getCurrent();
+            session.setAttribute("gen.jobTitle", item.title);
+            session.setAttribute("gen.company", item.company);
+            session.setAttribute("gen.tone", "Professional");
+            session.setAttribute("gen.skills", new java.util.HashSet<>());
+            session.setAttribute("gen.jobDesc", "");
+            getUI().ifPresent(ui -> ui.navigate("editor"));
         });
 
         // Delete button
@@ -672,8 +678,7 @@ public class HistoryView extends VerticalLayout {
 
             // Status based on age
             LocalDateTime now = LocalDateTime.now();
-            String status = timestamp.plusDays(7).isAfter(now) ? "SENT"
-                : timestamp.plusDays(30).isAfter(now) ? "FINALIZED" : "ARCHIVED";
+            String status = timestamp.plusDays(30).isAfter(now) ? "FINALIZED" : "ARCHIVED";
 
             return new HistoryItem(jobTitle, company, formattedDate, status, pin, timestamp, filePath);
         } catch (Exception e) {

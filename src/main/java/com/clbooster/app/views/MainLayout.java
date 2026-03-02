@@ -217,7 +217,6 @@ public class MainLayout extends AppLayout {
         toolsLabel.getStyle().set("letter-spacing", "0.1em");
 
         SideNavItem resume = createNavItem(getTranslation("nav.resume"), "resume", VaadinIcon.FILE_TEXT);
-        SideNavItem editor = createNavItem(getTranslation("nav.editor"), "editor", VaadinIcon.EDIT);
 
         // Support section
         Span supportLabel = new Span(getTranslation("nav.section.support"));
@@ -236,7 +235,7 @@ public class MainLayout extends AppLayout {
 
         // Create separate nav for tools items
         SideNav toolsNav = new SideNav();
-        toolsNav.addItem(resume, editor);
+        toolsNav.addItem(resume);
         drawer.add(toolsNav);
 
         drawer.add(supportLabel);
