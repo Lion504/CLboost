@@ -1,5 +1,7 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.backend.service.authentication.AuthenticationService;
+import com.clbooster.app.backend.service.profile.User;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -9,15 +11,22 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Route(value = "dashboard", layout = MainLayout.class)
 @PageTitle("Dashboard | CL Booster")
@@ -30,7 +39,16 @@ public class DashboardView extends VerticalLayout {
     private static final String BG_WHITE = "#ffffff";
     private static final String BG_GRAY = "#f5f5f7";
 
+    private static final String UPLOADS_DIR = "uploads/resumes/";
+    private HorizontalLayout lettersGrid;
+    private List<LetterCardData> allLetters;
+    private final AuthenticationService authService;
+    private User currentUser;
+
     public DashboardView() {
+        this.authService = new AuthenticationService();
+        this.currentUser = authService.getCurrentUser();
+        
         setPadding(true);
         setSpacing(true);
         getStyle().set("gap", "32px");
@@ -56,7 +74,9 @@ public class DashboardView extends VerticalLayout {
         titleGroup.setSpacing(false);
         titleGroup.getStyle().set("gap", "4px");
 
-        H1 title = new H1("Welcome back, Alex");
+        // Get user's first name or default to "Guest"
+        String firstName = currentUser != null ? currentUser.getFirstName() : "Guest";
+        H1 title = new H1("Welcome back, " + firstName);
         title.getStyle().set("font-size", "30px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("letter-spacing", "-0.025em");
@@ -120,7 +140,7 @@ public class DashboardView extends VerticalLayout {
         trendIcon.getStyle().set("background", "rgba(255,255,255,0.2)");
         trendIcon.getStyle().set("padding", "4px");
         trendIcon.getStyle().set("border-radius", "4px");
-        Icon arrow = VaadinIcon.ARROW_RIGHT.create();
+        Icon arrow = VaadinIcon.TRENDING_UP.create();
         arrow.getStyle().set("color", "white");
         arrow.getStyle().set("width", "14px");
         trendIcon.add(arrow);
@@ -159,7 +179,9 @@ public class DashboardView extends VerticalLayout {
         lettersLabel.getStyle().set("color", TEXT_SECONDARY);
         lettersLabel.getStyle().set("margin", "0 0 16px 0");
 
-        H2 lettersValue = new H2("24");
+        // Get actual file count from uploads directory
+        int fileCount = getUploadedFileCount();
+        H2 lettersValue = new H2(String.valueOf(fileCount));
         lettersValue.getStyle().set("font-size", "36px");
         lettersValue.getStyle().set("font-weight", "700");
         lettersValue.getStyle().set("color", TEXT_PRIMARY);
@@ -218,15 +240,17 @@ public class DashboardView extends VerticalLayout {
         filters.getStyle().set("gap", "8px");
 
         TextField searchField = new TextField();
-        searchField.setPlaceholder("Filter...");
+        searchField.setPlaceholder("Filter letters...");
         searchField.setPrefixComponent(VaadinIcon.SEARCH.create());
         searchField.getStyle().set("max-width", "200px");
+        searchField.addValueChangeListener(e -> filterLetters(e.getValue()));
 
         Button filterBtn = new Button("Filter", VaadinIcon.FILTER.create());
         filterBtn.getStyle().set("background", "rgba(0,0,0,0.05)");
         filterBtn.getStyle().set("color", TEXT_PRIMARY);
         filterBtn.getStyle().set("border-radius", "9999px");
         filterBtn.getStyle().set("font-size", "13px");
+        filterBtn.addClickListener(e -> Notification.show("Advanced filtering coming soon!", 3000, Notification.Position.TOP_CENTER));
 
         filters.add(searchField, filterBtn);
 
@@ -239,16 +263,11 @@ public class DashboardView extends VerticalLayout {
         lettersGrid.getStyle().set("gap", "24px");
         lettersGrid.getStyle().set("flex-wrap", "wrap");
 
-        // Sample letters data
-        List<String[]> letters = List.of(
-            new String[]{"Senior Product Designer", "Apple Inc.", "2 hours ago", "Draft", "98%"},
-            new String[]{"React Developer", "Meta", "Yesterday", "Sent", "92%"},
-            new String[]{"UX Engineer", "Airbnb", "3 days ago", "Optimized", "85%"}
-        );
-
-        for (String[] letter : letters) {
-            lettersGrid.add(createLetterCard(letter[0], letter[1], letter[2], letter[3], letter[4]));
-        }
+        // Load letters data from uploads or use sample data
+        allLetters = loadLetterData();
+        
+        // Display letters
+        refreshLettersGrid(allLetters);
 
         // Create new button card
         Div createCard = new Div();
@@ -424,5 +443,145 @@ public class DashboardView extends VerticalLayout {
         card.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(GeneratorView.class)));
 
         return card;
+    }
+
+    private int getUploadedFileCount() {
+        try {
+            Path uploadsPath = Paths.get(UPLOADS_DIR);
+            if (!Files.exists(uploadsPath)) {
+                return 0;
+            }
+            try (Stream<Path> files = Files.list(uploadsPath)) {
+                return (int) files.filter(Files::isRegularFile).count();
+            }
+        } catch (IOException e) {
+            return 0;
+        }
+    }
+
+    private List<LetterCardData> loadLetterData() {
+        List<LetterCardData> letters = new ArrayList<>();
+        
+        // Try to load from uploads directory
+        try {
+            Path uploadsPath = Paths.get(UPLOADS_DIR);
+            if (Files.exists(uploadsPath)) {
+                try (Stream<Path> files = Files.list(uploadsPath)
+                        .filter(Files::isRegularFile)
+                        .sorted((a, b) -> {
+                            try {
+                                return Files.getLastModifiedTime(b).compareTo(Files.getLastModifiedTime(a));
+                            } catch (IOException e) {
+                                return 0;
+                            }
+                        })
+                        .limit(3)) {
+                    
+                    files.forEach(file -> {
+                        String fileName = file.getFileName().toString();
+                        String title = extractJobTitle(fileName);
+                        String company = extractCompany(fileName);
+                        String date = getRelativeDate(file);
+                        letters.add(new LetterCardData(title, company, date, "Draft", "95%"));
+                    });
+                }
+            }
+        } catch (IOException e) {
+            // Fall through to sample data
+        }
+        
+        // If no files found, use sample data
+        if (letters.isEmpty()) {
+            letters.add(new LetterCardData("Senior Product Designer", "Apple Inc.", "2 hours ago", "Draft", "98%"));
+            letters.add(new LetterCardData("React Developer", "Meta", "Yesterday", "Sent", "92%"));
+            letters.add(new LetterCardData("UX Engineer", "Airbnb", "3 days ago", "Optimized", "85%"));
+        }
+        
+        return letters;
+    }
+
+    private String extractJobTitle(String fileName) {
+        // Extract potential job title from filename
+        if (fileName.contains("_")) {
+            String[] parts = fileName.split("_");
+            if (parts.length > 1) {
+                return parts[1].replaceAll("\\.\\w+$", "").replace("-", " ");
+            }
+        }
+        return "Cover Letter";
+    }
+
+    private String extractCompany(String fileName) {
+        // Extract potential company from filename or return generic
+        return "Company";
+    }
+
+    private String getRelativeDate(Path file) {
+        try {
+            long modified = Files.getLastModifiedTime(file).toMillis();
+            long now = System.currentTimeMillis();
+            long diff = now - modified;
+            
+            long hours = diff / (1000 * 60 * 60);
+            if (hours < 1) return "Just now";
+            if (hours < 24) return hours + " hours ago";
+            
+            long days = hours / 24;
+            if (days == 1) return "Yesterday";
+            if (days < 7) return days + " days ago";
+            if (days < 30) return (days / 7) + " weeks ago";
+            
+            return (days / 30) + " months ago";
+        } catch (IOException e) {
+            return "Recently";
+        }
+    }
+
+    private void filterLetters(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            refreshLettersGrid(allLetters);
+            return;
+        }
+        
+        String lowerQuery = query.toLowerCase();
+        List<LetterCardData> filtered = allLetters.stream()
+            .filter(l -> l.title.toLowerCase().contains(lowerQuery) ||
+                        l.company.toLowerCase().contains(lowerQuery) ||
+                        l.status.toLowerCase().contains(lowerQuery))
+            .collect(Collectors.toList());
+        
+        refreshLettersGrid(filtered);
+    }
+
+    private void refreshLettersGrid(List<LetterCardData> letters) {
+        // Clear existing letter cards (keep create card)
+        if (lettersGrid != null) {
+            List<com.vaadin.flow.component.Component> toRemove = lettersGrid.getChildren()
+                .filter(c -> c instanceof Div && ((Div) c).getElement().getProperty("class") != null)
+                .collect(Collectors.toList());
+            toRemove.forEach(lettersGrid::remove);
+            
+            // Add letter cards
+            for (LetterCardData letter : letters) {
+                lettersGrid.add(createLetterCard(letter.title, letter.company, letter.date, letter.status, letter.match));
+            }
+        }
+    }
+
+    // Helper class for letter card data
+    private static class LetterCardData {
+        final String title;
+        final String company;
+        final String date;
+        final String status;
+        final String match;
+
+        LetterCardData(String title, String company, String date, String status, String match) {
+            this.title = title;
+            this.company = company;
+            this.date = date;
+            this.status = status;
+            this.match = match;
+        }
     }
 }
