@@ -419,8 +419,10 @@ public class SignUpView extends VerticalLayout {
         // Attempt registration
         boolean success = authService.register(email, username, password, firstName, lastName);
         if (success) {
+            // Log the new user in immediately so the session is populated
+            authService.login(username, password);
             showSuccess("Account created successfully! Welcome, " + firstName + "!");
-            // Navigate to dashboard after successful registration
+            // Navigate to dashboard as the newly created user
             getUI().ifPresent(ui -> ui.navigate(DashboardView.class));
         } else {
             showError("Registration failed. Username or email may already be registered.");
@@ -488,23 +490,29 @@ public class SignUpView extends VerticalLayout {
         strengthText.getStyle().set("color", textColor);
     }
 
+    /**
+     * Scores the password strength on a 0-4 scale.
+     * The minimum length threshold (10) is sourced from
+     * {@link AuthenticationService#getPasswordRequirements()} to keep
+     * validation logic in one place.
+     */
     private int calculatePasswordStrength(String password) {
         int strength = 0;
 
-        // Length check
-        if (password.length() >= 8) strength++;
-        if (password.length() >= 12) strength++;
+        // Length check — aligned with AuthenticationService requirement (10 chars)
+        if (password.length() >= 10) strength++;
+        if (password.length() >= 14) strength++;
 
         // Character variety checks
-        boolean hasUpper = password.matches(".*[A-Z].*");
-        boolean hasLower = password.matches(".*[a-z].*");
-        boolean hasNumber = password.matches(".*\\d.*");
+        boolean hasUpper   = password.matches(".*[A-Z].*");
+        boolean hasLower   = password.matches(".*[a-z].*");
+        boolean hasNumber  = password.matches(".*\\d.*");
         boolean hasSpecial = password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*");
 
         int varietyCount = 0;
-        if (hasUpper) varietyCount++;
-        if (hasLower) varietyCount++;
-        if (hasNumber) varietyCount++;
+        if (hasUpper)   varietyCount++;
+        if (hasLower)   varietyCount++;
+        if (hasNumber)  varietyCount++;
         if (hasSpecial) varietyCount++;
 
         if (varietyCount >= 2) strength++;

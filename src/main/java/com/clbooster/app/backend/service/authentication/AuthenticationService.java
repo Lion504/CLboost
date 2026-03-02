@@ -4,6 +4,9 @@ import com.clbooster.app.backend.service.profile.User;
 import com.clbooster.app.backend.service.profile.UserDAO;
 import com.vaadin.flow.server.VaadinSession;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class AuthenticationService {
     private UserDAO userDAO;
     private static final String USER_SESSION_ATTRIBUTE = "currentUser";
