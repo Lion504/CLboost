@@ -1,6 +1,8 @@
 package com.clbooster.app.views;
 
+import com.clbooster.aiservice.Parser;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -15,11 +17,22 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.FileBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * 4-Step Wizard Generator View matching Figma Generator.tsx
@@ -44,6 +57,8 @@ public class GeneratorWizardView extends VerticalLayout {
     private static final String PURPLE = "#AF52DE";
     private static final String ORANGE = "#FF9500";
 
+    private static final Logger LOGGER = Logger.getLogger(GeneratorWizardView.class.getName());
+
     private int currentStep = 1;
     private final int totalSteps = 4;
     private boolean loading = false;
@@ -53,7 +68,7 @@ public class GeneratorWizardView extends VerticalLayout {
     private String companyName = "";
     private String jobDescription = "";
     private Set<String> selectedSkills = new HashSet<>();
-    private String selectedTone = "Creative";
+    private String selectedTone = ""; // No default selection - user must choose
 
     // Step content containers
     private Div stepContentContainer;
@@ -63,12 +78,25 @@ public class GeneratorWizardView extends VerticalLayout {
     private Div loadingOverlay;
     private VerticalLayout container;
 
+    // Step 1 form fields for inline validation
+    private TextField step1JobTitleField;
+    private TextField step1CompanyField;
+    private TextArea step1DescField;
+
+    // Step 2 skills grid for dynamic updates
+    private Div skillsGrid;
+    private final List<Button> skillButtons = new ArrayList<>();
+    private static final String[] AVAILABLE_SKILLS = {"React", "TypeScript", "Node.js", "UI Design", "GraphQL", "AWS", "Agile", "Leadership"};
+
     public GeneratorWizardView() {
         setSizeFull();
         setPadding(false);
         setSpacing(false);
         getStyle().set("background", BG_WHITE);
         getStyle().set("overflow", "auto");
+
+        // Clear any previous session data when starting a new wizard session
+        clearWizardSessionData();
 
         // Main container with max width
         container = new VerticalLayout();
@@ -257,15 +285,21 @@ public class GeneratorWizardView extends VerticalLayout {
 
         // Job Title
         VerticalLayout jobTitleGroup = createFormField("Job Title", VaadinIcon.BRIEFCASE, "e.g., Senior Frontend Engineer");
-        TextField jobTitleField = (TextField) jobTitleGroup.getComponentAt(1);
-        jobTitleField.setValue(jobTitle);
-        jobTitleField.addValueChangeListener(e -> jobTitle = e.getValue());
+        step1JobTitleField = (TextField) jobTitleGroup.getComponentAt(1);
+        step1JobTitleField.setValue(jobTitle);
+        step1JobTitleField.addValueChangeListener(e -> {
+            jobTitle = e.getValue();
+            step1JobTitleField.setInvalid(false); // Clear error on change
+        });
 
         // Company Name
         VerticalLayout companyGroup = createFormField("Company Name", VaadinIcon.BUILDING, "e.g., Acme Corp");
-        TextField companyField = (TextField) companyGroup.getComponentAt(1);
-        companyField.setValue(companyName);
-        companyField.addValueChangeListener(e -> companyName = e.getValue());
+        step1CompanyField = (TextField) companyGroup.getComponentAt(1);
+        step1CompanyField.setValue(companyName);
+        step1CompanyField.addValueChangeListener(e -> {
+            companyName = e.getValue();
+            step1CompanyField.setInvalid(false); // Clear error on change
+        });
 
         // Job Description
         VerticalLayout descGroup = new VerticalLayout();
@@ -280,18 +314,21 @@ public class GeneratorWizardView extends VerticalLayout {
         descLabel.getStyle().set("text-transform", "uppercase");
         descLabel.getStyle().set("letter-spacing", "0.1em");
 
-        TextArea descField = new TextArea();
-        descField.setPlaceholder("Paste the job description here...");
-        descField.setWidthFull();
-        descField.setMinHeight("160px");
-        descField.getStyle().set("background", BG_WHITE);
-        descField.getStyle().set("border", "1px solid rgba(0,0,0,0.1)");
-        descField.getStyle().set("border-radius", "12px");
-        descField.getStyle().set("padding", "12px 16px");
-        descField.setValue(jobDescription);
-        descField.addValueChangeListener(e -> jobDescription = e.getValue());
+        step1DescField = new TextArea();
+        step1DescField.setPlaceholder("Paste the job description here...");
+        step1DescField.setWidthFull();
+        step1DescField.setMinHeight("160px");
+        step1DescField.getStyle().set("background", BG_WHITE);
+        step1DescField.getStyle().set("border", "1px solid rgba(0,0,0,0.1)");
+        step1DescField.getStyle().set("border-radius", "12px");
+        step1DescField.getStyle().set("padding", "12px 16px");
+        step1DescField.setValue(jobDescription);
+        step1DescField.addValueChangeListener(e -> {
+            jobDescription = e.getValue();
+            step1DescField.setInvalid(false); // Clear error on change
+        });
 
-        descGroup.add(descLabel, descField);
+        descGroup.add(descLabel, step1DescField);
 
         form.add(jobTitleGroup, companyGroup, descGroup);
         card.add(form);
@@ -323,46 +360,19 @@ public class GeneratorWizardView extends VerticalLayout {
         subtitle.getStyle().set("margin", "0 0 16px 0");
 
         // Skills grid
-        Div skillsGrid = new Div();
+        skillsGrid = new Div();
         skillsGrid.getStyle().set("display", "grid");
         skillsGrid.getStyle().set("grid-template-columns", "repeat(auto-fill, minmax(140px, 1fr))");
         skillsGrid.getStyle().set("gap", "16px");
         skillsGrid.getStyle().set("width", "100%");
         skillsGrid.getStyle().set("max-width", "640px");
 
-        String[] skills = {"React", "TypeScript", "Node.js", "UI Design", "GraphQL", "AWS", "Agile", "Leadership"};
+        // Clear previous buttons list
+        skillButtons.clear();
         
-        for (String skill : skills) {
-            Button skillBtn = new Button(skill);
-            skillBtn.setWidthFull();
-            skillBtn.getStyle().set("padding", "16px");
-            skillBtn.getStyle().set("border-radius", "16px");
-            skillBtn.getStyle().set("font-weight", "700");
-            skillBtn.getStyle().set("font-size", "14px");
-            skillBtn.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
-            skillBtn.getStyle().set("background", BG_WHITE);
-            skillBtn.getStyle().set("color", TEXT_PRIMARY);
-            skillBtn.getStyle().set("cursor", "pointer");
-            skillBtn.getStyle().set("transition", "all 0.2s ease");
-
-            // Check if already selected
-            if (selectedSkills.contains(skill)) {
-                skillBtn.getStyle().set("border-color", PRIMARY);
-                skillBtn.getStyle().set("box-shadow", "0 4px 12px rgba(0,122,255,0.15)");
-            }
-
-            skillBtn.addClickListener(e -> {
-                if (selectedSkills.contains(skill)) {
-                    selectedSkills.remove(skill);
-                    skillBtn.getStyle().set("border-color", "rgba(0,0,0,0.05)");
-                    skillBtn.getStyle().set("box-shadow", "none");
-                } else {
-                    selectedSkills.add(skill);
-                    skillBtn.getStyle().set("border-color", PRIMARY);
-                    skillBtn.getStyle().set("box-shadow", "0 4px 12px rgba(0,122,255,0.15)");
-                }
-            });
-
+        for (String skill : AVAILABLE_SKILLS) {
+            Button skillBtn = createSkillButton(skill);
+            skillButtons.add(skillBtn);
             skillsGrid.add(skillBtn);
         }
 
@@ -394,19 +404,195 @@ public class GeneratorWizardView extends VerticalLayout {
         importDesc.getStyle().set("color", TEXT_SECONDARY);
         importDesc.getStyle().set("margin", "0 0 16px 0");
 
-        Button uploadBtn = new Button("Upload File");
-        uploadBtn.getStyle().set("background", "rgba(0,0,0,0.05)");
-        uploadBtn.getStyle().set("color", TEXT_PRIMARY);
-        uploadBtn.getStyle().set("font-weight", "600");
-        uploadBtn.getStyle().set("border-radius", "9999px");
-        uploadBtn.getStyle().set("padding", "8px 20px");
-        uploadBtn.addClickListener(e -> Notification.show("Resume upload coming soon!", 3000, Notification.Position.TOP_CENTER));
+        // Create Upload component with FileBuffer
+        // FileBuffer writes directly to a file instead of memory, avoiding stream issues
+        FileBuffer buffer = new FileBuffer();
+        Upload upload = new Upload();
+        upload.setReceiver(buffer);
 
-        importCard.add(fileIcon, importTitle, importDesc, uploadBtn);
+        upload.setDropAllowed(false);
+        upload.setAcceptedFileTypes("application/pdf", ".pdf",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx",
+            "application/msword", ".doc");
+        upload.setMaxFiles(1);
+        upload.setMaxFileSize(10 * 1024 * 1024); // 10MB max file size
+
+        // Set up the upload button properly
+        upload.setUploadButton(new Button("Upload File"));
+        upload.setDropLabel(new Span(""));
+        upload.setDropAllowed(false);
+
+        // Handle successful upload - FileBuffer provides direct file access
+        upload.addSucceededListener(event -> {
+            String fileName = event.getFileName();
+            LOGGER.info("[UPLOAD] File upload succeeded: " + fileName);
+
+            try {
+                // Validate filename
+                if (fileName == null || fileName.trim().isEmpty()) {
+                    throw new IllegalArgumentException("Filename is empty or null");
+                }
+
+                // Extract and validate file extension
+                String originalFileName = fileName.trim();
+                String fileExtension = "";
+                int lastDotIndex = originalFileName.lastIndexOf('.');
+                if (lastDotIndex > 0 && lastDotIndex < originalFileName.length() - 1) {
+                    fileExtension = originalFileName.substring(lastDotIndex).toLowerCase();
+                }
+                LOGGER.info("[UPLOAD] File extension detected: " + fileExtension);
+
+                // Validate supported extensions
+                Set<String> supportedExtensions = new HashSet<>(Arrays.asList(".pdf", ".docx", ".doc"));
+                if (!supportedExtensions.contains(fileExtension)) {
+                    throw new IllegalArgumentException("Unsupported file type: " + fileExtension + ". Only PDF and DOCX files are supported.");
+                }
+
+                // Get the temp file that FileBuffer already wrote to disk
+                File tempFile = buffer.getFileData().getFile();
+                LOGGER.info("[UPLOAD] FileBuffer temp file path: " + tempFile.getAbsolutePath());
+
+                if (!tempFile.exists()) {
+                    throw new IOException("Temp file does not exist: " + tempFile.getAbsolutePath());
+                }
+                if (tempFile.length() == 0) {
+                    throw new IOException("Temp file is empty: " + tempFile.getAbsolutePath());
+                }
+                LOGGER.info("[UPLOAD] Temp file size: " + tempFile.length() + " bytes");
+
+                // Parse the file using the Parser class directly using the temp file path
+                Parser parser = new Parser();
+                LOGGER.info("[UPLOAD] Starting file parsing...");
+                String resumeText = parser.parseFileToJson(tempFile.getAbsolutePath());
+                LOGGER.info("[UPLOAD] File parsing completed. Extracted " + (resumeText != null ? resumeText.length() : 0) + " characters");
+
+                // Extract skills from the resume text
+                Set<String> extractedSkills = extractSkillsFromText(resumeText);
+                LOGGER.info("[UPLOAD] Skills extracted: " + extractedSkills.size() + " skills found");
+
+                if (!extractedSkills.isEmpty()) {
+                    selectedSkills.addAll(extractedSkills);
+                    updateSkillButtonsUI();
+
+                    String skillsText = String.join(", ", extractedSkills);
+                    Notification.show("Skills extracted from resume: " + skillsText,
+                        5000, Notification.Position.TOP_CENTER);
+                } else {
+                    Notification.show("No matching skills found in the resume. Please select skills manually.",
+                        3000, Notification.Position.TOP_CENTER);
+                }
+
+                upload.getElement().executeJs("this.files = []");
+
+            } catch (IllegalArgumentException e) {
+                LOGGER.warning("[UPLOAD] Validation error: " + e.getMessage());
+                Notification.show("Upload error: " + e.getMessage(),
+                    5000, Notification.Position.TOP_CENTER);
+                upload.getElement().executeJs("this.files = []");
+            } catch (IOException e) {
+                LOGGER.severe("[UPLOAD] File I/O error: " + e.getMessage());
+                Notification.show("File error: " + e.getMessage() + ". Please try again.",
+                    5000, Notification.Position.TOP_CENTER);
+                upload.getElement().executeJs("this.files = []");
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "[UPLOAD] Unexpected error processing file '" + fileName + "': " + e.getMessage(), e);
+                Notification.show("Error processing file: " + e.getMessage() + ". Please check the file format and try again.",
+                    5000, Notification.Position.TOP_CENTER);
+                upload.getElement().executeJs("this.files = []");
+            }
+        });
+
+        // Handle failed upload
+        upload.addFailedListener(event -> {
+            LOGGER.severe("[UPLOAD] Upload failed event: " + (event.getReason() != null ? event.getReason().getMessage() : "Unknown reason"));
+            Notification.show("File upload failed: " + (event.getReason() != null ? event.getReason().getMessage() : "Unknown error"),
+                5000, Notification.Position.TOP_CENTER);
+        });
+
+        // Handle file rejection (wrong type, too large, etc.)
+        upload.addFileRejectedListener(event -> {
+            LOGGER.warning("[UPLOAD] File rejected: " + event.getErrorMessage());
+            Notification.show("File rejected: " + event.getErrorMessage(),
+                5000, Notification.Position.TOP_CENTER);
+        });
+
+        importCard.add(fileIcon, importTitle, importDesc, upload);
 
         layout.add(title, subtitle, skillsGrid, importCard);
 
         return layout;
+    }
+    
+    private Button createSkillButton(String skill) {
+        Button skillBtn = new Button(skill);
+        skillBtn.setWidthFull();
+        skillBtn.getStyle().set("padding", "16px");
+        skillBtn.getStyle().set("border-radius", "16px");
+        skillBtn.getStyle().set("font-weight", "700");
+        skillBtn.getStyle().set("font-size", "14px");
+        skillBtn.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
+        skillBtn.getStyle().set("background", BG_WHITE);
+        skillBtn.getStyle().set("color", TEXT_PRIMARY);
+        skillBtn.getStyle().set("cursor", "pointer");
+        skillBtn.getStyle().set("transition", "all 0.2s ease");
+
+        // Check if already selected
+        updateSkillButtonStyle(skillBtn, skill);
+
+        skillBtn.addClickListener(e -> {
+            if (selectedSkills.contains(skill)) {
+                selectedSkills.remove(skill);
+            } else {
+                selectedSkills.add(skill);
+            }
+            updateSkillButtonStyle(skillBtn, skill);
+        });
+
+        return skillBtn;
+    }
+    
+    private void updateSkillButtonStyle(Button skillBtn, String skill) {
+        if (selectedSkills.contains(skill)) {
+            skillBtn.getStyle().set("border-color", PRIMARY);
+            skillBtn.getStyle().set("box-shadow", "0 4px 12px rgba(0,122,255,0.15)");
+        } else {
+            skillBtn.getStyle().set("border-color", "rgba(0,0,0,0.05)");
+            skillBtn.getStyle().set("box-shadow", "none");
+        }
+    }
+    
+    private void updateSkillButtonsUI() {
+        for (Button skillBtn : skillButtons) {
+            String skill = skillBtn.getText();
+            updateSkillButtonStyle(skillBtn, skill);
+        }
+    }
+    
+    private Set<String> extractSkillsFromText(String text) {
+        Set<String> foundSkills = new HashSet<>();
+        if (text == null || text.isEmpty()) {
+            return foundSkills;
+        }
+        
+        // Convert text to lowercase for case-insensitive matching
+        String lowerText = text.toLowerCase();
+        
+        // Check for each skill in the text (case-insensitive)
+        for (String skill : AVAILABLE_SKILLS) {
+            // Create a regex pattern that matches the skill as a whole word
+            // Handle special characters like . in "Node.js" and spaces in "UI Design"
+            String skillPattern = skill.toLowerCase()
+                .replace(".", "\\.")  // Escape dots
+                .replace(" ", "\\s+"); // Match spaces as one or more whitespace
+            
+            // Check if the skill appears as a word in the text
+            if (lowerText.matches(".*\\b" + skillPattern + "\\b.*") ||
+                lowerText.contains(skill.toLowerCase())) {
+                foundSkills.add(skill);
+            }
+        }
+        
+        return foundSkills;
     }
 
     private VerticalLayout createStep3AICustomization() {
@@ -704,18 +890,72 @@ public class GeneratorWizardView extends VerticalLayout {
 
     private void handleNext() {
         if (currentStep < totalSteps) {
+            // Validate Step 1 fields before proceeding
+            if (currentStep == 1) {
+                if (!validateStep1Fields()) {
+                    return; // Validation failed, don't proceed
+                }
+            }
+            
+            // Validate Step 3 tone selection before proceeding
+            if (currentStep == 3) {
+                if (selectedTone == null || selectedTone.isEmpty()) {
+                    Notification.show("Please select a tone to continue", 3000, Notification.Position.TOP_CENTER);
+                    return; // Validation failed, don't proceed
+                }
+            }
+            
             // Show loading animation
             showLoading();
             
-            // Simulate loading delay like Figma
-            getUI().ifPresent(ui -> ui.getPage().executeJs(
-                "setTimeout(() => { $0.$server.advanceStep(); }, 800);",
-                getElement()
-            ));
+            // Direct synchronous step transition on UI thread
+            try {
+                showStep(currentStep + 1);
+            } finally {
+                // Always hide loading overlay, even if an exception occurs
+                hideLoading();
+            }
         } else {
             // Generate the letter
             generateLetter();
         }
+    }
+
+    private boolean validateStep1Fields() {
+        boolean valid = true;
+        
+        // Inline validation with field errors
+        if (step1JobTitleField != null) {
+            if (jobTitle == null || jobTitle.trim().isEmpty()) {
+                step1JobTitleField.setErrorMessage("Job title is required");
+                step1JobTitleField.setInvalid(true);
+                valid = false;
+            } else {
+                step1JobTitleField.setInvalid(false);
+            }
+        }
+        
+        if (step1CompanyField != null) {
+            if (companyName == null || companyName.trim().isEmpty()) {
+                step1CompanyField.setErrorMessage("Company name is required");
+                step1CompanyField.setInvalid(true);
+                valid = false;
+            } else {
+                step1CompanyField.setInvalid(false);
+            }
+        }
+        
+        if (step1DescField != null) {
+            if (jobDescription == null || jobDescription.trim().isEmpty()) {
+                step1DescField.setErrorMessage("Job description is required");
+                step1DescField.setInvalid(true);
+                valid = false;
+            } else {
+                step1DescField.setInvalid(false);
+            }
+        }
+        
+        return valid;
     }
 
     private void showLoading() {
@@ -753,17 +993,31 @@ public class GeneratorWizardView extends VerticalLayout {
         }
     }
 
-    // Called from JavaScript
-    private void advanceStep() {
-        getUI().ifPresent(ui -> ui.access(() -> {
-            hideLoading();
-            if (currentStep < totalSteps) {
-                showStep(currentStep + 1);
-            }
-        }));
+    /**
+     * Clears wizard-related session attributes to prevent stale data
+     * when starting a new cover letter generation.
+     */
+    private void clearWizardSessionData() {
+        VaadinSession session = VaadinSession.getCurrent();
+        if (session != null) {
+            session.setAttribute("gen.jobTitle", null);
+            session.setAttribute("gen.company", null);
+            session.setAttribute("gen.tone", null);
+            session.setAttribute("gen.skills", null);
+            session.setAttribute("gen.jobDesc", null);
+            LOGGER.info("Cleared wizard session data");
+        }
     }
 
     private void generateLetter() {
+        // Store wizard data in VaadinSession for EditorView to access
+        VaadinSession session = VaadinSession.getCurrent();
+        session.setAttribute("gen.jobTitle", jobTitle);
+        session.setAttribute("gen.company", companyName);
+        session.setAttribute("gen.tone", selectedTone);
+        session.setAttribute("gen.skills", selectedSkills);
+        session.setAttribute("gen.jobDesc", jobDescription);
+
         // Show full-screen loading
         Div fullScreenLoading = new Div();
         fullScreenLoading.getStyle().set("position", "fixed");
@@ -792,9 +1046,9 @@ public class GeneratorWizardView extends VerticalLayout {
         fullScreenLoading.add(spinner, loadingText);
         add(fullScreenLoading);
 
-        // Navigate to editor after delay
-        getUI().ifPresent(ui -> ui.getPage().executeJs(
-            "setTimeout(() => { window.location.href = '/editor'; }, 2500);"
-        ));
+        // Navigate to editor after delay using UI.navigate()
+        UI.getCurrent().access(() -> {
+            UI.getCurrent().navigate("editor");
+        });
     }
 }
