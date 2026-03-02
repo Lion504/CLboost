@@ -38,7 +38,12 @@ PORT=8080
 mvn clean install
 
 # Run in development mode
+$env:GEMINI_API_KEY="key"
+$env:GOOGLE_PROJECT_ID="your-actual-project-id"
 mvn spring-boot:run
+
+# skip test
+mvn spring-boot:run -DskipTests
 ```
 
 Application will be available at http://localhost:8080 by default
