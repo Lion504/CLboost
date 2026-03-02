@@ -1,8 +1,13 @@
 package com.clbooster.app.views;
 
+import com.clbooster.aiservice.AIService;
+import com.clbooster.aiservice.Exporter;
 import com.clbooster.aiservice.Parser;
+import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -23,8 +28,14 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -60,7 +71,7 @@ public class GeneratorWizardView extends VerticalLayout {
     private static final Logger LOGGER = Logger.getLogger(GeneratorWizardView.class.getName());
 
     private int currentStep = 1;
-    private final int totalSteps = 4;
+    private final int totalSteps = 5;
     private boolean loading = false;
 
     // Form data
@@ -82,6 +93,10 @@ public class GeneratorWizardView extends VerticalLayout {
     private TextField step1JobTitleField;
     private TextField step1CompanyField;
     private TextArea step1DescField;
+
+    // Step 5 editor
+    private TextArea editorTextArea;
+    private String savedFilePath;
 
     // Step 2 skills grid for dynamic updates
     private Div skillsGrid;
@@ -157,8 +172,8 @@ public class GeneratorWizardView extends VerticalLayout {
         indicator.getStyle().set("gap", "0");
         indicator.getStyle().set("margin-bottom", "24px");
 
-        String[] stepTitles = {"Job Details", "Qualifications", "AI Customization", "Review"};
-        VaadinIcon[] stepIcons = {VaadinIcon.BUILDING, VaadinIcon.LIST_SELECT, VaadinIcon.STAR, VaadinIcon.CHECK_CIRCLE};
+        String[] stepTitles = {"Job Details", "Qualifications", "AI Customization", "Summary", "Editor"};
+        VaadinIcon[] stepIcons = {VaadinIcon.BUILDING, VaadinIcon.LIST_SELECT, VaadinIcon.STAR, VaadinIcon.CHECK_CIRCLE, VaadinIcon.EDIT};
 
         for (int i = 0; i < totalSteps; i++) {
             final int stepNum = i + 1;
@@ -236,6 +251,9 @@ public class GeneratorWizardView extends VerticalLayout {
                 break;
             case 4:
                 stepContentContainer.add(createStep4Review());
+                break;
+            case 5:
+                stepContentContainer.add(createStep5Editor());
                 break;
         }
 
@@ -877,12 +895,18 @@ public class GeneratorWizardView extends VerticalLayout {
     }
 
     private void updateNavigationButtons() {
-        backButton.setVisible(currentStep > 1);
-        
         if (currentStep == totalSteps) {
-            nextButton.setText("Generate Letter");
+            // Editor step: hide Next, keep Back so user can revisit summary
+            backButton.setVisible(true);
+            nextButton.setVisible(false);
+        } else if (currentStep == 4) {
+            backButton.setVisible(true);
+            nextButton.setVisible(true);
+            nextButton.setText("Generate & Edit");
             nextButton.setIcon(VaadinIcon.MAGIC.create());
         } else {
+            backButton.setVisible(currentStep > 1);
+            nextButton.setVisible(true);
             nextButton.setText("Next Step");
             nextButton.setIcon(VaadinIcon.ARROW_RIGHT.create());
         }
@@ -915,10 +939,8 @@ public class GeneratorWizardView extends VerticalLayout {
                 // Always hide loading overlay, even if an exception occurs
                 hideLoading();
             }
-        } else {
-            // Generate the letter
-            generateLetter();
         }
+        // Step 5 (editor) hides the Next button, so no else branch needed
     }
 
     private boolean validateStep1Fields() {
@@ -993,6 +1015,330 @@ public class GeneratorWizardView extends VerticalLayout {
         }
     }
 
+    private VerticalLayout createStep5Editor() {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setWidthFull();
+        layout.setHeightFull();
+        layout.setSpacing(false);
+        layout.setPadding(false);
+        layout.getStyle().set("gap", "12px");
+
+        // ── Editor header ──────────────────────────────────────────────────────
+        HorizontalLayout header = new HorizontalLayout();
+        header.setWidthFull();
+        header.setAlignItems(FlexComponent.Alignment.CENTER);
+        header.getStyle().set("padding", "0 0 8px 0");
+
+        VerticalLayout titleGroup = new VerticalLayout();
+        titleGroup.setPadding(false);
+        titleGroup.setSpacing(false);
+        H1 jobTitleLabel = new H1(jobTitle);
+        jobTitleLabel.getStyle().set("font-size", "20px").set("font-weight", "700")
+            .set("color", TEXT_PRIMARY).set("margin", "0");
+        Paragraph subLabel = new Paragraph(companyName + " • " + selectedTone + " tone");
+        subLabel.getStyle().set("font-size", "13px").set("color", TEXT_SECONDARY).set("margin", "0");
+        titleGroup.add(jobTitleLabel, subLabel);
+
+        HorizontalLayout actions = new HorizontalLayout();
+        actions.setAlignItems(FlexComponent.Alignment.CENTER);
+        actions.getStyle().set("gap", "12px");
+
+        Button saveDocxBtn = new Button("Save DOCX", VaadinIcon.DOWNLOAD.create());
+        saveDocxBtn.getStyle().set("background", "rgba(0,0,0,0.05)").set("color", TEXT_PRIMARY)
+            .set("font-weight", "600").set("border-radius", "9999px").set("padding", "10px 20px");
+        saveDocxBtn.addClickListener(e -> downloadEditorAsDocx());
+
+        Button exportPdfBtn = new Button("Export PDF", VaadinIcon.FILE_TEXT.create());
+        exportPdfBtn.getStyle().set("background", PRIMARY).set("color", "white")
+            .set("font-weight", "600").set("border-radius", "9999px").set("padding", "10px 24px")
+            .set("border", "none").set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
+        exportPdfBtn.addClickListener(e -> downloadEditorAsPdf());
+
+        actions.add(saveDocxBtn, exportPdfBtn);
+        header.add(titleGroup, actions);
+        header.expand(titleGroup);
+
+        // ── Toolbar ────────────────────────────────────────────────────────────
+        HorizontalLayout toolbar = new HorizontalLayout();
+        toolbar.setWidthFull();
+        toolbar.setAlignItems(FlexComponent.Alignment.CENTER);
+        toolbar.getStyle().set("gap", "8px").set("padding", "12px 16px")
+            .set("background", BG_GRAY).set("border-radius", "12px");
+
+        Button boldBtn = createEditorToolbarButton(VaadinIcon.BOLD, "Bold");
+        boldBtn.addClickListener(e -> wrapEditorContent("**", "**"));
+        Button italicBtn = createEditorToolbarButton(VaadinIcon.ITALIC, "Italic");
+        italicBtn.addClickListener(e -> wrapEditorContent("_", "_"));
+        Button underlineBtn = createEditorToolbarButton(VaadinIcon.UNDERLINE, "Underline");
+        underlineBtn.addClickListener(e -> wrapEditorContent("__", "__"));
+
+        Button copyBtn = createEditorToolbarButton(VaadinIcon.COPY, "Copy all");
+        copyBtn.addClickListener(e -> {
+            if (editorTextArea != null) {
+                UI.getCurrent().getPage().executeJs(
+                    "navigator.clipboard.writeText($0)", editorTextArea.getValue());
+                Notification.show("Copied to clipboard", 2000, Notification.Position.TOP_CENTER);
+            }
+        });
+
+        Button clearBtn = createEditorToolbarButton(VaadinIcon.TRASH, "Clear");
+        clearBtn.addClickListener(e -> { if (editorTextArea != null) editorTextArea.setValue(""); });
+
+        Div divider = new Div();
+        divider.getStyle().set("width", "1px").set("height", "24px")
+            .set("background", "rgba(0,0,0,0.1)");
+
+        Button regenBtn = new Button("Regenerate", VaadinIcon.MAGIC.create());
+        regenBtn.getStyle().set("background", PRIMARY + "15").set("color", PRIMARY)
+            .set("font-weight", "600").set("border-radius", "9999px")
+            .set("padding", "8px 16px").set("border", "none");
+        regenBtn.addClickListener(e -> {
+            if (editorTextArea == null) return;
+            editorTextArea.setValue("⏳ Regenerating...");
+            editorTextArea.setEnabled(false);
+            UI ui = UI.getCurrent();
+            Thread t = new Thread(() -> {
+                String result = generateCoverLetterText();
+                ui.access(() -> { editorTextArea.setValue(result); editorTextArea.setEnabled(true); });
+            });
+            t.setDaemon(true);
+            t.start();
+        });
+
+        toolbar.add(boldBtn, italicBtn, underlineBtn, copyBtn, clearBtn, divider, regenBtn);
+
+        // ── Text Area ──────────────────────────────────────────────────────────
+        editorTextArea = new TextArea();
+        editorTextArea.setWidthFull();
+        editorTextArea.setMinHeight("460px");
+        editorTextArea.getStyle()
+            .set("background", BG_WHITE)
+            .set("border", "1px solid rgba(0,0,0,0.1)")
+            .set("border-radius", "16px")
+            .set("padding", "24px")
+            .set("font-size", "15px")
+            .set("line-height", "1.8")
+            .set("color", TEXT_PRIMARY)
+            .set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif");
+        editorTextArea.setValue("\u23f3 Generating your cover letter with AI, please wait...");
+        editorTextArea.setEnabled(false);
+
+        layout.add(header, toolbar, editorTextArea);
+        layout.expand(editorTextArea);
+
+        // ── Trigger AI generation ──────────────────────────────────────────────
+        UI ui = UI.getCurrent();
+        Thread genThread = new Thread(() -> {
+            String result = generateCoverLetterText();
+            ui.access(() -> {
+                editorTextArea.setValue(result);
+                editorTextArea.setEnabled(true);
+                savedFilePath = saveGeneratedCoverLetter(result);
+            });
+        });
+        genThread.setDaemon(true);
+        genThread.start();
+
+        return layout;
+    }
+
+    private Button createEditorToolbarButton(VaadinIcon icon, String tooltip) {
+        Button btn = new Button(icon.create());
+        btn.getElement().setAttribute("title", tooltip);
+        btn.getStyle().set("background", "transparent").set("color", TEXT_SECONDARY)
+            .set("border", "none").set("padding", "8px").set("border-radius", "8px");
+        btn.getElement().addEventListener("mouseenter",
+            e -> btn.getStyle().set("background", "rgba(0,0,0,0.05)"));
+        btn.getElement().addEventListener("mouseleave",
+            e -> btn.getStyle().set("background", "transparent"));
+        return btn;
+    }
+
+    private void wrapEditorContent(String prefix, String suffix) {
+        if (editorTextArea == null) return;
+        String current = editorTextArea.getValue();
+        if (current.isEmpty()) return;
+        if (current.startsWith(prefix) && current.endsWith(suffix)) {
+            editorTextArea.setValue(current.substring(prefix.length(),
+                current.length() - suffix.length()));
+        } else {
+            editorTextArea.setValue(prefix + current + suffix);
+        }
+    }
+
+    private String generateCoverLetterText() {
+        StringBuilder jobDetails = new StringBuilder();
+        jobDetails.append("Job Title: ").append(jobTitle).append("\n");
+        jobDetails.append("Company: ").append(companyName).append("\n");
+        jobDetails.append("Tone: ").append(selectedTone).append("\n");
+        jobDetails.append("Selected Skills: ").append(String.join(", ", selectedSkills)).append("\n");
+        jobDetails.append("Job Description: ").append(jobDescription).append("\n");
+
+        String resumeContent = String.format(
+            "Experienced professional with skills in %s. Seeking to apply expertise in a %s role at %s.",
+            String.join(", ", selectedSkills), jobTitle, companyName);
+
+        try {
+            AIService aiService = new AIService("");
+            String generated = aiService.generateCoverLetter(resumeContent, jobDetails.toString());
+            return (generated != null && !generated.isBlank()) ? generated : getFallbackCoverLetter();
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "AI generation failed, using fallback: " + e.getMessage(), e);
+            return getFallbackCoverLetter();
+        }
+    }
+
+    private String getFallbackCoverLetter() {
+        AuthenticationService authService = new AuthenticationService();
+        com.clbooster.app.backend.service.profile.User currentUser = authService.getCurrentUser();
+        String userName = currentUser != null
+            ? currentUser.getFirstName() + " " + currentUser.getLastName() : "User";
+        return "Dear Hiring Manager,\n\n"
+            + "I am writing to express my strong interest in the " + jobTitle
+            + " position at " + companyName + ". "
+            + "With relevant experience and skills in " + String.join(", ", selectedSkills) + ", "
+            + "I am excited about the opportunity to contribute to your team.\n\n"
+            + "My background aligns well with the requirements outlined in the job description. "
+            + "I am particularly drawn to this role because of " + companyName
+            + "'s reputation for excellence.\n\n"
+            + "Thank you for considering my application. I look forward to discussing how my skills "
+            + "align with your team's vision.\n\nBest regards,\n" + userName;
+    }
+
+    private String saveGeneratedCoverLetter(String content) {
+        try {
+            AuthenticationService authService = new AuthenticationService();
+            com.clbooster.app.backend.service.profile.User currentUser = authService.getCurrentUser();
+            if (currentUser == null) return null;
+            int userPin = currentUser.getPin();
+            Path dir = Paths.get("uploads", "coverletters");
+            if (!Files.exists(dir)) Files.createDirectories(dir);
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String fileName = userPin + "_" + timestamp + "_"
+                + sanitizeEditorFilename(companyName) + "_" + sanitizeEditorFilename(jobTitle) + ".docx";
+            Path filePath = dir.resolve(fileName);
+            new Exporter().saveAsDoc(content, filePath.toString());
+            LOGGER.info("Cover letter saved: " + filePath.toAbsolutePath());
+            return filePath.toAbsolutePath().toString();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Failed to save cover letter: " + e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private void downloadEditorAsDocx() {
+        if (editorTextArea == null) return;
+        String content = editorTextArea.getValue();
+        if (content == null || content.isBlank()) {
+            Notification.show("Nothing to download.", 2000, Notification.Position.TOP_CENTER);
+            return;
+        }
+        try {
+            Path dir = Paths.get("uploads", "coverletters");
+            if (!Files.exists(dir)) Files.createDirectories(dir);
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String fileName = sanitizeEditorFilename(companyName) + "_" + sanitizeEditorFilename(jobTitle)
+                + "_" + timestamp + ".docx";
+            Path outPath = dir.resolve(fileName);
+            new Exporter().saveAsDoc(content, outPath.toString());
+            byte[] bytes = Files.readAllBytes(outPath);
+            serveEditorDownload(bytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", fileName);
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "DOCX export failed: " + ex.getMessage(), ex);
+            Notification.show("Export failed: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
+        }
+    }
+
+    private void downloadEditorAsPdf() {
+        if (editorTextArea == null) return;
+        String content = editorTextArea.getValue();
+        if (content == null || content.isBlank()) {
+            Notification.show("Nothing to export.", 2000, Notification.Position.TOP_CENTER);
+            return;
+        }
+        try {
+            String fileName = sanitizeEditorFilename(companyName) + "_" + sanitizeEditorFilename(jobTitle) + ".pdf";
+            byte[] bytes = generateSimplePdf(content);
+            serveEditorDownload(bytes, "application/pdf", fileName);
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "PDF export failed: " + ex.getMessage(), ex);
+            Notification.show("Export failed: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
+        }
+    }
+
+    private void serveEditorDownload(byte[] bytes, String mimeType, String fileName) {
+        StreamResource resource = new StreamResource(fileName, () -> new ByteArrayInputStream(bytes));
+        resource.setContentType(mimeType);
+        Anchor anchor = new Anchor(resource, "");
+        anchor.getElement().setAttribute("download", fileName);
+        anchor.getElement().setAttribute("style", "display:none");
+        add(anchor);
+        anchor.getElement().executeJs(
+            "var a=$0;setTimeout(function(){a.click();setTimeout(function(){a.remove();},1000);},100);",
+            anchor.getElement());
+        Notification.show("Downloading " + fileName + "\u2026", 2000, Notification.Position.TOP_CENTER);
+    }
+
+    private byte[] generateSimplePdf(String text) throws IOException {
+        java.util.List<String> lines = new java.util.ArrayList<>();
+        for (String rawLine : text.split("\n", -1)) {
+            if (rawLine.length() <= 90) { lines.add(rawLine); }
+            else { for (int i = 0; i < rawLine.length(); i += 90) lines.add(rawLine.substring(i, Math.min(i + 90, rawLine.length()))); }
+        }
+        final float TOP_MARGIN = 800f, LEFT_MARGIN = 50f, LINE_HEIGHT = 14f,
+            BOTTOM_MARGIN = 50f, PAGE_HEIGHT = 841.89f;
+        final int FONT_SIZE = 11;
+        final int LINES_PER_PAGE = (int) ((TOP_MARGIN - BOTTOM_MARGIN) / LINE_HEIGHT);
+        java.util.List<java.util.List<String>> pages = new java.util.ArrayList<>();
+        for (int i = 0; i < lines.size(); i += LINES_PER_PAGE)
+            pages.add(lines.subList(i, Math.min(i + LINES_PER_PAGE, lines.size())));
+        if (pages.isEmpty()) pages.add(new java.util.ArrayList<>());
+        java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+        java.util.List<Integer> offsets = new java.util.ArrayList<>();
+        java.util.function.Consumer<String> write = s -> {
+            try { out.write(s.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1)); }
+            catch (IOException ex) { throw new RuntimeException(ex); }
+        };
+        write.accept("%PDF-1.4\n");
+        offsets.add(out.size());
+        write.accept("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n");
+        offsets.add(out.size());
+        StringBuilder kids = new StringBuilder();
+        for (int i = 0; i < pages.size(); i++) kids.append((4 + i * 2) + " 0 R ");
+        write.accept("2 0 obj\n<< /Type /Pages /Kids [" + kids + "] /Count " + pages.size() + " >>\nendobj\n");
+        offsets.add(out.size());
+        write.accept("3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\nendobj\n");
+        for (int p = 0; p < pages.size(); p++) {
+            StringBuilder stream = new StringBuilder();
+            stream.append("BT /F1 ").append(FONT_SIZE).append(" Tf ").append(LEFT_MARGIN).append(" ").append(TOP_MARGIN).append(" Td ").append(LINE_HEIGHT).append(" TL\n");
+            for (String line : pages.get(p)) {
+                String safe = line.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)");
+                stream.append("(").append(safe).append(") Tj T*\n");
+            }
+            stream.append("ET");
+            String s = stream.toString();
+            offsets.add(out.size());
+            write.accept((4 + p * 2) + " 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 "
+                + PAGE_HEIGHT + "] /Contents " + (5 + p * 2) + " 0 R /Resources << /Font << /F1 3 0 R >> >> >>\nendobj\n");
+            offsets.add(out.size());
+            write.accept((5 + p * 2) + " 0 obj\n<< /Length " + s.length() + " >>\nstream\n" + s + "\nendstream\nendobj\n");
+        }
+        int xrefOffset = out.size();
+        int totalObjs = 3 + pages.size() * 2;
+        write.accept("xref\n0 " + (totalObjs + 1) + "\n");
+        write.accept("0000000000 65535 f \n");
+        for (int offset : offsets) write.accept(String.format("%010d 00000 n \n", offset));
+        write.accept("trailer\n<< /Size " + (totalObjs + 1) + " /Root 1 0 R >>\n");
+        write.accept("startxref\n" + xrefOffset + "\n%%EOF\n");
+        return out.toByteArray();
+    }
+
+    private String sanitizeEditorFilename(String input) {
+        if (input == null || input.isBlank()) return "Unknown";
+        return input.trim().replaceAll("\\s+", "_").replaceAll("[^a-zA-Z0-9_\\-]", "")
+            .replaceAll("_+", "_").replaceAll("^_|_$", "");
+    }
+
     /**
      * Clears wizard-related session attributes to prevent stale data
      * when starting a new cover letter generation.
@@ -1009,46 +1355,5 @@ public class GeneratorWizardView extends VerticalLayout {
         }
     }
 
-    private void generateLetter() {
-        // Store wizard data in VaadinSession for EditorView to access
-        VaadinSession session = VaadinSession.getCurrent();
-        session.setAttribute("gen.jobTitle", jobTitle);
-        session.setAttribute("gen.company", companyName);
-        session.setAttribute("gen.tone", selectedTone);
-        session.setAttribute("gen.skills", selectedSkills);
-        session.setAttribute("gen.jobDesc", jobDescription);
-
-        // Show full-screen loading
-        Div fullScreenLoading = new Div();
-        fullScreenLoading.getStyle().set("position", "fixed");
-        fullScreenLoading.getStyle().set("inset", "0");
-        fullScreenLoading.getStyle().set("background", "rgba(255,255,255,0.98)");
-        fullScreenLoading.getStyle().set("display", "flex");
-        fullScreenLoading.getStyle().set("flex-direction", "column");
-        fullScreenLoading.getStyle().set("align-items", "center");
-        fullScreenLoading.getStyle().set("justify-content", "center");
-        fullScreenLoading.getStyle().set("gap", "24px");
-        fullScreenLoading.getStyle().set("z-index", "1000");
-
-        Div spinner = new Div();
-        spinner.getStyle().set("width", "56px");
-        spinner.getStyle().set("height", "56px");
-        spinner.getStyle().set("border", "4px solid rgba(0,122,255,0.2)");
-        spinner.getStyle().set("border-top-color", PRIMARY);
-        spinner.getStyle().set("border-radius", "50%");
-        spinner.getStyle().set("animation", "spin 1s linear infinite");
-
-        Paragraph loadingText = new Paragraph("Crafting your perfect cover letter...");
-        loadingText.getStyle().set("font-size", "18px");
-        loadingText.getStyle().set("font-weight", "600");
-        loadingText.getStyle().set("color", TEXT_PRIMARY);
-
-        fullScreenLoading.add(spinner, loadingText);
-        add(fullScreenLoading);
-
-        // Navigate to editor after delay using UI.navigate()
-        UI.getCurrent().access(() -> {
-            UI.getCurrent().navigate("editor");
-        });
-    }
 }
+

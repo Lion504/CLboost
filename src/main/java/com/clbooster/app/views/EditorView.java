@@ -3,6 +3,7 @@ package com.clbooster.app.views;
 import com.clbooster.aiservice.AIService;
 import com.clbooster.aiservice.Exporter;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
+import com.clbooster.app.backend.service.document.DocumentService;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
 import com.vaadin.flow.component.AttachEvent;
@@ -57,6 +58,8 @@ public class EditorView extends HorizontalLayout {
 
     private static final Logger LOGGER = Logger.getLogger(EditorView.class.getName());
 
+    private final DocumentService documentService;
+
     private TextArea editorArea;
     private String jobTitle;
     private String companyName;
@@ -69,7 +72,8 @@ public class EditorView extends HorizontalLayout {
     // Loading indicator shown while AI generates
     private Div loadingOverlay;
 
-    public EditorView() {
+    public EditorView(DocumentService documentService) {
+        this.documentService = documentService;
         setSizeFull();
         setPadding(true);
         getStyle().set("gap", "24px");
@@ -104,16 +108,11 @@ public class EditorView extends HorizontalLayout {
         com.clbooster.app.backend.service.profile.User currentUser = authService.getCurrentUser();
         this.userName = currentUser != null ? currentUser.getFirstName() + " " + currentUser.getLastName() : "User";
 
-        // Left side - Editor
+        // Editor takes full width
         VerticalLayout editorPanel = createEditorPanel();
-        editorPanel.setWidth("65%");
+        editorPanel.setWidth("100%");
 
-        // Right side - AI Sidebar
-        VerticalLayout sidebarPanel = createSidebarPanel();
-        sidebarPanel.setWidth("35%");
-        sidebarPanel.setMaxWidth("400px");
-
-        add(editorPanel, sidebarPanel);
+        add(editorPanel);
         expand(editorPanel);
     }
 
@@ -321,9 +320,16 @@ public class EditorView extends HorizontalLayout {
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".docx";
             Path outPath = Paths.get(System.getProperty("java.io.tmpdir"), fileName);
 
-            new Exporter().saveAsDoc(content, outPath.toString());
+            com.clbooster.app.backend.service.ResumeData resumeData =
+                new com.clbooster.app.backend.service.ResumeData();
+            resumeData.setRawResumeText(content);
 
-            byte[] bytes = Files.readAllBytes(outPath);
+            boolean success = documentService.exportResumeAsDocument(resumeData, outPath.toString());
+            if (!success) {
+                Notification.show("Export failed.", 4000, Notification.Position.TOP_CENTER);
+                return;
+            }
+            byte[] bytes = documentService.retrieveResumeFile(outPath.toString());
             serveDownload(bytes,
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 fileName);
@@ -488,67 +494,6 @@ public class EditorView extends HorizontalLayout {
         });
         t.setDaemon(true);
         t.start();
-    }
-
-    // ── Sidebar ────────────────────────────────────────────────────────────────
-
-    private VerticalLayout createSidebarPanel() {
-        VerticalLayout panel = new VerticalLayout();
-        panel.getStyle().set("gap", "20px");
-        panel.setHeightFull();
-        panel.setSpacing(false);
-        panel.addClassNames(LumoUtility.Padding.Top.MEDIUM, LumoUtility.Padding.Right.MEDIUM,
-            LumoUtility.Padding.Bottom.MEDIUM, LumoUtility.Padding.Left.MEDIUM);
-        panel.add(createScoreCard(), createTipsCard());
-        return panel;
-    }
-
-    private Div createScoreCard() {
-        Div card = new Div();
-        card.getStyle().set("background", BG_WHITE).set("border", "1px solid rgba(0,0,0,0.05)")
-            .set("border-radius", "24px").set("padding", "24px");
-
-        HorizontalLayout header = new HorizontalLayout();
-        header.setAlignItems(FlexComponent.Alignment.CENTER);
-        header.getStyle().set("gap", "12px").set("margin-bottom", "16px");
-
-        Icon chartIcon = VaadinIcon.CHART.create();
-        chartIcon.getStyle().set("color", PRIMARY);
-
-        H3 title = new H3("Match Score");
-        title.getStyle().set("font-size", "16px").set("font-weight", "700")
-            .set("color", TEXT_PRIMARY).set("margin", "0");
-        header.add(chartIcon, title);
-
-        Paragraph placeholder = new Paragraph("Match score calculation coming soon");
-        placeholder.getStyle().set("font-size", "14px").set("color", TEXT_SECONDARY).set("margin", "0");
-
-        card.add(header, placeholder);
-        return card;
-    }
-
-    private Div createTipsCard() {
-        Div card = new Div();
-        card.getStyle().set("background", BG_GRAY).set("border-radius", "24px").set("padding", "24px");
-
-        H3 title = new H3("Writing Tips");
-        title.getStyle().set("font-size", "16px").set("font-weight", "700")
-            .set("color", TEXT_PRIMARY).set("margin", "0 0 16px 0");
-        card.add(title);
-
-        for (String tip : new String[]{"Keep it under 400 words", "Use active voice",
-                "Match the company's tone", "Proofread twice"}) {
-            HorizontalLayout row = new HorizontalLayout();
-            row.setAlignItems(FlexComponent.Alignment.CENTER);
-            row.getStyle().set("gap", "10px").set("margin-bottom", "10px");
-            Icon check = VaadinIcon.CHECK.create();
-            check.getStyle().set("color", "#34C759").set("width", "16px");
-            Span text = new Span(tip);
-            text.getStyle().set("font-size", "13px").set("color", TEXT_SECONDARY);
-            row.add(check, text);
-            card.add(row);
-        }
-        return card;
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────────
