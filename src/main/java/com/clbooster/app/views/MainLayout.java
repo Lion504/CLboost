@@ -70,15 +70,6 @@ public class MainLayout extends AppLayout {
         DrawerToggle toggle = new DrawerToggle();
         toggle.getStyle().set("color", TEXT_PRIMARY);
 
-        // Search bar
-        TextField search = new TextField();
-        search.setPlaceholder("Search resources...");
-        search.setPrefixComponent(VaadinIcon.SEARCH.create());
-        search.setWidth("280px");
-        search.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        search.getStyle().set("--vaadin-input-field-border-radius", "12px");
-        search.getStyle().set("margin-left", "16px");
-
         // Right side icons
         HorizontalLayout rightSide = new HorizontalLayout();
         rightSide.setAlignItems(FlexComponent.Alignment.CENTER);
@@ -133,13 +124,14 @@ public class MainLayout extends AppLayout {
 
         rightSide.add(notifBtn, avatarWrapper);
 
-        HorizontalLayout header = new HorizontalLayout(toggle, search, rightSide);
+        HorizontalLayout header = new HorizontalLayout(toggle, rightSide);
         header.setWidthFull();
         header.setAlignItems(FlexComponent.Alignment.CENTER);
         header.getStyle().set("padding", "12px 24px");
         header.getStyle().set("background", BG_WHITE);
         header.getStyle().set("border-bottom", "1px solid rgba(0, 0, 0, 0.05)");
-        header.expand(search);
+        // No expand — toggle stays left, rightSide hugs the right naturally
+        header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 
         addToNavbar(true, header);
     }
