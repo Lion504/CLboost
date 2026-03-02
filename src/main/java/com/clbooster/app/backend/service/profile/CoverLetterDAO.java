@@ -13,7 +13,7 @@ public class CoverLetterDAO {
         String sql = "INSERT INTO coverletter (Pin, FilePath) VALUES (?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setInt(1, pin);
             pstmt.setString(2, filePath);
@@ -34,7 +34,7 @@ public class CoverLetterDAO {
         String sql = "SELECT id, Pin, Timestamp_edited, FilePath FROM coverletter WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
@@ -53,7 +53,7 @@ public class CoverLetterDAO {
         List<CoverLetter> list = new ArrayList<>();
 
         try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, pin);
             ResultSet rs = pstmt.executeQuery();
@@ -71,7 +71,7 @@ public class CoverLetterDAO {
         String sql = "UPDATE coverletter SET FilePath = ? WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, newFilePath);
             pstmt.setInt(2, id);
@@ -87,7 +87,7 @@ public class CoverLetterDAO {
         String sql = "DELETE FROM coverletter WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, id);
             return pstmt.executeUpdate() > 0;
@@ -102,7 +102,7 @@ public class CoverLetterDAO {
         String sql = "DELETE FROM coverletter WHERE Pin = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, pin);
             return pstmt.executeUpdate() > 0;
