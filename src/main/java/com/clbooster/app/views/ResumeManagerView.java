@@ -1,6 +1,8 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
@@ -13,22 +15,35 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.progressbar.ProgressBar;
-import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
+import com.vaadin.flow.component.upload.receivers.FileBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Route(value = "resume", layout = MainLayout.class)
 @PageTitle("Resume Manager | CL Booster")
 public class ResumeManagerView extends VerticalLayout {
 
-    // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
     private static final String PRIMARY_LIGHT = "#5AC8FA";
     private static final String TEXT_PRIMARY = "#1d1d1f";
@@ -39,16 +54,13 @@ public class ResumeManagerView extends VerticalLayout {
     private static final String WARNING = "#FF9500";
     private static final String ERROR = "#FF3B30";
 
-    // Sample data for uploaded resumes
-    private final List<ResumeData> resumes = new ArrayList<>();
-    private VerticalLayout contentArea;
-    private Div uploadZone;
+    private static final Logger LOGGER = Logger.getLogger(ResumeManagerView.class.getName());
+
+    private List<ResumeData> resumes = new ArrayList<>();
+    private VerticalLayout resumeListContainer;
+    private Span countBadge;
 
     public ResumeManagerView() {
-        // Initialize sample data
-        resumes.add(new ResumeData("Alex_Rivera_Resume_2024.pdf", "PDF", "2.4 MB", "2 days ago", 94, true));
-        resumes.add(new ResumeData("Alex_Rivera_CV_Tech.docx", "DOCX", "1.8 MB", "1 week ago", 87, false));
-
         setPadding(true);
         setSpacing(true);
         getStyle().set("gap", "32px");
@@ -57,15 +69,15 @@ public class ResumeManagerView extends VerticalLayout {
         getStyle().set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
         setSizeFull();
 
+        // Load actual resumes from filesystem
+        resumes = loadResumesFromFilesystem();
+
         buildUI();
     }
 
     private void buildUI() {
         // Header section
         HorizontalLayout header = createHeader();
-
-        // Tabs navigation
-        Tabs tabs = createTabs();
 
         // Main content area
         HorizontalLayout mainContent = new HorizontalLayout();
@@ -80,7 +92,7 @@ public class ResumeManagerView extends VerticalLayout {
         mainContent.add(leftPanel);
         mainContent.expand(leftPanel);
 
-        add(header, tabs, mainContent);
+        add(header, mainContent);
     }
 
     private HorizontalLayout createHeader() {
@@ -108,7 +120,7 @@ public class ResumeManagerView extends VerticalLayout {
 
         titleGroup.add(title, subtitle);
 
-        // Action buttons
+        // Action buttons - Only Import from LinkedIn (shows future feature message)
         HorizontalLayout actions = new HorizontalLayout();
         actions.getStyle().set("gap", "12px");
 
@@ -121,6 +133,11 @@ public class ResumeManagerView extends VerticalLayout {
         importBtn.getStyle().set("border", "none");
         importBtn.getStyle().set("cursor", "pointer");
 
+        importBtn.addClickListener(e -> {
+            Notification.show("LinkedIn import is coming soon! This feature will be available in a future update.",
+                5000, Notification.Position.TOP_CENTER);
+        });
+
         importBtn.getElement().addEventListener("mouseenter", e -> {
             importBtn.getStyle().set("background", "rgba(0,0,0,0.08)");
         });
@@ -128,42 +145,12 @@ public class ResumeManagerView extends VerticalLayout {
             importBtn.getStyle().set("background", BG_GRAY);
         });
 
-        Button newBtn = createPrimaryButton("Upload New", () -> {
-            Notification.show("Click on the upload zone to select a file", 3000, Notification.Position.BOTTOM_END);
-        });
-        newBtn.setIcon(VaadinIcon.UPLOAD.create());
-
-        actions.add(importBtn, newBtn);
+        actions.add(importBtn);
 
         header.add(titleGroup, actions);
         header.expand(titleGroup);
 
         return header;
-    }
-
-    private Tabs createTabs() {
-        Tabs tabs = new Tabs();
-        tabs.setWidthFull();
-        tabs.getStyle().set("background", "transparent");
-
-        Tab allResumes = new Tab("All Resumes");
-        Tab aiOptimized = new Tab("AI Optimized");
-        Tab starred = new Tab("Starred");
-
-        // Style tabs
-        for (Tab tab : new Tab[]{allResumes, aiOptimized, starred}) {
-            tab.getStyle().set("font-weight", "600");
-            tab.getStyle().set("font-size", "14px");
-        }
-
-        tabs.add(allResumes, aiOptimized, starred);
-        tabs.setSelectedTab(allResumes);
-
-        tabs.addSelectedChangeListener(event -> {
-            Notification.show("Showing: " + event.getSelectedTab().getLabel(), 2000, Notification.Position.BOTTOM_CENTER);
-        });
-
-        return tabs;
     }
 
     private VerticalLayout createLeftPanel() {
@@ -172,8 +159,8 @@ public class ResumeManagerView extends VerticalLayout {
         panel.setSpacing(false);
         panel.getStyle().set("gap", "24px");
 
-        // Upload zone
-        uploadZone = createUploadZone();
+        // Upload zone with actual file upload functionality
+        Div uploadZone = createUploadZone();
 
         // Resume list header
         HorizontalLayout listHeader = new HorizontalLayout();
@@ -187,7 +174,7 @@ public class ResumeManagerView extends VerticalLayout {
         listTitle.getStyle().set("color", TEXT_PRIMARY);
         listTitle.getStyle().set("margin", "0");
 
-        Span countBadge = new Span(String.valueOf(resumes.size()));
+        countBadge = new Span(String.valueOf(resumes.size()));
         countBadge.getStyle().set("font-size", "12px");
         countBadge.getStyle().set("font-weight", "700");
         countBadge.getStyle().set("padding", "4px 10px");
@@ -200,6 +187,7 @@ public class ResumeManagerView extends VerticalLayout {
         titleWithBadge.getStyle().set("gap", "8px");
         titleWithBadge.add(listTitle, countBadge);
 
+        // Sort dropdown button
         Button sortBtn = new Button("Sort by: Recent", VaadinIcon.CHEVRON_DOWN.create());
         sortBtn.getStyle().set("background", "transparent");
         sortBtn.getStyle().set("color", TEXT_SECONDARY);
@@ -207,99 +195,169 @@ public class ResumeManagerView extends VerticalLayout {
         sortBtn.getStyle().set("border", "none");
         sortBtn.getStyle().set("padding", "8px 12px");
 
+        // Create sort menu - open on left click
+        ContextMenu sortMenu = new ContextMenu();
+        sortMenu.setTarget(sortBtn);
+        sortMenu.setOpenOnClick(true);
+        sortMenu.addItem("Recent", e -> {
+            sortResumes(ResumeSort.RECENT);
+            sortBtn.setText("Sort by: Recent");
+        });
+        sortMenu.addItem("Name (A-Z)", e -> {
+            sortResumes(ResumeSort.NAME_ASC);
+            sortBtn.setText("Sort by: Name");
+        });
+        sortMenu.addItem("Name (Z-A)", e -> {
+            sortResumes(ResumeSort.NAME_DESC);
+            sortBtn.setText("Sort by: Name (Z-A)");
+        });
+        sortMenu.addItem("Size", e -> {
+            sortResumes(ResumeSort.SIZE);
+            sortBtn.setText("Sort by: Size");
+        });
+
         listHeader.add(titleWithBadge, sortBtn);
         listHeader.expand(titleWithBadge);
 
-        // Resume list
-        VerticalLayout resumeList = new VerticalLayout();
-        resumeList.setPadding(false);
-        resumeList.setSpacing(false);
-        resumeList.getStyle().set("gap", "16px");
+        // Resume list container
+        resumeListContainer = new VerticalLayout();
+        resumeListContainer.setPadding(false);
+        resumeListContainer.setSpacing(false);
+        resumeListContainer.getStyle().set("gap", "16px");
 
-        for (ResumeData resume : resumes) {
-            resumeList.add(createResumeCard(resume));
-        }
+        refreshResumeList();
 
-        panel.add(uploadZone, listHeader, resumeList);
+        panel.add(uploadZone, listHeader, resumeListContainer);
 
         return panel;
     }
 
     private Div createUploadZone() {
-        Div zone = new Div();
-        zone.getStyle().set("width", "90%");
-        zone.getStyle().set("background", "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)");
-        zone.getStyle().set("border", "2px dashed " + PRIMARY + "40");
-        zone.getStyle().set("border-radius", "24px");
-        zone.getStyle().set("padding", "48px");
-        zone.getStyle().set("cursor", "pointer");
-        zone.getStyle().set("transition", "all 0.3s");
-        zone.getStyle().set("text-align", "center");
+        FileBuffer buffer = new FileBuffer();
+        Upload upload = new Upload(buffer);
 
-        // Upload icon container
+        // Accept all three formats - use extensions only for broader browser compatibility
+        upload.setAcceptedFileTypes(
+            "application/pdf", ".pdf",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx",
+            "application/msword", ".doc",
+            "text/plain", "text/x-plain", "application/text", ".txt"
+        );
+        upload.setMaxFileSize(10 * 1024 * 1024);
+        upload.setMaxFiles(1);
+        upload.setDropAllowed(true);
+
+        // Style upload component to fill the zone visually — don't hide it
+        upload.getStyle()
+            .set("position", "absolute")
+            .set("inset", "0")
+            .set("opacity", "0")
+            .set("cursor", "pointer")
+            .set("width", "100%")
+            .set("height", "100%");
+
+        // Wrapper is position:relative so absolute upload overlays it
+        Div uploadContainer = new Div();
+        uploadContainer.getStyle()
+            .set("position", "relative")
+            .set("width", "90%")
+            .set("background", "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)")
+            .set("border", "2px dashed " + PRIMARY + "40")
+            .set("border-radius", "24px")
+            .set("padding", "48px")
+            .set("transition", "all 0.3s")
+            .set("text-align", "center")
+            .set("cursor", "pointer");
+
         Div iconContainer = new Div();
-        iconContainer.getStyle().set("width", "72px");
-        iconContainer.getStyle().set("height", "72px");
-        iconContainer.getStyle().set("background", "rgba(0,122,255,0.1)");
-        iconContainer.getStyle().set("border-radius", "50%");
-        iconContainer.getStyle().set("display", "flex");
-        iconContainer.getStyle().set("align-items", "center");
-        iconContainer.getStyle().set("justify-content", "center");
-        iconContainer.getStyle().set("margin", "0 auto 24px");
-        iconContainer.getStyle().set("transition", "all 0.3s");
+        iconContainer.getStyle()
+            .set("width", "72px").set("height", "72px")
+            .set("background", "rgba(0,122,255,0.1)")
+            .set("border-radius", "50%")
+            .set("display", "flex").set("align-items", "center").set("justify-content", "center")
+            .set("margin", "0 auto 24px");
 
         Icon uploadIcon = VaadinIcon.UPLOAD_ALT.create();
-        uploadIcon.getStyle().set("color", PRIMARY);
-        uploadIcon.getStyle().set("width", "32px");
-        uploadIcon.getStyle().set("height", "32px");
+        uploadIcon.getStyle().set("color", PRIMARY).set("width", "32px").set("height", "32px");
         iconContainer.add(uploadIcon);
 
-        // Title
         H3 title = new H3("Drop your resume here");
-        title.getStyle().set("font-size", "20px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 8px 0");
+        title.getStyle().set("font-size", "20px").set("font-weight", "700")
+            .set("color", TEXT_PRIMARY).set("margin", "0 0 8px 0");
 
-        // Subtitle
-        Paragraph subtitle = new Paragraph("or click to browse files (PDF, DOCX, up to 10MB)");
-        subtitle.getStyle().set("font-size", "14px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "0 0 24px 0");
+        Paragraph subtitle = new Paragraph("or click to browse files (PDF, DOCX, TXT, up to 10MB)");
+        subtitle.getStyle().set("font-size", "14px").set("color", TEXT_SECONDARY).set("margin", "0 0 24px 0");
 
-        // Format badges
         HorizontalLayout formats = new HorizontalLayout();
         formats.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         formats.getStyle().set("gap", "8px");
-
         formats.add(createFormatBadge("PDF"));
         formats.add(createFormatBadge("DOCX"));
         formats.add(createFormatBadge("TXT"));
 
-        zone.add(iconContainer, title, subtitle, formats);
+        // Visual content layer (pointer-events: none so clicks pass through to upload)
+        Div visualLayer = new Div();
+        visualLayer.getStyle().set("pointer-events", "none");
+        visualLayer.add(iconContainer, title, subtitle, formats);
 
-        // Hover effects
-        zone.getElement().addEventListener("mouseenter", e -> {
-            zone.getStyle().set("border-color", PRIMARY);
-            zone.getStyle().set("background", "linear-gradient(135deg, rgba(0,122,255,0.08) 0%, rgba(90,200,250,0.08) 100%)");
-            iconContainer.getStyle().set("transform", "scale(1.1)");
-            iconContainer.getStyle().set("background", "rgba(0,122,255,0.15)");
+        uploadContainer.add(visualLayer, upload);
+
+        // Drag-over styling
+        uploadContainer.getElement().addEventListener("dragover", e ->
+            uploadContainer.getStyle().set("border-color", PRIMARY).set("background",
+                "linear-gradient(135deg, rgba(0,122,255,0.1) 0%, rgba(90,200,250,0.1) 100%)"));
+        uploadContainer.getElement().addEventListener("dragleave", e ->
+            uploadContainer.getStyle().set("border-color", PRIMARY + "40").set("background",
+                "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)"));
+        uploadContainer.getElement().addEventListener("drop", e ->
+            uploadContainer.getStyle().set("border-color", PRIMARY + "40").set("background",
+                "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)"));
+
+        // File upload success handler
+        upload.addSucceededListener(event -> {
+            String fileName = event.getFileName();
+            try {
+                Path uploadsDir = Paths.get("uploads", "resumes");
+                if (!Files.exists(uploadsDir)) {
+                    Files.createDirectories(uploadsDir);
+                }
+
+                int userPin = getCurrentUserPin();
+                String timestamp = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss").format(LocalDateTime.now());
+                String safeOriginalName = fileName.replaceAll("[^a-zA-Z0-9._\\-]", "_");
+                String newFileName = userPin + "_" + timestamp + "_" + safeOriginalName;
+                Path targetPath = uploadsDir.resolve(newFileName);
+
+                File tempFile = buffer.getFileData().getFile();
+                if (!tempFile.exists()) {
+                    throw new IOException("Uploaded file is missing");
+                }
+                // Allow zero-byte TXT files; only reject if file doesn't exist
+                Files.copy(tempFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+                LOGGER.info("Resume uploaded: " + newFileName + " (" + targetPath.toFile().length() + " bytes)");
+                Notification.show("\"" + safeOriginalName + "\" uploaded successfully!",
+                    3000, Notification.Position.TOP_CENTER);
+
+                resumes = loadResumesFromFilesystem();
+                refreshResumeList();
+
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, "Upload failed", ex);
+                Notification.show("Upload failed: " + ex.getMessage(), 5000, Notification.Position.TOP_CENTER);
+            }
         });
 
-        zone.getElement().addEventListener("mouseleave", e -> {
-            zone.getStyle().set("border-color", PRIMARY + "40");
-            zone.getStyle().set("background", "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)");
-            iconContainer.getStyle().set("transform", "scale(1)");
-            iconContainer.getStyle().set("background", "rgba(0,122,255,0.1)");
-        });
+        upload.addFailedListener(event ->
+            Notification.show("Upload failed: " +
+                (event.getReason() != null ? event.getReason().getMessage() : "Unknown error"),
+                5000, Notification.Position.TOP_CENTER));
 
-        // Click handler
-        zone.getElement().addEventListener("click", e -> {
-            // In a real app, this would trigger file input
-            Notification.show("File picker would open here", 2000, Notification.Position.BOTTOM_CENTER);
-        });
+        upload.addFileRejectedListener(event ->
+            Notification.show("File rejected: " + event.getErrorMessage(),
+                5000, Notification.Position.TOP_CENTER));
 
-        return zone;
+        return uploadContainer;
     }
 
     private Span createFormatBadge(String format) {
@@ -311,6 +369,42 @@ public class ResumeManagerView extends VerticalLayout {
         badge.getStyle().set("color", TEXT_SECONDARY);
         badge.getStyle().set("border-radius", "9999px");
         return badge;
+    }
+
+    private void refreshResumeList() {
+        resumeListContainer.removeAll();
+
+        if (resumes.isEmpty()) {
+            resumeListContainer.add(createEmptyState());
+        } else {
+            for (ResumeData resume : resumes) {
+                resumeListContainer.add(createResumeCard(resume));
+            }
+        }
+
+        // Update count badge
+        countBadge.setText(String.valueOf(resumes.size()));
+    }
+
+    private VerticalLayout createEmptyState() {
+        VerticalLayout emptyState = new VerticalLayout();
+        emptyState.setWidthFull();
+        emptyState.setAlignItems(FlexComponent.Alignment.CENTER);
+        emptyState.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        emptyState.getStyle().set("padding", "60px 20px").set("gap", "16px");
+
+        Icon emptyIcon = VaadinIcon.FILE_TEXT_O.create();
+        emptyIcon.getStyle().set("color", TEXT_SECONDARY).set("width", "64px").set("height", "64px");
+
+        H3 title = new H3("No resumes yet");
+        title.getStyle().set("font-size", "20px").set("font-weight", "600")
+            .set("color", TEXT_PRIMARY).set("margin", "0");
+
+        Paragraph description = new Paragraph("Upload your first resume to get started.");
+        description.getStyle().set("font-size", "14px").set("color", TEXT_SECONDARY).set("margin", "0");
+
+        emptyState.add(emptyIcon, title, description);
+        return emptyState;
     }
 
     private Div createResumeCard(ResumeData resume) {
@@ -400,48 +494,23 @@ public class ResumeManagerView extends VerticalLayout {
 
         fileInfo.add(nameRow, metaRow);
 
-        // AI Score
-        VerticalLayout scoreGroup = new VerticalLayout();
-        scoreGroup.setPadding(false);
-        scoreGroup.setSpacing(false);
-        scoreGroup.getStyle().set("gap", "6px");
-        scoreGroup.setWidth("120px");
-        scoreGroup.setDefaultHorizontalComponentAlignment(Alignment.END);
-
-        HorizontalLayout scoreRow = new HorizontalLayout();
-        scoreRow.setAlignItems(FlexComponent.Alignment.CENTER);
-        scoreRow.getStyle().set("gap", "6px");
-        scoreRow.getStyle().set("justify-content", "flex-end");
-
-        Icon aiIcon = VaadinIcon.SPARK_LINE.create();
-        aiIcon.getStyle().set("color", getScoreColor(resume.score));
-        aiIcon.getStyle().set("width", "16px");
-        aiIcon.getStyle().set("height", "16px");
-
-        Span scoreText = new Span(resume.score + "%");
-        scoreText.getStyle().set("font-size", "20px");
-        scoreText.getStyle().set("font-weight", "700");
-        scoreText.getStyle().set("color", getScoreColor(resume.score));
-
-        scoreRow.add(aiIcon, scoreText);
-
-        Span scoreLabel = new Span("AI Score");
-        scoreLabel.getStyle().set("font-size", "11px");
-        scoreLabel.getStyle().set("font-weight", "600");
-        scoreLabel.getStyle().set("color", TEXT_SECONDARY);
-        scoreLabel.getStyle().set("text-transform", "uppercase");
-        scoreLabel.getStyle().set("letter-spacing", "0.05em");
-
-        scoreGroup.add(scoreRow, scoreLabel);
-
-        // Actions menu
+        // Actions menu (3 dots) - open on left click
         Button menuBtn = new Button(VaadinIcon.ELLIPSIS_DOTS_H.create());
         menuBtn.getStyle().set("background", "transparent");
         menuBtn.getStyle().set("color", TEXT_SECONDARY);
         menuBtn.getStyle().set("border", "none");
         menuBtn.getStyle().set("cursor", "pointer");
 
-        content.add(fileIcon, fileInfo, scoreGroup, menuBtn);
+        // Create context menu that opens on left click
+        ContextMenu contextMenu = new ContextMenu();
+        contextMenu.setTarget(menuBtn);
+        contextMenu.setOpenOnClick(true);
+        contextMenu.addItem("Download", e -> downloadResume(resume));
+        contextMenu.addItem("View", e -> viewResume(resume));
+        contextMenu.addItem("Toggle Star", e -> toggleStar(resume));
+        contextMenu.addItem("Delete", e -> deleteResume(resume));
+
+        content.add(fileIcon, fileInfo, menuBtn);
         content.expand(fileInfo);
 
         card.add(content);
@@ -462,6 +531,102 @@ public class ResumeManagerView extends VerticalLayout {
         return card;
     }
 
+    private void downloadResume(ResumeData resume) {
+        File file = new File(resume.filePath);
+        if (!file.exists()) {
+            Notification.show("File not found: " + resume.filePath, 3000, Notification.Position.TOP_CENTER);
+            return;
+        }
+        try {
+            byte[] bytes = Files.readAllBytes(file.toPath());
+            String mimeType = resume.format.equalsIgnoreCase("PDF") 
+                ? "application/pdf" 
+                : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            serveDownload(bytes, mimeType, resume.name);
+            Notification.show("Downloading " + resume.name, 2000, Notification.Position.TOP_CENTER);
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Download error", ex);
+            Notification.show("Error downloading file: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
+        }
+    }
+
+    private void viewResume(ResumeData resume) {
+        File file = new File(resume.filePath);
+        if (!file.exists()) {
+            Notification.show("File not found: " + resume.filePath, 3000, Notification.Position.TOP_CENTER);
+            return;
+        }
+        try {
+            byte[] bytes = Files.readAllBytes(file.toPath());
+            String mimeType = switch (resume.format.toUpperCase()) {
+                case "PDF"  -> "application/pdf";
+                case "TXT"  -> "text/plain";
+                default     -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            };
+
+            StreamResource resource = new StreamResource(resume.name, () -> new ByteArrayInputStream(bytes));
+            resource.setContentType(mimeType);
+
+            com.vaadin.flow.component.html.Anchor anchor = new com.vaadin.flow.component.html.Anchor(resource, "");
+            anchor.getElement().setAttribute("target", "_blank");
+            anchor.getElement().setAttribute("style", "display:none");
+            add(anchor);
+            anchor.getElement().executeJs(
+                "var a=$0;setTimeout(function(){a.click();setTimeout(function(){a.remove();},1000);},100);",
+                anchor.getElement());
+
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "View error", ex);
+            Notification.show("Error opening file: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
+        }
+    }
+
+    private void toggleStar(ResumeData resume) {
+        resume.starred = !resume.starred;
+        // In a real app, you would persist this to the database
+        refreshResumeList();
+        Notification.show(resume.starred ? "Resume starred" : "Resume unstarred", 2000, Notification.Position.TOP_CENTER);
+    }
+
+    private void deleteResume(ResumeData resume) {
+        File file = new File(resume.filePath);
+        if (file.exists()) {
+            if (file.delete()) {
+                resumes.remove(resume);
+                refreshResumeList();
+                Notification.show("Resume deleted", 2000, Notification.Position.TOP_CENTER);
+            } else {
+                Notification.show("Failed to delete resume", 3000, Notification.Position.TOP_CENTER);
+            }
+        }
+    }
+
+    private void sortResumes(ResumeSort sort) {
+        switch (sort) {
+            case RECENT -> resumes.sort((a, b) -> b.lastModified.compareTo(a.lastModified));
+            case NAME_ASC -> resumes.sort(Comparator.comparing(a -> a.name.toLowerCase()));
+            case NAME_DESC -> resumes.sort((a, b) -> b.name.compareToIgnoreCase(a.name));
+            case SIZE -> resumes.sort((a, b) -> Long.compare(parseSize(b.size), parseSize(a.size)));
+        }
+        refreshResumeList();
+    }
+
+    private long parseSize(String sizeStr) {
+        try {
+            String[] parts = sizeStr.split(" ");
+            double value = Double.parseDouble(parts[0]);
+            String unit = parts[1].toUpperCase();
+            return (long) (value * switch (unit) {
+                case "KB" -> 1024;
+                case "MB" -> 1024 * 1024;
+                case "GB" -> 1024 * 1024 * 1024;
+                default -> 1;
+            });
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
     private String getFileColor(String format) {
         return switch (format.toUpperCase()) {
             case "PDF" -> ERROR;
@@ -471,279 +636,155 @@ public class ResumeManagerView extends VerticalLayout {
         };
     }
 
-    private String getScoreColor(int score) {
-        if (score >= 90) return SUCCESS;
-        if (score >= 70) return WARNING;
-        return ERROR;
-    }
-
-    private Div createScoreBreakdown(ResumeData resume) {
-        Div card = new Div();
-        card.getStyle().set("background", BG_GRAY);
-        card.getStyle().set("border-radius", "16px");
-        card.getStyle().set("padding", "24px");
-
-        H3 title = new H3("Score Breakdown");
-        title.getStyle().set("font-size", "14px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 20px 0");
-        title.getStyle().set("text-transform", "uppercase");
-        title.getStyle().set("letter-spacing", "0.05em");
-
-        VerticalLayout bars = new VerticalLayout();
-        bars.setPadding(false);
-        bars.setSpacing(false);
-        bars.getStyle().set("gap", "16px");
-
-        bars.add(createScoreBar("Content Quality", 95, SUCCESS));
-        bars.add(createScoreBar("ATS Compatibility", 88, SUCCESS));
-        bars.add(createScoreBar("Keyword Match", 82, WARNING));
-        bars.add(createScoreBar("Formatting", 90, SUCCESS));
-
-        // Total score
-        HorizontalLayout totalRow = new HorizontalLayout();
-        totalRow.setWidthFull();
-        totalRow.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-        totalRow.setAlignItems(FlexComponent.Alignment.CENTER);
-        totalRow.getStyle().set("margin-top", "20px");
-        totalRow.getStyle().set("padding-top", "20px");
-        totalRow.getStyle().set("border-top", "1px solid rgba(0,0,0,0.05)");
-
-        Span totalLabel = new Span("Overall Score");
-        totalLabel.getStyle().set("font-size", "14px");
-        totalLabel.getStyle().set("font-weight", "600");
-        totalLabel.getStyle().set("color", TEXT_PRIMARY);
-
-        Span totalScore = new Span(resume.score + "%");
-        totalScore.getStyle().set("font-size", "24px");
-        totalScore.getStyle().set("font-weight", "700");
-        totalScore.getStyle().set("color", getScoreColor(resume.score));
-
-        totalRow.add(totalLabel, totalScore);
-
-        card.add(title, bars, totalRow);
-
-        return card;
-    }
-
-    private VerticalLayout createScoreBar(String label, int score, String color) {
-        VerticalLayout barGroup = new VerticalLayout();
-        barGroup.setPadding(false);
-        barGroup.setSpacing(false);
-        barGroup.getStyle().set("gap", "8px");
-        barGroup.setWidthFull();
-
-        HorizontalLayout labelRow = new HorizontalLayout();
-        labelRow.setWidthFull();
-        labelRow.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-
-        Span labelSpan = new Span(label);
-        labelSpan.getStyle().set("font-size", "13px");
-        labelSpan.getStyle().set("font-weight", "500");
-        labelSpan.getStyle().set("color", TEXT_PRIMARY);
-
-        Span scoreSpan = new Span(score + "%");
-        scoreSpan.getStyle().set("font-size", "13px");
-        scoreSpan.getStyle().set("font-weight", "600");
-        scoreSpan.getStyle().set("color", color);
-
-        labelRow.add(labelSpan, scoreSpan);
-
-        // Progress bar background
-        Div barBg = new Div();
-        barBg.getStyle().set("width", "100%");
-        barBg.getStyle().set("height", "6px");
-        barBg.getStyle().set("background", "rgba(0,0,0,0.05)");
-        barBg.getStyle().set("border-radius", "3px");
-        barBg.getStyle().set("overflow", "hidden");
-
-        // Progress bar fill
-        Div barFill = new Div();
-        barFill.getStyle().set("width", score + "%");
-        barFill.getStyle().set("height", "100%");
-        barFill.getStyle().set("background", color);
-        barFill.getStyle().set("border-radius", "3px");
-        barFill.getStyle().set("transition", "width 0.5s ease");
-
-        barBg.add(barFill);
-        barGroup.add(labelRow, barBg);
-
-        return barGroup;
-    }
-
-    private Div createStrengthsSection() {
-        Div section = new Div();
-
-        H3 title = new H3("Key Strengths");
-        title.getStyle().set("font-size", "14px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 16px 0");
-        title.getStyle().set("text-transform", "uppercase");
-        title.getStyle().set("letter-spacing", "0.05em");
-
-        VerticalLayout items = new VerticalLayout();
-        items.setPadding(false);
-        items.setSpacing(false);
-        items.getStyle().set("gap", "12px");
-
-        items.add(createHighlightItem("Strong action verbs", "Your resume uses impactful language", SUCCESS, VaadinIcon.CHECK_CIRCLE));
-        items.add(createHighlightItem("Clear structure", "Well-organized sections", SUCCESS, VaadinIcon.CHECK_CIRCLE));
-        items.add(createHighlightItem("Relevant experience", "10+ years highlighted effectively", SUCCESS, VaadinIcon.CHECK_CIRCLE));
-
-        section.add(title, items);
-
-        return section;
-    }
-
-    private Div createSuggestionsSection() {
-        Div section = new Div();
-
-        H3 title = new H3("AI Suggestions");
-        title.getStyle().set("font-size", "14px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 16px 0");
-        title.getStyle().set("text-transform", "uppercase");
-        title.getStyle().set("letter-spacing", "0.05em");
-
-        VerticalLayout items = new VerticalLayout();
-        items.setPadding(false);
-        items.setSpacing(false);
-        items.getStyle().set("gap", "12px");
-
-        items.add(createHighlightItem("Add more metrics", "Include quantifiable achievements", WARNING, VaadinIcon.LIGHTBULB));
-        items.add(createHighlightItem("Update skills section", "Add trending technologies", WARNING, VaadinIcon.LIGHTBULB));
-
-        section.add(title, items);
-
-        return section;
-    }
-
-    private Div createKeywordsSection() {
-        Div section = new Div();
-
-        H3 title = new H3("Missing Keywords");
-        title.getStyle().set("font-size", "14px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 16px 0");
-        title.getStyle().set("text-transform", "uppercase");
-        title.getStyle().set("letter-spacing", "0.05em");
-
-        HorizontalLayout keywords = new HorizontalLayout();
-        keywords.getStyle().set("gap", "8px");
-        keywords.getStyle().set("flex-wrap", "wrap");
-
-        String[] missingKeywords = {"Agile", "Scrum", "React", "TypeScript", "AWS"};
-        for (String keyword : missingKeywords) {
-            keywords.add(createKeywordChip(keyword));
+    private List<ResumeData> loadResumesFromFilesystem() {
+        List<ResumeData> items = new ArrayList<>();
+        try {
+            int userPin = getCurrentUserPin();
+            Path resumesDir = Paths.get("uploads", "resumes");
+            if (!Files.exists(resumesDir) || !Files.isDirectory(resumesDir)) {
+                return items;
+            }
+            File[] files = resumesDir.toFile().listFiles((d, name) -> {
+                String lower = name.toLowerCase();
+                // Added .txt support
+                return lower.endsWith(".pdf") || lower.endsWith(".docx")
+                    || lower.endsWith(".doc") || lower.endsWith(".txt");
+            });
+            if (files == null) return items;
+            for (File file : files) {
+                ResumeData item = parseResumeFile(file, userPin);
+                if (item != null) items.add(item);
+            }
+            items.sort((a, b) -> b.lastModified.compareTo(a.lastModified));
+            LOGGER.info("Loaded " + items.size() + " resumes for PIN: " + userPin);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error loading resumes: " + e.getMessage(), e);
         }
-
-        section.add(title, keywords);
-
-        return section;
+        return items;
     }
 
-    private HorizontalLayout createHighlightItem(String title, String description, String color, VaadinIcon iconType) {
-        HorizontalLayout item = new HorizontalLayout();
-        item.setWidthFull();
-        item.setAlignItems(FlexComponent.Alignment.START);
-        item.getStyle().set("gap", "12px");
-        item.getStyle().set("padding", "12px");
-        item.getStyle().set("background", color + "08");
-        item.getStyle().set("border-radius", "12px");
-        item.getStyle().set("border-left", "3px solid " + color);
+    private ResumeData parseResumeFile(File file, int currentUserPin) {
+        try {
+            String fileName = file.getName();
+            
+            // Parse filename format: PIN_timestamp_originalname.ext
+            String[] parts = fileName.split("_", 3);
+            if (parts.length < 3) {
+                return null;
+            }
 
-        Div iconContainer = new Div();
-        iconContainer.getStyle().set("width", "24px");
-        iconContainer.getStyle().set("height", "24px");
-        iconContainer.getStyle().set("border-radius", "50%");
-        iconContainer.getStyle().set("background", color + "20");
-        iconContainer.getStyle().set("display", "flex");
-        iconContainer.getStyle().set("align-items", "center");
-        iconContainer.getStyle().set("justify-content", "center");
-        iconContainer.getStyle().set("flex-shrink", "0");
+            int pin;
+            try {
+                pin = Integer.parseInt(parts[0]);
+            } catch (NumberFormatException e) {
+                return null;
+            }
 
-        Icon icon = iconType.create();
-        icon.getStyle().set("color", color);
-        icon.getStyle().set("width", "14px");
-        icon.getStyle().set("height", "14px");
-        iconContainer.add(icon);
+            // Only show resumes for the current user
+            if (pin != currentUserPin) {
+                return null;
+            }
 
-        VerticalLayout text = new VerticalLayout();
-        text.setPadding(false);
-        text.setSpacing(false);
-        text.getStyle().set("gap", "2px");
+            // Get file extension/format
+            String extension = "";
+            int dotIndex = fileName.lastIndexOf('.');
+            if (dotIndex > 0) {
+                extension = fileName.substring(dotIndex + 1).toUpperCase();
+            }
 
-        Span titleSpan = new Span(title);
-        titleSpan.getStyle().set("font-size", "14px");
-        titleSpan.getStyle().set("font-weight", "600");
-        titleSpan.getStyle().set("color", TEXT_PRIMARY);
+            // Get original file name (after PIN_timestamp_ prefix)
+            String originalName = parts[2];
 
-        Span descSpan = new Span(description);
-        descSpan.getStyle().set("font-size", "12px");
-        descSpan.getStyle().set("color", TEXT_SECONDARY);
+            // Format file size
+            long sizeBytes = file.length();
+            String sizeStr = formatFileSize(sizeBytes);
 
-        text.add(titleSpan, descSpan);
+            // Format date
+            LocalDateTime modifiedTime = LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault());
+            String dateStr = formatDate(modifiedTime);
 
-        item.add(iconContainer, text);
+            return new ResumeData(originalName, extension, sizeStr, dateStr, 
+                file.getAbsolutePath(), modifiedTime, false);
 
-        return item;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Parse error for: " + file.getName(), e);
+            return null;
+        }
     }
 
-    private Span createKeywordChip(String keyword) {
-        Span chip = new Span(keyword);
-        chip.getStyle().set("font-size", "12px");
-        chip.getStyle().set("font-weight", "600");
-        chip.getStyle().set("padding", "6px 12px");
-        chip.getStyle().set("background", BG_GRAY);
-        chip.getStyle().set("color", TEXT_SECONDARY);
-        chip.getStyle().set("border-radius", "9999px");
-        return chip;
+    private String formatFileSize(long bytes) {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return String.format("%.1f KB", bytes / 1024.0);
+        return String.format("%.1f MB", bytes / (1024.0 * 1024));
     }
 
-    private Button createPrimaryButton(String text, Runnable action) {
-        Button btn = new Button(text, e -> action.run());
-        btn.getStyle().set("background", "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)");
-        btn.getStyle().set("color", "white");
-        btn.getStyle().set("font-weight", "600");
-        btn.getStyle().set("font-size", "14px");
-        btn.getStyle().set("border-radius", "9999px");
-        btn.getStyle().set("border", "none");
-        btn.getStyle().set("padding", "10px 24px");
-        btn.getStyle().set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
-        btn.getStyle().set("transition", "all 0.2s");
-        btn.getStyle().set("cursor", "pointer");
+    private String formatDate(LocalDateTime dateTime) {
+        LocalDateTime now = LocalDateTime.now();
+        if (dateTime.toLocalDate().equals(now.toLocalDate())) {
+            return "Today";
+        } else if (dateTime.toLocalDate().equals(now.toLocalDate().minusDays(1))) {
+            return "Yesterday";
+        } else if (dateTime.isAfter(now.minusDays(7))) {
+            return dateTime.format(DateTimeFormatter.ofPattern("EEEE")); // Day name
+        } else {
+            return dateTime.format(DateTimeFormatter.ofPattern("MMM d, yyyy"));
+        }
+    }
 
-        btn.getElement().addEventListener("mouseenter", e -> {
-            btn.getStyle().set("filter", "brightness(1.1)");
-            btn.getStyle().set("transform", "translateY(-1px)");
-        });
-        btn.getElement().addEventListener("mouseleave", e -> {
-            btn.getStyle().set("filter", "brightness(1)");
-            btn.getStyle().set("transform", "translateY(0)");
-        });
+    private int getCurrentUserPin() {
+        try {
+            AuthenticationService authService = new AuthenticationService();
+            com.clbooster.app.backend.service.profile.User currentUser = authService.getCurrentUser();
+            if (currentUser == null) {
+                LOGGER.warning("No user logged in, returning default PIN 0");
+                return 0;
+            }
+            return currentUser.getPin();
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Error getting current user PIN", e);
+            return 0;
+        }
+    }
 
-        return btn;
+    /** Serves bytes as a browser download using a hidden anchor + JS click. */
+    private void serveDownload(byte[] bytes, String mimeType, String fileName) {
+        StreamResource resource = new StreamResource(fileName, () -> new ByteArrayInputStream(bytes));
+        resource.setContentType(mimeType);
+
+        com.vaadin.flow.component.html.Anchor anchor = new com.vaadin.flow.component.html.Anchor(resource, "");
+        anchor.getElement().setAttribute("download", fileName);
+        anchor.getElement().setAttribute("style", "display:none");
+        add(anchor);
+        anchor.getElement().executeJs(
+            "var a=$0;setTimeout(function(){a.click();setTimeout(function(){a.remove();},1000);},100);",
+            anchor.getElement());
+    }
+
+    private enum ResumeSort {
+        RECENT, NAME_ASC, NAME_DESC, SIZE
     }
 
     // Inner class to represent resume data
-    private static class ResumeData {
+    private static class ResumeData implements Serializable {
+        private static final long serialVersionUID = 1L;
+
         String name;
         String format;
         String size;
         String date;
-        int score;
+        String filePath;
+        LocalDateTime lastModified;
         boolean starred;
 
-        ResumeData(String name, String format, String size, String date, int score, boolean starred) {
+        ResumeData(String name, String format, String size, String date, 
+                   String filePath, LocalDateTime lastModified, boolean starred) {
             this.name = name;
             this.format = format;
             this.size = size;
             this.date = date;
-            this.score = score;
+            this.filePath = filePath;
+            this.lastModified = lastModified;
             this.starred = starred;
         }
     }
