@@ -2,6 +2,7 @@ package com.clbooster.app.views;
 
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.User;
+import com.clbooster.app.views.GeneratorWizardView;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -43,7 +44,7 @@ public class DashboardView extends VerticalLayout {
     private HorizontalLayout lettersGrid;
     private List<LetterCardData> allLetters;
     private final AuthenticationService authService;
-    private User currentUser;
+    private final User currentUser;
 
     public DashboardView() {
         this.authService = new AuthenticationService();
@@ -97,7 +98,7 @@ public class DashboardView extends VerticalLayout {
         createBtn.getStyle().set("border-radius", "9999px");
         createBtn.getStyle().set("padding", "12px 24px");
         createBtn.getStyle().set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
-        createBtn.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(GeneratorView.class)));
+        createBtn.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(GeneratorWizardView.class)));
 
         HorizontalLayout header = new HorizontalLayout(titleGroup, createBtn);
         header.setWidthFull();
@@ -300,7 +301,7 @@ public class DashboardView extends VerticalLayout {
 
         createCard.add(plusIcon, createText);
 
-        createCard.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(GeneratorView.class)));
+        createCard.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(GeneratorWizardView.class)));
 
         createCard.getElement().addEventListener("mouseenter", e -> {
             createCard.getStyle().set("background", "rgba(0,0,0,0.03)");
@@ -440,7 +441,7 @@ public class DashboardView extends VerticalLayout {
             iconContainer.getStyle().set("transform", "scale(1)");
         });
 
-        card.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(GeneratorView.class)));
+        card.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(GeneratorWizardView.class)));
 
         return card;
     }
