@@ -159,10 +159,10 @@ public class LoginView extends VerticalLayout {
         socialButtons.getStyle().set("gap", "12px");
 
         Button googleBtn = createSocialButton("Google");
-        Button appleBtn = createSocialButton("Apple");
+        Button linkedinBtn = createSocialButton("LinkedIn");
 
-        socialButtons.add(googleBtn, appleBtn);
-        socialButtons.expand(googleBtn, appleBtn);
+        socialButtons.add(googleBtn, linkedinBtn);
+        socialButtons.expand(googleBtn, linkedinBtn);
 
         // Sign up link
         HorizontalLayout signupRow = new HorizontalLayout();
