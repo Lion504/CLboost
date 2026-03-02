@@ -1,9 +1,16 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.backend.service.authentication.AuthenticationService;
+import com.clbooster.app.backend.service.profile.User;
+import com.clbooster.app.backend.service.settings.Settings;
+import com.clbooster.app.backend.service.settings.SettingsService;
+import com.clbooster.app.theme.ThemeService;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -22,13 +29,40 @@ public class MainLayout extends AppLayout {
     private static final String TEXT_SECONDARY = "#86868b";
     private static final String BG_WHITE = "#ffffff";
     private static final String BG_GRAY = "#f5f5f7";
-    private static final String SIDEBAR_BG = "#1d1d1f";
-    private static final String SIDEBAR_HOVER = "#2d2d2f";
+    // Lighter sidebar colors for better visibility
+    private static final String SIDEBAR_BG = "#f8f9fa";
+    private static final String SIDEBAR_HOVER = "#e9ecef";
+    private static final String SIDEBAR_TEXT = "#495057";
+    private static final String SIDEBAR_LABEL = "#6c757d";
+
+    private final AuthenticationService authService;
 
     public MainLayout() {
+        this.authService = new AuthenticationService();
         setPrimarySection(Section.DRAWER);
         createHeader();
         createDrawer();
+    }
+
+    @Override
+    protected void onAttach(com.vaadin.flow.component.AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+
+        // Initialize theme handling
+        UI ui = getUI().orElse(null);
+        if (ui != null) {
+            ThemeService.initializeTheme(ui);
+
+            // Apply user's theme preference if logged in
+            User currentUser = authService.getCurrentUser();
+            if (currentUser != null) {
+                SettingsService settingsService = new SettingsService();
+                Settings settings = settingsService.getSettings(currentUser.getPin());
+                if (settings != null && settings.getTheme() != null) {
+                    ThemeService.applyTheme(settings.getTheme(), ui);
+                }
+            }
+        }
     }
 
     private void createHeader() {
@@ -55,23 +89,40 @@ public class MainLayout extends AppLayout {
         notifBtn.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(NotificationsView.class)));
         notifBtn.getElement().setAttribute("aria-label", "Notifications");
 
-        // Settings button
-        Button settingsBtn = createIconButton(VaadinIcon.COG);
-        settingsBtn.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(SettingsView.class)));
-        settingsBtn.getElement().setAttribute("aria-label", "Settings");
+        // Settings button removed - now accessible via avatar dropdown menu
 
-        // User avatar (wrapped in clickable div)
+        // User avatar with dropdown menu
         Div avatarWrapper = new Div();
         avatarWrapper.getStyle().set("cursor", "pointer");
         avatarWrapper.getStyle().set("transition", "transform 0.2s");
         
-        Avatar avatar = new Avatar("Alex Rivera");
+        // Get current user from auth service
+        User currentUser = authService.getCurrentUser();
+        String userName = currentUser != null ?
+            currentUser.getFirstName() + " " + currentUser.getLastName() : "Guest";
+        String userInitials = currentUser != null ?
+            (currentUser.getFirstName().substring(0, 1) + currentUser.getLastName().substring(0, 1)).toUpperCase() : "G";
+        
+        Avatar avatar = new Avatar(userName);
         avatar.setColorIndex(2);
         avatar.getStyle().set("border", "2px solid " + BG_WHITE);
         avatar.getStyle().set("box-shadow", "0 2px 8px rgba(0, 0, 0, 0.1)");
         
         avatarWrapper.add(avatar);
-        avatarWrapper.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(ProfileView.class)));
+        
+        // Create context menu for avatar dropdown
+        ContextMenu avatarMenu = new ContextMenu();
+        avatarMenu.setTarget(avatarWrapper);
+        avatarMenu.setOpenOnClick(true);
+        
+        // Add menu items
+        avatarMenu.addItem("Profile", e -> getUI().ifPresent(ui -> ui.navigate(ProfileView.class)));
+        avatarMenu.addItem("Settings", e -> getUI().ifPresent(ui -> ui.navigate(SettingsView.class)));
+        avatarMenu.addSeparator();
+        avatarMenu.addItem("Sign Out", e -> {
+            authService.logout();
+            getUI().ifPresent(ui -> ui.navigate(LoginView.class));
+        });
         
         avatarWrapper.getElement().addEventListener("mouseenter", e -> {
             avatarWrapper.getStyle().set("transform", "scale(1.05)");
@@ -80,7 +131,7 @@ public class MainLayout extends AppLayout {
             avatarWrapper.getStyle().set("transform", "scale(1)");
         });
 
-        rightSide.add(notifBtn, settingsBtn, avatarWrapper);
+        rightSide.add(notifBtn, avatarWrapper);
 
         HorizontalLayout header = new HorizontalLayout(toggle, search, rightSide);
         header.setWidthFull();
@@ -143,7 +194,7 @@ public class MainLayout extends AppLayout {
         Span logoText = new Span("CL Booster");
         logoText.getStyle().set("font-weight", "700");
         logoText.getStyle().set("font-size", "20px");
-        logoText.getStyle().set("color", "white");
+        logoText.getStyle().set("color", TEXT_PRIMARY);
         logoText.getStyle().set("letter-spacing", "-0.025em");
 
         logoSection.add(logoIcon, logoText);
@@ -157,7 +208,7 @@ public class MainLayout extends AppLayout {
         Span mainLabel = new Span("MAIN");
         mainLabel.getStyle().set("font-size", "11px");
         mainLabel.getStyle().set("font-weight", "700");
-        mainLabel.getStyle().set("color", "rgba(255, 255, 255, 0.4)");
+        mainLabel.getStyle().set("color", SIDEBAR_LABEL);
         mainLabel.getStyle().set("padding", "0 20px");
         mainLabel.getStyle().set("letter-spacing", "0.1em");
 
@@ -165,22 +216,11 @@ public class MainLayout extends AppLayout {
         SideNavItem generate = createNavItem("Generate", "generator-wizard", VaadinIcon.MAGIC);
         SideNavItem history = createNavItem("History", "history", VaadinIcon.CLOCK);
 
-        // Account section
-        Span accountLabel = new Span("ACCOUNT");
-        accountLabel.getStyle().set("font-size", "11px");
-        accountLabel.getStyle().set("font-weight", "700");
-        accountLabel.getStyle().set("color", "rgba(255, 255, 255, 0.4)");
-        accountLabel.getStyle().set("padding", "24px 20px 8px");
-        accountLabel.getStyle().set("letter-spacing", "0.1em");
-
-        SideNavItem profile = createNavItem("Profile", "profile", VaadinIcon.USER);
-        SideNavItem settings = createNavItem("Settings", "settings", VaadinIcon.COG);
-
         // Add Resume section
         Span toolsLabel = new Span("TOOLS");
         toolsLabel.getStyle().set("font-size", "11px");
         toolsLabel.getStyle().set("font-weight", "700");
-        toolsLabel.getStyle().set("color", "rgba(255, 255, 255, 0.4)");
+        toolsLabel.getStyle().set("color", SIDEBAR_LABEL);
         toolsLabel.getStyle().set("padding", "24px 20px 8px");
         toolsLabel.getStyle().set("letter-spacing", "0.1em");
 
@@ -191,7 +231,7 @@ public class MainLayout extends AppLayout {
         Span supportLabel = new Span("SUPPORT");
         supportLabel.getStyle().set("font-size", "11px");
         supportLabel.getStyle().set("font-weight", "700");
-        supportLabel.getStyle().set("color", "rgba(255, 255, 255, 0.4)");
+        supportLabel.getStyle().set("color", SIDEBAR_LABEL);
         supportLabel.getStyle().set("padding", "24px 20px 8px");
         supportLabel.getStyle().set("letter-spacing", "0.1em");
 
@@ -212,12 +252,7 @@ public class MainLayout extends AppLayout {
         supportNav.addItem(help);
         drawer.add(supportNav);
 
-        drawer.add(accountLabel);
-
-        // Create separate nav for account items
-        SideNav accountNav = new SideNav();
-        accountNav.addItem(profile, settings);
-        drawer.add(accountNav);
+        // Note: ACCOUNT section removed - now accessible via avatar dropdown in header
 
         // Add spacer and version info at bottom
         Div spacer = new Div();
@@ -230,7 +265,7 @@ public class MainLayout extends AppLayout {
 
         Span versionLabel = new Span("v4.0.0");
         versionLabel.getStyle().set("font-size", "12px");
-        versionLabel.getStyle().set("color", "rgba(255, 255, 255, 0.4)");
+        versionLabel.getStyle().set("color", SIDEBAR_LABEL);
 
         Div dot = new Div();
         dot.getStyle().set("width", "6px");
@@ -240,7 +275,7 @@ public class MainLayout extends AppLayout {
 
         Span statusLabel = new Span("Online");
         statusLabel.getStyle().set("font-size", "12px");
-        statusLabel.getStyle().set("color", "rgba(255, 255, 255, 0.6)");
+        statusLabel.getStyle().set("color", SIDEBAR_TEXT);
 
         versionInfo.add(versionLabel, dot, statusLabel);
 
@@ -252,7 +287,7 @@ public class MainLayout extends AppLayout {
 
     private SideNavItem createNavItem(String label, String route, VaadinIcon icon) {
         SideNavItem item = new SideNavItem(label, route, icon.create());
-        item.getStyle().set("color", "rgba(255, 255, 255, 0.7)");
+        item.getStyle().set("color", SIDEBAR_TEXT);
         item.getStyle().set("font-weight", "500");
         item.getStyle().set("font-size", "14px");
         item.getStyle().set("padding", "12px 20px");
@@ -262,12 +297,12 @@ public class MainLayout extends AppLayout {
 
         // Hover effect
         item.getElement().addEventListener("mouseenter", e -> {
-            item.getStyle().set("background", "rgba(255, 255, 255, 0.1)");
-            item.getStyle().set("color", "white");
+            item.getStyle().set("background", SIDEBAR_HOVER);
+            item.getStyle().set("color", TEXT_PRIMARY);
         });
         item.getElement().addEventListener("mouseleave", e -> {
             item.getStyle().set("background", "transparent");
-            item.getStyle().set("color", "rgba(255, 255, 255, 0.7)");
+            item.getStyle().set("color", SIDEBAR_TEXT);
         });
 
         return item;
