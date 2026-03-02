@@ -98,12 +98,19 @@ public class GeneratorWizardView extends VerticalLayout {
     private TextArea editorTextArea;
     private String savedFilePath;
 
+    // Captured on UI thread before background AI generation starts
+    private String capturedUserName = "User";
+    private int capturedUserPin = -1;
+
     // Step 2 skills grid for dynamic updates
     private Div skillsGrid;
     private final List<Button> skillButtons = new ArrayList<>();
     private static final String[] AVAILABLE_SKILLS = {"React", "TypeScript", "Node.js", "UI Design", "GraphQL", "AWS", "Agile", "Leadership"};
 
-    public GeneratorWizardView() {
+    private final AIService aiService;
+
+    public GeneratorWizardView(AIService aiService) {
+        this.aiService = aiService;
         setSizeFull();
         setPadding(false);
         setSpacing(false);
@@ -1126,6 +1133,18 @@ public class GeneratorWizardView extends VerticalLayout {
         layout.add(header, toolbar, editorTextArea);
         layout.expand(editorTextArea);
 
+        // ── Capture session-bound data on UI thread before spawning background ──
+        try {
+            AuthenticationService _authSvc = new AuthenticationService();
+            com.clbooster.app.backend.service.profile.User _u = _authSvc.getCurrentUser();
+            if (_u != null) {
+                capturedUserName = _u.getFirstName() + " " + _u.getLastName();
+                capturedUserPin  = _u.getPin();
+            }
+        } catch (Exception ignored) {
+            LOGGER.warning("Could not capture user from session before generation");
+        }
+
         // ── Trigger AI generation ──────────────────────────────────────────────
         UI ui = UI.getCurrent();
         Thread genThread = new Thread(() -> {
@@ -1178,7 +1197,6 @@ public class GeneratorWizardView extends VerticalLayout {
         String resumeContent = buildCandidateContext();
 
         try {
-            AIService aiService = new AIService("");
             String generated = aiService.generateCoverLetter(resumeContent, jobDetails.toString(), selectedTone);
             return (generated != null && !generated.isBlank()) ? generated : getFallbackCoverLetter();
         } catch (Exception e) {
@@ -1199,19 +1217,17 @@ public class GeneratorWizardView extends VerticalLayout {
         StringBuilder ctx = new StringBuilder();
 
         try {
-            AuthenticationService authService = new AuthenticationService();
-            com.clbooster.app.backend.service.profile.User currentUser = authService.getCurrentUser();
-            if (currentUser == null) {
-                LOGGER.warning("buildCandidateContext: no logged-in user");
+            // Use data captured on the UI thread – do NOT call VaadinSession from here
+            if (capturedUserPin < 0) {
+                LOGGER.warning("buildCandidateContext: no user captured before background thread");
                 return fallbackSkillsSummary();
             }
 
-            int pin = currentUser.getPin();
+            int pin = capturedUserPin;
 
             // 1 – Basic identity
             ctx.append("=== CANDIDATE PROFILE ===\n");
-            ctx.append("Name: ").append(currentUser.getFirstName()).append(" ")
-               .append(currentUser.getLastName()).append("\n");
+            ctx.append("Name: ").append(capturedUserName).append("\n");
 
             // 2 – Profile data from DB
             com.clbooster.app.backend.service.profile.ProfileDAO profileDAO =
@@ -1287,10 +1303,7 @@ public class GeneratorWizardView extends VerticalLayout {
     }
 
     private String getFallbackCoverLetter() {
-        AuthenticationService authService = new AuthenticationService();
-        com.clbooster.app.backend.service.profile.User currentUser = authService.getCurrentUser();
-        String userName = currentUser != null
-            ? currentUser.getFirstName() + " " + currentUser.getLastName() : "User";
+        String userName = capturedUserName;
         return "Dear Hiring Manager,\n\n"
             + "I am writing to express my strong interest in the " + jobTitle
             + " position at " + companyName + ". "

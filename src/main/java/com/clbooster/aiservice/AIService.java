@@ -20,11 +20,16 @@ public class AIService {
 
     private synchronized ChatLanguageModel getLanguageModel() {
         if (languageModel == null) {
-            String actualApiKey = apiKey != null && !apiKey.isEmpty() ? apiKey : "dummy-key";
+            if (apiKey == null || apiKey.isBlank()) {
+                throw new IllegalStateException(
+                    "GEMINI_API_KEY environment variable is not set. " +
+                    "Set it and restart the application before generating cover letters.");
+            }
             languageModel = GoogleAiGeminiChatModel.builder()
-                    .apiKey(actualApiKey)
+                    .apiKey(apiKey)
                     .modelName("gemini-2.5-flash-lite")
                     .temperature(0.7)
+                    .timeout(java.time.Duration.ofSeconds(30))
                     .build();
         }
         return languageModel;

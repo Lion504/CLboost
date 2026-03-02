@@ -59,6 +59,7 @@ public class EditorView extends HorizontalLayout {
     private static final Logger LOGGER = Logger.getLogger(EditorView.class.getName());
 
     private final DocumentService documentService;
+    private final AIService aiService;
 
     private TextArea editorArea;
     private String jobTitle;
@@ -72,8 +73,9 @@ public class EditorView extends HorizontalLayout {
     // Loading indicator shown while AI generates
     private Div loadingOverlay;
 
-    public EditorView(DocumentService documentService) {
+    public EditorView(DocumentService documentService, AIService aiService) {
         this.documentService = documentService;
+        this.aiService = aiService;
         setSizeFull();
         setPadding(true);
         getStyle().set("gap", "24px");
@@ -520,7 +522,6 @@ public class EditorView extends HorizontalLayout {
             String.join(", ", selectedSkills), jobTitle, companyName);
 
         try {
-            AIService aiService = new AIService("");
             String generated = aiService.generateCoverLetter(resumeContent, jobDetails.toString(), selectedTone);
             return (generated != null && !generated.isBlank()) ? generated : getFallbackCoverLetter();
         } catch (Exception e) {
