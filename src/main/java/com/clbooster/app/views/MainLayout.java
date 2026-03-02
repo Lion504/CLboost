@@ -4,7 +4,7 @@ import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.User;
 import com.clbooster.app.backend.service.settings.Settings;
 import com.clbooster.app.backend.service.settings.SettingsService;
-import com.clbooster.app.theme.ThemeService;
+import com.clbooster.app.i18n.TranslationService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -36,9 +36,11 @@ public class MainLayout extends AppLayout {
     private static final String SIDEBAR_LABEL = "#6c757d";
 
     private final AuthenticationService authService;
+    private final TranslationService translationService;
 
     public MainLayout() {
         this.authService = new AuthenticationService();
+        this.translationService = new TranslationService();
         setPrimarySection(Section.DRAWER);
         createHeader();
         createDrawer();
@@ -48,18 +50,16 @@ public class MainLayout extends AppLayout {
     protected void onAttach(com.vaadin.flow.component.AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
-        // Initialize theme handling
+        // Apply user's language preference if logged in
         UI ui = getUI().orElse(null);
         if (ui != null) {
-            ThemeService.initializeTheme(ui);
-
-            // Apply user's theme preference if logged in
             User currentUser = authService.getCurrentUser();
             if (currentUser != null) {
                 SettingsService settingsService = new SettingsService();
                 Settings settings = settingsService.getSettings(currentUser.getPin());
-                if (settings != null && settings.getTheme() != null) {
-                    ThemeService.applyTheme(settings.getTheme(), ui);
+                if (settings != null && settings.getLanguage() != null) {
+                    translationService.setLanguage(settings.getLanguage());
+                    ui.setLocale(translationService.getCurrentLocale());
                 }
             }
         }
