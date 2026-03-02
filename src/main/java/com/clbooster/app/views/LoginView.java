@@ -120,15 +120,25 @@ public class LoginView extends VerticalLayout {
         Checkbox remember = new Checkbox("Remember me");
         remember.getStyle().set("font-size", "14px");
         remember.getStyle().set("color", TEXT_PRIMARY);
+        remember.addValueChangeListener(e -> {
+            if (e.getValue()) {
+                showInfo("Remember me is not yet implemented");
+                remember.setValue(false);
+            }
+        });
 
-        Anchor forgot = new Anchor("#", "Forgot password?");
+        Span forgot = new Span("Forgot password?");
         forgot.getStyle().set("font-size", "14px");
         forgot.getStyle().set("font-weight", "500");
         forgot.getStyle().set("color", PRIMARY);
         forgot.getStyle().set("text-decoration", "none");
         forgot.getStyle().set("transition", "opacity 0.2s");
+        forgot.getStyle().set("cursor", "pointer");
         forgot.getElement().addEventListener("mouseenter", e -> forgot.getStyle().set("opacity", "0.7"));
         forgot.getElement().addEventListener("mouseleave", e -> forgot.getStyle().set("opacity", "1"));
+        forgot.addClickListener(e -> {
+            showInfo("Please contact admin@clbooster.com for password reset assistance");
+        });
 
         rememberRow.add(remember, forgot);
 
@@ -235,6 +245,11 @@ public class LoginView extends VerticalLayout {
     private void showError(String message) {
         Notification notification = new Notification(message, 3000, Notification.Position.TOP_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        notification.open();
+    }
+
+    private void showInfo(String message) {
+        Notification notification = new Notification(message, 4000, Notification.Position.TOP_CENTER);
         notification.open();
     }
 

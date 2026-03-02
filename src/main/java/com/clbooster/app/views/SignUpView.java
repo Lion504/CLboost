@@ -1,9 +1,13 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.router.*;
@@ -21,8 +25,22 @@ public class SignUpView extends VerticalLayout {
     private static final String BG_GRAY = "#f5f5f7";
     private static final String BG_WHITE = "#ffffff";
     private static final String SUCCESS = "#34C759";
+    private static final String ERROR = "#FF3B30";
+    private static final String WEAK = "#FF3B30";
+    private static final String MEDIUM = "#FF9500";
+    private static final String GRAY = "rgba(0, 0, 0, 0.1)";
+
+    private final AuthenticationService authService;
+    private TextField firstNameField;
+    private TextField lastNameField;
+    private TextField usernameField;
+    private EmailField emailField;
+    private PasswordField passwordField;
+    private Div[] strengthBars;
+    private Span strengthText;
 
     public SignUpView() {
+        this.authService = new AuthenticationService();
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
@@ -97,25 +115,45 @@ public class SignUpView extends VerticalLayout {
         form.getStyle().set("gap", "20px");
         form.setWidthFull();
 
-        // Full Name field
-        TextField fullName = new TextField("Full Name");
-        fullName.setPlaceholder("Alex Riviera");
-        fullName.setWidthFull();
-        fullName.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        fullName.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        // Name fields (First and Last)
+        HorizontalLayout nameRow = new HorizontalLayout();
+        nameRow.setWidthFull();
+        nameRow.getStyle().set("gap", "12px");
+
+        firstNameField = new TextField("First Name");
+        firstNameField.setPlaceholder("Alex");
+        firstNameField.setWidthFull();
+        firstNameField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
+        firstNameField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+
+        lastNameField = new TextField("Last Name");
+        lastNameField.setPlaceholder("Riviera");
+        lastNameField.setWidthFull();
+        lastNameField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
+        lastNameField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+
+        nameRow.add(firstNameField, lastNameField);
+        nameRow.expand(firstNameField, lastNameField);
+
+        // Username field
+        usernameField = new TextField("Username");
+        usernameField.setPlaceholder("alexriviera");
+        usernameField.setWidthFull();
+        usernameField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
+        usernameField.getStyle().set("--vaadin-input-field-border-radius", "12px");
 
         // Email field
-        EmailField email = new EmailField("Email Address");
-        email.setPlaceholder("alex@example.com");
-        email.setWidthFull();
-        email.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        email.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        emailField = new EmailField("Email Address");
+        emailField.setPlaceholder("alex@example.com");
+        emailField.setWidthFull();
+        emailField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
+        emailField.getStyle().set("--vaadin-input-field-border-radius", "12px");
 
         // Password field
-        PasswordField password = new PasswordField("Password");
-        password.setWidthFull();
-        password.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        password.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        passwordField = new PasswordField("Password");
+        passwordField.setWidthFull();
+        passwordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
+        passwordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
 
         // Password strength indicator
         VerticalLayout strengthIndicator = new VerticalLayout();
@@ -124,26 +162,31 @@ public class SignUpView extends VerticalLayout {
         strengthIndicator.getStyle().set("gap", "8px");
         strengthIndicator.getStyle().set("margin-top", "-12px");
 
-        HorizontalLayout strengthBars = new HorizontalLayout();
-        strengthBars.getStyle().set("gap", "4px");
-        strengthBars.setWidthFull();
+        HorizontalLayout strengthBarsLayout = new HorizontalLayout();
+        strengthBarsLayout.getStyle().set("gap", "4px");
+        strengthBarsLayout.setWidthFull();
 
+        strengthBars = new Div[4];
         for (int i = 0; i < 4; i++) {
             Div bar = new Div();
             bar.getStyle().set("flex", "1");
             bar.getStyle().set("height", "4px");
-            bar.getStyle().set("background", i < 2 ? SUCCESS : "rgba(0, 0, 0, 0.1)");
+            bar.getStyle().set("background", GRAY);
             bar.getStyle().set("border-radius", "2px");
             bar.getStyle().set("transition", "background 0.3s");
-            strengthBars.add(bar);
+            strengthBars[i] = bar;
+            strengthBarsLayout.add(bar);
         }
 
-        Span strengthText = new Span("Password strength: Good");
+        strengthText = new Span("Password strength: Enter password");
         strengthText.getStyle().set("font-size", "12px");
-        strengthText.getStyle().set("color", SUCCESS);
+        strengthText.getStyle().set("color", TEXT_SECONDARY);
         strengthText.getStyle().set("font-weight", "500");
 
-        strengthIndicator.add(strengthBars, strengthText);
+        strengthIndicator.add(strengthBarsLayout, strengthText);
+
+        // Add real-time password strength listener
+        passwordField.addValueChangeListener(e -> updatePasswordStrength(e.getValue()));
 
         // Terms checkbox
         HorizontalLayout termsRow = new HorizontalLayout();
@@ -168,31 +211,57 @@ public class SignUpView extends VerticalLayout {
         check.getStyle().set("color", "white");
         checkIcon.add(check);
 
-        Paragraph termsText = new Paragraph("By signing up, you agree to our ");
-        termsText.getStyle().set("font-size", "13px");
-        termsText.getStyle().set("color", TEXT_SECONDARY);
-        termsText.getStyle().set("margin", "0");
+        // Terms text - two lines
+        VerticalLayout termsTextLayout = new VerticalLayout();
+        termsTextLayout.setPadding(false);
+        termsTextLayout.setSpacing(false);
+        termsTextLayout.getStyle().set("gap", "2px");
 
-        Anchor termsLink = new Anchor("#", "Terms of Service");
+        // Line 1: Terms of Service
+        HorizontalLayout termsLine1 = new HorizontalLayout();
+        termsLine1.setAlignItems(FlexComponent.Alignment.CENTER);
+        termsLine1.getStyle().set("gap", "4px");
+        termsLine1.getStyle().set("flex-wrap", "nowrap");
+
+        Span agreeText = new Span("By signing up, you agree to our");
+        agreeText.getStyle().set("font-size", "13px");
+        agreeText.getStyle().set("color", TEXT_SECONDARY);
+
+        Span termsLink = new Span("Terms of Service");
         termsLink.getStyle().set("font-size", "13px");
         termsLink.getStyle().set("font-weight", "500");
         termsLink.getStyle().set("color", PRIMARY);
-        termsLink.getStyle().set("text-decoration", "none");
+        termsLink.getStyle().set("cursor", "pointer");
+        termsLink.getStyle().set("text-decoration", "underline");
+        termsLink.addClickListener(e -> showTermsOfServiceDialog());
 
-        Span andText = new Span(" and ");
+        termsLine1.add(agreeText, termsLink);
+
+        // Line 2: Privacy Policy
+        HorizontalLayout termsLine2 = new HorizontalLayout();
+        termsLine2.setAlignItems(FlexComponent.Alignment.CENTER);
+        termsLine2.getStyle().set("gap", "4px");
+        termsLine2.getStyle().set("flex-wrap", "nowrap");
+
+        Span andText = new Span("and");
         andText.getStyle().set("font-size", "13px");
         andText.getStyle().set("color", TEXT_SECONDARY);
 
-        Anchor privacyLink = new Anchor("#", "Privacy Policy");
+        Span privacyLink = new Span("Privacy Policy");
         privacyLink.getStyle().set("font-size", "13px");
         privacyLink.getStyle().set("font-weight", "500");
         privacyLink.getStyle().set("color", PRIMARY);
-        privacyLink.getStyle().set("text-decoration", "none");
+        privacyLink.getStyle().set("cursor", "pointer");
+        privacyLink.getStyle().set("text-decoration", "underline");
+        privacyLink.addClickListener(e -> showPrivacyPolicyDialog());
 
-        termsRow.add(checkIcon, termsText, termsLink, andText, privacyLink);
+        termsLine2.add(andText, privacyLink);
+
+        termsTextLayout.add(termsLine1, termsLine2);
+        termsRow.add(checkIcon, termsTextLayout);
 
         // Create Account button
-        Button createBtn = createPrimaryButton("Create Account", () -> getUI().ifPresent(ui -> ui.navigate(DashboardView.class)));
+        Button createBtn = createPrimaryButton("Create Account", this::handleRegistration);
         createBtn.setWidthFull();
         createBtn.getStyle().set("margin-top", "8px");
 
@@ -226,10 +295,10 @@ public class SignUpView extends VerticalLayout {
         socialButtons.getStyle().set("gap", "12px");
 
         Button googleBtn = createSocialButton("Google");
-        Button appleBtn = createSocialButton("Apple");
+        Button linkedinBtn = createSocialButton("LinkedIn");
 
-        socialButtons.add(googleBtn, appleBtn);
-        socialButtons.expand(googleBtn, appleBtn);
+        socialButtons.add(googleBtn, linkedinBtn);
+        socialButtons.expand(googleBtn, linkedinBtn);
 
         // Login link
         HorizontalLayout loginRow = new HorizontalLayout();
@@ -253,7 +322,7 @@ public class SignUpView extends VerticalLayout {
 
         loginRow.add(haveAccount, loginLink);
 
-        form.add(fullName, email, password, strengthIndicator, termsRow, createBtn);
+        form.add(nameRow, usernameField, emailField, passwordField, strengthIndicator, termsRow, createBtn);
         card.add(backLink, logoIcon, title, subtitle, form, divider, socialButtons, loginRow);
 
         // Hover effect for card
@@ -316,5 +385,243 @@ public class SignUpView extends VerticalLayout {
         });
 
         return btn;
+    }
+
+    private void handleRegistration() {
+        String firstName = firstNameField.getValue();
+        String lastName = lastNameField.getValue();
+        String username = usernameField.getValue();
+        String email = emailField.getValue();
+        String password = passwordField.getValue();
+
+        // Validation
+        if (firstName == null || firstName.trim().isEmpty()) {
+            showError("Please enter your first name");
+            return;
+        }
+        if (lastName == null || lastName.trim().isEmpty()) {
+            showError("Please enter your last name");
+            return;
+        }
+        if (username == null || username.trim().isEmpty()) {
+            showError("Please enter a username");
+            return;
+        }
+        if (email == null || email.trim().isEmpty()) {
+            showError("Please enter your email address");
+            return;
+        }
+        if (password == null || password.trim().isEmpty()) {
+            showError("Please enter a password");
+            return;
+        }
+
+        // Attempt registration
+        boolean success = authService.register(email, username, password, firstName, lastName);
+        if (success) {
+            showSuccess("Account created successfully! Welcome, " + firstName + "!");
+            // Navigate to dashboard after successful registration
+            getUI().ifPresent(ui -> ui.navigate(DashboardView.class));
+        } else {
+            showError("Registration failed. Username or email may already be registered.");
+        }
+    }
+
+    private void showSuccess(String message) {
+        Notification notification = new Notification(message, 3000, Notification.Position.TOP_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        notification.open();
+    }
+
+    private void showError(String message) {
+        Notification notification = new Notification(message, 3000, Notification.Position.TOP_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        notification.open();
+    }
+
+    private void updatePasswordStrength(String password) {
+        if (password == null || password.isEmpty()) {
+            // Reset to gray
+            for (int i = 0; i < 4; i++) {
+                strengthBars[i].getStyle().set("background", GRAY);
+            }
+            strengthText.setText("Password strength: Enter password");
+            strengthText.getStyle().set("color", TEXT_SECONDARY);
+            return;
+        }
+
+        int strength = calculatePasswordStrength(password);
+
+        // Update bars based on strength
+        String barColor;
+        String strengthLabel;
+        String textColor;
+
+        if (strength <= 1) {
+            barColor = WEAK;
+            strengthLabel = "Weak";
+            textColor = WEAK;
+        } else if (strength == 2) {
+            barColor = MEDIUM;
+            strengthLabel = "Fair";
+            textColor = MEDIUM;
+        } else if (strength == 3) {
+            barColor = SUCCESS;
+            strengthLabel = "Good";
+            textColor = SUCCESS;
+        } else {
+            barColor = SUCCESS;
+            strengthLabel = "Strong";
+            textColor = SUCCESS;
+        }
+
+        // Fill bars
+        for (int i = 0; i < 4; i++) {
+            if (i < strength) {
+                strengthBars[i].getStyle().set("background", barColor);
+            } else {
+                strengthBars[i].getStyle().set("background", GRAY);
+            }
+        }
+
+        strengthText.setText("Password strength: " + strengthLabel);
+        strengthText.getStyle().set("color", textColor);
+    }
+
+    private int calculatePasswordStrength(String password) {
+        int strength = 0;
+
+        // Length check
+        if (password.length() >= 8) strength++;
+        if (password.length() >= 12) strength++;
+
+        // Character variety checks
+        boolean hasUpper = password.matches(".*[A-Z].*");
+        boolean hasLower = password.matches(".*[a-z].*");
+        boolean hasNumber = password.matches(".*\\d.*");
+        boolean hasSpecial = password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*");
+
+        int varietyCount = 0;
+        if (hasUpper) varietyCount++;
+        if (hasLower) varietyCount++;
+        if (hasNumber) varietyCount++;
+        if (hasSpecial) varietyCount++;
+
+        if (varietyCount >= 2) strength++;
+        if (varietyCount >= 3) strength++;
+
+        // Cap at 4
+        return Math.min(strength, 4);
+    }
+
+    private void showTermsOfServiceDialog() {
+        Dialog dialog = new Dialog();
+        dialog.setHeaderTitle("Terms of Service");
+        dialog.setWidth("500px");
+        dialog.setHeight("600px");
+
+        VerticalLayout content = new VerticalLayout();
+        content.setPadding(true);
+        content.setSpacing(true);
+
+        H3 title = new H3("CL Booster Terms of Service");
+        title.getStyle().set("margin-top", "0");
+
+        Paragraph intro = new Paragraph("Welcome to CL Booster! By using our service, you agree to these terms. Please read them carefully.");
+
+        H4 section1 = new H4("1. Acceptance of Terms");
+        Paragraph text1 = new Paragraph("By accessing or using CL Booster, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this service.");
+
+        H4 section2 = new H4("2. Use License");
+        Paragraph text2 = new Paragraph("Permission is granted to temporarily use CL Booster for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title. Under this license you may not:");
+        UnorderedList list2 = new UnorderedList(
+            new ListItem("Modify or copy the materials"),
+            new ListItem("Use the materials for any commercial purpose"),
+            new ListItem("Attempt to decompile or reverse engineer any software"),
+            new ListItem("Remove any copyright or proprietary notations")
+        );
+
+        H4 section3 = new H4("3. User Accounts");
+        Paragraph text3 = new Paragraph("You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account or password.");
+
+        H4 section4 = new H4("4. Disclaimer");
+        Paragraph text4 = new Paragraph("The materials on CL Booster are provided on an 'as is' basis. CL Booster makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property.");
+
+        H4 section5 = new H4("5. Limitations");
+        Paragraph text5 = new Paragraph("In no event shall CL Booster or its suppliers be liable for any damages arising out of the use or inability to use the materials on CL Booster.");
+
+        content.add(title, intro, section1, text1, section2, text2, list2, section3, text3, section4, text4, section5, text5);
+        content.getStyle().set("overflow", "auto");
+        content.setHeight("400px");
+
+        Button closeButton = new Button("I Understand", e -> dialog.close());
+        closeButton.getStyle().set("background", PRIMARY);
+        closeButton.getStyle().set("color", "white");
+
+        dialog.add(content);
+        dialog.getFooter().add(closeButton);
+        dialog.open();
+    }
+
+    private void showPrivacyPolicyDialog() {
+        Dialog dialog = new Dialog();
+        dialog.setHeaderTitle("Privacy Policy");
+        dialog.setWidth("500px");
+        dialog.setHeight("600px");
+
+        VerticalLayout content = new VerticalLayout();
+        content.setPadding(true);
+        content.setSpacing(true);
+
+        H3 title = new H3("CL Booster Privacy Policy");
+        title.getStyle().set("margin-top", "0");
+
+        Paragraph intro = new Paragraph("Your privacy is important to us. This Privacy Policy explains how CL Booster collects, uses, and protects your personal information.");
+
+        H4 section1 = new H4("1. Information We Collect");
+        Paragraph text1 = new Paragraph("We collect information you provide directly to us, including:");
+        UnorderedList list1 = new UnorderedList(
+            new ListItem("Personal information (name, email address, username)"),
+            new ListItem("Resume and job application data"),
+            new ListItem("Usage data and analytics"),
+            new ListItem("Device and browser information")
+        );
+
+        H4 section2 = new H4("2. How We Use Your Information");
+        Paragraph text2 = new Paragraph("We use the information we collect to:");
+        UnorderedList list2 = new UnorderedList(
+            new ListItem("Provide and maintain our services"),
+            new ListItem("Generate personalized cover letters"),
+            new ListItem("Improve and optimize our platform"),
+            new ListItem("Communicate with you about updates and features"),
+            new ListItem("Protect against fraud and abuse")
+        );
+
+        H4 section3 = new H4("3. Data Security");
+        Paragraph text3 = new Paragraph("We implement appropriate technical and organizational measures to protect your personal data against unauthorized access, alteration, disclosure, or destruction. All passwords are securely hashed using industry-standard encryption.");
+
+        H4 section4 = new H4("4. Data Retention");
+        Paragraph text4 = new Paragraph("We retain your personal information for as long as your account is active or as needed to provide you services. You may request deletion of your account and associated data at any time by contacting us.");
+
+        H4 section5 = new H4("5. Third-Party Services");
+        Paragraph text5 = new Paragraph("We may use third-party services for hosting, analytics, and AI processing. These services have their own privacy policies and we encourage you to read them.");
+
+        H4 section6 = new H4("6. Your Rights");
+        Paragraph text6 = new Paragraph("You have the right to access, correct, or delete your personal information. You may also object to or restrict certain processing of your data. Contact us at privacy@clbooster.com for any privacy-related requests.");
+
+        H4 section7 = new H4("7. Changes to This Policy");
+        Paragraph text7 = new Paragraph("We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the effective date.");
+
+        content.add(title, intro, section1, text1, list1, section2, text2, list2, section3, text3, section4, text4, section5, text5, section6, text6, section7, text7);
+        content.getStyle().set("overflow", "auto");
+        content.setHeight("400px");
+
+        Button closeButton = new Button("I Understand", e -> dialog.close());
+        closeButton.getStyle().set("background", PRIMARY);
+        closeButton.getStyle().set("color", "white");
+
+        dialog.add(content);
+        dialog.getFooter().add(closeButton);
+        dialog.open();
     }
 }
