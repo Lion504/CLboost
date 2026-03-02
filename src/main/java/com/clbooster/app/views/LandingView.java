@@ -68,7 +68,12 @@ public class LandingView extends VerticalLayout {
 
     // ============ NAVBAR ============
     private HorizontalLayout createNavbar() {
-        // Logo with sparkles
+        // Left section - Logo (fixed width for balance)
+        HorizontalLayout leftSection = new HorizontalLayout();
+        leftSection.setWidth("200px");
+        leftSection.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
+        leftSection.setAlignItems(FlexComponent.Alignment.CENTER);
+        
         HorizontalLayout logo = new HorizontalLayout();
         logo.setAlignItems(FlexComponent.Alignment.CENTER);
         logo.setSpacing(false);
@@ -94,19 +99,26 @@ public class LandingView extends VerticalLayout {
 
         logo.add(logoIcon, logoText);
         logo.addClickListener(e -> scrollToTop());
+        leftSection.add(logo);
 
-        // Navigation links (hidden on mobile)
-        HorizontalLayout navLinks = new HorizontalLayout();
-        navLinks.setVisible(true); // Will be hidden on mobile via CSS
-        navLinks.setSpacing(false);
-        navLinks.getStyle().set("gap", "32px");
+        // Center section - Navigation links
+        HorizontalLayout centerSection = new HorizontalLayout();
+        centerSection.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        centerSection.setAlignItems(FlexComponent.Alignment.CENTER);
+        centerSection.setSpacing(false);
+        centerSection.getStyle().set("gap", "32px");
 
         Button howItWorks = createNavButton("How it works", () -> openHowItWorksModal());
         Button faq = createNavButton("FAQ", () -> openFaqModal());
 
-        navLinks.add(howItWorks, faq);
+        centerSection.add(howItWorks, faq);
 
-        // Auth buttons
+        // Right section - Auth buttons (fixed width for balance)
+        HorizontalLayout rightSection = new HorizontalLayout();
+        rightSection.setWidth("200px");
+        rightSection.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+        rightSection.setAlignItems(FlexComponent.Alignment.CENTER);
+        
         Button loginBtn = new Button("Log in", e -> getUI().ifPresent(ui -> ui.navigate(LoginView.class)));
         loginBtn.getStyle().set("font-size", "13px");
         loginBtn.getStyle().set("font-weight", "700");
@@ -120,26 +132,23 @@ public class LandingView extends VerticalLayout {
         signupBtn.getStyle().set("font-size", "13px");
         signupBtn.getStyle().set("padding", "8px 20px");
 
-        HorizontalLayout authButtons = new HorizontalLayout(loginBtn, signupBtn);
-        authButtons.setSpacing(false);
-        authButtons.getStyle().set("gap", "12px");
-        authButtons.setAlignItems(FlexComponent.Alignment.CENTER);
+        rightSection.add(loginBtn, signupBtn);
 
-        // Full navbar
-        HorizontalLayout navbar = new HorizontalLayout(logo, navLinks, authButtons);
+        // Full navbar with three equal sections
+        HorizontalLayout navbar = new HorizontalLayout(leftSection, centerSection, rightSection);
         navbar.setWidthFull();
         navbar.setAlignItems(FlexComponent.Alignment.CENTER);
         navbar.setPadding(true);
-        navbar.getStyle().set("padding", "0 48px"); // No vertical padding, use height instead
-        navbar.getStyle().set("height", "80px"); // h-20 = 80px like Figma
-        navbar.getStyle().set("background", BG_WHITE + "cc"); // 80% opacity
+        navbar.getStyle().set("padding", "0 48px");
+        navbar.getStyle().set("height", "80px");
+        navbar.getStyle().set("background", BG_WHITE + "cc");
         navbar.getStyle().set("backdrop-filter", "blur(12px)");
         navbar.getStyle().set("position", "sticky");
         navbar.getStyle().set("top", "0");
         navbar.getStyle().set("z-index", "40");
         navbar.getStyle().set("border-bottom", "1px solid rgba(0,0,0,0.05)");
         navbar.getStyle().set("box-sizing", "border-box");
-        navbar.expand(navLinks);
+        navbar.expand(centerSection);
 
         return navbar;
     }
