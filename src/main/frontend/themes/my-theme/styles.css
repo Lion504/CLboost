@@ -59,6 +59,176 @@
 }
 
 /* ============================================
+   DARK MODE THEME
+   ============================================ */
+[data-theme='dark'] {
+  /* Primary Colors - Adjusted for dark mode */
+  --lumo-primary-color: #0a84ff;
+  --lumo-primary-color-50pct: rgba(10, 132, 255, 0.5);
+  --lumo-primary-color-10pct: rgba(10, 132, 255, 0.1);
+  --lumo-primary-text-color: #0a84ff;
+  --lumo-primary-contrast-color: #ffffff;
+  --lumo-primary-light: #64d2ff;
+
+  /* Text Colors - Inverted for dark mode */
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1a6;
+  --text-tertiary: #8e8e93;
+
+  /* Background Colors - Dark */
+  --lumo-base-color: #1d1d1f;
+  --bg-white: #1d1d1f;
+  --bg-gray: #2d2d2f;
+  --bg-light: #3a3a3c;
+  --lumo-contrast-5pct: #2d2d2f;
+
+  /* Semantic Colors - Adjusted for visibility */
+  --color-success: #30d158;
+  --color-warning: #ff9f0a;
+  --color-error: #ff453a;
+  --color-purple: #bf5af2;
+  --color-orange: #ff9f0a;
+
+  /* Shadows - Adjusted for dark backgrounds */
+  --lumo-box-shadow-s: 0 2px 12px rgba(0, 0, 0, 0.3);
+  --lumo-box-shadow-m: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --lumo-box-shadow-l: 0 10px 40px rgba(0, 0, 0, 0.5);
+  --shadow-primary: 0 10px 15px -3px rgba(10, 132, 255, 0.3);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 24px 48px rgba(0, 0, 0, 0.4);
+}
+
+/* ============================================
+   DARK MODE SPECIFIC OVERRIDES
+   ============================================ */
+
+/* Main body background in dark mode */
+[data-theme='dark'] body {
+  background-color: #1d1d1f !important;
+}
+
+/* Override vaadin components for dark mode */
+[data-theme='dark'] vaadin-app-layout {
+  background: #1d1d1f !important;
+}
+
+[data-theme='dark'] [class*='drawer'] {
+  background: linear-gradient(180deg, #2d2d2f 0%, #1d1d1f 100%) !important;
+}
+
+/* Card backgrounds in dark mode */
+[data-theme='dark'] [class*='card'],
+[data-theme='dark'] .cl-card,
+[data-theme='dark'] .feature-card {
+  background: #2d2d2f !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Input fields in dark mode */
+[data-theme='dark'] vaadin-text-field,
+[data-theme='dark'] vaadin-password-field,
+[data-theme='dark'] vaadin-select,
+[data-theme='dark'] input,
+[data-theme='dark'] .form-input {
+  background: #3a3a3c !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+[data-theme='dark'] vaadin-text-field::part(input-field),
+[data-theme='dark'] vaadin-password-field::part(input-field),
+[data-theme='dark'] vaadin-select::part(input-field) {
+  background: #3a3a3c !important;
+}
+
+/* Button styles in dark mode */
+[data-theme='dark'] .btn-secondary {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme='dark'] .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Badge neutral in dark mode */
+[data-theme='dark'] .badge-neutral,
+[data-theme='dark'] .badge-draft {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #a1a1a6 !important;
+}
+
+/* Sidebar navigation in dark mode */
+[data-theme='dark'] [class*='sidenav'] {
+  background: transparent !important;
+}
+
+[data-theme='dark'] [class*='sidenav-item'] {
+  color: #a1a1a6 !important;
+}
+
+[data-theme='dark'] [class*='sidenav-item']:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+/* Header/navbar in dark mode */
+[data-theme='dark'] [class*='navbar'],
+[data-theme='dark'] header {
+  background: #1d1d1f !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Dialog/Modal in dark mode */
+[data-theme='dark'] [class*='dialog-overlay'],
+[data-theme='dark'] [class*='modal-overlay'] {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+
+[data-theme='dark'] [class*='dialog-content'],
+[data-theme='dark'] [class*='modal-content'] {
+  background: #2d2d2f !important;
+  color: #ffffff !important;
+}
+
+/* Toggle switches in dark mode */
+[data-theme='dark'] [class*='toggle'] {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Selection styling in dark mode */
+[data-theme='dark'] ::selection {
+  background: rgba(10, 132, 255, 0.3) !important;
+  color: #ffffff !important;
+}
+
+/* Skeleton loading in dark mode */
+[data-theme='dark'] .skeleton {
+  background: linear-gradient(90deg, #3a3a3c 25%, #48484a 50%, #3a3a3c 75%) !important;
+  background-size: 200% 100%;
+}
+
+/* Smooth theme transitions */
+html,
+body,
+[data-theme='dark'] body,
+[data-theme='light'] body {
+  transition:
+    background-color var(--transition-slow),
+    color var(--transition-slow);
+}
+
+/* Ensure all themed elements transition smoothly */
+* {
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+/* ============================================
    GLOBAL STYLES
    ============================================ */
 * {

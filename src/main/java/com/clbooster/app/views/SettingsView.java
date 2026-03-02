@@ -1,20 +1,24 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.backend.service.authentication.AuthenticationService;
+import com.clbooster.app.backend.service.profile.User;
+import com.clbooster.app.backend.service.profile.UserDAO;
+import com.clbooster.app.backend.service.settings.Settings;
+import com.clbooster.app.backend.service.settings.SettingsService;
+import com.clbooster.app.i18n.TranslationService;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -30,7 +34,50 @@ public class SettingsView extends VerticalLayout {
     private static final String BG_GRAY = "#f5f5f7";
     private static final String SUCCESS = "#34C759";
 
+    private final SettingsService settingsService;
+    private final AuthenticationService authService;
+    private final UserDAO userDAO;
+    private final TranslationService translationService;
+    private Settings userSettings;
+    private User currentUser;
+
+    // Language select
+    private Select<String> langSelect;
+    
+    // Toggle track elements for updating styles
+    private Div emailTrack;
+    private Div pushTrack;
+    private Div productTrack;
+    private Div marketingTrack;
+    private Div cloudTrack;
+    private Div aiTrack;
+    private Div usageTrack;
+    
+    // Toggle thumbs for animation
+    private Div emailThumb;
+    private Div pushThumb;
+    private Div productThumb;
+    private Div marketingThumb;
+    private Div cloudThumb;
+    private Div aiThumb;
+    private Div usageThumb;
+
+    // Toggle states
+    private boolean emailNotifications;
+    private boolean pushNotifications;
+    private boolean productUpdates;
+    private boolean marketing;
+    private boolean storeInCloud;
+    private boolean allowAiTraining;
+    private boolean shareUsageData;
+
     public SettingsView() {
+        this.settingsService = new SettingsService();
+        this.authService = new AuthenticationService();
+        this.userDAO = new UserDAO();
+        this.translationService = new TranslationService();
+        this.currentUser = authService.getCurrentUser();
+
         setPadding(true);
         setSpacing(true);
         getStyle().set("gap", "24px");
@@ -39,6 +86,9 @@ public class SettingsView extends VerticalLayout {
         getStyle().set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
         setSizeFull();
         setMaxWidth("900px");
+
+        // Load user settings first
+        loadSettings();
 
         // Page Header
         VerticalLayout pageHeader = new VerticalLayout();
@@ -61,22 +111,38 @@ public class SettingsView extends VerticalLayout {
 
         pageHeader.add(title, subtitle);
 
-        // Appearance Card
+        // Settings Cards
         Div appearanceCard = createAppearanceCard();
-
-        // Language Card
         Div languageCard = createLanguageCard();
-
-        // Notifications Card
         Div notificationsCard = createNotificationsCard();
-
-        // Data & Privacy Card
         Div privacyCard = createPrivacyCard();
 
         // Action buttons
         HorizontalLayout actions = createActionButtons();
 
         add(pageHeader, appearanceCard, languageCard, notificationsCard, privacyCard, actions);
+    }
+
+    private void loadSettings() {
+        if (currentUser != null) {
+            userSettings = settingsService.getSettings(currentUser.getPin());
+            emailNotifications = userSettings.isEmailNotifications();
+            pushNotifications = userSettings.isPushNotifications();
+            productUpdates = userSettings.isProductUpdates();
+            marketing = userSettings.isMarketing();
+            storeInCloud = userSettings.isStoreInCloud();
+            allowAiTraining = userSettings.isAllowAiTraining();
+            shareUsageData = userSettings.isShareUsageData();
+        } else {
+            userSettings = new Settings();
+            emailNotifications = true;
+            pushNotifications = false;
+            productUpdates = true;
+            marketing = false;
+            storeInCloud = true;
+            allowAiTraining = false;
+            shareUsageData = true;
+        }
     }
 
     private Div createAppearanceCard() {
@@ -91,58 +157,11 @@ public class SettingsView extends VerticalLayout {
         Paragraph desc = new Paragraph("Customize how Cover Booster looks on your device.");
         desc.getStyle().set("font-size", "14px");
         desc.getStyle().set("color", TEXT_SECONDARY);
-        desc.getStyle().set("margin", "0 0 24px 0");
+        desc.getStyle().set("margin", "0");
 
-        // Theme options
-        HorizontalLayout themeOptions = new HorizontalLayout();
-        themeOptions.getStyle().set("gap", "12px");
-
-        themeOptions.add(createThemeOption("Light", VaadinIcon.SUN_O, false));
-        themeOptions.add(createThemeOption("Dark", VaadinIcon.MOON_O, false));
-        themeOptions.add(createThemeOption("System", VaadinIcon.DESKTOP, true));
-
-        card.add(title, desc, themeOptions);
+        card.add(title, desc);
 
         return card;
-    }
-
-    private Div createThemeOption(String label, VaadinIcon iconType, boolean selected) {
-        Div option = new Div();
-        option.getStyle().set("display", "flex");
-        option.getStyle().set("align-items", "center");
-        option.getStyle().set("gap", "10px");
-        option.getStyle().set("padding", "16px 20px");
-        option.getStyle().set("background", selected ? "rgba(0, 122, 255, 0.1)" : BG_GRAY);
-        option.getStyle().set("border", selected ? "2px solid " + PRIMARY : "2px solid transparent");
-        option.getStyle().set("border-radius", "16px");
-        option.getStyle().set("cursor", "pointer");
-        option.getStyle().set("transition", "all 0.2s");
-        option.getStyle().set("min-width", "120px");
-
-        Icon icon = iconType.create();
-        icon.getStyle().set("color", selected ? PRIMARY : TEXT_SECONDARY);
-        icon.getStyle().set("width", "20px");
-        icon.getStyle().set("height", "20px");
-
-        Span labelSpan = new Span(label);
-        labelSpan.getStyle().set("font-size", "14px");
-        labelSpan.getStyle().set("font-weight", selected ? "600" : "500");
-        labelSpan.getStyle().set("color", selected ? PRIMARY : TEXT_PRIMARY);
-
-        option.add(icon, labelSpan);
-
-        option.getElement().addEventListener("mouseenter", e -> {
-            if (!selected) {
-                option.getStyle().set("background", "rgba(0, 0, 0, 0.06)");
-            }
-        });
-        option.getElement().addEventListener("mouseleave", e -> {
-            if (!selected) {
-                option.getStyle().set("background", BG_GRAY);
-            }
-        });
-
-        return option;
     }
 
     private Div createLanguageCard() {
@@ -173,12 +192,21 @@ public class SettingsView extends VerticalLayout {
         label.getStyle().set("text-transform", "uppercase");
         label.getStyle().set("letter-spacing", "0.05em");
 
-        Select<String> langSelect = new Select<>();
+        langSelect = new Select<>();
         langSelect.setItems("English", "Finnish (Suomi)", "Swedish (Svenska)", "German (Deutsch)", "French (Français)");
-        langSelect.setValue("English");
+        langSelect.setValue(userSettings.getLanguage() != null ? userSettings.getLanguage() : "English");
         langSelect.setWidthFull();
         langSelect.getStyle().set("--vaadin-input-field-background", BG_GRAY);
         langSelect.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        
+        // Apply language change immediately when selected
+        langSelect.addValueChangeListener(e -> {
+            if (e.getValue() != null) {
+                translationService.setLanguage(e.getValue());
+                Notification.show("Language changed to " + e.getValue() + ". Save settings to apply permanently.",
+                    3000, Notification.Position.BOTTOM_END);
+            }
+        });
 
         selectGroup.add(label, langSelect);
         card.add(title, desc, selectGroup);
@@ -204,23 +232,64 @@ public class SettingsView extends VerticalLayout {
         VerticalLayout toggles = new VerticalLayout();
         toggles.setPadding(false);
         toggles.setSpacing(false);
-        toggles.getStyle().set("gap", "16px");
+        toggles.getStyle().set("gap", "0");
 
-        toggles.add(createToggleRow("Email Notifications", "Weekly summaries and match alerts", true));
-        toggles.add(createToggleRow("Push Notifications", "Real-time generation status", false));
-        toggles.add(createToggleRow("Product Updates", "New features and tips", true));
-        toggles.add(createToggleRow("Marketing", "Special offers and promotions", false));
+        ToggleResult emailResult = createToggleRow("Email Notifications", "Weekly summaries and match alerts", emailNotifications);
+        emailTrack = emailResult.track;
+        emailThumb = emailResult.thumb;
+        emailTrack.addClickListener(e -> {
+            emailNotifications = !emailNotifications;
+            updateToggleVisual(emailTrack, emailThumb, emailNotifications);
+        });
+        
+        ToggleResult pushResult = createToggleRow("Push Notifications", "Real-time generation status", pushNotifications);
+        pushTrack = pushResult.track;
+        pushThumb = pushResult.thumb;
+        pushTrack.addClickListener(e -> {
+            pushNotifications = !pushNotifications;
+            updateToggleVisual(pushTrack, pushThumb, pushNotifications);
+        });
+        
+        ToggleResult productResult = createToggleRow("Product Updates", "New features and tips", productUpdates);
+        productTrack = productResult.track;
+        productThumb = productResult.thumb;
+        productTrack.addClickListener(e -> {
+            productUpdates = !productUpdates;
+            updateToggleVisual(productTrack, productThumb, productUpdates);
+        });
+        
+        ToggleResult marketingResult = createToggleRow("Marketing", "Special offers and promotions", marketing);
+        marketingTrack = marketingResult.track;
+        marketingThumb = marketingResult.thumb;
+        marketingTrack.addClickListener(e -> {
+            marketing = !marketing;
+            updateToggleVisual(marketingTrack, marketingThumb, marketing);
+        });
+
+        toggles.add(emailResult.row, pushResult.row, productResult.row, marketingResult.row);
 
         card.add(title, desc, toggles);
 
         return card;
     }
+    
+    private static class ToggleResult {
+        final HorizontalLayout row;
+        final Div track;
+        final Div thumb;
+        
+        ToggleResult(HorizontalLayout row, Div track, Div thumb) {
+            this.row = row;
+            this.track = track;
+            this.thumb = thumb;
+        }
+    }
 
-    private HorizontalLayout createToggleRow(String title, String description, boolean enabled) {
+    private ToggleResult createToggleRow(String title, String description, boolean enabled) {
         HorizontalLayout row = new HorizontalLayout();
         row.setWidthFull();
         row.setAlignItems(FlexComponent.Alignment.CENTER);
-        row.getStyle().set("padding", "12px 0");
+        row.getStyle().set("padding", "16px 0");
         row.getStyle().set("border-bottom", "1px solid rgba(0, 0, 0, 0.05)");
 
         VerticalLayout textGroup = new VerticalLayout();
@@ -239,24 +308,15 @@ public class SettingsView extends VerticalLayout {
 
         textGroup.add(titleSpan, descSpan);
 
-        // Toggle switch
-        Div toggle = createToggleSwitch(enabled);
-
-        row.add(textGroup, toggle);
-        row.expand(textGroup);
-
-        return row;
-    }
-
-    private Div createToggleSwitch(boolean enabled) {
+        // Create toggle
         Div track = new Div();
         track.getStyle().set("width", "48px");
         track.getStyle().set("height", "28px");
-        track.getStyle().set("background", enabled ? SUCCESS : "rgba(0, 0, 0, 0.2)");
         track.getStyle().set("border-radius", "9999px");
         track.getStyle().set("position", "relative");
         track.getStyle().set("cursor", "pointer");
         track.getStyle().set("transition", "background 0.2s");
+        track.getStyle().set("flex-shrink", "0");
 
         Div thumb = new Div();
         thumb.getStyle().set("width", "24px");
@@ -265,20 +325,29 @@ public class SettingsView extends VerticalLayout {
         thumb.getStyle().set("border-radius", "50%");
         thumb.getStyle().set("position", "absolute");
         thumb.getStyle().set("top", "2px");
-        thumb.getStyle().set(enabled ? "right" : "left", "2px");
         thumb.getStyle().set("box-shadow", "0 2px 4px rgba(0,0,0,0.2)");
         thumb.getStyle().set("transition", "all 0.2s");
 
         track.add(thumb);
+        
+        // Set initial state
+        updateToggleVisual(track, thumb, enabled);
 
-        track.getElement().addEventListener("click", e -> {
-            boolean newState = !enabled;
-            track.getStyle().set("background", newState ? SUCCESS : "rgba(0, 0, 0, 0.2)");
-            thumb.getStyle().set(newState ? "right" : "left", "2px");
-            thumb.getStyle().remove(newState ? "left" : "right");
-        });
+        row.add(textGroup, track);
+        row.expand(textGroup);
 
-        return track;
+        return new ToggleResult(row, track, thumb);
+    }
+    
+    private void updateToggleVisual(Div track, Div thumb, boolean enabled) {
+        track.getStyle().set("background", enabled ? SUCCESS : "rgba(0, 0, 0, 0.2)");
+        if (enabled) {
+            thumb.getStyle().set("right", "2px");
+            thumb.getStyle().remove("left");
+        } else {
+            thumb.getStyle().set("left", "2px");
+            thumb.getStyle().remove("right");
+        }
     }
 
     private Div createPrivacyCard() {
@@ -299,11 +368,33 @@ public class SettingsView extends VerticalLayout {
         VerticalLayout options = new VerticalLayout();
         options.setPadding(false);
         options.setSpacing(false);
-        options.getStyle().set("gap", "16px");
+        options.getStyle().set("gap", "0");
 
-        options.add(createPrivacyRow("Store cover letters in cloud", true));
-        options.add(createPrivacyRow("Allow AI improvement training", false));
-        options.add(createPrivacyRow("Share anonymized usage data", true));
+        ToggleResult cloudResult = createToggleRow("Store cover letters in cloud", "Securely store your documents", storeInCloud);
+        cloudTrack = cloudResult.track;
+        cloudThumb = cloudResult.thumb;
+        cloudTrack.addClickListener(e -> {
+            storeInCloud = !storeInCloud;
+            updateToggleVisual(cloudTrack, cloudThumb, storeInCloud);
+        });
+        
+        ToggleResult aiResult = createToggleRow("Allow AI improvement training", "Help improve our AI models", allowAiTraining);
+        aiTrack = aiResult.track;
+        aiThumb = aiResult.thumb;
+        aiTrack.addClickListener(e -> {
+            allowAiTraining = !allowAiTraining;
+            updateToggleVisual(aiTrack, aiThumb, allowAiTraining);
+        });
+        
+        ToggleResult usageResult = createToggleRow("Share anonymized usage data", "Help us improve the product", shareUsageData);
+        usageTrack = usageResult.track;
+        usageThumb = usageResult.thumb;
+        usageTrack.addClickListener(e -> {
+            shareUsageData = !shareUsageData;
+            updateToggleVisual(usageTrack, usageThumb, shareUsageData);
+        });
+
+        options.add(cloudResult.row, aiResult.row, usageResult.row);
 
         // Danger zone
         Div dangerZone = new Div();
@@ -348,6 +439,8 @@ public class SettingsView extends VerticalLayout {
             deleteBtn.getStyle().set("background", "rgba(255, 59, 48, 0.1)");
         });
 
+        deleteBtn.addClickListener(e -> showDeleteAccountDialog());
+
         dangerRow.add(dangerText, deleteBtn);
         dangerRow.expand(dangerText);
 
@@ -358,24 +451,59 @@ public class SettingsView extends VerticalLayout {
         return card;
     }
 
-    private HorizontalLayout createPrivacyRow(String title, boolean enabled) {
-        HorizontalLayout row = new HorizontalLayout();
-        row.setWidthFull();
-        row.setAlignItems(FlexComponent.Alignment.CENTER);
-        row.getStyle().set("padding", "12px 0");
-        row.getStyle().set("border-bottom", "1px solid rgba(0, 0, 0, 0.05)");
+    private void showDeleteAccountDialog() {
+        if (currentUser == null) {
+            Notification.show("Error: You must be logged in to delete your account", 3000, Notification.Position.TOP_CENTER);
+            return;
+        }
 
-        Span titleSpan = new Span(title);
-        titleSpan.getStyle().set("font-size", "15px");
-        titleSpan.getStyle().set("font-weight", "500");
-        titleSpan.getStyle().set("color", TEXT_PRIMARY);
+        Dialog dialog = new Dialog();
+        dialog.setHeaderTitle("Delete Account");
 
-        Div toggle = createToggleSwitch(enabled);
+        VerticalLayout content = new VerticalLayout();
+        content.setPadding(true);
+        content.setSpacing(true);
 
-        row.add(titleSpan, toggle);
-        row.expand(titleSpan);
+        Paragraph warning = new Paragraph("This action cannot be undone. Please enter your password to confirm.");
+        warning.getStyle().set("color", TEXT_SECONDARY);
 
-        return row;
+        PasswordField passwordField = new PasswordField("Password");
+        passwordField.setWidthFull();
+        passwordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
+
+        content.add(warning, passwordField);
+
+        Button cancelBtn = new Button("Cancel", e -> dialog.close());
+        cancelBtn.getStyle().set("background", "transparent");
+        cancelBtn.getStyle().set("color", TEXT_SECONDARY);
+
+        Button confirmBtn = new Button("Delete Account", e -> {
+            String password = passwordField.getValue();
+            if (password == null || password.isEmpty()) {
+                Notification.show("Please enter your password", 3000, Notification.Position.TOP_CENTER);
+                return;
+            }
+
+            if (userDAO.loginUser(currentUser.getUsername(), password) != null) {
+                settingsService.deleteSettings(currentUser.getPin());
+                if (userDAO.deleteUser(currentUser)) {
+                    Notification.show("Account deleted successfully", 3000, Notification.Position.BOTTOM_END);
+                    authService.logout();
+                    dialog.close();
+                    getUI().ifPresent(ui -> ui.navigate(LoginView.class));
+                } else {
+                    Notification.show("Error deleting account. Please try again.", 3000, Notification.Position.TOP_CENTER);
+                }
+            } else {
+                Notification.show("Incorrect password", 3000, Notification.Position.TOP_CENTER);
+            }
+        });
+        confirmBtn.getStyle().set("background", "#FF3B30");
+        confirmBtn.getStyle().set("color", "white");
+
+        dialog.add(content);
+        dialog.getFooter().add(cancelBtn, confirmBtn);
+        dialog.open();
     }
 
     private HorizontalLayout createActionButtons() {
@@ -386,6 +514,8 @@ public class SettingsView extends VerticalLayout {
         actions.getStyle().set("margin-top", "8px");
 
         Button discardBtn = new Button("Discard Changes", e -> {
+            loadSettings();
+            getUI().ifPresent(ui -> ui.getPage().reload());
             Notification.show("Changes discarded", 2000, Notification.Position.BOTTOM_END);
         });
         discardBtn.getStyle().set("background", "transparent");
@@ -406,13 +536,53 @@ public class SettingsView extends VerticalLayout {
             discardBtn.getStyle().set("color", TEXT_SECONDARY);
         });
 
-        Button saveBtn = createPrimaryButton("Save Changes", () -> {
-            Notification.show("Settings saved successfully!", 3000, Notification.Position.BOTTOM_END);
-        });
+        Button saveBtn = createPrimaryButton("Save Changes", () -> saveSettings());
 
         actions.add(discardBtn, saveBtn);
 
         return actions;
+    }
+
+    private void saveSettings() {
+        if (currentUser == null) {
+            Notification.show("Error: You must be logged in to save settings", 3000, Notification.Position.TOP_CENTER);
+            return;
+        }
+
+        String languageValue = langSelect.getValue();
+        if (languageValue == null) {
+            languageValue = "English";
+        }
+
+        userSettings.setUserPin(currentUser.getPin());
+        userSettings.setTheme("system");
+        userSettings.setLanguage(languageValue);
+        userSettings.setEmailNotifications(emailNotifications);
+        userSettings.setPushNotifications(pushNotifications);
+        userSettings.setProductUpdates(productUpdates);
+        userSettings.setMarketing(marketing);
+        userSettings.setStoreInCloud(storeInCloud);
+        userSettings.setAllowAiTraining(allowAiTraining);
+        userSettings.setShareUsageData(shareUsageData);
+
+        System.out.println("DEBUG: Saving settings for user " + currentUser.getPin());
+        System.out.println("DEBUG: Theme = system");
+        System.out.println("DEBUG: Language = " + languageValue);
+
+        try {
+            boolean success = settingsService.saveSettings(userSettings);
+            if (success) {
+                Notification.show("Settings saved successfully!", 3000, Notification.Position.BOTTOM_END);
+                System.out.println("DEBUG: Settings saved successfully");
+            } else {
+                Notification.show("Error: Failed to save settings. The database may be unavailable.", 5000, Notification.Position.TOP_CENTER);
+                System.err.println("ERROR: Failed to save settings for user " + currentUser.getPin());
+            }
+        } catch (Exception e) {
+            Notification.show("Database error: " + e.getMessage(), 5000, Notification.Position.TOP_CENTER);
+            System.err.println("ERROR: Exception while saving settings: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private Div createCard() {
