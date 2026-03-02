@@ -1174,9 +1174,8 @@ public class GeneratorWizardView extends VerticalLayout {
         jobDetails.append("Selected Skills: ").append(String.join(", ", selectedSkills)).append("\n");
         jobDetails.append("Job Description: ").append(jobDescription).append("\n");
 
-        String resumeContent = String.format(
-            "Experienced professional with skills in %s. Seeking to apply expertise in a %s role at %s.",
-            String.join(", ", selectedSkills), jobTitle, companyName);
+        // Build enriched candidate context from profile + resume
+        String resumeContent = buildCandidateContext();
 
         try {
             AIService aiService = new AIService("");
@@ -1185,6 +1184,105 @@ public class GeneratorWizardView extends VerticalLayout {
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "AI generation failed, using fallback: " + e.getMessage(), e);
             return getFallbackCoverLetter();
+        }
+    }
+
+    /**
+     * Builds a rich candidate context string by combining:
+     * 1. User identity (name, email) from the User record
+     * 2. Profile data (experience level, skills, tools, portfolio link)
+     * 3. Parsed text from the user's most recent uploaded resume file
+     *
+     * This gives the AI full context to write a personalised cover letter.
+     */
+    private String buildCandidateContext() {
+        StringBuilder ctx = new StringBuilder();
+
+        try {
+            AuthenticationService authService = new AuthenticationService();
+            com.clbooster.app.backend.service.profile.User currentUser = authService.getCurrentUser();
+            if (currentUser == null) {
+                LOGGER.warning("buildCandidateContext: no logged-in user");
+                return fallbackSkillsSummary();
+            }
+
+            int pin = currentUser.getPin();
+
+            // 1 – Basic identity
+            ctx.append("=== CANDIDATE PROFILE ===\n");
+            ctx.append("Name: ").append(currentUser.getFirstName()).append(" ")
+               .append(currentUser.getLastName()).append("\n");
+
+            // 2 – Profile data from DB
+            com.clbooster.app.backend.service.profile.ProfileDAO profileDAO =
+                new com.clbooster.app.backend.service.profile.ProfileDAO();
+            com.clbooster.app.backend.service.profile.Profile profile = profileDAO.getProfileByPin(pin);
+
+            if (profile != null) {
+                if (profile.getExperienceLevel() != null && !profile.getExperienceLevel().isBlank())
+                    ctx.append("Experience Level: ").append(profile.getExperienceLevel()).append("\n");
+                if (profile.getSkills() != null && !profile.getSkills().isBlank())
+                    ctx.append("Profile Skills: ").append(profile.getSkills()).append("\n");
+                if (profile.getTools() != null && !profile.getTools().isBlank())
+                    ctx.append("Tools & Technologies: ").append(profile.getTools()).append("\n");
+                if (profile.getLink() != null && !profile.getLink().isBlank())
+                    ctx.append("Portfolio/LinkedIn: ").append(profile.getLink()).append("\n");
+                if (profile.getProfileEmail() != null && !profile.getProfileEmail().isBlank())
+                    ctx.append("Contact Email: ").append(profile.getProfileEmail()).append("\n");
+            } else {
+                LOGGER.info("buildCandidateContext: no profile row for PIN " + pin);
+            }
+
+            // 3 – Parsed resume text
+            String resumeText = loadUserResumeText(pin);
+            if (resumeText != null && !resumeText.isBlank()) {
+                ctx.append("\n=== RESUME CONTENT ===\n").append(resumeText).append("\n");
+            } else {
+                // Fall back to wizard-selected skills if no resume uploaded yet
+                ctx.append("\nSelected Skills for this application: ")
+                   .append(String.join(", ", selectedSkills)).append("\n");
+                LOGGER.info("buildCandidateContext: no resume found, using wizard skills");
+            }
+
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "buildCandidateContext error: " + e.getMessage(), e);
+            return fallbackSkillsSummary();
+        }
+
+        return ctx.toString();
+    }
+
+    private String fallbackSkillsSummary() {
+        return String.format(
+            "Experienced professional with skills in %s. Seeking a %s role at %s.",
+            String.join(", ", selectedSkills), jobTitle, companyName);
+    }
+
+    /**
+     * Finds the most recently uploaded resume for the given PIN in uploads/resumes/
+     * and returns its parsed text content.
+     */
+    private String loadUserResumeText(int userPin) {
+        try {
+            Path resumeDir = Paths.get("uploads", "resumes");
+            if (!Files.exists(resumeDir)) return null;
+
+            File[] userFiles = resumeDir.toFile().listFiles(
+                (d, name) -> name.startsWith(userPin + "_"));
+            if (userFiles == null || userFiles.length == 0) return null;
+
+            File latest = java.util.Arrays.stream(userFiles)
+                .filter(File::isFile)
+                .max(java.util.Comparator.comparingLong(File::lastModified))
+                .orElse(null);
+            if (latest == null) return null;
+
+            LOGGER.info("Using resume: " + latest.getName());
+            String parsed = new Parser().parseFileToJson(latest.getAbsolutePath());
+            return (parsed != null && !parsed.isBlank()) ? parsed : null;
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "loadUserResumeText error: " + e.getMessage(), e);
+            return null;
         }
     }
 
