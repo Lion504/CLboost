@@ -6,10 +6,12 @@ import com.clbooster.app.backend.service.settings.SettingsService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.i18n.I18NProvider;
 import com.vaadin.flow.server.VaadinSession;
+import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.*;
 
+@Component
 public class TranslationService implements I18NProvider {
     
     private static final String BUNDLE_PREFIX = "messages";

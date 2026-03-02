@@ -1,6 +1,8 @@
 package com.clbooster.app.views;
 
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
+import com.clbooster.app.backend.service.document.DocumentService;
+import com.clbooster.app.backend.service.profile.ProfileService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.html.Div;
@@ -17,6 +19,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.FileBuffer;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
@@ -29,7 +33,6 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -56,11 +59,13 @@ public class ResumeManagerView extends VerticalLayout {
 
     private static final Logger LOGGER = Logger.getLogger(ResumeManagerView.class.getName());
 
+    private final DocumentService documentService;
     private List<ResumeData> resumes = new ArrayList<>();
     private VerticalLayout resumeListContainer;
     private Span countBadge;
 
-    public ResumeManagerView() {
+    public ResumeManagerView(DocumentService documentService) {
+        this.documentService = documentService;
         setPadding(true);
         setSpacing(true);
         getStyle().set("gap", "32px");
@@ -159,8 +164,42 @@ public class ResumeManagerView extends VerticalLayout {
         panel.setSpacing(false);
         panel.getStyle().set("gap", "24px");
 
-        // Upload zone with actual file upload functionality
+        // ---- Tab toggle: Upload File / Paste Text ----
+        HorizontalLayout tabToggle = new HorizontalLayout();
+        tabToggle.setPadding(false);
+        tabToggle.setSpacing(false);
+        tabToggle.getStyle()
+            .set("background", BG_GRAY)
+            .set("border-radius", "12px")
+            .set("padding", "4px")
+            .set("gap", "4px")
+            .set("width", "fit-content");
+
+        Button uploadTabBtn = new Button("Upload File");
+        Button pasteTabBtn  = new Button("Paste Text");
+
+        styleActiveTab(uploadTabBtn, true);
+        styleActiveTab(pasteTabBtn, false);
+
+        // Upload zone and paste panel — only one is visible at a time
         Div uploadZone = createUploadZone();
+        Div pastePanel = createPasteTextPanel();
+        pastePanel.setVisible(false);
+
+        uploadTabBtn.addClickListener(e -> {
+            styleActiveTab(uploadTabBtn, true);
+            styleActiveTab(pasteTabBtn, false);
+            uploadZone.setVisible(true);
+            pastePanel.setVisible(false);
+        });
+        pasteTabBtn.addClickListener(e -> {
+            styleActiveTab(uploadTabBtn, false);
+            styleActiveTab(pasteTabBtn, true);
+            uploadZone.setVisible(false);
+            pastePanel.setVisible(true);
+        });
+
+        tabToggle.add(uploadTabBtn, pasteTabBtn);
 
         // Resume list header
         HorizontalLayout listHeader = new HorizontalLayout();
@@ -227,7 +266,7 @@ public class ResumeManagerView extends VerticalLayout {
 
         refreshResumeList();
 
-        panel.add(uploadZone, listHeader, resumeListContainer);
+        panel.add(tabToggle, uploadZone, pastePanel, listHeader, resumeListContainer);
 
         return panel;
     }
@@ -316,26 +355,14 @@ public class ResumeManagerView extends VerticalLayout {
         // File upload success handler
         upload.addSucceededListener(event -> {
             String fileName = event.getFileName();
+            int userPin = getCurrentUserPin();
             try {
-                Path uploadsDir = Paths.get("uploads", "resumes");
-                if (!Files.exists(uploadsDir)) {
-                    Files.createDirectories(uploadsDir);
-                }
+                String storedPath = documentService.storeResumeFile(
+                    buffer.getInputStream(), fileName, String.valueOf(userPin));
+                new ProfileService().updateCVTimestamp(userPin);
 
-                int userPin = getCurrentUserPin();
-                String timestamp = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss").format(LocalDateTime.now());
                 String safeOriginalName = fileName.replaceAll("[^a-zA-Z0-9._\\-]", "_");
-                String newFileName = userPin + "_" + timestamp + "_" + safeOriginalName;
-                Path targetPath = uploadsDir.resolve(newFileName);
-
-                File tempFile = buffer.getFileData().getFile();
-                if (!tempFile.exists()) {
-                    throw new IOException("Uploaded file is missing");
-                }
-                // Allow zero-byte TXT files; only reject if file doesn't exist
-                Files.copy(tempFile.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-
-                LOGGER.info("Resume uploaded: " + newFileName + " (" + targetPath.toFile().length() + " bytes)");
+                LOGGER.info("Resume uploaded via DocumentService: " + storedPath);
                 Notification.show("\"" + safeOriginalName + "\" uploaded successfully!",
                     3000, Notification.Position.TOP_CENTER);
 
@@ -358,6 +385,105 @@ public class ResumeManagerView extends VerticalLayout {
                 5000, Notification.Position.TOP_CENTER));
 
         return uploadContainer;
+    }
+
+    private void styleActiveTab(Button btn, boolean active) {
+        if (active) {
+            btn.getStyle()
+                .set("background", BG_WHITE)
+                .set("color", TEXT_PRIMARY)
+                .set("font-weight", "700")
+                .set("border-radius", "10px")
+                .set("padding", "8px 20px")
+                .set("border", "none")
+                .set("box-shadow", "0 1px 4px rgba(0,0,0,0.1)")
+                .set("cursor", "pointer");
+        } else {
+            btn.getStyle()
+                .set("background", "transparent")
+                .set("color", TEXT_SECONDARY)
+                .set("font-weight", "500")
+                .set("border-radius", "10px")
+                .set("padding", "8px 20px")
+                .set("border", "none")
+                .set("box-shadow", "none")
+                .set("cursor", "pointer");
+        }
+    }
+
+    private Div createPasteTextPanel() {
+        Div panel = new Div();
+        panel.getStyle()
+            .set("width", "90%")
+            .set("background", BG_WHITE)
+            .set("border", "1px solid rgba(0,0,0,0.08)")
+            .set("border-radius", "24px")
+            .set("padding", "32px");
+
+        VerticalLayout inner = new VerticalLayout();
+        inner.setPadding(false);
+        inner.setSpacing(false);
+        inner.getStyle().set("gap", "16px");
+
+        H3 heading = new H3("Paste Resume Text");
+        heading.getStyle().set("font-size", "18px").set("font-weight", "700")
+            .set("color", TEXT_PRIMARY).set("margin", "0");
+
+        TextArea resumeTextArea = new TextArea();
+        resumeTextArea.setPlaceholder("Paste the plain text of your resume here...");
+        resumeTextArea.setWidthFull();
+        resumeTextArea.setMinHeight("200px");
+        resumeTextArea.getStyle().set("--vaadin-input-field-background", BG_GRAY)
+            .set("--vaadin-input-field-border-radius", "12px");
+
+        TextField filenameField = new TextField();
+        filenameField.setPlaceholder("Filename (e.g. my-resume.txt)");
+        filenameField.setWidthFull();
+        filenameField.getStyle().set("--vaadin-input-field-background", BG_GRAY)
+            .set("--vaadin-input-field-border-radius", "12px");
+
+        Button saveBtn = new Button("Save as Text File");
+        saveBtn.getStyle()
+            .set("background", "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)")
+            .set("color", "white")
+            .set("font-weight", "600")
+            .set("border-radius", "9999px")
+            .set("border", "none")
+            .set("padding", "12px 24px")
+            .set("cursor", "pointer")
+            .set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
+
+        saveBtn.addClickListener(e -> {
+            String text = resumeTextArea.getValue();
+            if (text == null || text.trim().isEmpty()) {
+                Notification.show("Please paste some resume text first.", 3000, Notification.Position.TOP_CENTER);
+                return;
+            }
+            String filename = filenameField.getValue();
+            if (filename == null || filename.trim().isEmpty()) {
+                filename = "resume_text.txt";
+            } else if (!filename.contains(".")) {
+                filename = filename + ".txt";
+            }
+            int userPin = getCurrentUserPin();
+            try {
+                String storedPath = documentService.storeResumeText(text, filename, String.valueOf(userPin));
+                LOGGER.info("Resume text saved via DocumentService: " + storedPath);
+                Notification.show("Resume text saved as \"" + filename + "\"!",
+                    3000, Notification.Position.TOP_CENTER);
+                resumeTextArea.clear();
+                filenameField.clear();
+                resumes = loadResumesFromFilesystem();
+                refreshResumeList();
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, "Save resume text failed", ex);
+                Notification.show("Failed to save: " + ex.getMessage(), 5000, Notification.Position.TOP_CENTER);
+            }
+        });
+
+        inner.add(heading, resumeTextArea, filenameField, saveBtn);
+        panel.add(inner);
+        return panel;
     }
 
     private Span createFormatBadge(String format) {
@@ -532,15 +658,10 @@ public class ResumeManagerView extends VerticalLayout {
     }
 
     private void downloadResume(ResumeData resume) {
-        File file = new File(resume.filePath);
-        if (!file.exists()) {
-            Notification.show("File not found: " + resume.filePath, 3000, Notification.Position.TOP_CENTER);
-            return;
-        }
         try {
-            byte[] bytes = Files.readAllBytes(file.toPath());
-            String mimeType = resume.format.equalsIgnoreCase("PDF") 
-                ? "application/pdf" 
+            byte[] bytes = documentService.retrieveResumeFile(resume.filePath);
+            String mimeType = resume.format.equalsIgnoreCase("PDF")
+                ? "application/pdf"
                 : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             serveDownload(bytes, mimeType, resume.name);
             Notification.show("Downloading " + resume.name, 2000, Notification.Position.TOP_CENTER);
@@ -551,13 +672,8 @@ public class ResumeManagerView extends VerticalLayout {
     }
 
     private void viewResume(ResumeData resume) {
-        File file = new File(resume.filePath);
-        if (!file.exists()) {
-            Notification.show("File not found: " + resume.filePath, 3000, Notification.Position.TOP_CENTER);
-            return;
-        }
         try {
-            byte[] bytes = Files.readAllBytes(file.toPath());
+            byte[] bytes = documentService.retrieveResumeFile(resume.filePath);
             String mimeType = switch (resume.format.toUpperCase()) {
                 case "PDF"  -> "application/pdf";
                 case "TXT"  -> "text/plain";
@@ -589,15 +705,12 @@ public class ResumeManagerView extends VerticalLayout {
     }
 
     private void deleteResume(ResumeData resume) {
-        File file = new File(resume.filePath);
-        if (file.exists()) {
-            if (file.delete()) {
-                resumes.remove(resume);
-                refreshResumeList();
-                Notification.show("Resume deleted", 2000, Notification.Position.TOP_CENTER);
-            } else {
-                Notification.show("Failed to delete resume", 3000, Notification.Position.TOP_CENTER);
-            }
+        if (documentService.deleteResumeFile(resume.filePath)) {
+            resumes.remove(resume);
+            refreshResumeList();
+            Notification.show("Resume deleted", 2000, Notification.Position.TOP_CENTER);
+        } else {
+            Notification.show("Failed to delete resume", 3000, Notification.Position.TOP_CENTER);
         }
     }
 

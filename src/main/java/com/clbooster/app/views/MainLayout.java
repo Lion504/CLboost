@@ -42,6 +42,18 @@ public class MainLayout extends AppLayout {
         this.authService = new AuthenticationService();
         this.translationService = new TranslationService();
         setPrimarySection(Section.DRAWER);
+
+        // Apply user language preference BEFORE building the layout so all
+        // getTranslation() calls in createDrawer() use the correct locale.
+        User currentUser = authService.getCurrentUser();
+        if (currentUser != null) {
+            SettingsService settingsService = new SettingsService();
+            Settings settings = settingsService.getSettings(currentUser.getPin());
+            if (settings != null && settings.getLanguage() != null) {
+                translationService.setLanguage(settings.getLanguage());
+            }
+        }
+
         createHeader();
         createDrawer();
     }
@@ -49,20 +61,8 @@ public class MainLayout extends AppLayout {
     @Override
     protected void onAttach(com.vaadin.flow.component.AttachEvent attachEvent) {
         super.onAttach(attachEvent);
-
-        // Apply user's language preference if logged in
-        UI ui = getUI().orElse(null);
-        if (ui != null) {
-            User currentUser = authService.getCurrentUser();
-            if (currentUser != null) {
-                SettingsService settingsService = new SettingsService();
-                Settings settings = settingsService.getSettings(currentUser.getPin());
-                if (settings != null && settings.getLanguage() != null) {
-                    translationService.setLanguage(settings.getLanguage());
-                    ui.setLocale(translationService.getCurrentLocale());
-                }
-            }
-        }
+        // Locale was already applied in the constructor.
+        // Nothing extra needed here for language support.
     }
 
     private void createHeader() {
@@ -197,37 +197,37 @@ public class MainLayout extends AppLayout {
         nav.getStyle().set("margin-top", "8px");
 
         // Main section
-        Span mainLabel = new Span("MAIN");
+        Span mainLabel = new Span(getTranslation("nav.section.main"));
         mainLabel.getStyle().set("font-size", "11px");
         mainLabel.getStyle().set("font-weight", "700");
         mainLabel.getStyle().set("color", SIDEBAR_LABEL);
         mainLabel.getStyle().set("padding", "0 20px");
         mainLabel.getStyle().set("letter-spacing", "0.1em");
 
-        SideNavItem dashboard = createNavItem("Dashboard", "dashboard", VaadinIcon.DASHBOARD);
-        SideNavItem generate = createNavItem("Generate", "generator-wizard", VaadinIcon.MAGIC);
-        SideNavItem history = createNavItem("History", "history", VaadinIcon.CLOCK);
+        SideNavItem dashboard = createNavItem(getTranslation("nav.dashboard"), "dashboard", VaadinIcon.DASHBOARD);
+        SideNavItem generate  = createNavItem(getTranslation("nav.generator"), "generator-wizard", VaadinIcon.MAGIC);
+        SideNavItem history   = createNavItem(getTranslation("nav.history"),   "history",          VaadinIcon.CLOCK);
 
         // Add Resume section
-        Span toolsLabel = new Span("TOOLS");
+        Span toolsLabel = new Span(getTranslation("nav.section.tools"));
         toolsLabel.getStyle().set("font-size", "11px");
         toolsLabel.getStyle().set("font-weight", "700");
         toolsLabel.getStyle().set("color", SIDEBAR_LABEL);
         toolsLabel.getStyle().set("padding", "24px 20px 8px");
         toolsLabel.getStyle().set("letter-spacing", "0.1em");
 
-        SideNavItem resume = createNavItem("Resume Manager", "resume", VaadinIcon.FILE_TEXT);
-        SideNavItem editor = createNavItem("Editor", "editor", VaadinIcon.EDIT);
+        SideNavItem resume = createNavItem(getTranslation("nav.resume"), "resume", VaadinIcon.FILE_TEXT);
+        SideNavItem editor = createNavItem(getTranslation("nav.editor"), "editor", VaadinIcon.EDIT);
 
         // Support section
-        Span supportLabel = new Span("SUPPORT");
+        Span supportLabel = new Span(getTranslation("nav.section.support"));
         supportLabel.getStyle().set("font-size", "11px");
         supportLabel.getStyle().set("font-weight", "700");
         supportLabel.getStyle().set("color", SIDEBAR_LABEL);
         supportLabel.getStyle().set("padding", "24px 20px 8px");
         supportLabel.getStyle().set("letter-spacing", "0.1em");
 
-        SideNavItem help = createNavItem("Help", "help", VaadinIcon.QUESTION_CIRCLE);
+        SideNavItem help = createNavItem(getTranslation("nav.help"), "help", VaadinIcon.QUESTION_CIRCLE);
 
         nav.addItem(dashboard, generate, history);
 

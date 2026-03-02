@@ -2,7 +2,7 @@ package com.clbooster.app.views;
 
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.User;
-import com.clbooster.app.backend.service.profile.UserDAO;
+import com.clbooster.app.backend.service.profile.UserService;
 import com.clbooster.app.backend.service.settings.Settings;
 import com.clbooster.app.backend.service.settings.SettingsService;
 import com.clbooster.app.i18n.TranslationService;
@@ -36,7 +36,7 @@ public class SettingsView extends VerticalLayout {
 
     private final SettingsService settingsService;
     private final AuthenticationService authService;
-    private final UserDAO userDAO;
+    private final UserService userService;
     private final TranslationService translationService;
     private Settings userSettings;
     private User currentUser;
@@ -74,7 +74,7 @@ public class SettingsView extends VerticalLayout {
     public SettingsView() {
         this.settingsService = new SettingsService();
         this.authService = new AuthenticationService();
-        this.userDAO = new UserDAO();
+        this.userService = new UserService();
         this.translationService = new TranslationService();
         this.currentUser = authService.getCurrentUser();
 
@@ -484,9 +484,9 @@ public class SettingsView extends VerticalLayout {
                 return;
             }
 
-            if (userDAO.loginUser(currentUser.getUsername(), password) != null) {
+            if (userService.loginUser(currentUser.getUsername(), password) != null) {
                 settingsService.deleteSettings(currentUser.getPin());
-                if (userDAO.deleteUser(currentUser)) {
+                if (userService.deleteUser(currentUser)) {
                     Notification.show("Account deleted successfully", 3000, Notification.Position.BOTTOM_END);
                     authService.logout();
                     dialog.close();
@@ -572,8 +572,9 @@ public class SettingsView extends VerticalLayout {
         try {
             boolean success = settingsService.saveSettings(userSettings);
             if (success) {
-                Notification.show("Settings saved successfully!", 3000, Notification.Position.BOTTOM_END);
-                System.out.println("DEBUG: Settings saved successfully");
+                Notification.show("Settings saved!", 2000, Notification.Position.BOTTOM_END);
+                // Reload so MainLayout and all components rebuild with the new locale
+                getUI().ifPresent(ui -> ui.getPage().reload());
             } else {
                 Notification.show("Error: Failed to save settings. The database may be unavailable.", 5000, Notification.Position.TOP_CENTER);
                 System.err.println("ERROR: Failed to save settings for user " + currentUser.getPin());
