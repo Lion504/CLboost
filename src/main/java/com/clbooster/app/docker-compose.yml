@@ -7,7 +7,7 @@ services:
       - ./storage:/app/storage   # maps local ./storage to /app/storage in container
 
   db:
-    image: mysql:8
+    image: mariadb
     environment:
       MYSQL_DATABASE: CL_generator
       MYSQL_ROOT_PASSWORD: yourpassword
