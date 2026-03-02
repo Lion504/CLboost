@@ -86,6 +86,7 @@ public class GeneratorWizardView extends VerticalLayout {
     private HorizontalLayout stepIndicator;
     private Button nextButton;
     private Button backButton;
+    private Button saveButton;
     private Div loadingOverlay;
     private VerticalLayout container;
 
@@ -447,6 +448,25 @@ public class GeneratorWizardView extends VerticalLayout {
         upload.setDropLabel(new Span(""));
         upload.setDropAllowed(false);
 
+        // File name tag — hidden until a file is uploaded
+        Div fileTag = new Div();
+        fileTag.getStyle()
+            .set("display", "inline-flex")
+            .set("align-items", "center")
+            .set("gap", "6px")
+            .set("background", "#e8f5e9")
+            .set("color", "#2e7d32")
+            .set("font-size", "13px")
+            .set("font-weight", "600")
+            .set("padding", "6px 14px")
+            .set("border-radius", "9999px")
+            .set("margin-top", "12px")
+            .set("max-width", "100%")
+            .set("overflow", "hidden")
+            .set("text-overflow", "ellipsis")
+            .set("white-space", "nowrap");
+        fileTag.setVisible(false);
+
         // Handle successful upload - FileBuffer provides direct file access
         upload.addSucceededListener(event -> {
             String fileName = event.getFileName();
@@ -495,6 +515,10 @@ public class GeneratorWizardView extends VerticalLayout {
                 Set<String> extractedSkills = extractSkillsFromText(resumeText);
                 LOGGER.info("[UPLOAD] Skills extracted: " + extractedSkills.size() + " skills found");
 
+                // Show the uploaded filename in the card
+                fileTag.setText("\uD83D\uDCCE " + originalFileName);
+                fileTag.setVisible(true);
+
                 if (!extractedSkills.isEmpty()) {
                     selectedSkills.addAll(extractedSkills);
                     updateSkillButtonsUI();
@@ -541,7 +565,7 @@ public class GeneratorWizardView extends VerticalLayout {
                 5000, Notification.Position.TOP_CENTER);
         });
 
-        importCard.add(fileIcon, importTitle, importDesc, upload);
+        importCard.add(fileIcon, importTitle, importDesc, upload, fileTag);
 
         layout.add(title, subtitle, skillsGrid, importCard);
 
@@ -896,23 +920,58 @@ public class GeneratorWizardView extends VerticalLayout {
         nextButton.getStyle().set("gap", "8px");
         nextButton.addClickListener(e -> handleNext());
 
-        nav.add(backButton, nextButton);
+        // Save button — visible only on step 5
+        saveButton = new Button("Save", VaadinIcon.CHECK.create());
+        saveButton.getStyle().set("background", GREEN);
+        saveButton.getStyle().set("color", "white");
+        saveButton.getStyle().set("font-weight", "600");
+        saveButton.getStyle().set("border-radius", "9999px");
+        saveButton.getStyle().set("padding", "14px 32px");
+        saveButton.getStyle().set("font-size", "15px");
+        saveButton.getStyle().set("box-shadow", "0 10px 20px -4px rgba(52,199,89,0.35)");
+        saveButton.getStyle().set("gap", "8px");
+        saveButton.setVisible(false);
+        saveButton.addClickListener(e -> {
+            if (editorTextArea == null || editorTextArea.getValue().isBlank()) {
+                Notification.show("Nothing to save yet.", 2000, Notification.Position.TOP_CENTER);
+                return;
+            }
+            saveButton.setEnabled(false);
+            saveButton.setText("Saving...");
+            String path = saveGeneratedCoverLetter(editorTextArea.getValue());
+            if (path != null) {
+                savedFilePath = path;
+                saveButton.setText("Saved ✓");
+                Notification.show("Cover letter saved!", 2500, Notification.Position.TOP_CENTER);
+            } else {
+                saveButton.setText("Save");
+                Notification.show("Save failed — please try again.", 3000, Notification.Position.TOP_CENTER);
+            }
+            saveButton.setEnabled(true);
+        });
+
+        nav.add(backButton, saveButton, nextButton);
 
         return nav;
     }
 
     private void updateNavigationButtons() {
         if (currentStep == totalSteps) {
-            // Editor step: hide Next, keep Back so user can revisit summary
+            // Editor step: show Save, hide Next, keep Back
             backButton.setVisible(true);
+            saveButton.setVisible(true);
+            saveButton.setText("Save");
+            saveButton.setEnabled(true);
             nextButton.setVisible(false);
         } else if (currentStep == 4) {
             backButton.setVisible(true);
+            saveButton.setVisible(false);
             nextButton.setVisible(true);
             nextButton.setText("Generate & Edit");
             nextButton.setIcon(VaadinIcon.MAGIC.create());
         } else {
             backButton.setVisible(currentStep > 1);
+            saveButton.setVisible(false);
             nextButton.setVisible(true);
             nextButton.setText("Next Step");
             nextButton.setIcon(VaadinIcon.ARROW_RIGHT.create());
