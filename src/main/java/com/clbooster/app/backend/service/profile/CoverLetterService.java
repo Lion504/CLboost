@@ -7,8 +7,7 @@ import java.util.List;
 public class CoverLetterService {
 
     // Use env variable for Docker, fallback to local path for dev
-    private static final String BASE_PATH = System.getenv("STORAGE_PATH") != null
-            ? System.getenv("STORAGE_PATH")
+    private static final String BASE_PATH = System.getenv("STORAGE_PATH") != null ? System.getenv("STORAGE_PATH")
             : "storage/coverletters/";
 
     private CoverLetterDAO coverLetterDAO;
