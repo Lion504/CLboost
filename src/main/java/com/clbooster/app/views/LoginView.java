@@ -1,10 +1,13 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.router.*;
@@ -22,7 +25,12 @@ public class LoginView extends VerticalLayout {
     private static final String BG_GRAY = "#f5f5f7";
     private static final String BG_WHITE = "#ffffff";
 
+    private final AuthenticationService authService;
+    private TextField usernameField;
+    private PasswordField passwordField;
+
     public LoginView() {
+        this.authService = new AuthenticationService();
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
@@ -97,11 +105,11 @@ public class LoginView extends VerticalLayout {
         form.getStyle().set("gap", "20px");
         form.setWidthFull();
 
-        // Email field
-        EmailField email = createEmailField("Email Address", "alex@example.com");
+        // Username field
+        usernameField = createTextField("Username", "alexsmith");
 
         // Password field
-        PasswordField password = createPasswordField("Password");
+        passwordField = createPasswordField("Password");
 
         // Remember me and Forgot password row
         HorizontalLayout rememberRow = new HorizontalLayout();
@@ -125,7 +133,7 @@ public class LoginView extends VerticalLayout {
         rememberRow.add(remember, forgot);
 
         // Sign In button
-        Button signIn = createPrimaryButton("Sign In", () -> getUI().ifPresent(ui -> ui.navigate(DashboardView.class)));
+        Button signIn = createPrimaryButton("Sign In", this::handleLogin);
         signIn.setWidthFull();
         signIn.getStyle().set("margin-top", "8px");
 
@@ -186,7 +194,7 @@ public class LoginView extends VerticalLayout {
 
         signupRow.add(noAccount, createLink);
 
-        form.add(email, password, rememberRow, signIn);
+        form.add(usernameField, passwordField, rememberRow, signIn);
         card.add(backLink, logoIcon, title, subtitle, form, divider, socialButtons, signupRow);
 
         // Hover effect for card
@@ -202,8 +210,36 @@ public class LoginView extends VerticalLayout {
         add(card);
     }
 
-    private EmailField createEmailField(String label, String placeholder) {
-        EmailField field = new EmailField(label);
+    private void handleLogin() {
+        String username = usernameField.getValue();
+        String password = passwordField.getValue();
+
+        if (username == null || username.trim().isEmpty()) {
+            showError("Please enter your username");
+            return;
+        }
+        if (password == null || password.trim().isEmpty()) {
+            showError("Please enter your password");
+            return;
+        }
+
+        boolean success = authService.login(username, password);
+        if (success) {
+            getUI().ifPresent(ui -> ui.navigate(DashboardView.class));
+        } else {
+            showError("Invalid username or password");
+            passwordField.clear();
+        }
+    }
+
+    private void showError(String message) {
+        Notification notification = new Notification(message, 3000, Notification.Position.TOP_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        notification.open();
+    }
+
+    private TextField createTextField(String label, String placeholder) {
+        TextField field = new TextField(label);
         field.setPlaceholder(placeholder);
         field.setWidthFull();
         field.getStyle().set("--vaadin-input-field-background", BG_GRAY);
