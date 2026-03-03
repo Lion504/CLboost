@@ -23,3 +23,9 @@ webpack.generated.js
 # Log files
 *.log
 target/
+
+bin/
+uploads/
+Test-Resume.pdf
+.env
+test-jobads.md
