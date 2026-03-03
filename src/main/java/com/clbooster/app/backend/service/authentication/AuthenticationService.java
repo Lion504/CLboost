@@ -6,28 +6,49 @@ import com.vaadin.flow.server.VaadinSession;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class AuthenticationService {
     private UserDAO userDAO;
+    private Map<String, Object> sessionStore;
     private static final String USER_SESSION_ATTRIBUTE = "currentUser";
 
+    // Production constructor - uses VaadinSession
     public AuthenticationService() {
         this.userDAO = new UserDAO();
+        this.sessionStore = null;
     }
 
-    // Store user in VaadinSession for persistence across page refreshes
+    // Test constructor - accepts HashMap for mocking session
+    public AuthenticationService(Map<String, Object> sessionStore) {
+        this.userDAO = new UserDAO();
+        this.sessionStore = sessionStore;
+    }
+
+    // Store user in session (VaadinSession or HashMap for tests)
     private void storeUserInSession(User user) {
-        VaadinSession.getCurrent().setAttribute(USER_SESSION_ATTRIBUTE, user);
+        if (sessionStore != null) {
+            sessionStore.put(USER_SESSION_ATTRIBUTE, user);
+        } else {
+            VaadinSession.getCurrent().setAttribute(USER_SESSION_ATTRIBUTE, user);
+        }
     }
 
-    // Get user from VaadinSession
+    // Get user from session (VaadinSession or HashMap for tests)
     private User getUserFromSession() {
+        if (sessionStore != null) {
+            return (User) sessionStore.get(USER_SESSION_ATTRIBUTE);
+        }
         return (User) VaadinSession.getCurrent().getAttribute(USER_SESSION_ATTRIBUTE);
     }
 
-    // Remove user from VaadinSession
+    // Remove user from session (VaadinSession or HashMap for tests)
     private void removeUserFromSession() {
-        VaadinSession.getCurrent().setAttribute(USER_SESSION_ATTRIBUTE, null);
+        if (sessionStore != null) {
+            sessionStore.remove(USER_SESSION_ATTRIBUTE);
+        } else {
+            VaadinSession.getCurrent().setAttribute(USER_SESSION_ATTRIBUTE, null);
+        }
     }
 
     public static void showPasswordRequirements() {

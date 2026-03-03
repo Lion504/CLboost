@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -14,10 +16,12 @@ class AuthenticationServiceTest {
 
     private AuthenticationService service;
     private UserDAO userDAOMock;
+    private Map<String, Object> sessionMap;
 
     @BeforeEach
     void setUp() throws Exception {
-        service = new AuthenticationService();
+        sessionMap = new HashMap<>();
+        service = new AuthenticationService(sessionMap);
         userDAOMock = mock(UserDAO.class);
 
         Field daoField = AuthenticationService.class.getDeclaredField("userDAO");
