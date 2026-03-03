@@ -1,4 +1,4 @@
-# Sprint 1 Review Report
+# Sprint 3 Review Report
 
 ## Sprint Goal
 
@@ -27,14 +27,9 @@
 
 During the sprint review, we demonstrated:
 
-- Presented the Backend Comand line interface
-- Presented the Coverage code
-- Presented the Unit tests
-
-- Entity Relation Diagram ( Database ER model)
-  <img width="3492" height="1218" alt="Database_ER_model" src="https://github.com/user-attachments/assets/848224ed-3d72-4610-9090-dac21f261c7f" />
-- Activity Diagram ( System flow )
-  <img width="565" height="441" alt="structure" src="https://github.com/user-attachments/assets/e02bd43f-0d21-4708-9d84-dacb7327e025" />
+- Demonstrated functional application
+- Presented the Docker Image for the application
+- Presented the tests and code coverage report
 - Showed the Frontend Figma Prototype:
   https://www.figma.com/proto/LFr0EooJ9Nmnfztwv4pO3F/CLbooster?node-id=4-2492&p=f&t=vZzS39YYiB2ldEY4-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=4%3A2492
 - Presented the Sprint 2 backlog: https://taysa-ferreira-abinader.atlassian.net/jira/software/projects/CLGEN/boards/67/backlog
@@ -57,10 +52,10 @@ During the sprint review, we demonstrated:
 ## Time Tracking
 
 | Team Member       | Hours Spent | Tasks Contributions                                                                                                                                                                                                                                             |
-| ----------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Wang Yongzhi      | 9           | Project Planning report, Product Vision, usecase diagram, sprint meeting, user stories                                                                                                                                                                          |
-| Taysa Abinader    | 12          | Scrum Master, Project planing report, Product Vision, sprint meeting, user stories, organization of Jira envinronment                                                                                                                                           |
-| Tamseela Mahmood  | 19          | Scrum master, worked on the code for (Authentication(Register Login in, out), Profile Management, Database(model, DAO, service), Comand line interface), Database (define and ER Diagram), System activity diagram , JUnit Test, Jira backlog setup and updates |
-| Kiavash Montazeri | 6           | Helped with Usecase Diagram, Presentation                                                                                                                                                                                                                       |
+| ----------------- |---| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wang Yongzhi      |   |                                                                                                                                                                          |
+| Taysa Abinader    |   |                                                                                                                                            |
+| Tamseela Mahmood  | 4 | worked on remaining dao and services functionalities and tests |
+| Kiavash Montazeri |   |                                                                                                                                                                                                                    |
 
-**Total Sprint Hours:** 46 hours
+**Total Sprint Hours:**  
