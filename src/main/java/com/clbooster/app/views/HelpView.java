@@ -20,8 +20,8 @@ import com.vaadin.flow.router.Route;
 import java.util.List;
 
 /**
- * Help View - Help center with search, FAQs, and support cards
- * Following Apple Design System
+ * Help View - Help center with search, FAQs, and support cards Following Apple
+ * Design System
  */
 @Route(value = "help", layout = MainLayout.class)
 @PageTitle("Help Center | CL Booster")
@@ -127,12 +127,9 @@ public class HelpView extends VerticalLayout {
         links.getStyle().set("justify-content", "center");
         links.getStyle().set("flex-wrap", "wrap");
 
-        String[][] linkData = {
-            {"Getting Started", VaadinIcon.ROCKET.name()},
-            {"Account & Billing", VaadinIcon.USER_CARD.name()},
-            {"AI Features", VaadinIcon.MAGIC.name()},
-            {"Export & Share", VaadinIcon.DOWNLOAD.name()}
-        };
+        String[][] linkData = { { "Getting Started", VaadinIcon.ROCKET.name() },
+                { "Account & Billing", VaadinIcon.USER_CARD.name() }, { "AI Features", VaadinIcon.MAGIC.name() },
+                { "Export & Share", VaadinIcon.DOWNLOAD.name() } };
 
         for (String[] data : linkData) {
             Button linkBtn = createQuickLinkButton(data[0], VaadinIcon.valueOf(data[1]));
@@ -187,14 +184,18 @@ public class HelpView extends VerticalLayout {
         faqContainer.getStyle().set("gap", "12px");
 
         // FAQ items
-        List<String[]> faqs = List.of(
-            new String[]{"Is CL Booster really free?", "Yes! CL Booster is free for all job seekers. You can generate unlimited cover letters with our AI. Premium features like advanced customization and priority support are available in our Pro plan."},
-            new String[]{"How does the AI generate cover letters?", "Our AI analyzes your resume and the job description to create personalized cover letters. It identifies key skills, experiences, and company values to craft compelling narratives that match the role."},
-            new String[]{"Can I edit the generated cover letter?", "Absolutely! After generation, you can edit your cover letter in our built-in editor. You also get AI-powered suggestions to improve your letter further."},
-            new String[]{"What file formats can I export?", "You can export your cover letters as PDF, DOCX, or plain text. PDF is recommended for job applications as it preserves formatting across all devices."},
-            new String[]{"Is my data secure?", "We take data security seriously. Your resume and personal information are encrypted and stored securely. We never share your data with third parties."},
-            new String[]{"How do I improve my match score?", "To improve your match score, make sure to include relevant keywords from the job description, highlight quantifiable achievements, and tailor your skills to match the role requirements."}
-        );
+        List<String[]> faqs = List.of(new String[] { "Is CL Booster really free?",
+                "Yes! CL Booster is free for all job seekers. You can generate unlimited cover letters with our AI. Premium features like advanced customization and priority support are available in our Pro plan." },
+                new String[] { "How does the AI generate cover letters?",
+                        "Our AI analyzes your resume and the job description to create personalized cover letters. It identifies key skills, experiences, and company values to craft compelling narratives that match the role." },
+                new String[] { "Can I edit the generated cover letter?",
+                        "Absolutely! After generation, you can edit your cover letter in our built-in editor. You also get AI-powered suggestions to improve your letter further." },
+                new String[] { "What file formats can I export?",
+                        "You can export your cover letters as PDF, DOCX, or plain text. PDF is recommended for job applications as it preserves formatting across all devices." },
+                new String[] { "Is my data secure?",
+                        "We take data security seriously. Your resume and personal information are encrypted and stored securely. We never share your data with third parties." },
+                new String[] { "How do I improve my match score?",
+                        "To improve your match score, make sure to include relevant keywords from the job description, highlight quantifiable achievements, and tailor your skills to match the role requirements." });
 
         for (String[] faq : faqs) {
             faqContainer.add(createFAQItem(faq[0], faq[1]));
@@ -243,7 +244,7 @@ public class HelpView extends VerticalLayout {
         item.add(header, answerText);
 
         // Toggle functionality
-        final boolean[] isExpanded = {false};
+        final boolean[] isExpanded = { false };
         item.addClickListener(e -> {
             isExpanded[0] = !isExpanded[0];
             if (isExpanded[0]) {
@@ -284,39 +285,24 @@ public class HelpView extends VerticalLayout {
         cards.getStyle().set("margin-top", "20px");
 
         // Contact support card
-        Div contactCard = createSupportCard(
-            "Contact Support",
-            "Get in touch with our team",
-            VaadinIcon.ENVELOPE,
-            PRIMARY,
-            "Email Us"
-        );
+        Div contactCard = createSupportCard("Contact Support", "Get in touch with our team", VaadinIcon.ENVELOPE,
+                PRIMARY, "Email Us");
 
         // Community card
-        Div communityCard = createSupportCard(
-            "Community",
-            "Join discussions with other users",
-            VaadinIcon.USERS,
-            "#AF52DE",
-            "Join Community"
-        );
+        Div communityCard = createSupportCard("Community", "Join discussions with other users", VaadinIcon.USERS,
+                "#AF52DE", "Join Community");
 
         // Documentation card
-        Div docsCard = createSupportCard(
-            "Documentation",
-            "Read our detailed guides",
-            VaadinIcon.BOOK,
-            "#34C759",
-            "View Docs"
-        );
+        Div docsCard = createSupportCard("Documentation", "Read our detailed guides", VaadinIcon.BOOK, "#34C759",
+                "View Docs");
 
         cards.add(contactCard, communityCard, docsCard);
 
         return cards;
     }
 
-    private Div createSupportCard(String title, String description, VaadinIcon iconType,
-                                   String iconColor, String actionText) {
+    private Div createSupportCard(String title, String description, VaadinIcon iconType, String iconColor,
+            String actionText) {
         Div card = new Div();
         card.getStyle().set("background", BG_WHITE);
         card.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
@@ -396,7 +382,8 @@ public class HelpView extends VerticalLayout {
     }
 
     private void filterFAQs(String searchTerm) {
-        // Simple filter implementation - in production, this would search through actual data
+        // Simple filter implementation - in production, this would search through
+        // actual data
         if (searchTerm == null || searchTerm.isEmpty()) {
             return;
         }

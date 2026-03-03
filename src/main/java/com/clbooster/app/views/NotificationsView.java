@@ -22,8 +22,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
- * Notifications View - Notification center with animated cards
- * Following Apple Design System with modern animations
+ * Notifications View - Notification center with animated cards Following Apple
+ * Design System with modern animations
  */
 @Route(value = "notifications", layout = MainLayout.class)
 @PageTitle("Notifications | CL Booster")
@@ -157,25 +157,12 @@ public class NotificationsView extends VerticalLayout {
         notificationsList.add(todayLabel);
 
         // Today's notifications
-        notificationsList.add(createNotificationCard(
-            "AI Generated",
-            "Your cover letter for Senior Product Designer is ready!",
-            "2 hours ago",
-            VaadinIcon.MAGIC,
-            PRIMARY,
-            true,
-            true
-        ));
+        notificationsList
+                .add(createNotificationCard("AI Generated", "Your cover letter for Senior Product Designer is ready!",
+                        "2 hours ago", VaadinIcon.MAGIC, PRIMARY, true, true));
 
-        notificationsList.add(createNotificationCard(
-            "Optimization Complete",
-            "Your letter score improved from 82% to 94%",
-            "4 hours ago",
-            VaadinIcon.CHART,
-            "#34C759",
-            false,
-            true
-        ));
+        notificationsList.add(createNotificationCard("Optimization Complete",
+                "Your letter score improved from 82% to 94%", "4 hours ago", VaadinIcon.CHART, "#34C759", false, true));
 
         // Yesterday section
         Span yesterdayLabel = new Span("Yesterday");
@@ -188,25 +175,11 @@ public class NotificationsView extends VerticalLayout {
 
         notificationsList.add(yesterdayLabel);
 
-        notificationsList.add(createNotificationCard(
-            "Document Exported",
-            "Your cover letter was exported as PDF",
-            "Yesterday",
-            VaadinIcon.FILE_TEXT,
-            TEXT_SECONDARY,
-            false,
-            false
-        ));
+        notificationsList.add(createNotificationCard("Document Exported", "Your cover letter was exported as PDF",
+                "Yesterday", VaadinIcon.FILE_TEXT, TEXT_SECONDARY, false, false));
 
-        notificationsList.add(createNotificationCard(
-            "New Feature",
-            "Try our new AI tone customization options",
-            "Yesterday",
-            VaadinIcon.SPARK_LINE,
-            "#AF52DE",
-            false,
-            false
-        ));
+        notificationsList.add(createNotificationCard("New Feature", "Try our new AI tone customization options",
+                "Yesterday", VaadinIcon.SPARK_LINE, "#AF52DE", false, false));
 
         // Earlier section
         Span earlierLabel = new Span("Earlier");
@@ -219,20 +192,13 @@ public class NotificationsView extends VerticalLayout {
 
         notificationsList.add(earlierLabel);
 
-        notificationsList.add(createNotificationCard(
-            "Welcome to CL Booster",
-            "Get started with your first cover letter",
-            "3 days ago",
-            VaadinIcon.HANDSHAKE,
-            "#FF9500",
-            false,
-            false
-        ));
+        notificationsList
+                .add(createNotificationCard("Welcome to CL Booster", "Get started with your first cover letter",
+                        "3 days ago", VaadinIcon.HANDSHAKE, "#FF9500", false, false));
     }
 
-    private Div createNotificationCard(String title, String message, String time,
-                                        VaadinIcon iconType, String iconColor,
-                                        boolean isUnread, boolean isNew) {
+    private Div createNotificationCard(String title, String message, String time, VaadinIcon iconType, String iconColor,
+            boolean isUnread, boolean isNew) {
         Div card = new Div();
         card.getStyle().set("background", isUnread ? BG_WHITE : BG_GRAY);
         card.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");

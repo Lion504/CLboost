@@ -47,7 +47,8 @@ public class LandingView extends VerticalLayout {
         setSizeFull();
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         getStyle().set("background", BG_WHITE);
-        getStyle().set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
+        getStyle().set("font-family",
+                "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
 
         // Main Container
         VerticalLayout page = new VerticalLayout();
@@ -73,13 +74,13 @@ public class LandingView extends VerticalLayout {
         leftSection.setWidth("200px");
         leftSection.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
         leftSection.setAlignItems(FlexComponent.Alignment.CENTER);
-        
+
         HorizontalLayout logo = new HorizontalLayout();
         logo.setAlignItems(FlexComponent.Alignment.CENTER);
         logo.setSpacing(false);
         logo.getStyle().set("gap", "8px");
         logo.getStyle().set("cursor", "pointer");
-        
+
         Div logoIcon = new Div();
         logoIcon.getStyle().set("width", "32px");
         logoIcon.getStyle().set("height", "32px");
@@ -90,7 +91,7 @@ public class LandingView extends VerticalLayout {
         logoIcon.getStyle().set("justify-content", "center");
         logoIcon.getStyle().set("color", "white");
         logoIcon.add(VaadinIcon.SPARK_LINE.create());
-        
+
         Span logoText = new Span("CL Booster");
         logoText.getStyle().set("font-weight", "700");
         logoText.getStyle().set("font-size", "20px");
@@ -118,7 +119,7 @@ public class LandingView extends VerticalLayout {
         rightSection.setWidth("200px");
         rightSection.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
         rightSection.setAlignItems(FlexComponent.Alignment.CENTER);
-        
+
         Button loginBtn = new Button("Log in", e -> getUI().ifPresent(ui -> ui.navigate(LoginView.class)));
         loginBtn.getStyle().set("font-size", "13px");
         loginBtn.getStyle().set("font-weight", "700");
@@ -178,9 +179,6 @@ public class LandingView extends VerticalLayout {
 
         // NEW Badge
 
-
-
-
         // Headline with gradient text - using HTML for proper gradient rendering
         Div headline = new Div();
         headline.getStyle().set("font-size", "clamp(40px, 5vw, 72px)");
@@ -189,18 +187,16 @@ public class LandingView extends VerticalLayout {
         headline.getStyle().set("line-height", "1.1");
         headline.getStyle().set("margin", "0");
         headline.getStyle().set("max-width", "600px");
-        
+
         // Set HTML content directly for gradient text support
-        headline.getElement().setProperty("innerHTML",
-            "<div style='color: " + TEXT_PRIMARY + ";'>Elevate your</div>" +
-            "<span style='background: linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent; display: inline-block;'>job hunting</span>" +
-            "<span style='color: " + TEXT_PRIMARY + ";'> with AI.</span>"
-        );
+        headline.getElement().setProperty("innerHTML", "<div style='color: " + TEXT_PRIMARY + ";'>Elevate your</div>"
+                + "<span style='background: linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT
+                + " 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent; display: inline-block;'>job hunting</span>"
+                + "<span style='color: " + TEXT_PRIMARY + ";'> with AI.</span>");
 
         // Description
         Paragraph description = new Paragraph(
-            "Generate perfectly tailored cover letters in seconds by analyzing your resume, the job ad, and company culture."
-        );
+                "Generate perfectly tailored cover letters in seconds by analyzing your resume, the job ad, and company culture.");
         description.getStyle().set("font-size", "20px");
         description.getStyle().set("color", TEXT_SECONDARY);
         description.getStyle().set("line-height", "1.6");
@@ -213,7 +209,8 @@ public class LandingView extends VerticalLayout {
         ctaRow.getStyle().set("gap", "16px");
         ctaRow.getStyle().set("padding-top", "16px");
 
-        Button generateBtn = createPrimaryButton("Generate Now", () -> getUI().ifPresent(ui -> ui.navigate(LoginView.class)));
+        Button generateBtn = createPrimaryButton("Generate Now",
+                () -> getUI().ifPresent(ui -> ui.navigate(LoginView.class)));
         generateBtn.getStyle().set("font-size", "16px");
         generateBtn.getStyle().set("padding", "16px 40px");
 
@@ -222,7 +219,7 @@ public class LandingView extends VerticalLayout {
         samplesBtn.getStyle().set("padding", "16px 40px");
 
         ctaRow.add(generateBtn, samplesBtn);
-heroText.add(headline, description, ctaRow);
+        heroText.add(headline, description, ctaRow);
 
         heroText.getStyle().set("padding", "80px 0");
 
@@ -252,8 +249,10 @@ heroText.add(headline, description, ctaRow);
         heroImage.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
         heroImage.getStyle().set("transform", "rotate(2deg)");
         heroImage.getStyle().set("transition", "transform 0.7s");
-        heroImage.getElement().addEventListener("mouseenter", e -> heroImage.getStyle().set("transform", "rotate(0deg)"));
-        heroImage.getElement().addEventListener("mouseleave", e -> heroImage.getStyle().set("transform", "rotate(2deg)"));
+        heroImage.getElement().addEventListener("mouseenter",
+                e -> heroImage.getStyle().set("transform", "rotate(0deg)"));
+        heroImage.getElement().addEventListener("mouseleave",
+                e -> heroImage.getStyle().set("transform", "rotate(2deg)"));
 
         imageContainer.add(glow, heroImage);
 
@@ -307,26 +306,14 @@ heroText.add(headline, description, ctaRow);
         cards.getStyle().set("justify-content", "center");
         cards.getStyle().set("flex-wrap", "wrap");
 
-        cards.add(createFeatureCard(
-            VaadinIcon.BOLT,
-            "#FF9500",
-            "Instant Generation",
-            "Analyze complex job ads and extract key keywords automatically."
-        ));
+        cards.add(createFeatureCard(VaadinIcon.BOLT, "#FF9500", "Instant Generation",
+                "Analyze complex job ads and extract key keywords automatically."));
 
-        cards.add(createFeatureCard(
-            VaadinIcon.GLOBE,
-            "#007AFF",
-            "Company Intel",
-            "We research the company's mission to align your voice with their values."
-        ));
+        cards.add(createFeatureCard(VaadinIcon.GLOBE, "#007AFF", "Company Intel",
+                "We research the company's mission to align your voice with their values."));
 
-        cards.add(createFeatureCard(
-            VaadinIcon.CHECK,
-            "#34C759",
-            "ATS Optimized",
-            "Strategically place keywords to ensure you pass through modern filters."
-        ));
+        cards.add(createFeatureCard(VaadinIcon.CHECK, "#34C759", "ATS Optimized",
+                "Strategically place keywords to ensure you pass through modern filters."));
 
         section.add(header, cards);
 
@@ -456,12 +443,14 @@ heroText.add(headline, description, ctaRow);
         faqContent.getStyle().set("padding", "32px");
         faqContent.getStyle().set("gap", "32px");
 
-        List<String[]> faqItems = List.of(
-            new String[]{"Is it really free?", "Yes, Cover Booster is currently free for all job seekers. Our mission is to democratize high-quality job application tools."},
-            new String[]{"How does the AI work?", "We use advanced Large Language Models specifically tuned for career coaching. We cross-reference your resume against the job description to find the most impactful overlaps."},
-            new String[]{"Is my data safe?", "Absolutely. We encrypt all uploaded resumes and do not sell your personal data to third parties. Your privacy is our priority."},
-            new String[]{"Can I use multiple resumes?", "Yes, you can upload up to 5 different versions of your resume to target various roles (e.g., Design vs. Management)."}
-        );
+        List<String[]> faqItems = List.of(new String[] { "Is it really free?",
+                "Yes, Cover Booster is currently free for all job seekers. Our mission is to democratize high-quality job application tools." },
+                new String[] { "How does the AI work?",
+                        "We use advanced Large Language Models specifically tuned for career coaching. We cross-reference your resume against the job description to find the most impactful overlaps." },
+                new String[] { "Is my data safe?",
+                        "Absolutely. We encrypt all uploaded resumes and do not sell your personal data to third parties. Your privacy is our priority." },
+                new String[] { "Can I use multiple resumes?",
+                        "Yes, you can upload up to 5 different versions of your resume to target various roles (e.g., Design vs. Management)." });
 
         for (String[] item : faqItems) {
             VerticalLayout faqItem = new VerticalLayout();
@@ -580,45 +569,54 @@ heroText.add(headline, description, ctaRow);
         samplesGrid.getStyle().set("padding", "32px");
 
         // Sample data with cover letter content
-        record Sample(String title, String company, String match, String letter) {}
-        
-        List<Sample> samples = List.of(
-            new Sample("Senior Product Manager", "Tech Giant", "98%",
-                "Dear Hiring Manager," + System.lineSeparator() + System.lineSeparator() +
-                "I am writing to express my strong interest in the Senior Product Manager position at Tech Giant. With over 8 years of experience driving product strategy and leading cross-functional teams, I am excited about the opportunity to contribute to your innovative platform." + System.lineSeparator() + System.lineSeparator() +
-                "At my current role, I have successfully launched three major product features that increased user engagement by 45% and revenue by $2M annually. My experience in Agile methodologies, user research, and data-driven decision making aligns perfectly with Tech Giant's mission to create world-class products." + System.lineSeparator() + System.lineSeparator() +
-                "I am particularly drawn to Tech Giant's commitment to innovation and user-centric design. I would welcome the opportunity to discuss how my background in product management and passion for technology can contribute to your team's continued success." + System.lineSeparator() + System.lineSeparator() +
-                "Thank you for your time and consideration." + System.lineSeparator() + System.lineSeparator() +
-                "Sincerely," + System.lineSeparator() +
-                "[Your Name]"),
-                
-            new Sample("Junior React Developer", "Modern Startup", "95%",
-                "Dear Hiring Team," + System.lineSeparator() + System.lineSeparator() +
-                "I am thrilled to apply for the Junior React Developer position at Modern Startup. As a recent graduate with a Computer Science degree and hands-on experience building responsive web applications, I am eager to contribute to your cutting-edge projects." + System.lineSeparator() + System.lineSeparator() +
-                "During my internship at XYZ Company, I developed React components that improved page load times by 30% and implemented Redux for state management in a production application. My portfolio includes several personal projects utilizing React, TypeScript, and modern CSS frameworks." + System.lineSeparator() + System.lineSeparator() +
-                "Modern Startup's focus on innovation and growth mindset resonates with my career goals. I am excited about the opportunity to learn from experienced developers while contributing fresh perspectives and strong problem-solving skills." + System.lineSeparator() + System.lineSeparator() +
-                "I would love to discuss how my technical skills and enthusiasm can add value to your development team." + System.lineSeparator() + System.lineSeparator() +
-                "Best regards," + System.lineSeparator() +
-                "[Your Name]"),
-                
-            new Sample("Creative Director", "Design Agency", "92%",
-                "Dear Creative Team," + System.lineSeparator() + System.lineSeparator() +
-                "I am excited to apply for the Creative Director position at Design Agency. With 10+ years of experience leading creative teams and delivering award-winning campaigns, I bring a unique blend of artistic vision and strategic thinking to every project." + System.lineSeparator() + System.lineSeparator() +
-                "In my current role, I have led rebranding initiatives for Fortune 500 clients, resulting in a 60% increase in brand recognition. My expertise spans brand strategy, visual design, motion graphics, and team mentorship. I am proficient in Adobe Creative Suite, Figma, and emerging AI design tools." + System.lineSeparator() + System.lineSeparator() +
-                "Design Agency's reputation for pushing creative boundaries and delivering exceptional work aligns perfectly with my professional values. I am eager to bring my leadership experience and creative expertise to elevate your client portfolio." + System.lineSeparator() + System.lineSeparator() +
-                "Thank you for considering my application." + System.lineSeparator() + System.lineSeparator() +
-                "Warm regards," + System.lineSeparator() +
-                "[Your Name]"),
-                
-            new Sample("Customer Success Lead", "SaaS Corp", "96%",
-                "Dear Hiring Manager," + System.lineSeparator() + System.lineSeparator() +
-                "I am writing to express my interest in the Customer Success Lead position at SaaS Corp. With 6 years of experience in customer-facing roles and a proven track record of reducing churn by 25%, I am confident in my ability to drive customer satisfaction and retention." + System.lineSeparator() + System.lineSeparator() +
-                "In my previous role, I managed a portfolio of 50+ enterprise accounts and implemented a proactive engagement strategy that increased NPS scores by 35 points. My experience with CRM platforms, data analysis, and team leadership has prepared me to excel in this role." + System.lineSeparator() + System.lineSeparator() +
-                "SaaS Corp's commitment to customer-centric innovation is inspiring. I am excited about the opportunity to build and lead a high-performing customer success team that drives growth and loyalty." + System.lineSeparator() + System.lineSeparator() +
-                "I look forward to discussing how my experience aligns with your team's goals." + System.lineSeparator() + System.lineSeparator() +
-                "Best regards," + System.lineSeparator() +
-                "[Your Name]")
-        );
+        record Sample(String title, String company, String match, String letter) {
+        }
+
+        List<Sample> samples = List.of(new Sample("Senior Product Manager", "Tech Giant", "98%", "Dear Hiring Manager,"
+                + System.lineSeparator() + System.lineSeparator()
+                + "I am writing to express my strong interest in the Senior Product Manager position at Tech Giant. With over 8 years of experience driving product strategy and leading cross-functional teams, I am excited about the opportunity to contribute to your innovative platform."
+                + System.lineSeparator() + System.lineSeparator()
+                + "At my current role, I have successfully launched three major product features that increased user engagement by 45% and revenue by $2M annually. My experience in Agile methodologies, user research, and data-driven decision making aligns perfectly with Tech Giant's mission to create world-class products."
+                + System.lineSeparator() + System.lineSeparator()
+                + "I am particularly drawn to Tech Giant's commitment to innovation and user-centric design. I would welcome the opportunity to discuss how my background in product management and passion for technology can contribute to your team's continued success."
+                + System.lineSeparator() + System.lineSeparator() + "Thank you for your time and consideration."
+                + System.lineSeparator() + System.lineSeparator() + "Sincerely," + System.lineSeparator()
+                + "[Your Name]"),
+
+                new Sample("Junior React Developer", "Modern Startup", "95%", "Dear Hiring Team,"
+                        + System.lineSeparator() + System.lineSeparator()
+                        + "I am thrilled to apply for the Junior React Developer position at Modern Startup. As a recent graduate with a Computer Science degree and hands-on experience building responsive web applications, I am eager to contribute to your cutting-edge projects."
+                        + System.lineSeparator() + System.lineSeparator()
+                        + "During my internship at XYZ Company, I developed React components that improved page load times by 30% and implemented Redux for state management in a production application. My portfolio includes several personal projects utilizing React, TypeScript, and modern CSS frameworks."
+                        + System.lineSeparator() + System.lineSeparator()
+                        + "Modern Startup's focus on innovation and growth mindset resonates with my career goals. I am excited about the opportunity to learn from experienced developers while contributing fresh perspectives and strong problem-solving skills."
+                        + System.lineSeparator() + System.lineSeparator()
+                        + "I would love to discuss how my technical skills and enthusiasm can add value to your development team."
+                        + System.lineSeparator() + System.lineSeparator() + "Best regards," + System.lineSeparator()
+                        + "[Your Name]"),
+
+                new Sample("Creative Director", "Design Agency", "92%", "Dear Creative Team," + System.lineSeparator()
+                        + System.lineSeparator()
+                        + "I am excited to apply for the Creative Director position at Design Agency. With 10+ years of experience leading creative teams and delivering award-winning campaigns, I bring a unique blend of artistic vision and strategic thinking to every project."
+                        + System.lineSeparator() + System.lineSeparator()
+                        + "In my current role, I have led rebranding initiatives for Fortune 500 clients, resulting in a 60% increase in brand recognition. My expertise spans brand strategy, visual design, motion graphics, and team mentorship. I am proficient in Adobe Creative Suite, Figma, and emerging AI design tools."
+                        + System.lineSeparator() + System.lineSeparator()
+                        + "Design Agency's reputation for pushing creative boundaries and delivering exceptional work aligns perfectly with my professional values. I am eager to bring my leadership experience and creative expertise to elevate your client portfolio."
+                        + System.lineSeparator() + System.lineSeparator() + "Thank you for considering my application."
+                        + System.lineSeparator() + System.lineSeparator() + "Warm regards," + System.lineSeparator()
+                        + "[Your Name]"),
+
+                new Sample("Customer Success Lead", "SaaS Corp", "96%", "Dear Hiring Manager," + System.lineSeparator()
+                        + System.lineSeparator()
+                        + "I am writing to express my interest in the Customer Success Lead position at SaaS Corp. With 6 years of experience in customer-facing roles and a proven track record of reducing churn by 25%, I am confident in my ability to drive customer satisfaction and retention."
+                        + System.lineSeparator() + System.lineSeparator()
+                        + "In my previous role, I managed a portfolio of 50+ enterprise accounts and implemented a proactive engagement strategy that increased NPS scores by 35 points. My experience with CRM platforms, data analysis, and team leadership has prepared me to excel in this role."
+                        + System.lineSeparator() + System.lineSeparator()
+                        + "SaaS Corp's commitment to customer-centric innovation is inspiring. I am excited about the opportunity to build and lead a high-performing customer success team that drives growth and loyalty."
+                        + System.lineSeparator() + System.lineSeparator()
+                        + "I look forward to discussing how my experience aligns with your team's goals."
+                        + System.lineSeparator() + System.lineSeparator() + "Best regards," + System.lineSeparator()
+                        + "[Your Name]"));
 
         for (Sample sample : samples) {
             Div sampleCard = new Div();
@@ -776,15 +774,15 @@ heroText.add(headline, description, ctaRow);
 
         // Step 1
         HorizontalLayout step1 = createStepItem("1", "Upload Your Resume",
-            "Upload your existing resume or create a new profile. Our AI will analyze your skills and experience.");
-        
+                "Upload your existing resume or create a new profile. Our AI will analyze your skills and experience.");
+
         // Step 2
         HorizontalLayout step2 = createStepItem("2", "Paste Job Description",
-            "Copy and paste the job posting you're applying for. We'll extract key requirements and company details.");
-        
+                "Copy and paste the job posting you're applying for. We'll extract key requirements and company details.");
+
         // Step 3
         HorizontalLayout step3 = createStepItem("3", "Generate & Download",
-            "Our AI creates a tailored cover letter in seconds. Edit if needed, then download as PDF or copy to clipboard.");
+                "Our AI creates a tailored cover letter in seconds. Edit if needed, then download as PDF or copy to clipboard.");
 
         stepsContent.add(step1, step2, step3);
 

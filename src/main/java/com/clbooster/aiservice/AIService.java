@@ -21,16 +21,11 @@ public class AIService {
     private synchronized ChatLanguageModel getLanguageModel() {
         if (languageModel == null) {
             if (apiKey == null || apiKey.isBlank()) {
-                throw new IllegalStateException(
-                    "GEMINI_API_KEY environment variable is not set. " +
-                    "Set it and restart the application before generating cover letters.");
+                throw new IllegalStateException("GEMINI_API_KEY environment variable is not set. "
+                        + "Set it and restart the application before generating cover letters.");
             }
-            languageModel = GoogleAiGeminiChatModel.builder()
-                    .apiKey(apiKey)
-                    .modelName("gemini-2.5-flash-lite")
-                    .temperature(0.7)
-                    .timeout(java.time.Duration.ofSeconds(30))
-                    .build();
+            languageModel = GoogleAiGeminiChatModel.builder().apiKey(apiKey).modelName("gemini-2.5-flash-lite")
+                    .temperature(0.7).timeout(java.time.Duration.ofSeconds(30)).build();
         }
         return languageModel;
     }
@@ -51,17 +46,18 @@ public class AIService {
     }
 
     private String toneInstruction(String tone) {
-        if (tone == null || tone.isBlank()) return "";
+        if (tone == null || tone.isBlank())
+            return "";
         switch (tone.trim()) {
-            case "Creative":
-                return "TONE: Write in a creative, enthusiastic and bold voice. Show genuine personality, " +
-                       "use vivid language, and let the candidate's passion stand out. Best for startups and agencies.";
-            case "Storyteller":
-                return "TONE: Write in a storytelling narrative voice. Focus on the candidate's journey, " +
-                       "key moments of impact, and what drives them. Best for senior and lead roles.";
-            default: // Professional
-                return "TONE: Write in a formal, structured and strictly professional voice. " +
-                       "Keep language concise, confident and business-appropriate. Best for corporate roles.";
+        case "Creative":
+            return "TONE: Write in a creative, enthusiastic and bold voice. Show genuine personality, "
+                    + "use vivid language, and let the candidate's passion stand out. Best for startups and agencies.";
+        case "Storyteller":
+            return "TONE: Write in a storytelling narrative voice. Focus on the candidate's journey, "
+                    + "key moments of impact, and what drives them. Best for senior and lead roles.";
+        default: // Professional
+            return "TONE: Write in a formal, structured and strictly professional voice. "
+                    + "Keep language concise, confident and business-appropriate. Best for corporate roles.";
         }
     }
 
@@ -82,10 +78,8 @@ public class AIService {
                 {{JOB}}
                 """;
 
-        String finalPrompt = coverLetterPrompt
-                .replace("{{TONE}}", toneInstruction(tone))
-                .replace("{{ANALYSIS}}", matchAnalysis)
-                .replace("{{JOB}}", jobDetails);
+        String finalPrompt = coverLetterPrompt.replace("{{TONE}}", toneInstruction(tone))
+                .replace("{{ANALYSIS}}", matchAnalysis).replace("{{JOB}}", jobDetails);
 
         return getLanguageModel().generate(finalPrompt);
     }

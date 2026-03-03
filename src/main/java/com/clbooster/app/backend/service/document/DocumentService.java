@@ -105,9 +105,8 @@ public class DocumentService {
      */
     public String storeResumeText(String resumeText, String originalFilename, String userId) throws IOException {
         try {
-            String baseName = (originalFilename != null && !originalFilename.trim().isEmpty())
-                ? originalFilename.trim()
-                : "resume_text.txt";
+            String baseName = (originalFilename != null && !originalFilename.trim().isEmpty()) ? originalFilename.trim()
+                    : "resume_text.txt";
             String filename = generateStorageFilename(baseName, userId);
             Path targetPath = Paths.get(DOCUMENT_STORAGE_DIR).resolve(filename);
 
@@ -123,8 +122,8 @@ public class DocumentService {
     }
 
     /**
-     * Stores raw resume text to a file (uses default filename).
-     * Delegates to {@link #storeResumeText(String, String, String)}.
+     * Stores raw resume text to a file (uses default filename). Delegates to
+     * {@link #storeResumeText(String, String, String)}.
      *
      * @param resumeText
      *            The resume text content
@@ -219,14 +218,14 @@ public class DocumentService {
 
     /**
      * Generates a unique filename for storage in the format:
-     * {@code userId_timestampMillis_safeOriginalFilename}.
-     * This three-part format is required by the resume list parser.
+     * {@code userId_timestampMillis_safeOriginalFilename}. This three-part format
+     * is required by the resume list parser.
      */
     private String generateStorageFilename(String originalFilename, String userId) {
         String timestamp = String.valueOf(System.currentTimeMillis());
         String safeOriginalName = (originalFilename != null && !originalFilename.isEmpty())
-            ? originalFilename.replaceAll("[^a-zA-Z0-9._\\-]", "_")
-            : "resume";
+                ? originalFilename.replaceAll("[^a-zA-Z0-9._\\-]", "_")
+                : "resume";
         return userId + "_" + timestamp + "_" + safeOriginalName;
     }
 

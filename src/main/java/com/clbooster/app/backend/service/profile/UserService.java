@@ -3,8 +3,8 @@ package com.clbooster.app.backend.service.profile;
 import org.springframework.stereotype.Service;
 
 /**
- * Spring service wrapping {@link UserDAO}.
- * Views should inject this bean instead of instantiating UserDAO directly.
+ * Spring service wrapping {@link UserDAO}. Views should inject this bean
+ * instead of instantiating UserDAO directly.
  */
 @Service
 public class UserService {

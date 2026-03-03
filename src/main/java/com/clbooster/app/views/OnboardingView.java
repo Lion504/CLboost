@@ -66,8 +66,10 @@ public class OnboardingView extends VerticalLayout {
     private TextArea bioField;
     private TextArea goalField;
 
-    private final String[] industries = {"Technology", "Finance", "Healthcare", "Education", "Marketing", "Design", "Consulting", "Manufacturing"};
-    private final String[] experienceLevels = {"Entry Level (0-2 years)", "Mid Level (3-5 years)", "Senior Level (6-10 years)", "Executive (10+ years)"};
+    private final String[] industries = { "Technology", "Finance", "Healthcare", "Education", "Marketing", "Design",
+            "Consulting", "Manufacturing" };
+    private final String[] experienceLevels = { "Entry Level (0-2 years)", "Mid Level (3-5 years)",
+            "Senior Level (6-10 years)", "Executive (10+ years)" };
 
     public OnboardingView() {
         setPadding(false);
@@ -162,7 +164,8 @@ public class OnboardingView extends VerticalLayout {
         Div logoIcon = new Div();
         logoIcon.getStyle().set("width", "40px");
         logoIcon.getStyle().set("height", "40px");
-        logoIcon.getStyle().set("background", "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)");
+        logoIcon.getStyle().set("background",
+                "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)");
         logoIcon.getStyle().set("border-radius", "12px");
         logoIcon.getStyle().set("display", "flex");
         logoIcon.getStyle().set("align-items", "center");
@@ -338,9 +341,7 @@ public class OnboardingView extends VerticalLayout {
 
         // Update navigation
         HorizontalLayout nav = (HorizontalLayout) getComponentAt(0).getChildren()
-            .filter(c -> c instanceof HorizontalLayout)
-            .reduce((first, second) -> second)
-            .orElse(null);
+                .filter(c -> c instanceof HorizontalLayout).reduce((first, second) -> second).orElse(null);
 
         if (nav != null) {
             Button backBtn = (Button) nav.getComponentAt(0);
@@ -359,15 +360,15 @@ public class OnboardingView extends VerticalLayout {
         }
 
         switch (step) {
-            case 1:
-                showProfileStep();
-                break;
-            case 2:
-                showCareerStep();
-                break;
-            case 3:
-                showPreferencesStep();
-                break;
+        case 1:
+            showProfileStep();
+            break;
+        case 2:
+            showCareerStep();
+            break;
+        case 3:
+            showPreferencesStep();
+            break;
         }
     }
 
@@ -428,8 +429,10 @@ public class OnboardingView extends VerticalLayout {
         HorizontalLayout row2 = new HorizontalLayout();
         row2.setWidthFull();
         row2.getStyle().set("gap", "16px");
-        row2.add(createFormGroup("Job Title", titleField, VaadinIcon.BRIEFCASE), createFormGroup("Location", locationField, VaadinIcon.MAP_MARKER));
-        row2.expand(createFormGroup("Job Title", titleField, VaadinIcon.BRIEFCASE), createFormGroup("Location", locationField, VaadinIcon.MAP_MARKER));
+        row2.add(createFormGroup("Job Title", titleField, VaadinIcon.BRIEFCASE),
+                createFormGroup("Location", locationField, VaadinIcon.MAP_MARKER));
+        row2.expand(createFormGroup("Job Title", titleField, VaadinIcon.BRIEFCASE),
+                createFormGroup("Location", locationField, VaadinIcon.MAP_MARKER));
 
         form.add(row2);
         form.add(createFormGroup("Professional Bio", bioField, null));
@@ -605,11 +608,9 @@ public class OnboardingView extends VerticalLayout {
         toneOptions.setWidthFull();
         toneOptions.getStyle().set("gap", "16px");
 
-        String[][] toneData = {
-            {"Professional", "Formal and polished", PRIMARY, VaadinIcon.BRIEFCASE.name()},
-            {"Creative", "Bold and unique", "#AF52DE", VaadinIcon.STAR.name()},
-            {"Casual", "Friendly and approachable", WARNING, VaadinIcon.SMILEY_O.name()}
-        };
+        String[][] toneData = { { "Professional", "Formal and polished", PRIMARY, VaadinIcon.BRIEFCASE.name() },
+                { "Creative", "Bold and unique", "#AF52DE", VaadinIcon.STAR.name() },
+                { "Casual", "Friendly and approachable", WARNING, VaadinIcon.SMILEY_O.name() } };
 
         for (String[] tone : toneData) {
             toneOptions.add(createToneOption(tone[0], tone[1], tone[2], tone[3]));
@@ -650,7 +651,8 @@ public class OnboardingView extends VerticalLayout {
 
         // Summary card
         Div summaryCard = new Div();
-        summaryCard.getStyle().set("background", "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)");
+        summaryCard.getStyle().set("background",
+                "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)");
         summaryCard.getStyle().set("border-radius", "24px");
         summaryCard.getStyle().set("padding", "32px");
         summaryCard.getStyle().set("margin-top", "24px");
@@ -703,7 +705,8 @@ public class OnboardingView extends VerticalLayout {
         stats.getStyle().set("border-top", "1px solid rgba(255,255,255,0.2)");
 
         stats.add(createSummaryStat("Profile", "Completed"));
-        stats.add(createSummaryStat("Career", selectedExperience.isEmpty() ? "Pending" : selectedExperience.get(0).split(" ")[0]));
+        stats.add(createSummaryStat("Career",
+                selectedExperience.isEmpty() ? "Pending" : selectedExperience.get(0).split(" ")[0]));
         stats.add(createSummaryStat("Tone", selectedTone));
 
         summaryCard.add(summaryHeader, stats);
@@ -965,7 +968,8 @@ public class OnboardingView extends VerticalLayout {
             showStep(currentStep + 1);
         } else {
             // Complete onboarding
-            Notification.show("Welcome to CL Booster! Your profile is set up.", 4000, Notification.Position.BOTTOM_CENTER);
+            Notification.show("Welcome to CL Booster! Your profile is set up.", 4000,
+                    Notification.Position.BOTTOM_CENTER);
             getUI().ifPresent(ui -> ui.navigate(DashboardView.class));
         }
     }

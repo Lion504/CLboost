@@ -46,11 +46,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * 4-Step Wizard Generator View matching Figma Generator.tsx
- * Step 1: Job Details
- * Step 2: Qualifications  
- * Step 3: AI Customization
- * Step 4: Review
+ * 4-Step Wizard Generator View matching Figma Generator.tsx Step 1: Job Details
+ * Step 2: Qualifications Step 3: AI Customization Step 4: Review
  */
 @Route(value = "generator-wizard", layout = MainLayout.class)
 @PageTitle("Generate Cover Letter | CL Booster")
@@ -106,7 +103,8 @@ public class GeneratorWizardView extends VerticalLayout {
     // Step 2 skills grid for dynamic updates
     private Div skillsGrid;
     private final List<Button> skillButtons = new ArrayList<>();
-    private static final String[] AVAILABLE_SKILLS = {"React", "TypeScript", "Node.js", "UI Design", "GraphQL", "AWS", "Agile", "Leadership"};
+    private static final String[] AVAILABLE_SKILLS = { "React", "TypeScript", "Node.js", "UI Design", "GraphQL", "AWS",
+            "Agile", "Leadership" };
 
     private final AIService aiService;
 
@@ -133,7 +131,7 @@ public class GeneratorWizardView extends VerticalLayout {
 
         // Header with back button and step indicator
         HorizontalLayout header = createHeader();
-        
+
         // Step indicator
         stepIndicator = createStepIndicator();
 
@@ -146,9 +144,9 @@ public class GeneratorWizardView extends VerticalLayout {
         HorizontalLayout navigation = createNavigation();
 
         container.add(header, stepIndicator, stepContentContainer, navigation);
-        
+
         add(container);
-        
+
         // Show initial step
         showStep(1);
     }
@@ -180,12 +178,13 @@ public class GeneratorWizardView extends VerticalLayout {
         indicator.getStyle().set("gap", "0");
         indicator.getStyle().set("margin-bottom", "24px");
 
-        String[] stepTitles = {"Job Details", "Qualifications", "AI Customization", "Summary", "Editor"};
-        VaadinIcon[] stepIcons = {VaadinIcon.BUILDING, VaadinIcon.LIST_SELECT, VaadinIcon.STAR, VaadinIcon.CHECK_CIRCLE, VaadinIcon.EDIT};
+        String[] stepTitles = { "Job Details", "Qualifications", "AI Customization", "Summary", "Editor" };
+        VaadinIcon[] stepIcons = { VaadinIcon.BUILDING, VaadinIcon.LIST_SELECT, VaadinIcon.STAR,
+                VaadinIcon.CHECK_CIRCLE, VaadinIcon.EDIT };
 
         for (int i = 0; i < totalSteps; i++) {
             final int stepNum = i + 1;
-            
+
             HorizontalLayout stepItem = new HorizontalLayout();
             stepItem.setAlignItems(FlexComponent.Alignment.CENTER);
             stepItem.getStyle().set("gap", "6px");
@@ -200,7 +199,7 @@ public class GeneratorWizardView extends VerticalLayout {
             badge.getStyle().set("font-size", "12px");
             badge.getStyle().set("font-weight", "700");
             badge.getStyle().set("transition", "all 0.3s ease");
-            
+
             // Set badge style based on current step
             if (stepNum == currentStep) {
                 badge.getStyle().set("background", PRIMARY);
@@ -217,10 +216,10 @@ public class GeneratorWizardView extends VerticalLayout {
             Icon icon = stepIcons[i].create();
             icon.getStyle().set("width", "14px");
             icon.getStyle().set("height", "14px");
-            
+
             Span title = new Span(stepTitles[i]);
             badge.add(icon, title);
-            
+
             stepItem.add(badge);
 
             // Connector line (except for last step)
@@ -246,23 +245,23 @@ public class GeneratorWizardView extends VerticalLayout {
     private void showStep(int step) {
         currentStep = step;
         stepContentContainer.removeAll();
-        
+
         switch (step) {
-            case 1:
-                stepContentContainer.add(createStep1JobDetails());
-                break;
-            case 2:
-                stepContentContainer.add(createStep2Qualifications());
-                break;
-            case 3:
-                stepContentContainer.add(createStep3AICustomization());
-                break;
-            case 4:
-                stepContentContainer.add(createStep4Review());
-                break;
-            case 5:
-                stepContentContainer.add(createStep5Editor());
-                break;
+        case 1:
+            stepContentContainer.add(createStep1JobDetails());
+            break;
+        case 2:
+            stepContentContainer.add(createStep2Qualifications());
+            break;
+        case 3:
+            stepContentContainer.add(createStep3AICustomization());
+            break;
+        case 4:
+            stepContentContainer.add(createStep4Review());
+            break;
+        case 5:
+            stepContentContainer.add(createStep5Editor());
+            break;
         }
 
         // Update step indicator in container
@@ -310,7 +309,8 @@ public class GeneratorWizardView extends VerticalLayout {
         form.setPadding(false);
 
         // Job Title
-        VerticalLayout jobTitleGroup = createFormField("Job Title", VaadinIcon.BRIEFCASE, "e.g., Senior Frontend Engineer");
+        VerticalLayout jobTitleGroup = createFormField("Job Title", VaadinIcon.BRIEFCASE,
+                "e.g., Senior Frontend Engineer");
         step1JobTitleField = (TextField) jobTitleGroup.getComponentAt(1);
         step1JobTitleField.setValue(jobTitle);
         step1JobTitleField.addValueChangeListener(e -> {
@@ -395,7 +395,7 @@ public class GeneratorWizardView extends VerticalLayout {
 
         // Clear previous buttons list
         skillButtons.clear();
-        
+
         for (String skill : AVAILABLE_SKILLS) {
             Button skillBtn = createSkillButton(skill);
             skillButtons.add(skillBtn);
@@ -431,15 +431,16 @@ public class GeneratorWizardView extends VerticalLayout {
         importDesc.getStyle().set("margin", "0 0 16px 0");
 
         // Create Upload component with FileBuffer
-        // FileBuffer writes directly to a file instead of memory, avoiding stream issues
+        // FileBuffer writes directly to a file instead of memory, avoiding stream
+        // issues
         FileBuffer buffer = new FileBuffer();
         Upload upload = new Upload();
         upload.setReceiver(buffer);
 
         upload.setDropAllowed(false);
         upload.setAcceptedFileTypes("application/pdf", ".pdf",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx",
-            "application/msword", ".doc");
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx",
+                "application/msword", ".doc");
         upload.setMaxFiles(1);
         upload.setMaxFileSize(10 * 1024 * 1024); // 10MB max file size
 
@@ -450,21 +451,11 @@ public class GeneratorWizardView extends VerticalLayout {
 
         // File name tag — hidden until a file is uploaded
         Div fileTag = new Div();
-        fileTag.getStyle()
-            .set("display", "inline-flex")
-            .set("align-items", "center")
-            .set("gap", "6px")
-            .set("background", "#e8f5e9")
-            .set("color", "#2e7d32")
-            .set("font-size", "13px")
-            .set("font-weight", "600")
-            .set("padding", "6px 14px")
-            .set("border-radius", "9999px")
-            .set("margin-top", "12px")
-            .set("max-width", "100%")
-            .set("overflow", "hidden")
-            .set("text-overflow", "ellipsis")
-            .set("white-space", "nowrap");
+        fileTag.getStyle().set("display", "inline-flex").set("align-items", "center").set("gap", "6px")
+                .set("background", "#e8f5e9").set("color", "#2e7d32").set("font-size", "13px").set("font-weight", "600")
+                .set("padding", "6px 14px").set("border-radius", "9999px").set("margin-top", "12px")
+                .set("max-width", "100%").set("overflow", "hidden").set("text-overflow", "ellipsis")
+                .set("white-space", "nowrap");
         fileTag.setVisible(false);
 
         // Handle successful upload - FileBuffer provides direct file access
@@ -490,7 +481,8 @@ public class GeneratorWizardView extends VerticalLayout {
                 // Validate supported extensions
                 Set<String> supportedExtensions = new HashSet<>(Arrays.asList(".pdf", ".docx", ".doc"));
                 if (!supportedExtensions.contains(fileExtension)) {
-                    throw new IllegalArgumentException("Unsupported file type: " + fileExtension + ". Only PDF and DOCX files are supported.");
+                    throw new IllegalArgumentException(
+                            "Unsupported file type: " + fileExtension + ". Only PDF and DOCX files are supported.");
                 }
 
                 // Get the temp file that FileBuffer already wrote to disk
@@ -509,7 +501,8 @@ public class GeneratorWizardView extends VerticalLayout {
                 Parser parser = new Parser();
                 LOGGER.info("[UPLOAD] Starting file parsing...");
                 String resumeText = parser.parseFileToJson(tempFile.getAbsolutePath());
-                LOGGER.info("[UPLOAD] File parsing completed. Extracted " + (resumeText != null ? resumeText.length() : 0) + " characters");
+                LOGGER.info("[UPLOAD] File parsing completed. Extracted "
+                        + (resumeText != null ? resumeText.length() : 0) + " characters");
 
                 // Extract skills from the resume text
                 Set<String> extractedSkills = extractSkillsFromText(resumeText);
@@ -524,45 +517,48 @@ public class GeneratorWizardView extends VerticalLayout {
                     updateSkillButtonsUI();
 
                     String skillsText = String.join(", ", extractedSkills);
-                    Notification.show("Skills extracted from resume: " + skillsText,
-                        5000, Notification.Position.TOP_CENTER);
+                    Notification.show("Skills extracted from resume: " + skillsText, 5000,
+                            Notification.Position.TOP_CENTER);
                 } else {
-                    Notification.show("No matching skills found in the resume. Please select skills manually.",
-                        3000, Notification.Position.TOP_CENTER);
+                    Notification.show("No matching skills found in the resume. Please select skills manually.", 3000,
+                            Notification.Position.TOP_CENTER);
                 }
 
                 upload.getElement().executeJs("this.files = []");
 
             } catch (IllegalArgumentException e) {
                 LOGGER.warning("[UPLOAD] Validation error: " + e.getMessage());
-                Notification.show("Upload error: " + e.getMessage(),
-                    5000, Notification.Position.TOP_CENTER);
+                Notification.show("Upload error: " + e.getMessage(), 5000, Notification.Position.TOP_CENTER);
                 upload.getElement().executeJs("this.files = []");
             } catch (IOException e) {
                 LOGGER.severe("[UPLOAD] File I/O error: " + e.getMessage());
-                Notification.show("File error: " + e.getMessage() + ". Please try again.",
-                    5000, Notification.Position.TOP_CENTER);
+                Notification.show("File error: " + e.getMessage() + ". Please try again.", 5000,
+                        Notification.Position.TOP_CENTER);
                 upload.getElement().executeJs("this.files = []");
             } catch (Exception e) {
-                LOGGER.log(Level.SEVERE, "[UPLOAD] Unexpected error processing file '" + fileName + "': " + e.getMessage(), e);
-                Notification.show("Error processing file: " + e.getMessage() + ". Please check the file format and try again.",
-                    5000, Notification.Position.TOP_CENTER);
+                LOGGER.log(Level.SEVERE,
+                        "[UPLOAD] Unexpected error processing file '" + fileName + "': " + e.getMessage(), e);
+                Notification.show(
+                        "Error processing file: " + e.getMessage() + ". Please check the file format and try again.",
+                        5000, Notification.Position.TOP_CENTER);
                 upload.getElement().executeJs("this.files = []");
             }
         });
 
         // Handle failed upload
         upload.addFailedListener(event -> {
-            LOGGER.severe("[UPLOAD] Upload failed event: " + (event.getReason() != null ? event.getReason().getMessage() : "Unknown reason"));
-            Notification.show("File upload failed: " + (event.getReason() != null ? event.getReason().getMessage() : "Unknown error"),
-                5000, Notification.Position.TOP_CENTER);
+            LOGGER.severe("[UPLOAD] Upload failed event: "
+                    + (event.getReason() != null ? event.getReason().getMessage() : "Unknown reason"));
+            Notification.show(
+                    "File upload failed: "
+                            + (event.getReason() != null ? event.getReason().getMessage() : "Unknown error"),
+                    5000, Notification.Position.TOP_CENTER);
         });
 
         // Handle file rejection (wrong type, too large, etc.)
         upload.addFileRejectedListener(event -> {
             LOGGER.warning("[UPLOAD] File rejected: " + event.getErrorMessage());
-            Notification.show("File rejected: " + event.getErrorMessage(),
-                5000, Notification.Position.TOP_CENTER);
+            Notification.show("File rejected: " + event.getErrorMessage(), 5000, Notification.Position.TOP_CENTER);
         });
 
         importCard.add(fileIcon, importTitle, importDesc, upload, fileTag);
@@ -571,7 +567,7 @@ public class GeneratorWizardView extends VerticalLayout {
 
         return layout;
     }
-    
+
     private Button createSkillButton(String skill) {
         Button skillBtn = new Button(skill);
         skillBtn.setWidthFull();
@@ -599,7 +595,7 @@ public class GeneratorWizardView extends VerticalLayout {
 
         return skillBtn;
     }
-    
+
     private void updateSkillButtonStyle(Button skillBtn, String skill) {
         if (selectedSkills.contains(skill)) {
             skillBtn.getStyle().set("border-color", PRIMARY);
@@ -609,38 +605,36 @@ public class GeneratorWizardView extends VerticalLayout {
             skillBtn.getStyle().set("box-shadow", "none");
         }
     }
-    
+
     private void updateSkillButtonsUI() {
         for (Button skillBtn : skillButtons) {
             String skill = skillBtn.getText();
             updateSkillButtonStyle(skillBtn, skill);
         }
     }
-    
+
     private Set<String> extractSkillsFromText(String text) {
         Set<String> foundSkills = new HashSet<>();
         if (text == null || text.isEmpty()) {
             return foundSkills;
         }
-        
+
         // Convert text to lowercase for case-insensitive matching
         String lowerText = text.toLowerCase();
-        
+
         // Check for each skill in the text (case-insensitive)
         for (String skill : AVAILABLE_SKILLS) {
             // Create a regex pattern that matches the skill as a whole word
             // Handle special characters like . in "Node.js" and spaces in "UI Design"
-            String skillPattern = skill.toLowerCase()
-                .replace(".", "\\.")  // Escape dots
-                .replace(" ", "\\s+"); // Match spaces as one or more whitespace
-            
+            String skillPattern = skill.toLowerCase().replace(".", "\\.") // Escape dots
+                    .replace(" ", "\\s+"); // Match spaces as one or more whitespace
+
             // Check if the skill appears as a word in the text
-            if (lowerText.matches(".*\\b" + skillPattern + "\\b.*") ||
-                lowerText.contains(skill.toLowerCase())) {
+            if (lowerText.matches(".*\\b" + skillPattern + "\\b.*") || lowerText.contains(skill.toLowerCase())) {
                 foundSkills.add(skill);
             }
         }
-        
+
         return foundSkills;
     }
 
@@ -659,7 +653,8 @@ public class GeneratorWizardView extends VerticalLayout {
         title.getStyle().set("text-align", "center");
         title.getStyle().set("margin", "0");
 
-        Paragraph subtitle = new Paragraph("How should the letter sound? Choose a voice that fits the company culture.");
+        Paragraph subtitle = new Paragraph(
+                "How should the letter sound? Choose a voice that fits the company culture.");
         subtitle.getStyle().set("font-size", "18px");
         subtitle.getStyle().set("color", TEXT_SECONDARY);
         subtitle.getStyle().set("text-align", "center");
@@ -674,26 +669,24 @@ public class GeneratorWizardView extends VerticalLayout {
         cards.getStyle().set("max-width", "800px");
 
         // Professional card
-        cards.add(createToneCard("Professional", 
-            "Formal, structured, and strictly business. Best for corporate roles.",
-            VaadinIcon.BRIEFCASE, "#e3f2fd", PRIMARY, "Professional".equals(selectedTone)));
+        cards.add(createToneCard("Professional", "Formal, structured, and strictly business. Best for corporate roles.",
+                VaadinIcon.BRIEFCASE, "#e3f2fd", PRIMARY, "Professional".equals(selectedTone)));
 
         // Creative card (selected by default)
-        cards.add(createToneCard("Creative",
-            "Enthusiastic, bold, and unique. Best for startups and agencies.",
-            VaadinIcon.STAR, "#f3e5f5", PURPLE, "Creative".equals(selectedTone)));
+        cards.add(createToneCard("Creative", "Enthusiastic, bold, and unique. Best for startups and agencies.",
+                VaadinIcon.STAR, "#f3e5f5", PURPLE, "Creative".equals(selectedTone)));
 
         // Storyteller card
-        cards.add(createToneCard("Storyteller",
-            "Focuses on your journey and impact. Best for senior/lead roles.",
-            VaadinIcon.MAGIC, "#fff3e0", ORANGE, "Storyteller".equals(selectedTone)));
+        cards.add(createToneCard("Storyteller", "Focuses on your journey and impact. Best for senior/lead roles.",
+                VaadinIcon.MAGIC, "#fff3e0", ORANGE, "Storyteller".equals(selectedTone)));
 
         layout.add(title, subtitle, cards);
 
         return layout;
     }
 
-    private Div createToneCard(String title, String description, VaadinIcon iconName, String bgColor, String iconColor, boolean isSelected) {
+    private Div createToneCard(String title, String description, VaadinIcon iconName, String bgColor, String iconColor,
+            boolean isSelected) {
         Div card = new Div();
         card.getStyle().set("background", BG_WHITE);
         card.getStyle().set("border-radius", "20px");
@@ -702,7 +695,7 @@ public class GeneratorWizardView extends VerticalLayout {
         card.getStyle().set("text-align", "center");
         card.getStyle().set("cursor", "pointer");
         card.getStyle().set("transition", "all 0.2s ease");
-        
+
         if (isSelected) {
             card.getStyle().set("border", "2px solid " + PRIMARY);
             card.getStyle().set("box-shadow", "0 8px 24px rgba(0,122,255,0.15)");
@@ -806,14 +799,14 @@ public class GeneratorWizardView extends VerticalLayout {
         summary.add(createSummaryRow("Role:", jobTitle.isEmpty() ? "Senior Product Designer" : jobTitle));
         summary.add(createSummaryRow("Company:", companyName.isEmpty() ? "Apple Inc." : companyName));
         summary.add(createSummaryRow("Tone:", selectedTone));
-        
+
         // Divider
         Div divider = new Div();
         divider.getStyle().set("height", "1px");
         divider.getStyle().set("background", "rgba(0,0,0,0.06)");
         divider.getStyle().set("margin", "8px 0");
         summary.add(divider);
-        
+
         summary.add(createSummaryRow("Access:", "Free Forever", GREEN));
 
         card.add(summary);
@@ -986,7 +979,7 @@ public class GeneratorWizardView extends VerticalLayout {
                     return; // Validation failed, don't proceed
                 }
             }
-            
+
             // Validate Step 3 tone selection before proceeding
             if (currentStep == 3) {
                 if (selectedTone == null || selectedTone.isEmpty()) {
@@ -994,10 +987,10 @@ public class GeneratorWizardView extends VerticalLayout {
                     return; // Validation failed, don't proceed
                 }
             }
-            
+
             // Show loading animation
             showLoading();
-            
+
             // Direct synchronous step transition on UI thread
             try {
                 showStep(currentStep + 1);
@@ -1011,7 +1004,7 @@ public class GeneratorWizardView extends VerticalLayout {
 
     private boolean validateStep1Fields() {
         boolean valid = true;
-        
+
         // Inline validation with field errors
         if (step1JobTitleField != null) {
             if (jobTitle == null || jobTitle.trim().isEmpty()) {
@@ -1022,7 +1015,7 @@ public class GeneratorWizardView extends VerticalLayout {
                 step1JobTitleField.setInvalid(false);
             }
         }
-        
+
         if (step1CompanyField != null) {
             if (companyName == null || companyName.trim().isEmpty()) {
                 step1CompanyField.setErrorMessage("Company name is required");
@@ -1032,7 +1025,7 @@ public class GeneratorWizardView extends VerticalLayout {
                 step1CompanyField.setInvalid(false);
             }
         }
-        
+
         if (step1DescField != null) {
             if (jobDescription == null || jobDescription.trim().isEmpty()) {
                 step1DescField.setErrorMessage("Job description is required");
@@ -1042,14 +1035,14 @@ public class GeneratorWizardView extends VerticalLayout {
                 step1DescField.setInvalid(false);
             }
         }
-        
+
         return valid;
     }
 
     private void showLoading() {
         loading = true;
         nextButton.setEnabled(false);
-        
+
         // Create loading overlay for the content area
         loadingOverlay = new Div();
         loadingOverlay.getStyle().set("position", "absolute");
@@ -1099,8 +1092,8 @@ public class GeneratorWizardView extends VerticalLayout {
         titleGroup.setPadding(false);
         titleGroup.setSpacing(false);
         H1 jobTitleLabel = new H1(jobTitle);
-        jobTitleLabel.getStyle().set("font-size", "20px").set("font-weight", "700")
-            .set("color", TEXT_PRIMARY).set("margin", "0");
+        jobTitleLabel.getStyle().set("font-size", "20px").set("font-weight", "700").set("color", TEXT_PRIMARY)
+                .set("margin", "0");
         Paragraph subLabel = new Paragraph(companyName + " • " + selectedTone + " tone");
         subLabel.getStyle().set("font-size", "13px").set("color", TEXT_SECONDARY).set("margin", "0");
         titleGroup.add(jobTitleLabel, subLabel);
@@ -1111,13 +1104,13 @@ public class GeneratorWizardView extends VerticalLayout {
 
         Button saveDocxBtn = new Button("Save DOCX", VaadinIcon.DOWNLOAD.create());
         saveDocxBtn.getStyle().set("background", "rgba(0,0,0,0.05)").set("color", TEXT_PRIMARY)
-            .set("font-weight", "600").set("border-radius", "9999px").set("padding", "10px 20px");
+                .set("font-weight", "600").set("border-radius", "9999px").set("padding", "10px 20px");
         saveDocxBtn.addClickListener(e -> downloadEditorAsDocx());
 
         Button exportPdfBtn = new Button("Export PDF", VaadinIcon.FILE_TEXT.create());
-        exportPdfBtn.getStyle().set("background", PRIMARY).set("color", "white")
-            .set("font-weight", "600").set("border-radius", "9999px").set("padding", "10px 24px")
-            .set("border", "none").set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
+        exportPdfBtn.getStyle().set("background", PRIMARY).set("color", "white").set("font-weight", "600")
+                .set("border-radius", "9999px").set("padding", "10px 24px").set("border", "none")
+                .set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
         exportPdfBtn.addClickListener(e -> downloadEditorAsPdf());
 
         actions.add(saveDocxBtn, exportPdfBtn);
@@ -1128,8 +1121,8 @@ public class GeneratorWizardView extends VerticalLayout {
         HorizontalLayout toolbar = new HorizontalLayout();
         toolbar.setWidthFull();
         toolbar.setAlignItems(FlexComponent.Alignment.CENTER);
-        toolbar.getStyle().set("gap", "8px").set("padding", "12px 16px")
-            .set("background", BG_GRAY).set("border-radius", "12px");
+        toolbar.getStyle().set("gap", "8px").set("padding", "12px 16px").set("background", BG_GRAY).set("border-radius",
+                "12px");
 
         Button boldBtn = createEditorToolbarButton(VaadinIcon.BOLD, "Bold");
         boldBtn.addClickListener(e -> wrapEditorContent("**", "**"));
@@ -1141,31 +1134,35 @@ public class GeneratorWizardView extends VerticalLayout {
         Button copyBtn = createEditorToolbarButton(VaadinIcon.COPY, "Copy all");
         copyBtn.addClickListener(e -> {
             if (editorTextArea != null) {
-                UI.getCurrent().getPage().executeJs(
-                    "navigator.clipboard.writeText($0)", editorTextArea.getValue());
+                UI.getCurrent().getPage().executeJs("navigator.clipboard.writeText($0)", editorTextArea.getValue());
                 Notification.show("Copied to clipboard", 2000, Notification.Position.TOP_CENTER);
             }
         });
 
         Button clearBtn = createEditorToolbarButton(VaadinIcon.TRASH, "Clear");
-        clearBtn.addClickListener(e -> { if (editorTextArea != null) editorTextArea.setValue(""); });
+        clearBtn.addClickListener(e -> {
+            if (editorTextArea != null)
+                editorTextArea.setValue("");
+        });
 
         Div divider = new Div();
-        divider.getStyle().set("width", "1px").set("height", "24px")
-            .set("background", "rgba(0,0,0,0.1)");
+        divider.getStyle().set("width", "1px").set("height", "24px").set("background", "rgba(0,0,0,0.1)");
 
         Button regenBtn = new Button("Regenerate", VaadinIcon.MAGIC.create());
-        regenBtn.getStyle().set("background", PRIMARY + "15").set("color", PRIMARY)
-            .set("font-weight", "600").set("border-radius", "9999px")
-            .set("padding", "8px 16px").set("border", "none");
+        regenBtn.getStyle().set("background", PRIMARY + "15").set("color", PRIMARY).set("font-weight", "600")
+                .set("border-radius", "9999px").set("padding", "8px 16px").set("border", "none");
         regenBtn.addClickListener(e -> {
-            if (editorTextArea == null) return;
+            if (editorTextArea == null)
+                return;
             editorTextArea.setValue("⏳ Regenerating...");
             editorTextArea.setEnabled(false);
             UI ui = UI.getCurrent();
             Thread t = new Thread(() -> {
                 String result = generateCoverLetterText();
-                ui.access(() -> { editorTextArea.setValue(result); editorTextArea.setEnabled(true); });
+                ui.access(() -> {
+                    editorTextArea.setValue(result);
+                    editorTextArea.setEnabled(true);
+                });
             });
             t.setDaemon(true);
             t.start();
@@ -1177,15 +1174,10 @@ public class GeneratorWizardView extends VerticalLayout {
         editorTextArea = new TextArea();
         editorTextArea.setWidthFull();
         editorTextArea.setMinHeight("460px");
-        editorTextArea.getStyle()
-            .set("background", BG_WHITE)
-            .set("border", "1px solid rgba(0,0,0,0.1)")
-            .set("border-radius", "16px")
-            .set("padding", "24px")
-            .set("font-size", "15px")
-            .set("line-height", "1.8")
-            .set("color", TEXT_PRIMARY)
-            .set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif");
+        editorTextArea.getStyle().set("background", BG_WHITE).set("border", "1px solid rgba(0,0,0,0.1)")
+                .set("border-radius", "16px").set("padding", "24px").set("font-size", "15px").set("line-height", "1.8")
+                .set("color", TEXT_PRIMARY)
+                .set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif");
         editorTextArea.setValue("\u23f3 Generating your cover letter with AI, please wait...");
         editorTextArea.setEnabled(false);
 
@@ -1198,7 +1190,7 @@ public class GeneratorWizardView extends VerticalLayout {
             com.clbooster.app.backend.service.profile.User _u = _authSvc.getCurrentUser();
             if (_u != null) {
                 capturedUserName = _u.getFirstName() + " " + _u.getLastName();
-                capturedUserPin  = _u.getPin();
+                capturedUserPin = _u.getPin();
             }
         } catch (Exception ignored) {
             LOGGER.warning("Could not capture user from session before generation");
@@ -1223,22 +1215,21 @@ public class GeneratorWizardView extends VerticalLayout {
     private Button createEditorToolbarButton(VaadinIcon icon, String tooltip) {
         Button btn = new Button(icon.create());
         btn.getElement().setAttribute("title", tooltip);
-        btn.getStyle().set("background", "transparent").set("color", TEXT_SECONDARY)
-            .set("border", "none").set("padding", "8px").set("border-radius", "8px");
-        btn.getElement().addEventListener("mouseenter",
-            e -> btn.getStyle().set("background", "rgba(0,0,0,0.05)"));
-        btn.getElement().addEventListener("mouseleave",
-            e -> btn.getStyle().set("background", "transparent"));
+        btn.getStyle().set("background", "transparent").set("color", TEXT_SECONDARY).set("border", "none")
+                .set("padding", "8px").set("border-radius", "8px");
+        btn.getElement().addEventListener("mouseenter", e -> btn.getStyle().set("background", "rgba(0,0,0,0.05)"));
+        btn.getElement().addEventListener("mouseleave", e -> btn.getStyle().set("background", "transparent"));
         return btn;
     }
 
     private void wrapEditorContent(String prefix, String suffix) {
-        if (editorTextArea == null) return;
+        if (editorTextArea == null)
+            return;
         String current = editorTextArea.getValue();
-        if (current.isEmpty()) return;
+        if (current.isEmpty())
+            return;
         if (current.startsWith(prefix) && current.endsWith(suffix)) {
-            editorTextArea.setValue(current.substring(prefix.length(),
-                current.length() - suffix.length()));
+            editorTextArea.setValue(current.substring(prefix.length(), current.length() - suffix.length()));
         } else {
             editorTextArea.setValue(prefix + current + suffix);
         }
@@ -1265,10 +1256,10 @@ public class GeneratorWizardView extends VerticalLayout {
     }
 
     /**
-     * Builds a rich candidate context string by combining:
-     * 1. User identity (name, email) from the User record
-     * 2. Profile data (experience level, skills, tools, portfolio link)
-     * 3. Parsed text from the user's most recent uploaded resume file
+     * Builds a rich candidate context string by combining: 1. User identity (name,
+     * email) from the User record 2. Profile data (experience level, skills, tools,
+     * portfolio link) 3. Parsed text from the user's most recent uploaded resume
+     * file
      *
      * This gives the AI full context to write a personalised cover letter.
      */
@@ -1289,8 +1280,7 @@ public class GeneratorWizardView extends VerticalLayout {
             ctx.append("Name: ").append(capturedUserName).append("\n");
 
             // 2 – Profile data from DB
-            com.clbooster.app.backend.service.profile.ProfileDAO profileDAO =
-                new com.clbooster.app.backend.service.profile.ProfileDAO();
+            com.clbooster.app.backend.service.profile.ProfileDAO profileDAO = new com.clbooster.app.backend.service.profile.ProfileDAO();
             com.clbooster.app.backend.service.profile.Profile profile = profileDAO.getProfileByPin(pin);
 
             if (profile != null) {
@@ -1314,8 +1304,8 @@ public class GeneratorWizardView extends VerticalLayout {
                 ctx.append("\n=== RESUME CONTENT ===\n").append(resumeText).append("\n");
             } else {
                 // Fall back to wizard-selected skills if no resume uploaded yet
-                ctx.append("\nSelected Skills for this application: ")
-                   .append(String.join(", ", selectedSkills)).append("\n");
+                ctx.append("\nSelected Skills for this application: ").append(String.join(", ", selectedSkills))
+                        .append("\n");
                 LOGGER.info("buildCandidateContext: no resume found, using wizard skills");
             }
 
@@ -1328,9 +1318,8 @@ public class GeneratorWizardView extends VerticalLayout {
     }
 
     private String fallbackSkillsSummary() {
-        return String.format(
-            "Experienced professional with skills in %s. Seeking a %s role at %s.",
-            String.join(", ", selectedSkills), jobTitle, companyName);
+        return String.format("Experienced professional with skills in %s. Seeking a %s role at %s.",
+                String.join(", ", selectedSkills), jobTitle, companyName);
     }
 
     /**
@@ -1340,17 +1329,17 @@ public class GeneratorWizardView extends VerticalLayout {
     private String loadUserResumeText(int userPin) {
         try {
             Path resumeDir = Paths.get("uploads", "resumes");
-            if (!Files.exists(resumeDir)) return null;
+            if (!Files.exists(resumeDir))
+                return null;
 
-            File[] userFiles = resumeDir.toFile().listFiles(
-                (d, name) -> name.startsWith(userPin + "_"));
-            if (userFiles == null || userFiles.length == 0) return null;
+            File[] userFiles = resumeDir.toFile().listFiles((d, name) -> name.startsWith(userPin + "_"));
+            if (userFiles == null || userFiles.length == 0)
+                return null;
 
-            File latest = java.util.Arrays.stream(userFiles)
-                .filter(File::isFile)
-                .max(java.util.Comparator.comparingLong(File::lastModified))
-                .orElse(null);
-            if (latest == null) return null;
+            File latest = java.util.Arrays.stream(userFiles).filter(File::isFile)
+                    .max(java.util.Comparator.comparingLong(File::lastModified)).orElse(null);
+            if (latest == null)
+                return null;
 
             LOGGER.info("Using resume: " + latest.getName());
             String parsed = new Parser().parseFileToJson(latest.getAbsolutePath());
@@ -1363,29 +1352,29 @@ public class GeneratorWizardView extends VerticalLayout {
 
     private String getFallbackCoverLetter() {
         String userName = capturedUserName;
-        return "Dear Hiring Manager,\n\n"
-            + "I am writing to express my strong interest in the " + jobTitle
-            + " position at " + companyName + ". "
-            + "With relevant experience and skills in " + String.join(", ", selectedSkills) + ", "
-            + "I am excited about the opportunity to contribute to your team.\n\n"
-            + "My background aligns well with the requirements outlined in the job description. "
-            + "I am particularly drawn to this role because of " + companyName
-            + "'s reputation for excellence.\n\n"
-            + "Thank you for considering my application. I look forward to discussing how my skills "
-            + "align with your team's vision.\n\nBest regards,\n" + userName;
+        return "Dear Hiring Manager,\n\n" + "I am writing to express my strong interest in the " + jobTitle
+                + " position at " + companyName + ". " + "With relevant experience and skills in "
+                + String.join(", ", selectedSkills) + ", "
+                + "I am excited about the opportunity to contribute to your team.\n\n"
+                + "My background aligns well with the requirements outlined in the job description. "
+                + "I am particularly drawn to this role because of " + companyName + "'s reputation for excellence.\n\n"
+                + "Thank you for considering my application. I look forward to discussing how my skills "
+                + "align with your team's vision.\n\nBest regards,\n" + userName;
     }
 
     private String saveGeneratedCoverLetter(String content) {
         try {
             AuthenticationService authService = new AuthenticationService();
             com.clbooster.app.backend.service.profile.User currentUser = authService.getCurrentUser();
-            if (currentUser == null) return null;
+            if (currentUser == null)
+                return null;
             int userPin = currentUser.getPin();
             Path dir = Paths.get("uploads", "coverletters");
-            if (!Files.exists(dir)) Files.createDirectories(dir);
+            if (!Files.exists(dir))
+                Files.createDirectories(dir);
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            String fileName = userPin + "_" + timestamp + "_"
-                + sanitizeEditorFilename(companyName) + "_" + sanitizeEditorFilename(jobTitle) + ".docx";
+            String fileName = userPin + "_" + timestamp + "_" + sanitizeEditorFilename(companyName) + "_"
+                    + sanitizeEditorFilename(jobTitle) + ".docx";
             Path filePath = dir.resolve(fileName);
             new Exporter().saveAsDoc(content, filePath.toString());
             LOGGER.info("Cover letter saved: " + filePath.toAbsolutePath());
@@ -1397,7 +1386,8 @@ public class GeneratorWizardView extends VerticalLayout {
     }
 
     private void downloadEditorAsDocx() {
-        if (editorTextArea == null) return;
+        if (editorTextArea == null)
+            return;
         String content = editorTextArea.getValue();
         if (content == null || content.isBlank()) {
             Notification.show("Nothing to download.", 2000, Notification.Position.TOP_CENTER);
@@ -1405,14 +1395,16 @@ public class GeneratorWizardView extends VerticalLayout {
         }
         try {
             Path dir = Paths.get("uploads", "coverletters");
-            if (!Files.exists(dir)) Files.createDirectories(dir);
+            if (!Files.exists(dir))
+                Files.createDirectories(dir);
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            String fileName = sanitizeEditorFilename(companyName) + "_" + sanitizeEditorFilename(jobTitle)
-                + "_" + timestamp + ".docx";
+            String fileName = sanitizeEditorFilename(companyName) + "_" + sanitizeEditorFilename(jobTitle) + "_"
+                    + timestamp + ".docx";
             Path outPath = dir.resolve(fileName);
             new Exporter().saveAsDoc(content, outPath.toString());
             byte[] bytes = Files.readAllBytes(outPath);
-            serveEditorDownload(bytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", fileName);
+            serveEditorDownload(bytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    fileName);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "DOCX export failed: " + ex.getMessage(), ex);
             Notification.show("Export failed: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
@@ -1420,7 +1412,8 @@ public class GeneratorWizardView extends VerticalLayout {
     }
 
     private void downloadEditorAsPdf() {
-        if (editorTextArea == null) return;
+        if (editorTextArea == null)
+            return;
         String content = editorTextArea.getValue();
         if (content == null || content.isBlank()) {
             Notification.show("Nothing to export.", 2000, Notification.Position.TOP_CENTER);
@@ -1444,43 +1437,53 @@ public class GeneratorWizardView extends VerticalLayout {
         anchor.getElement().setAttribute("style", "display:none");
         add(anchor);
         anchor.getElement().executeJs(
-            "var a=$0;setTimeout(function(){a.click();setTimeout(function(){a.remove();},1000);},100);",
-            anchor.getElement());
+                "var a=$0;setTimeout(function(){a.click();setTimeout(function(){a.remove();},1000);},100);",
+                anchor.getElement());
         Notification.show("Downloading " + fileName + "\u2026", 2000, Notification.Position.TOP_CENTER);
     }
 
     private byte[] generateSimplePdf(String text) throws IOException {
         java.util.List<String> lines = new java.util.ArrayList<>();
         for (String rawLine : text.split("\n", -1)) {
-            if (rawLine.length() <= 90) { lines.add(rawLine); }
-            else { for (int i = 0; i < rawLine.length(); i += 90) lines.add(rawLine.substring(i, Math.min(i + 90, rawLine.length()))); }
+            if (rawLine.length() <= 90) {
+                lines.add(rawLine);
+            } else {
+                for (int i = 0; i < rawLine.length(); i += 90)
+                    lines.add(rawLine.substring(i, Math.min(i + 90, rawLine.length())));
+            }
         }
-        final float TOP_MARGIN = 800f, LEFT_MARGIN = 50f, LINE_HEIGHT = 14f,
-            BOTTOM_MARGIN = 50f, PAGE_HEIGHT = 841.89f;
+        final float TOP_MARGIN = 800f, LEFT_MARGIN = 50f, LINE_HEIGHT = 14f, BOTTOM_MARGIN = 50f, PAGE_HEIGHT = 841.89f;
         final int FONT_SIZE = 11;
         final int LINES_PER_PAGE = (int) ((TOP_MARGIN - BOTTOM_MARGIN) / LINE_HEIGHT);
         java.util.List<java.util.List<String>> pages = new java.util.ArrayList<>();
         for (int i = 0; i < lines.size(); i += LINES_PER_PAGE)
             pages.add(lines.subList(i, Math.min(i + LINES_PER_PAGE, lines.size())));
-        if (pages.isEmpty()) pages.add(new java.util.ArrayList<>());
+        if (pages.isEmpty())
+            pages.add(new java.util.ArrayList<>());
         java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
         java.util.List<Integer> offsets = new java.util.ArrayList<>();
         java.util.function.Consumer<String> write = s -> {
-            try { out.write(s.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1)); }
-            catch (IOException ex) { throw new RuntimeException(ex); }
+            try {
+                out.write(s.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         };
         write.accept("%PDF-1.4\n");
         offsets.add(out.size());
         write.accept("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n");
         offsets.add(out.size());
         StringBuilder kids = new StringBuilder();
-        for (int i = 0; i < pages.size(); i++) kids.append((4 + i * 2) + " 0 R ");
+        for (int i = 0; i < pages.size(); i++)
+            kids.append((4 + i * 2) + " 0 R ");
         write.accept("2 0 obj\n<< /Type /Pages /Kids [" + kids + "] /Count " + pages.size() + " >>\nendobj\n");
         offsets.add(out.size());
-        write.accept("3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\nendobj\n");
+        write.accept(
+                "3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\nendobj\n");
         for (int p = 0; p < pages.size(); p++) {
             StringBuilder stream = new StringBuilder();
-            stream.append("BT /F1 ").append(FONT_SIZE).append(" Tf ").append(LEFT_MARGIN).append(" ").append(TOP_MARGIN).append(" Td ").append(LINE_HEIGHT).append(" TL\n");
+            stream.append("BT /F1 ").append(FONT_SIZE).append(" Tf ").append(LEFT_MARGIN).append(" ").append(TOP_MARGIN)
+                    .append(" Td ").append(LINE_HEIGHT).append(" TL\n");
             for (String line : pages.get(p)) {
                 String safe = line.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)");
                 stream.append("(").append(safe).append(") Tj T*\n");
@@ -1488,30 +1491,33 @@ public class GeneratorWizardView extends VerticalLayout {
             stream.append("ET");
             String s = stream.toString();
             offsets.add(out.size());
-            write.accept((4 + p * 2) + " 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 "
-                + PAGE_HEIGHT + "] /Contents " + (5 + p * 2) + " 0 R /Resources << /Font << /F1 3 0 R >> >> >>\nendobj\n");
+            write.accept((4 + p * 2) + " 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 " + PAGE_HEIGHT
+                    + "] /Contents " + (5 + p * 2) + " 0 R /Resources << /Font << /F1 3 0 R >> >> >>\nendobj\n");
             offsets.add(out.size());
-            write.accept((5 + p * 2) + " 0 obj\n<< /Length " + s.length() + " >>\nstream\n" + s + "\nendstream\nendobj\n");
+            write.accept(
+                    (5 + p * 2) + " 0 obj\n<< /Length " + s.length() + " >>\nstream\n" + s + "\nendstream\nendobj\n");
         }
         int xrefOffset = out.size();
         int totalObjs = 3 + pages.size() * 2;
         write.accept("xref\n0 " + (totalObjs + 1) + "\n");
         write.accept("0000000000 65535 f \n");
-        for (int offset : offsets) write.accept(String.format("%010d 00000 n \n", offset));
+        for (int offset : offsets)
+            write.accept(String.format("%010d 00000 n \n", offset));
         write.accept("trailer\n<< /Size " + (totalObjs + 1) + " /Root 1 0 R >>\n");
         write.accept("startxref\n" + xrefOffset + "\n%%EOF\n");
         return out.toByteArray();
     }
 
     private String sanitizeEditorFilename(String input) {
-        if (input == null || input.isBlank()) return "Unknown";
-        return input.trim().replaceAll("\\s+", "_").replaceAll("[^a-zA-Z0-9_\\-]", "")
-            .replaceAll("_+", "_").replaceAll("^_|_$", "");
+        if (input == null || input.isBlank())
+            return "Unknown";
+        return input.trim().replaceAll("\\s+", "_").replaceAll("[^a-zA-Z0-9_\\-]", "").replaceAll("_+", "_")
+                .replaceAll("^_|_$", "");
     }
 
     /**
-     * Clears wizard-related session attributes to prevent stale data
-     * when starting a new cover letter generation.
+     * Clears wizard-related session attributes to prevent stale data when starting
+     * a new cover letter generation.
      */
     private void clearWizardSessionData() {
         VaadinSession session = VaadinSession.getCurrent();
@@ -1526,4 +1532,3 @@ public class GeneratorWizardView extends VerticalLayout {
     }
 
 }
-

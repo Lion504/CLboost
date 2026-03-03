@@ -45,7 +45,8 @@ public class SignUpView extends VerticalLayout {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
         getStyle().set("background", BG_GRAY);
-        getStyle().set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
+        getStyle().set("font-family",
+                "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
 
         // Main card container
         Div card = new Div();
@@ -491,32 +492,39 @@ public class SignUpView extends VerticalLayout {
     }
 
     /**
-     * Scores the password strength on a 0-4 scale.
-     * The minimum length threshold (10) is sourced from
-     * {@link AuthenticationService#getPasswordRequirements()} to keep
-     * validation logic in one place.
+     * Scores the password strength on a 0-4 scale. The minimum length threshold
+     * (10) is sourced from {@link AuthenticationService#getPasswordRequirements()}
+     * to keep validation logic in one place.
      */
     private int calculatePasswordStrength(String password) {
         int strength = 0;
 
         // Length check — aligned with AuthenticationService requirement (10 chars)
-        if (password.length() >= 10) strength++;
-        if (password.length() >= 14) strength++;
+        if (password.length() >= 10)
+            strength++;
+        if (password.length() >= 14)
+            strength++;
 
         // Character variety checks
-        boolean hasUpper   = password.matches(".*[A-Z].*");
-        boolean hasLower   = password.matches(".*[a-z].*");
-        boolean hasNumber  = password.matches(".*\\d.*");
+        boolean hasUpper = password.matches(".*[A-Z].*");
+        boolean hasLower = password.matches(".*[a-z].*");
+        boolean hasNumber = password.matches(".*\\d.*");
         boolean hasSpecial = password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*");
 
         int varietyCount = 0;
-        if (hasUpper)   varietyCount++;
-        if (hasLower)   varietyCount++;
-        if (hasNumber)  varietyCount++;
-        if (hasSpecial) varietyCount++;
+        if (hasUpper)
+            varietyCount++;
+        if (hasLower)
+            varietyCount++;
+        if (hasNumber)
+            varietyCount++;
+        if (hasSpecial)
+            varietyCount++;
 
-        if (varietyCount >= 2) strength++;
-        if (varietyCount >= 3) strength++;
+        if (varietyCount >= 2)
+            strength++;
+        if (varietyCount >= 3)
+            strength++;
 
         // Cap at 4
         return Math.min(strength, 4);
@@ -535,30 +543,35 @@ public class SignUpView extends VerticalLayout {
         H3 title = new H3("CL Booster Terms of Service");
         title.getStyle().set("margin-top", "0");
 
-        Paragraph intro = new Paragraph("Welcome to CL Booster! By using our service, you agree to these terms. Please read them carefully.");
+        Paragraph intro = new Paragraph(
+                "Welcome to CL Booster! By using our service, you agree to these terms. Please read them carefully.");
 
         H4 section1 = new H4("1. Acceptance of Terms");
-        Paragraph text1 = new Paragraph("By accessing or using CL Booster, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this service.");
+        Paragraph text1 = new Paragraph(
+                "By accessing or using CL Booster, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this service.");
 
         H4 section2 = new H4("2. Use License");
-        Paragraph text2 = new Paragraph("Permission is granted to temporarily use CL Booster for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title. Under this license you may not:");
-        UnorderedList list2 = new UnorderedList(
-            new ListItem("Modify or copy the materials"),
-            new ListItem("Use the materials for any commercial purpose"),
-            new ListItem("Attempt to decompile or reverse engineer any software"),
-            new ListItem("Remove any copyright or proprietary notations")
-        );
+        Paragraph text2 = new Paragraph(
+                "Permission is granted to temporarily use CL Booster for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title. Under this license you may not:");
+        UnorderedList list2 = new UnorderedList(new ListItem("Modify or copy the materials"),
+                new ListItem("Use the materials for any commercial purpose"),
+                new ListItem("Attempt to decompile or reverse engineer any software"),
+                new ListItem("Remove any copyright or proprietary notations"));
 
         H4 section3 = new H4("3. User Accounts");
-        Paragraph text3 = new Paragraph("You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account or password.");
+        Paragraph text3 = new Paragraph(
+                "You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account or password.");
 
         H4 section4 = new H4("4. Disclaimer");
-        Paragraph text4 = new Paragraph("The materials on CL Booster are provided on an 'as is' basis. CL Booster makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property.");
+        Paragraph text4 = new Paragraph(
+                "The materials on CL Booster are provided on an 'as is' basis. CL Booster makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property.");
 
         H4 section5 = new H4("5. Limitations");
-        Paragraph text5 = new Paragraph("In no event shall CL Booster or its suppliers be liable for any damages arising out of the use or inability to use the materials on CL Booster.");
+        Paragraph text5 = new Paragraph(
+                "In no event shall CL Booster or its suppliers be liable for any damages arising out of the use or inability to use the materials on CL Booster.");
 
-        content.add(title, intro, section1, text1, section2, text2, list2, section3, text3, section4, text4, section5, text5);
+        content.add(title, intro, section1, text1, section2, text2, list2, section3, text3, section4, text4, section5,
+                text5);
         content.getStyle().set("overflow", "auto");
         content.setHeight("400px");
 
@@ -584,43 +597,44 @@ public class SignUpView extends VerticalLayout {
         H3 title = new H3("CL Booster Privacy Policy");
         title.getStyle().set("margin-top", "0");
 
-        Paragraph intro = new Paragraph("Your privacy is important to us. This Privacy Policy explains how CL Booster collects, uses, and protects your personal information.");
+        Paragraph intro = new Paragraph(
+                "Your privacy is important to us. This Privacy Policy explains how CL Booster collects, uses, and protects your personal information.");
 
         H4 section1 = new H4("1. Information We Collect");
         Paragraph text1 = new Paragraph("We collect information you provide directly to us, including:");
-        UnorderedList list1 = new UnorderedList(
-            new ListItem("Personal information (name, email address, username)"),
-            new ListItem("Resume and job application data"),
-            new ListItem("Usage data and analytics"),
-            new ListItem("Device and browser information")
-        );
+        UnorderedList list1 = new UnorderedList(new ListItem("Personal information (name, email address, username)"),
+                new ListItem("Resume and job application data"), new ListItem("Usage data and analytics"),
+                new ListItem("Device and browser information"));
 
         H4 section2 = new H4("2. How We Use Your Information");
         Paragraph text2 = new Paragraph("We use the information we collect to:");
-        UnorderedList list2 = new UnorderedList(
-            new ListItem("Provide and maintain our services"),
-            new ListItem("Generate personalized cover letters"),
-            new ListItem("Improve and optimize our platform"),
-            new ListItem("Communicate with you about updates and features"),
-            new ListItem("Protect against fraud and abuse")
-        );
+        UnorderedList list2 = new UnorderedList(new ListItem("Provide and maintain our services"),
+                new ListItem("Generate personalized cover letters"), new ListItem("Improve and optimize our platform"),
+                new ListItem("Communicate with you about updates and features"),
+                new ListItem("Protect against fraud and abuse"));
 
         H4 section3 = new H4("3. Data Security");
-        Paragraph text3 = new Paragraph("We implement appropriate technical and organizational measures to protect your personal data against unauthorized access, alteration, disclosure, or destruction. All passwords are securely hashed using industry-standard encryption.");
+        Paragraph text3 = new Paragraph(
+                "We implement appropriate technical and organizational measures to protect your personal data against unauthorized access, alteration, disclosure, or destruction. All passwords are securely hashed using industry-standard encryption.");
 
         H4 section4 = new H4("4. Data Retention");
-        Paragraph text4 = new Paragraph("We retain your personal information for as long as your account is active or as needed to provide you services. You may request deletion of your account and associated data at any time by contacting us.");
+        Paragraph text4 = new Paragraph(
+                "We retain your personal information for as long as your account is active or as needed to provide you services. You may request deletion of your account and associated data at any time by contacting us.");
 
         H4 section5 = new H4("5. Third-Party Services");
-        Paragraph text5 = new Paragraph("We may use third-party services for hosting, analytics, and AI processing. These services have their own privacy policies and we encourage you to read them.");
+        Paragraph text5 = new Paragraph(
+                "We may use third-party services for hosting, analytics, and AI processing. These services have their own privacy policies and we encourage you to read them.");
 
         H4 section6 = new H4("6. Your Rights");
-        Paragraph text6 = new Paragraph("You have the right to access, correct, or delete your personal information. You may also object to or restrict certain processing of your data. Contact us at privacy@clbooster.com for any privacy-related requests.");
+        Paragraph text6 = new Paragraph(
+                "You have the right to access, correct, or delete your personal information. You may also object to or restrict certain processing of your data. Contact us at privacy@clbooster.com for any privacy-related requests.");
 
         H4 section7 = new H4("7. Changes to This Policy");
-        Paragraph text7 = new Paragraph("We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the effective date.");
+        Paragraph text7 = new Paragraph(
+                "We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the effective date.");
 
-        content.add(title, intro, section1, text1, list1, section2, text2, list2, section3, text3, section4, text4, section5, text5, section6, text6, section7, text7);
+        content.add(title, intro, section1, text1, list1, section2, text2, list2, section3, text3, section4, text4,
+                section5, text5, section6, text6, section7, text7);
         content.getStyle().set("overflow", "auto");
         content.setHeight("400px");
 

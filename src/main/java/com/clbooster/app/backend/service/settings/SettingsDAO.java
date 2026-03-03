@@ -16,23 +16,17 @@ public class SettingsDAO {
     }
 
     private void createTableIfNotExists() {
-        String sql = "CREATE TABLE IF NOT EXISTS user_settings (" +
-                "user_pin INT PRIMARY KEY," +
-                "theme VARCHAR(20) DEFAULT 'system'," +
-                "language VARCHAR(50) DEFAULT 'English'," +
-                "email_notifications BOOLEAN DEFAULT TRUE," +
-                "push_notifications BOOLEAN DEFAULT FALSE," +
-                "product_updates BOOLEAN DEFAULT TRUE," +
-                "marketing BOOLEAN DEFAULT FALSE," +
-                "store_in_cloud BOOLEAN DEFAULT TRUE," +
-                "allow_ai_training BOOLEAN DEFAULT FALSE," +
-                "share_usage_data BOOLEAN DEFAULT TRUE," +
-                "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
-                "FOREIGN KEY (user_pin) REFERENCES identification(Pin) ON DELETE CASCADE" +
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+        String sql = "CREATE TABLE IF NOT EXISTS user_settings (" + "user_pin INT PRIMARY KEY,"
+                + "theme VARCHAR(20) DEFAULT 'system'," + "language VARCHAR(50) DEFAULT 'English',"
+                + "email_notifications BOOLEAN DEFAULT TRUE," + "push_notifications BOOLEAN DEFAULT FALSE,"
+                + "product_updates BOOLEAN DEFAULT TRUE," + "marketing BOOLEAN DEFAULT FALSE,"
+                + "store_in_cloud BOOLEAN DEFAULT TRUE," + "allow_ai_training BOOLEAN DEFAULT FALSE,"
+                + "share_usage_data BOOLEAN DEFAULT TRUE,"
+                + "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,"
+                + "FOREIGN KEY (user_pin) REFERENCES identification(Pin) ON DELETE CASCADE"
+                + ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement()) {
+        try (Connection conn = DatabaseConnection.getConnection(); Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
             System.out.println("DEBUG: user_settings table checked/created successfully");
         } catch (SQLException e) {
@@ -43,13 +37,13 @@ public class SettingsDAO {
 
     public Settings getSettings(int userPin) {
         String sql = "SELECT * FROM user_settings WHERE user_pin = ?";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, userPin);
             ResultSet rs = pstmt.executeQuery();
-            
+
             if (rs.next()) {
                 Settings settings = new Settings();
                 settings.setUserPin(userPin);
@@ -68,18 +62,18 @@ public class SettingsDAO {
             System.err.println("ERROR: Failed to get settings for user " + userPin + ": " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         // Return default settings if none found
         return new Settings(userPin);
     }
 
     public boolean saveSettings(Settings settings) {
         System.out.println("DEBUG: Saving settings for user " + settings.getUserPin());
-        
+
         // Check if settings exist
         boolean exists = settingsExist(settings.getUserPin());
         System.out.println("DEBUG: Settings exist = " + exists);
-        
+
         if (exists) {
             return updateSettings(settings);
         } else {
@@ -89,14 +83,14 @@ public class SettingsDAO {
 
     private boolean settingsExist(int userPin) {
         String sql = "SELECT 1 FROM user_settings WHERE user_pin = ?";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, userPin);
             ResultSet rs = pstmt.executeQuery();
             return rs.next();
-            
+
         } catch (SQLException e) {
             System.err.println("ERROR: Failed to check if settings exist for user " + userPin + ": " + e.getMessage());
             e.printStackTrace();
@@ -105,12 +99,12 @@ public class SettingsDAO {
     }
 
     private boolean insertSettings(Settings settings) {
-        String sql = "INSERT INTO user_settings (user_pin, theme, language, email_notifications, " +
-                     "push_notifications, product_updates, marketing, store_in_cloud, " +
-                     "allow_ai_training, share_usage_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO user_settings (user_pin, theme, language, email_notifications, "
+                + "push_notifications, product_updates, marketing, store_in_cloud, "
+                + "allow_ai_training, share_usage_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, settings.getUserPin());
             pstmt.setString(2, settings.getTheme());
@@ -137,13 +131,13 @@ public class SettingsDAO {
     }
 
     private boolean updateSettings(Settings settings) {
-        String sql = "UPDATE user_settings SET theme = ?, language = ?, email_notifications = ?, " +
-                     "push_notifications = ?, product_updates = ?, marketing = ?, store_in_cloud = ?, " +
-                     "allow_ai_training = ?, share_usage_data = ? WHERE user_pin = ?";
-        
+        String sql = "UPDATE user_settings SET theme = ?, language = ?, email_notifications = ?, "
+                + "push_notifications = ?, product_updates = ?, marketing = ?, store_in_cloud = ?, "
+                + "allow_ai_training = ?, share_usage_data = ? WHERE user_pin = ?";
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, settings.getTheme());
             pstmt.setString(2, settings.getLanguage());
             pstmt.setBoolean(3, settings.isEmailNotifications());
@@ -154,11 +148,11 @@ public class SettingsDAO {
             pstmt.setBoolean(8, settings.isAllowAiTraining());
             pstmt.setBoolean(9, settings.isShareUsageData());
             pstmt.setInt(10, settings.getUserPin());
-            
+
             int result = pstmt.executeUpdate();
             System.out.println("DEBUG: Update settings result = " + result);
             return result > 0;
-            
+
         } catch (SQLException e) {
             System.err.println("ERROR: Failed to update settings for user " + settings.getUserPin());
             System.err.println("SQL Error: " + e.getMessage());
@@ -170,15 +164,15 @@ public class SettingsDAO {
 
     public boolean deleteSettings(int userPin) {
         String sql = "DELETE FROM user_settings WHERE user_pin = ?";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, userPin);
             int result = pstmt.executeUpdate();
             System.out.println("DEBUG: Delete settings result = " + result);
             return result > 0;
-            
+
         } catch (SQLException e) {
             System.err.println("ERROR: Failed to delete settings for user " + userPin + ": " + e.getMessage());
             e.printStackTrace();

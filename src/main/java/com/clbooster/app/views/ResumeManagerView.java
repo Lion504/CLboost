@@ -71,7 +71,8 @@ public class ResumeManagerView extends VerticalLayout {
         getStyle().set("gap", "32px");
         getStyle().set("padding", "32px");
         getStyle().set("background", BG_WHITE);
-        getStyle().set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
+        getStyle().set("font-family",
+                "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
         setSizeFull();
 
         // Load actual resumes from filesystem
@@ -140,7 +141,7 @@ public class ResumeManagerView extends VerticalLayout {
 
         importBtn.addClickListener(e -> {
             Notification.show("LinkedIn import is coming soon! This feature will be available in a future update.",
-                5000, Notification.Position.TOP_CENTER);
+                    5000, Notification.Position.TOP_CENTER);
         });
 
         importBtn.getElement().addEventListener("mouseenter", e -> {
@@ -168,15 +169,11 @@ public class ResumeManagerView extends VerticalLayout {
         HorizontalLayout tabToggle = new HorizontalLayout();
         tabToggle.setPadding(false);
         tabToggle.setSpacing(false);
-        tabToggle.getStyle()
-            .set("background", BG_GRAY)
-            .set("border-radius", "12px")
-            .set("padding", "4px")
-            .set("gap", "4px")
-            .set("width", "fit-content");
+        tabToggle.getStyle().set("background", BG_GRAY).set("border-radius", "12px").set("padding", "4px")
+                .set("gap", "4px").set("width", "fit-content");
 
         Button uploadTabBtn = new Button("Upload File");
-        Button pasteTabBtn  = new Button("Paste Text");
+        Button pasteTabBtn = new Button("Paste Text");
 
         styleActiveTab(uploadTabBtn, true);
         styleActiveTab(pasteTabBtn, false);
@@ -275,54 +272,38 @@ public class ResumeManagerView extends VerticalLayout {
         FileBuffer buffer = new FileBuffer();
         Upload upload = new Upload(buffer);
 
-        // Accept all three formats - use extensions only for broader browser compatibility
-        upload.setAcceptedFileTypes(
-            "application/pdf", ".pdf",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx",
-            "application/msword", ".doc",
-            "text/plain", "text/x-plain", "application/text", ".txt"
-        );
+        // Accept all three formats - use extensions only for broader browser
+        // compatibility
+        upload.setAcceptedFileTypes("application/pdf", ".pdf",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx",
+                "application/msword", ".doc", "text/plain", "text/x-plain", "application/text", ".txt");
         upload.setMaxFileSize(10 * 1024 * 1024);
         upload.setMaxFiles(1);
         upload.setDropAllowed(true);
 
         // Style upload component to fill the zone visually — don't hide it
-        upload.getStyle()
-            .set("position", "absolute")
-            .set("inset", "0")
-            .set("opacity", "0")
-            .set("cursor", "pointer")
-            .set("width", "100%")
-            .set("height", "100%");
+        upload.getStyle().set("position", "absolute").set("inset", "0").set("opacity", "0").set("cursor", "pointer")
+                .set("width", "100%").set("height", "100%");
 
         // Wrapper is position:relative so absolute upload overlays it
         Div uploadContainer = new Div();
-        uploadContainer.getStyle()
-            .set("position", "relative")
-            .set("width", "90%")
-            .set("background", "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)")
-            .set("border", "2px dashed " + PRIMARY + "40")
-            .set("border-radius", "24px")
-            .set("padding", "48px")
-            .set("transition", "all 0.3s")
-            .set("text-align", "center")
-            .set("cursor", "pointer");
+        uploadContainer.getStyle().set("position", "relative").set("width", "90%")
+                .set("background", "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)")
+                .set("border", "2px dashed " + PRIMARY + "40").set("border-radius", "24px").set("padding", "48px")
+                .set("transition", "all 0.3s").set("text-align", "center").set("cursor", "pointer");
 
         Div iconContainer = new Div();
-        iconContainer.getStyle()
-            .set("width", "72px").set("height", "72px")
-            .set("background", "rgba(0,122,255,0.1)")
-            .set("border-radius", "50%")
-            .set("display", "flex").set("align-items", "center").set("justify-content", "center")
-            .set("margin", "0 auto 24px");
+        iconContainer.getStyle().set("width", "72px").set("height", "72px").set("background", "rgba(0,122,255,0.1)")
+                .set("border-radius", "50%").set("display", "flex").set("align-items", "center")
+                .set("justify-content", "center").set("margin", "0 auto 24px");
 
         Icon uploadIcon = VaadinIcon.UPLOAD_ALT.create();
         uploadIcon.getStyle().set("color", PRIMARY).set("width", "32px").set("height", "32px");
         iconContainer.add(uploadIcon);
 
         H3 title = new H3("Drop your resume here");
-        title.getStyle().set("font-size", "20px").set("font-weight", "700")
-            .set("color", TEXT_PRIMARY).set("margin", "0 0 8px 0");
+        title.getStyle().set("font-size", "20px").set("font-weight", "700").set("color", TEXT_PRIMARY).set("margin",
+                "0 0 8px 0");
 
         Paragraph subtitle = new Paragraph("or click to browse files (PDF, DOCX, TXT, up to 10MB)");
         subtitle.getStyle().set("font-size", "14px").set("color", TEXT_SECONDARY).set("margin", "0 0 24px 0");
@@ -342,29 +323,29 @@ public class ResumeManagerView extends VerticalLayout {
         uploadContainer.add(visualLayer, upload);
 
         // Drag-over styling
-        uploadContainer.getElement().addEventListener("dragover", e ->
-            uploadContainer.getStyle().set("border-color", PRIMARY).set("background",
-                "linear-gradient(135deg, rgba(0,122,255,0.1) 0%, rgba(90,200,250,0.1) 100%)"));
-        uploadContainer.getElement().addEventListener("dragleave", e ->
-            uploadContainer.getStyle().set("border-color", PRIMARY + "40").set("background",
-                "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)"));
-        uploadContainer.getElement().addEventListener("drop", e ->
-            uploadContainer.getStyle().set("border-color", PRIMARY + "40").set("background",
-                "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)"));
+        uploadContainer.getElement().addEventListener("dragover",
+                e -> uploadContainer.getStyle().set("border-color", PRIMARY).set("background",
+                        "linear-gradient(135deg, rgba(0,122,255,0.1) 0%, rgba(90,200,250,0.1) 100%)"));
+        uploadContainer.getElement().addEventListener("dragleave",
+                e -> uploadContainer.getStyle().set("border-color", PRIMARY + "40").set("background",
+                        "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)"));
+        uploadContainer.getElement().addEventListener("drop",
+                e -> uploadContainer.getStyle().set("border-color", PRIMARY + "40").set("background",
+                        "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)"));
 
         // File upload success handler
         upload.addSucceededListener(event -> {
             String fileName = event.getFileName();
             int userPin = getCurrentUserPin();
             try {
-                String storedPath = documentService.storeResumeFile(
-                    buffer.getInputStream(), fileName, String.valueOf(userPin));
+                String storedPath = documentService.storeResumeFile(buffer.getInputStream(), fileName,
+                        String.valueOf(userPin));
                 new ProfileService().updateCVTimestamp(userPin);
 
                 String safeOriginalName = fileName.replaceAll("[^a-zA-Z0-9._\\-]", "_");
                 LOGGER.info("Resume uploaded via DocumentService: " + storedPath);
-                Notification.show("\"" + safeOriginalName + "\" uploaded successfully!",
-                    3000, Notification.Position.TOP_CENTER);
+                Notification.show("\"" + safeOriginalName + "\" uploaded successfully!", 3000,
+                        Notification.Position.TOP_CENTER);
 
                 resumes = loadResumesFromFilesystem();
                 refreshResumeList();
@@ -375,50 +356,32 @@ public class ResumeManagerView extends VerticalLayout {
             }
         });
 
-        upload.addFailedListener(event ->
-            Notification.show("Upload failed: " +
-                (event.getReason() != null ? event.getReason().getMessage() : "Unknown error"),
+        upload.addFailedListener(event -> Notification.show(
+                "Upload failed: " + (event.getReason() != null ? event.getReason().getMessage() : "Unknown error"),
                 5000, Notification.Position.TOP_CENTER));
 
-        upload.addFileRejectedListener(event ->
-            Notification.show("File rejected: " + event.getErrorMessage(),
-                5000, Notification.Position.TOP_CENTER));
+        upload.addFileRejectedListener(event -> Notification.show("File rejected: " + event.getErrorMessage(), 5000,
+                Notification.Position.TOP_CENTER));
 
         return uploadContainer;
     }
 
     private void styleActiveTab(Button btn, boolean active) {
         if (active) {
-            btn.getStyle()
-                .set("background", BG_WHITE)
-                .set("color", TEXT_PRIMARY)
-                .set("font-weight", "700")
-                .set("border-radius", "10px")
-                .set("padding", "8px 20px")
-                .set("border", "none")
-                .set("box-shadow", "0 1px 4px rgba(0,0,0,0.1)")
-                .set("cursor", "pointer");
+            btn.getStyle().set("background", BG_WHITE).set("color", TEXT_PRIMARY).set("font-weight", "700")
+                    .set("border-radius", "10px").set("padding", "8px 20px").set("border", "none")
+                    .set("box-shadow", "0 1px 4px rgba(0,0,0,0.1)").set("cursor", "pointer");
         } else {
-            btn.getStyle()
-                .set("background", "transparent")
-                .set("color", TEXT_SECONDARY)
-                .set("font-weight", "500")
-                .set("border-radius", "10px")
-                .set("padding", "8px 20px")
-                .set("border", "none")
-                .set("box-shadow", "none")
-                .set("cursor", "pointer");
+            btn.getStyle().set("background", "transparent").set("color", TEXT_SECONDARY).set("font-weight", "500")
+                    .set("border-radius", "10px").set("padding", "8px 20px").set("border", "none")
+                    .set("box-shadow", "none").set("cursor", "pointer");
         }
     }
 
     private Div createPasteTextPanel() {
         Div panel = new Div();
-        panel.getStyle()
-            .set("width", "90%")
-            .set("background", BG_WHITE)
-            .set("border", "1px solid rgba(0,0,0,0.08)")
-            .set("border-radius", "24px")
-            .set("padding", "32px");
+        panel.getStyle().set("width", "90%").set("background", BG_WHITE).set("border", "1px solid rgba(0,0,0,0.08)")
+                .set("border-radius", "24px").set("padding", "32px");
 
         VerticalLayout inner = new VerticalLayout();
         inner.setPadding(false);
@@ -426,32 +389,27 @@ public class ResumeManagerView extends VerticalLayout {
         inner.getStyle().set("gap", "16px");
 
         H3 heading = new H3("Paste Resume Text");
-        heading.getStyle().set("font-size", "18px").set("font-weight", "700")
-            .set("color", TEXT_PRIMARY).set("margin", "0");
+        heading.getStyle().set("font-size", "18px").set("font-weight", "700").set("color", TEXT_PRIMARY).set("margin",
+                "0");
 
         TextArea resumeTextArea = new TextArea();
         resumeTextArea.setPlaceholder("Paste the plain text of your resume here...");
         resumeTextArea.setWidthFull();
         resumeTextArea.setMinHeight("200px");
         resumeTextArea.getStyle().set("--vaadin-input-field-background", BG_GRAY)
-            .set("--vaadin-input-field-border-radius", "12px");
+                .set("--vaadin-input-field-border-radius", "12px");
 
         TextField filenameField = new TextField();
         filenameField.setPlaceholder("Filename (e.g. my-resume.txt)");
         filenameField.setWidthFull();
         filenameField.getStyle().set("--vaadin-input-field-background", BG_GRAY)
-            .set("--vaadin-input-field-border-radius", "12px");
+                .set("--vaadin-input-field-border-radius", "12px");
 
         Button saveBtn = new Button("Save as Text File");
-        saveBtn.getStyle()
-            .set("background", "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)")
-            .set("color", "white")
-            .set("font-weight", "600")
-            .set("border-radius", "9999px")
-            .set("border", "none")
-            .set("padding", "12px 24px")
-            .set("cursor", "pointer")
-            .set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
+        saveBtn.getStyle().set("background", "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)")
+                .set("color", "white").set("font-weight", "600").set("border-radius", "9999px").set("border", "none")
+                .set("padding", "12px 24px").set("cursor", "pointer")
+                .set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
 
         saveBtn.addClickListener(e -> {
             String text = resumeTextArea.getValue();
@@ -469,8 +427,7 @@ public class ResumeManagerView extends VerticalLayout {
             try {
                 String storedPath = documentService.storeResumeText(text, filename, String.valueOf(userPin));
                 LOGGER.info("Resume text saved via DocumentService: " + storedPath);
-                Notification.show("Resume text saved as \"" + filename + "\"!",
-                    3000, Notification.Position.TOP_CENTER);
+                Notification.show("Resume text saved as \"" + filename + "\"!", 3000, Notification.Position.TOP_CENTER);
                 resumeTextArea.clear();
                 filenameField.clear();
                 resumes = loadResumesFromFilesystem();
@@ -523,8 +480,8 @@ public class ResumeManagerView extends VerticalLayout {
         emptyIcon.getStyle().set("color", TEXT_SECONDARY).set("width", "64px").set("height", "64px");
 
         H3 title = new H3("No resumes yet");
-        title.getStyle().set("font-size", "20px").set("font-weight", "600")
-            .set("color", TEXT_PRIMARY).set("margin", "0");
+        title.getStyle().set("font-size", "20px").set("font-weight", "600").set("color", TEXT_PRIMARY).set("margin",
+                "0");
 
         Paragraph description = new Paragraph("Upload your first resume to get started.");
         description.getStyle().set("font-size", "14px").set("color", TEXT_SECONDARY).set("margin", "0");
@@ -660,9 +617,8 @@ public class ResumeManagerView extends VerticalLayout {
     private void downloadResume(ResumeData resume) {
         try {
             byte[] bytes = documentService.retrieveResumeFile(resume.filePath);
-            String mimeType = resume.format.equalsIgnoreCase("PDF")
-                ? "application/pdf"
-                : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            String mimeType = resume.format.equalsIgnoreCase("PDF") ? "application/pdf"
+                    : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             serveDownload(bytes, mimeType, resume.name);
             Notification.show("Downloading " + resume.name, 2000, Notification.Position.TOP_CENTER);
         } catch (IOException ex) {
@@ -675,9 +631,9 @@ public class ResumeManagerView extends VerticalLayout {
         try {
             byte[] bytes = documentService.retrieveResumeFile(resume.filePath);
             String mimeType = switch (resume.format.toUpperCase()) {
-                case "PDF"  -> "application/pdf";
-                case "TXT"  -> "text/plain";
-                default     -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            case "PDF" -> "application/pdf";
+            case "TXT" -> "text/plain";
+            default -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             };
 
             StreamResource resource = new StreamResource(resume.name, () -> new ByteArrayInputStream(bytes));
@@ -688,8 +644,8 @@ public class ResumeManagerView extends VerticalLayout {
             anchor.getElement().setAttribute("style", "display:none");
             add(anchor);
             anchor.getElement().executeJs(
-                "var a=$0;setTimeout(function(){a.click();setTimeout(function(){a.remove();},1000);},100);",
-                anchor.getElement());
+                    "var a=$0;setTimeout(function(){a.click();setTimeout(function(){a.remove();},1000);},100);",
+                    anchor.getElement());
 
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "View error", ex);
@@ -701,7 +657,8 @@ public class ResumeManagerView extends VerticalLayout {
         resume.starred = !resume.starred;
         // In a real app, you would persist this to the database
         refreshResumeList();
-        Notification.show(resume.starred ? "Resume starred" : "Resume unstarred", 2000, Notification.Position.TOP_CENTER);
+        Notification.show(resume.starred ? "Resume starred" : "Resume unstarred", 2000,
+                Notification.Position.TOP_CENTER);
     }
 
     private void deleteResume(ResumeData resume) {
@@ -716,10 +673,10 @@ public class ResumeManagerView extends VerticalLayout {
 
     private void sortResumes(ResumeSort sort) {
         switch (sort) {
-            case RECENT -> resumes.sort((a, b) -> b.lastModified.compareTo(a.lastModified));
-            case NAME_ASC -> resumes.sort(Comparator.comparing(a -> a.name.toLowerCase()));
-            case NAME_DESC -> resumes.sort((a, b) -> b.name.compareToIgnoreCase(a.name));
-            case SIZE -> resumes.sort((a, b) -> Long.compare(parseSize(b.size), parseSize(a.size)));
+        case RECENT -> resumes.sort((a, b) -> b.lastModified.compareTo(a.lastModified));
+        case NAME_ASC -> resumes.sort(Comparator.comparing(a -> a.name.toLowerCase()));
+        case NAME_DESC -> resumes.sort((a, b) -> b.name.compareToIgnoreCase(a.name));
+        case SIZE -> resumes.sort((a, b) -> Long.compare(parseSize(b.size), parseSize(a.size)));
         }
         refreshResumeList();
     }
@@ -730,10 +687,10 @@ public class ResumeManagerView extends VerticalLayout {
             double value = Double.parseDouble(parts[0]);
             String unit = parts[1].toUpperCase();
             return (long) (value * switch (unit) {
-                case "KB" -> 1024;
-                case "MB" -> 1024 * 1024;
-                case "GB" -> 1024 * 1024 * 1024;
-                default -> 1;
+            case "KB" -> 1024;
+            case "MB" -> 1024 * 1024;
+            case "GB" -> 1024 * 1024 * 1024;
+            default -> 1;
             });
         } catch (Exception e) {
             return 0;
@@ -742,10 +699,10 @@ public class ResumeManagerView extends VerticalLayout {
 
     private String getFileColor(String format) {
         return switch (format.toUpperCase()) {
-            case "PDF" -> ERROR;
-            case "DOCX" -> PRIMARY;
-            case "TXT" -> TEXT_SECONDARY;
-            default -> PRIMARY;
+        case "PDF" -> ERROR;
+        case "DOCX" -> PRIMARY;
+        case "TXT" -> TEXT_SECONDARY;
+        default -> PRIMARY;
         };
     }
 
@@ -760,13 +717,15 @@ public class ResumeManagerView extends VerticalLayout {
             File[] files = resumesDir.toFile().listFiles((d, name) -> {
                 String lower = name.toLowerCase();
                 // Added .txt support
-                return lower.endsWith(".pdf") || lower.endsWith(".docx")
-                    || lower.endsWith(".doc") || lower.endsWith(".txt");
+                return lower.endsWith(".pdf") || lower.endsWith(".docx") || lower.endsWith(".doc")
+                        || lower.endsWith(".txt");
             });
-            if (files == null) return items;
+            if (files == null)
+                return items;
             for (File file : files) {
                 ResumeData item = parseResumeFile(file, userPin);
-                if (item != null) items.add(item);
+                if (item != null)
+                    items.add(item);
             }
             items.sort((a, b) -> b.lastModified.compareTo(a.lastModified));
             LOGGER.info("Loaded " + items.size() + " resumes for PIN: " + userPin);
@@ -779,7 +738,7 @@ public class ResumeManagerView extends VerticalLayout {
     private ResumeData parseResumeFile(File file, int currentUserPin) {
         try {
             String fileName = file.getName();
-            
+
             // Parse filename format: PIN_timestamp_originalname.ext
             String[] parts = fileName.split("_", 3);
             if (parts.length < 3) {
@@ -813,12 +772,12 @@ public class ResumeManagerView extends VerticalLayout {
             String sizeStr = formatFileSize(sizeBytes);
 
             // Format date
-            LocalDateTime modifiedTime = LocalDateTime.ofInstant(
-                Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault());
+            LocalDateTime modifiedTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()),
+                    ZoneId.systemDefault());
             String dateStr = formatDate(modifiedTime);
 
-            return new ResumeData(originalName, extension, sizeStr, dateStr, 
-                file.getAbsolutePath(), modifiedTime, false);
+            return new ResumeData(originalName, extension, sizeStr, dateStr, file.getAbsolutePath(), modifiedTime,
+                    false);
 
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Parse error for: " + file.getName(), e);
@@ -827,8 +786,10 @@ public class ResumeManagerView extends VerticalLayout {
     }
 
     private String formatFileSize(long bytes) {
-        if (bytes < 1024) return bytes + " B";
-        if (bytes < 1024 * 1024) return String.format("%.1f KB", bytes / 1024.0);
+        if (bytes < 1024)
+            return bytes + " B";
+        if (bytes < 1024 * 1024)
+            return String.format("%.1f KB", bytes / 1024.0);
         return String.format("%.1f MB", bytes / (1024.0 * 1024));
     }
 
@@ -870,8 +831,8 @@ public class ResumeManagerView extends VerticalLayout {
         anchor.getElement().setAttribute("style", "display:none");
         add(anchor);
         anchor.getElement().executeJs(
-            "var a=$0;setTimeout(function(){a.click();setTimeout(function(){a.remove();},1000);},100);",
-            anchor.getElement());
+                "var a=$0;setTimeout(function(){a.click();setTimeout(function(){a.remove();},1000);},100);",
+                anchor.getElement());
     }
 
     private enum ResumeSort {
@@ -890,8 +851,8 @@ public class ResumeManagerView extends VerticalLayout {
         LocalDateTime lastModified;
         boolean starred;
 
-        ResumeData(String name, String format, String size, String date, 
-                   String filePath, LocalDateTime lastModified, boolean starred) {
+        ResumeData(String name, String format, String size, String date, String filePath, LocalDateTime lastModified,
+                boolean starred) {
             this.name = name;
             this.format = format;
             this.size = size;

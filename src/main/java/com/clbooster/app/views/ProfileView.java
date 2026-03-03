@@ -49,12 +49,12 @@ public class ProfileView extends VerticalLayout {
     private TextArea skillsArea;
     private TextArea toolsArea;
     private TextField linkField;
-    
+
     // Security tab fields
     private com.vaadin.flow.component.textfield.PasswordField currentPasswordField;
     private com.vaadin.flow.component.textfield.PasswordField newPasswordField;
     private com.vaadin.flow.component.textfield.PasswordField confirmPasswordField;
-    
+
     private boolean editMode = false;
     private Button editBtn;
     private Button saveBtn;
@@ -65,15 +65,15 @@ public class ProfileView extends VerticalLayout {
         this.authService = new AuthenticationService();
         this.profileService = new ProfileService();
         this.currentUser = authService.getCurrentUser();
-        this.userProfile = currentUser != null ?
-            profileService.getProfile(currentUser.getPin()) : null;
-        
+        this.userProfile = currentUser != null ? profileService.getProfile(currentUser.getPin()) : null;
+
         setPadding(true);
         setSpacing(true);
         getStyle().set("gap", "32px");
         getStyle().set("padding", "32px");
         getStyle().set("background", BG_WHITE);
-        getStyle().set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
+        getStyle().set("font-family",
+                "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
         setSizeFull();
 
         // Profile Header Card
@@ -88,7 +88,7 @@ public class ProfileView extends VerticalLayout {
         securityContent.setVisible(false);
 
         add(profileCard, tabs, generalContent, securityContent);
-        
+
         // Set initial edit mode
         setFieldsEditable(false);
     }
@@ -111,10 +111,10 @@ public class ProfileView extends VerticalLayout {
         userInfo.setAlignItems(FlexComponent.Alignment.CENTER);
         userInfo.getStyle().set("gap", "20px");
 
-        String userFullName = currentUser != null ?
-            currentUser.getFirstName() + " " + currentUser.getLastName() : "Guest User";
+        String userFullName = currentUser != null ? currentUser.getFirstName() + " " + currentUser.getLastName()
+                : "Guest User";
         String userEmail = currentUser != null ? currentUser.getIdentityEmail() : "guest@example.com";
-        
+
         Avatar avatar = new Avatar(userFullName);
         avatar.setColorIndex(2);
         avatar.setWidth("80px");
@@ -187,7 +187,7 @@ public class ProfileView extends VerticalLayout {
         editBtn.getElement().addEventListener("mouseleave", e -> {
             editBtn.getStyle().set("background", BG_GRAY);
         });
-        
+
         editBtn.addClickListener(e -> toggleEditMode());
 
         saveBtn = createPrimaryButton("Save Changes", this::saveProfile);
@@ -278,8 +278,9 @@ public class ProfileView extends VerticalLayout {
         leftCol.add(createFormGroup("Username", usernameField));
 
         // Experience Level (from Profile)
-        String expLevel = userProfile != null && userProfile.getExperienceLevel() != null ?
-            userProfile.getExperienceLevel() : "";
+        String expLevel = userProfile != null && userProfile.getExperienceLevel() != null
+                ? userProfile.getExperienceLevel()
+                : "";
         experienceField = createFormField("Experience Level", expLevel);
         leftCol.add(createFormGroup("Experience Level", experienceField));
 
@@ -303,22 +304,19 @@ public class ProfileView extends VerticalLayout {
         formGrid.add(leftCol, rightCol);
 
         // Skills Section (from Profile)
-        String skills = userProfile != null && userProfile.getSkills() != null ?
-            userProfile.getSkills() : "";
+        String skills = userProfile != null && userProfile.getSkills() != null ? userProfile.getSkills() : "";
         skillsArea = createTextArea("Skills", skills, "Add your skills...");
         VerticalLayout skillsGroup = createFormGroup("Skills", skillsArea);
         skillsGroup.getStyle().set("margin-top", "24px");
 
         // Tools Section (from Profile)
-        String tools = userProfile != null && userProfile.getTools() != null ?
-            userProfile.getTools() : "";
+        String tools = userProfile != null && userProfile.getTools() != null ? userProfile.getTools() : "";
         toolsArea = createTextArea("Tools & Technologies", tools, "Add tools you use...");
         VerticalLayout toolsGroup = createFormGroup("Tools & Technologies", toolsArea);
         toolsGroup.getStyle().set("margin-top", "16px");
 
         // Profile Link (from Profile)
-        String profileLink = userProfile != null && userProfile.getLink() != null ?
-            userProfile.getLink() : "";
+        String profileLink = userProfile != null && userProfile.getLink() != null ? userProfile.getLink() : "";
         linkField = createFormField("Portfolio/LinkedIn", profileLink);
         VerticalLayout linkGroup = createFormGroup("Portfolio/LinkedIn", linkField);
         linkGroup.getStyle().set("margin-top", "16px");
@@ -381,7 +379,8 @@ public class ProfileView extends VerticalLayout {
         passwordSection.add(createFormGroup("Confirm New Password", confirmPasswordField));
 
         // Password requirements info
-        Paragraph requirements = new Paragraph("Password must be at least 10 characters with uppercase, lowercase, number, and special character.");
+        Paragraph requirements = new Paragraph(
+                "Password must be at least 10 characters with uppercase, lowercase, number, and special character.");
         requirements.getStyle().set("font-size", "12px");
         requirements.getStyle().set("color", TEXT_SECONDARY);
         requirements.getStyle().set("margin", "8px 0 0 0");
@@ -412,21 +411,15 @@ public class ProfileView extends VerticalLayout {
         securityOptions.getStyle().set("gap", "16px");
 
         // Two-Factor Authentication (placeholder)
-        HorizontalLayout twoFactorRow = createSecurityOption(
-            "Two-Factor Authentication",
-            "Add an extra layer of security to your account",
-            "Enable",
-            () -> Notification.show("2FA setup coming soon!", 3000, Notification.Position.TOP_CENTER)
-        );
+        HorizontalLayout twoFactorRow = createSecurityOption("Two-Factor Authentication",
+                "Add an extra layer of security to your account", "Enable",
+                () -> Notification.show("2FA setup coming soon!", 3000, Notification.Position.TOP_CENTER));
         securityOptions.add(twoFactorRow);
 
         // Login Notifications (placeholder)
-        HorizontalLayout loginNotifRow = createSecurityOption(
-            "Login Notifications",
-            "Get notified when someone logs into your account",
-            "Enable",
-            () -> Notification.show("Login notifications coming soon!", 3000, Notification.Position.TOP_CENTER)
-        );
+        HorizontalLayout loginNotifRow = createSecurityOption("Login Notifications",
+                "Get notified when someone logs into your account", "Enable",
+                () -> Notification.show("Login notifications coming soon!", 3000, Notification.Position.TOP_CENTER));
         securityOptions.add(loginNotifRow);
 
         card.add(title, subtitle, passwordSection, divider, securityTitle, securityOptions);
@@ -434,7 +427,8 @@ public class ProfileView extends VerticalLayout {
         return card;
     }
 
-    private HorizontalLayout createSecurityOption(String title, String description, String buttonText, Runnable action) {
+    private HorizontalLayout createSecurityOption(String title, String description, String buttonText,
+            Runnable action) {
         HorizontalLayout row = new HorizontalLayout();
         row.setWidthFull();
         row.setAlignItems(FlexComponent.Alignment.CENTER);
@@ -500,13 +494,11 @@ public class ProfileView extends VerticalLayout {
         }
 
         // Check password requirements
-        if (newPwd.length() < 10 ||
-            !newPwd.matches(".*[A-Z].*") ||
-            !newPwd.matches(".*[a-z].*") ||
-            !newPwd.matches(".*\\d.*") ||
-            !newPwd.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*")) {
-            Notification.show("Error: Password must be at least 10 characters with uppercase, lowercase, number, and special character",
-                5000, Notification.Position.TOP_CENTER);
+        if (newPwd.length() < 10 || !newPwd.matches(".*[A-Z].*") || !newPwd.matches(".*[a-z].*")
+                || !newPwd.matches(".*\\d.*") || !newPwd.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*")) {
+            Notification.show(
+                    "Error: Password must be at least 10 characters with uppercase, lowercase, number, and special character",
+                    5000, Notification.Position.TOP_CENTER);
             return;
         }
 
@@ -573,7 +565,7 @@ public class ProfileView extends VerticalLayout {
     private void toggleEditMode() {
         editMode = !editMode;
         setFieldsEditable(editMode);
-        
+
         if (editMode) {
             editBtn.setText("Cancel");
             editBtn.setIcon(VaadinIcon.CLOSE.create());
@@ -627,14 +619,8 @@ public class ProfileView extends VerticalLayout {
         }
 
         // Update profile using ProfileService
-        boolean success = profileService.updateProfile(
-            currentUser.getPin(),
-            experienceField.getValue(),
-            toolsArea.getValue(),
-            skillsArea.getValue(),
-            linkField.getValue(),
-            email
-        );
+        boolean success = profileService.updateProfile(currentUser.getPin(), experienceField.getValue(),
+                toolsArea.getValue(), skillsArea.getValue(), linkField.getValue(), email);
 
         if (success) {
             Notification.show("Profile saved successfully!", 3000, Notification.Position.BOTTOM_END);
@@ -643,7 +629,8 @@ public class ProfileView extends VerticalLayout {
             // Exit edit mode
             toggleEditMode();
         } else {
-            Notification.show("Error: Failed to save profile. Please try again.", 3000, Notification.Position.TOP_CENTER);
+            Notification.show("Error: Failed to save profile. Please try again.", 3000,
+                    Notification.Position.TOP_CENTER);
         }
     }
 

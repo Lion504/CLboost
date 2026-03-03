@@ -41,9 +41,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Editor View - Cover letter editor with split layout
- * Rich text editor on the left, AI suggestions sidebar on the right
- * Following Apple Design System
+ * Editor View - Cover letter editor with split layout Rich text editor on the
+ * left, AI suggestions sidebar on the right Following Apple Design System
  */
 @Route(value = "editor", layout = MainLayout.class)
 @PageTitle("Editor | CL Booster")
@@ -97,7 +96,7 @@ public class EditorView extends HorizontalLayout {
             LOGGER.warning("Required session data missing. Redirecting to generator wizard.");
             Notification.show("Please complete the generator form first.", 3000, Notification.Position.TOP_CENTER);
             getUI().ifPresent(ui -> ui.navigate(GeneratorWizardView.class));
-            
+
             // Set defaults to avoid NPE during construction
             this.jobTitle = this.jobTitle != null ? this.jobTitle : "Cover Letter";
             this.companyName = this.companyName != null ? this.companyName : "Company";
@@ -121,7 +120,8 @@ public class EditorView extends HorizontalLayout {
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
-        if (editorArea == null) return; // redirected case
+        if (editorArea == null)
+            return; // redirected case
 
         // Show loading state
         editorArea.setValue("⏳ Generating your cover letter with AI, please wait...");
@@ -199,8 +199,8 @@ public class EditorView extends HorizontalLayout {
         titleGroup.setSpacing(false);
 
         H2 title = new H2(jobTitle);
-        title.getStyle().set("font-size", "20px").set("font-weight", "700")
-            .set("color", TEXT_PRIMARY).set("margin", "0");
+        title.getStyle().set("font-size", "20px").set("font-weight", "700").set("color", TEXT_PRIMARY).set("margin",
+                "0");
 
         Paragraph subtitle = new Paragraph(companyName + " • " + selectedTone + " tone");
         subtitle.getStyle().set("font-size", "13px").set("color", TEXT_SECONDARY).set("margin", "0");
@@ -216,7 +216,7 @@ public class EditorView extends HorizontalLayout {
         // Save as DOCX button
         Button saveDocxBtn = new Button("Save DOCX", VaadinIcon.DOWNLOAD.create());
         saveDocxBtn.getStyle().set("background", "rgba(0,0,0,0.05)").set("color", TEXT_PRIMARY)
-            .set("font-weight", "600").set("border-radius", "9999px").set("padding", "10px 20px");
+                .set("font-weight", "600").set("border-radius", "9999px").set("padding", "10px 20px");
         saveDocxBtn.addClickListener(e -> downloadAsDocx());
 
         // Export PDF button
@@ -234,8 +234,8 @@ public class EditorView extends HorizontalLayout {
         HorizontalLayout toolbar = new HorizontalLayout();
         toolbar.setWidthFull();
         toolbar.setAlignItems(FlexComponent.Alignment.CENTER);
-        toolbar.getStyle().set("gap", "8px").set("padding", "12px 16px")
-            .set("background", BG_GRAY).set("border-radius", "12px").set("margin-bottom", "8px");
+        toolbar.getStyle().set("gap", "8px").set("padding", "12px 16px").set("background", BG_GRAY)
+                .set("border-radius", "12px").set("margin-bottom", "8px");
 
         // Wrap selected text in markers (plain-text simulation)
         Button boldBtn = createToolbarButton(VaadinIcon.BOLD, "Bold");
@@ -249,7 +249,8 @@ public class EditorView extends HorizontalLayout {
 
         Button listBtn = createToolbarButton(VaadinIcon.LIST, "Bullet list");
         listBtn.addClickListener(e -> {
-            if (editorArea == null) return;
+            if (editorArea == null)
+                return;
             String current = editorArea.getValue();
             editorArea.setValue(current + (current.endsWith("\n") ? "" : "\n") + "• ");
         });
@@ -258,24 +259,24 @@ public class EditorView extends HorizontalLayout {
         Button copyBtn = createToolbarButton(VaadinIcon.COPY, "Copy all");
         copyBtn.addClickListener(e -> {
             if (editorArea != null) {
-                editorArea.getElement().executeJs(
-                    "navigator.clipboard.writeText($0)", editorArea.getValue());
+                editorArea.getElement().executeJs("navigator.clipboard.writeText($0)", editorArea.getValue());
                 Notification.show("Copied to clipboard!", 2000, Notification.Position.TOP_CENTER);
             }
         });
 
         // Clear button
         Button clearBtn = createToolbarButton(VaadinIcon.TRASH, "Clear");
-        clearBtn.addClickListener(e -> { if (editorArea != null) editorArea.clear(); });
+        clearBtn.addClickListener(e -> {
+            if (editorArea != null)
+                editorArea.clear();
+        });
 
         Div divider = new Div();
-        divider.getStyle().set("width", "1px").set("height", "24px")
-            .set("background", "rgba(0,0,0,0.1)");
+        divider.getStyle().set("width", "1px").set("height", "24px").set("background", "rgba(0,0,0,0.1)");
 
         Button regenBtn = new Button("Regenerate", VaadinIcon.MAGIC.create());
-        regenBtn.getStyle().set("background", PRIMARY + "15").set("color", PRIMARY)
-            .set("font-weight", "600").set("border-radius", "9999px")
-            .set("padding", "8px 16px").set("border", "none");
+        regenBtn.getStyle().set("background", PRIMARY + "15").set("color", PRIMARY).set("font-weight", "600")
+                .set("border-radius", "9999px").set("padding", "8px 16px").set("border", "none");
         regenBtn.addClickListener(e -> regenerateLetter());
 
         toolbar.add(boldBtn, italicBtn, underlineBtn, listBtn, copyBtn, clearBtn, divider, regenBtn);
@@ -283,13 +284,14 @@ public class EditorView extends HorizontalLayout {
     }
 
     private void wrapContent(String prefix, String suffix) {
-        if (editorArea == null) return;
+        if (editorArea == null)
+            return;
         String current = editorArea.getValue();
-        if (current.isEmpty()) return;
+        if (current.isEmpty())
+            return;
         // Toggle: if already wrapped at start/end, remove; otherwise add
         if (current.startsWith(prefix) && current.endsWith(suffix)) {
-            editorArea.setValue(current.substring(prefix.length(),
-                current.length() - suffix.length()));
+            editorArea.setValue(current.substring(prefix.length(), current.length() - suffix.length()));
         } else {
             editorArea.setValue(prefix + current + suffix);
         }
@@ -298,32 +300,29 @@ public class EditorView extends HorizontalLayout {
     private Button createToolbarButton(VaadinIcon icon, String tooltip) {
         Button btn = new Button(icon.create());
         btn.getElement().setAttribute("title", tooltip);
-        btn.getStyle().set("background", "transparent").set("color", TEXT_SECONDARY)
-            .set("border", "none").set("padding", "8px").set("border-radius", "8px");
-        btn.getElement().addEventListener("mouseenter",
-            e -> btn.getStyle().set("background", "rgba(0,0,0,0.05)"));
-        btn.getElement().addEventListener("mouseleave",
-            e -> btn.getStyle().set("background", "transparent"));
+        btn.getStyle().set("background", "transparent").set("color", TEXT_SECONDARY).set("border", "none")
+                .set("padding", "8px").set("border-radius", "8px");
+        btn.getElement().addEventListener("mouseenter", e -> btn.getStyle().set("background", "rgba(0,0,0,0.05)"));
+        btn.getElement().addEventListener("mouseleave", e -> btn.getStyle().set("background", "transparent"));
         return btn;
     }
 
     // ── Downloads ──────────────────────────────────────────────────────────────
 
     private void downloadAsDocx() {
-        if (editorArea == null) return;
+        if (editorArea == null)
+            return;
         String content = editorArea.getValue();
         if (content == null || content.isBlank()) {
             Notification.show("Nothing to export yet.", 2000, Notification.Position.TOP_CENTER);
             return;
         }
         try {
-            String fileName = sanitizeForFilename(companyName) + "_" +
-                sanitizeForFilename(jobTitle) + "_" +
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".docx";
+            String fileName = sanitizeForFilename(companyName) + "_" + sanitizeForFilename(jobTitle) + "_"
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".docx";
             Path outPath = Paths.get(System.getProperty("java.io.tmpdir"), fileName);
 
-            com.clbooster.app.backend.service.ResumeData resumeData =
-                new com.clbooster.app.backend.service.ResumeData();
+            com.clbooster.app.backend.service.ResumeData resumeData = new com.clbooster.app.backend.service.ResumeData();
             resumeData.setRawResumeText(content);
 
             boolean success = documentService.exportResumeAsDocument(resumeData, outPath.toString());
@@ -332,9 +331,7 @@ public class EditorView extends HorizontalLayout {
                 return;
             }
             byte[] bytes = documentService.retrieveResumeFile(outPath.toString());
-            serveDownload(bytes,
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                fileName);
+            serveDownload(bytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", fileName);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "DOCX export failed", ex);
             Notification.show("Export failed: " + ex.getMessage(), 4000, Notification.Position.TOP_CENTER);
@@ -342,16 +339,16 @@ public class EditorView extends HorizontalLayout {
     }
 
     private void downloadAsPdf() {
-        if (editorArea == null) return;
+        if (editorArea == null)
+            return;
         String content = editorArea.getValue();
         if (content == null || content.isBlank()) {
             Notification.show("Nothing to export yet.", 2000, Notification.Position.TOP_CENTER);
             return;
         }
         try {
-            String fileName = sanitizeForFilename(companyName) + "_" +
-                sanitizeForFilename(jobTitle) + "_" +
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".pdf";
+            String fileName = sanitizeForFilename(companyName) + "_" + sanitizeForFilename(jobTitle) + "_"
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".pdf";
 
             byte[] pdfBytes = generateSimplePdf(content);
             if (pdfBytes == null || pdfBytes.length == 0) {
@@ -374,8 +371,8 @@ public class EditorView extends HorizontalLayout {
         anchor.getElement().setAttribute("style", "display:none");
         add(anchor);
         anchor.getElement().executeJs(
-            "var a=$0;setTimeout(function(){a.click();setTimeout(function(){a.remove();},1000);},100);",
-            anchor.getElement());
+                "var a=$0;setTimeout(function(){a.click();setTimeout(function(){a.remove();},1000);},100);",
+                anchor.getElement());
 
         Notification.show("Downloading " + fileName + "…", 2000, Notification.Position.TOP_CENTER);
     }
@@ -385,14 +382,11 @@ public class EditorView extends HorizontalLayout {
     private byte[] generateSimplePdf(String text) throws IOException {
         List<String> lines = new ArrayList<>();
         for (String rawLine : text.split("\n", -1)) {
-            String escaped = rawLine
-                .replace("\\", "\\\\")
-                .replace("(", "\\(")
-                .replace(")", "\\)")
-                .replace("\r", "");
+            String escaped = rawLine.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)").replace("\r", "");
             while (escaped.length() > 90) {
                 int breakAt = escaped.lastIndexOf(' ', 90);
-                if (breakAt <= 0) breakAt = 90;
+                if (breakAt <= 0)
+                    breakAt = 90;
                 lines.add(escaped.substring(0, breakAt));
                 escaped = escaped.substring(breakAt).replaceFirst("^ ", "");
             }
@@ -411,14 +405,18 @@ public class EditorView extends HorizontalLayout {
         for (int i = 0; i < lines.size(); i += LINES_PER_PAGE) {
             pages.add(lines.subList(i, Math.min(i + LINES_PER_PAGE, lines.size())));
         }
-        if (pages.isEmpty()) pages.add(new ArrayList<>());
+        if (pages.isEmpty())
+            pages.add(new ArrayList<>());
 
         java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
         List<Integer> offsets = new ArrayList<>();
 
         java.util.function.Consumer<String> write = s -> {
-            try { out.write(s.getBytes(java.nio.charset.StandardCharsets.US_ASCII)); }
-            catch (IOException e) { throw new java.io.UncheckedIOException(e); }
+            try {
+                out.write(s.getBytes(java.nio.charset.StandardCharsets.US_ASCII));
+            } catch (IOException e) {
+                throw new java.io.UncheckedIOException(e);
+            }
         };
 
         write.accept("%PDF-1.4\n");
@@ -430,12 +428,14 @@ public class EditorView extends HorizontalLayout {
         // obj 2: Pages
         offsets.add(out.size());
         StringBuilder kids = new StringBuilder();
-        for (int i = 0; i < pages.size(); i++) kids.append(4 + i * 2).append(" 0 R ");
+        for (int i = 0; i < pages.size(); i++)
+            kids.append(4 + i * 2).append(" 0 R ");
         write.accept("2 0 obj\n<< /Type /Pages /Kids [" + kids + "] /Count " + pages.size() + " >>\nendobj\n");
 
         // obj 3: Font
         offsets.add(out.size());
-        write.accept("3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\nendobj\n");
+        write.accept(
+                "3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\nendobj\n");
 
         // Pages + content streams starting at obj 4
         for (int p = 0; p < pages.size(); p++) {
@@ -455,10 +455,9 @@ public class EditorView extends HorizontalLayout {
             byte[] streamBytes = stream.toString().getBytes(java.nio.charset.StandardCharsets.ISO_8859_1);
 
             offsets.add(out.size());
-            write.accept(pageObj + " 0 obj\n<< /Type /Page /Parent 2 0 R"
-                + " /MediaBox [0 0 595.28 " + PAGE_HEIGHT + "]"
-                + " /Resources << /Font << /F1 3 0 R >> >>"
-                + " /Contents " + contentObj + " 0 R >>\nendobj\n");
+            write.accept(pageObj + " 0 obj\n<< /Type /Page /Parent 2 0 R" + " /MediaBox [0 0 595.28 " + PAGE_HEIGHT
+                    + "]" + " /Resources << /Font << /F1 3 0 R >> >>" + " /Contents " + contentObj
+                    + " 0 R >>\nendobj\n");
 
             offsets.add(out.size());
             write.accept(contentObj + " 0 obj\n<< /Length " + streamBytes.length + " >>\nstream\n");
@@ -482,7 +481,8 @@ public class EditorView extends HorizontalLayout {
     // ── Regenerate ─────────────────────────────────────────────────────────────
 
     private void regenerateLetter() {
-        if (editorArea == null) return;
+        if (editorArea == null)
+            return;
         editorArea.setValue("⏳ Regenerating...");
         editorArea.setEnabled(false);
         UI ui = UI.getCurrent();
@@ -502,10 +502,9 @@ public class EditorView extends HorizontalLayout {
 
     private Button createPrimaryButton(String text, VaadinIcon icon) {
         Button btn = new Button(text, icon.create());
-        btn.getStyle().set("background", PRIMARY).set("color", "white")
-            .set("font-weight", "600").set("border-radius", "9999px")
-            .set("padding", "10px 24px").set("border", "none")
-            .set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
+        btn.getStyle().set("background", PRIMARY).set("color", "white").set("font-weight", "600")
+                .set("border-radius", "9999px").set("padding", "10px 24px").set("border", "none")
+                .set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
         return btn;
     }
 
@@ -518,8 +517,8 @@ public class EditorView extends HorizontalLayout {
         jobDetails.append("Job Description: ").append(jobDescription).append("\n");
 
         String resumeContent = String.format(
-            "Experienced professional with skills in %s. Seeking to apply expertise in a %s role at %s.",
-            String.join(", ", selectedSkills), jobTitle, companyName);
+                "Experienced professional with skills in %s. Seeking to apply expertise in a %s role at %s.",
+                String.join(", ", selectedSkills), jobTitle, companyName);
 
         try {
             String generated = aiService.generateCoverLetter(resumeContent, jobDetails.toString(), selectedTone);
@@ -531,21 +530,19 @@ public class EditorView extends HorizontalLayout {
     }
 
     private String getFallbackCoverLetter() {
-        return "Dear Hiring Manager,\n\n" +
-               "I am writing to express my strong interest in the " + jobTitle +
-               " position at " + companyName + ". " +
-               "With relevant experience and skills in " + String.join(", ", selectedSkills) + ", " +
-               "I am excited about the opportunity to contribute to your team.\n\n" +
-               "My background aligns well with the requirements outlined in the job description. " +
-               "I am particularly drawn to this role because of " + companyName +
-               "'s reputation for excellence.\n\n" +
-               "Thank you for considering my application. I look forward to discussing how my skills " +
-               "align with your team's vision.\n\n" +
-               "Best regards,\n" + userName;
+        return "Dear Hiring Manager,\n\n" + "I am writing to express my strong interest in the " + jobTitle
+                + " position at " + companyName + ". " + "With relevant experience and skills in "
+                + String.join(", ", selectedSkills) + ", "
+                + "I am excited about the opportunity to contribute to your team.\n\n"
+                + "My background aligns well with the requirements outlined in the job description. "
+                + "I am particularly drawn to this role because of " + companyName + "'s reputation for excellence.\n\n"
+                + "Thank you for considering my application. I look forward to discussing how my skills "
+                + "align with your team's vision.\n\n" + "Best regards,\n" + userName;
     }
 
     /**
-     * Saves the cover letter as DOCX and returns the saved file path (or null on failure).
+     * Saves the cover letter as DOCX and returns the saved file path (or null on
+     * failure).
      */
     private String saveGeneratedCoverLetter(String content) {
         try {
@@ -557,11 +554,12 @@ public class EditorView extends HorizontalLayout {
             }
             int userPin = currentUser.getPin();
             Path dir = Paths.get("uploads", "coverletters");
-            if (!Files.exists(dir)) Files.createDirectories(dir);
+            if (!Files.exists(dir))
+                Files.createDirectories(dir);
 
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            String fileName = userPin + "_" + timestamp + "_" +
-                sanitizeForFilename(companyName) + "_" + sanitizeForFilename(jobTitle) + ".docx";
+            String fileName = userPin + "_" + timestamp + "_" + sanitizeForFilename(companyName) + "_"
+                    + sanitizeForFilename(jobTitle) + ".docx";
             Path filePath = dir.resolve(fileName);
 
             new Exporter().saveAsDoc(content, filePath.toString());
@@ -574,11 +572,9 @@ public class EditorView extends HorizontalLayout {
     }
 
     private String sanitizeForFilename(String input) {
-        if (input == null || input.isBlank()) return "Unknown";
-        return input.trim()
-            .replaceAll("\\s+", "_")
-            .replaceAll("[^a-zA-Z0-9_\\-]", "")
-            .replaceAll("_+", "_")
-            .replaceAll("^_|_$", "");
+        if (input == null || input.isBlank())
+            return "Unknown";
+        return input.trim().replaceAll("\\s+", "_").replaceAll("[^a-zA-Z0-9_\\-]", "").replaceAll("_+", "_")
+                .replaceAll("^_|_$", "");
     }
 }

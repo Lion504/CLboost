@@ -86,26 +86,26 @@ public class MainLayout extends AppLayout {
         Div avatarWrapper = new Div();
         avatarWrapper.getStyle().set("cursor", "pointer");
         avatarWrapper.getStyle().set("transition", "transform 0.2s");
-        
+
         // Get current user from auth service
         User currentUser = authService.getCurrentUser();
-        String userName = currentUser != null ?
-            currentUser.getFirstName() + " " + currentUser.getLastName() : "Guest";
-        String userInitials = currentUser != null ?
-            (currentUser.getFirstName().substring(0, 1) + currentUser.getLastName().substring(0, 1)).toUpperCase() : "G";
-        
+        String userName = currentUser != null ? currentUser.getFirstName() + " " + currentUser.getLastName() : "Guest";
+        String userInitials = currentUser != null
+                ? (currentUser.getFirstName().substring(0, 1) + currentUser.getLastName().substring(0, 1)).toUpperCase()
+                : "G";
+
         Avatar avatar = new Avatar(userName);
         avatar.setColorIndex(2);
         avatar.getStyle().set("border", "2px solid " + BG_WHITE);
         avatar.getStyle().set("box-shadow", "0 2px 8px rgba(0, 0, 0, 0.1)");
-        
+
         avatarWrapper.add(avatar);
-        
+
         // Create context menu for avatar dropdown
         ContextMenu avatarMenu = new ContextMenu();
         avatarMenu.setTarget(avatarWrapper);
         avatarMenu.setOpenOnClick(true);
-        
+
         // Add menu items
         avatarMenu.addItem("Profile", e -> getUI().ifPresent(ui -> ui.navigate(ProfileView.class)));
         avatarMenu.addItem("Settings", e -> getUI().ifPresent(ui -> ui.navigate(SettingsView.class)));
@@ -114,7 +114,7 @@ public class MainLayout extends AppLayout {
             authService.logout();
             getUI().ifPresent(ui -> ui.navigate(LoginView.class));
         });
-        
+
         avatarWrapper.getElement().addEventListener("mouseenter", e -> {
             avatarWrapper.getStyle().set("transform", "scale(1.05)");
         });
@@ -163,7 +163,8 @@ public class MainLayout extends AppLayout {
         drawer.setPadding(false);
         drawer.setSpacing(false);
         drawer.getStyle().set("height", "100%");
-        drawer.getStyle().set("background", "linear-gradient(180deg, " + SIDEBAR_BG + " 0%, " + SIDEBAR_HOVER + " 100%)");
+        drawer.getStyle().set("background",
+                "linear-gradient(180deg, " + SIDEBAR_BG + " 0%, " + SIDEBAR_HOVER + " 100%)");
 
         // Logo section
         HorizontalLayout logoSection = new HorizontalLayout();
@@ -205,8 +206,8 @@ public class MainLayout extends AppLayout {
         mainLabel.getStyle().set("letter-spacing", "0.1em");
 
         SideNavItem dashboard = createNavItem(getTranslation("nav.dashboard"), "dashboard", VaadinIcon.DASHBOARD);
-        SideNavItem generate  = createNavItem(getTranslation("nav.generator"), "generator-wizard", VaadinIcon.MAGIC);
-        SideNavItem history   = createNavItem(getTranslation("nav.history"),   "history",          VaadinIcon.CLOCK);
+        SideNavItem generate = createNavItem(getTranslation("nav.generator"), "generator-wizard", VaadinIcon.MAGIC);
+        SideNavItem history = createNavItem(getTranslation("nav.history"), "history", VaadinIcon.CLOCK);
 
         // Add Resume section
         Span toolsLabel = new Span(getTranslation("nav.section.tools"));

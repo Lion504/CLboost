@@ -43,7 +43,7 @@ public class SettingsView extends VerticalLayout {
 
     // Language select
     private Select<String> langSelect;
-    
+
     // Toggle track elements for updating styles
     private Div emailTrack;
     private Div pushTrack;
@@ -52,7 +52,7 @@ public class SettingsView extends VerticalLayout {
     private Div cloudTrack;
     private Div aiTrack;
     private Div usageTrack;
-    
+
     // Toggle thumbs for animation
     private Div emailThumb;
     private Div pushThumb;
@@ -83,7 +83,8 @@ public class SettingsView extends VerticalLayout {
         getStyle().set("gap", "24px");
         getStyle().set("padding", "32px");
         getStyle().set("background", BG_WHITE);
-        getStyle().set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
+        getStyle().set("font-family",
+                "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
         setSizeFull();
         setMaxWidth("900px");
 
@@ -198,13 +199,13 @@ public class SettingsView extends VerticalLayout {
         langSelect.setWidthFull();
         langSelect.getStyle().set("--vaadin-input-field-background", BG_GRAY);
         langSelect.getStyle().set("--vaadin-input-field-border-radius", "12px");
-        
+
         // Apply language change immediately when selected
         langSelect.addValueChangeListener(e -> {
             if (e.getValue() != null) {
                 translationService.setLanguage(e.getValue());
-                Notification.show("Language changed to " + e.getValue() + ". Save settings to apply permanently.",
-                    3000, Notification.Position.BOTTOM_END);
+                Notification.show("Language changed to " + e.getValue() + ". Save settings to apply permanently.", 3000,
+                        Notification.Position.BOTTOM_END);
             }
         });
 
@@ -234,22 +235,24 @@ public class SettingsView extends VerticalLayout {
         toggles.setSpacing(false);
         toggles.getStyle().set("gap", "0");
 
-        ToggleResult emailResult = createToggleRow("Email Notifications", "Weekly summaries and match alerts", emailNotifications);
+        ToggleResult emailResult = createToggleRow("Email Notifications", "Weekly summaries and match alerts",
+                emailNotifications);
         emailTrack = emailResult.track;
         emailThumb = emailResult.thumb;
         emailTrack.addClickListener(e -> {
             emailNotifications = !emailNotifications;
             updateToggleVisual(emailTrack, emailThumb, emailNotifications);
         });
-        
-        ToggleResult pushResult = createToggleRow("Push Notifications", "Real-time generation status", pushNotifications);
+
+        ToggleResult pushResult = createToggleRow("Push Notifications", "Real-time generation status",
+                pushNotifications);
         pushTrack = pushResult.track;
         pushThumb = pushResult.thumb;
         pushTrack.addClickListener(e -> {
             pushNotifications = !pushNotifications;
             updateToggleVisual(pushTrack, pushThumb, pushNotifications);
         });
-        
+
         ToggleResult productResult = createToggleRow("Product Updates", "New features and tips", productUpdates);
         productTrack = productResult.track;
         productThumb = productResult.thumb;
@@ -257,7 +260,7 @@ public class SettingsView extends VerticalLayout {
             productUpdates = !productUpdates;
             updateToggleVisual(productTrack, productThumb, productUpdates);
         });
-        
+
         ToggleResult marketingResult = createToggleRow("Marketing", "Special offers and promotions", marketing);
         marketingTrack = marketingResult.track;
         marketingThumb = marketingResult.thumb;
@@ -272,12 +275,12 @@ public class SettingsView extends VerticalLayout {
 
         return card;
     }
-    
+
     private static class ToggleResult {
         final HorizontalLayout row;
         final Div track;
         final Div thumb;
-        
+
         ToggleResult(HorizontalLayout row, Div track, Div thumb) {
             this.row = row;
             this.track = track;
@@ -329,7 +332,7 @@ public class SettingsView extends VerticalLayout {
         thumb.getStyle().set("transition", "all 0.2s");
 
         track.add(thumb);
-        
+
         // Set initial state
         updateToggleVisual(track, thumb, enabled);
 
@@ -338,7 +341,7 @@ public class SettingsView extends VerticalLayout {
 
         return new ToggleResult(row, track, thumb);
     }
-    
+
     private void updateToggleVisual(Div track, Div thumb, boolean enabled) {
         track.getStyle().set("background", enabled ? SUCCESS : "rgba(0, 0, 0, 0.2)");
         if (enabled) {
@@ -370,23 +373,26 @@ public class SettingsView extends VerticalLayout {
         options.setSpacing(false);
         options.getStyle().set("gap", "0");
 
-        ToggleResult cloudResult = createToggleRow("Store cover letters in cloud", "Securely store your documents", storeInCloud);
+        ToggleResult cloudResult = createToggleRow("Store cover letters in cloud", "Securely store your documents",
+                storeInCloud);
         cloudTrack = cloudResult.track;
         cloudThumb = cloudResult.thumb;
         cloudTrack.addClickListener(e -> {
             storeInCloud = !storeInCloud;
             updateToggleVisual(cloudTrack, cloudThumb, storeInCloud);
         });
-        
-        ToggleResult aiResult = createToggleRow("Allow AI improvement training", "Help improve our AI models", allowAiTraining);
+
+        ToggleResult aiResult = createToggleRow("Allow AI improvement training", "Help improve our AI models",
+                allowAiTraining);
         aiTrack = aiResult.track;
         aiThumb = aiResult.thumb;
         aiTrack.addClickListener(e -> {
             allowAiTraining = !allowAiTraining;
             updateToggleVisual(aiTrack, aiThumb, allowAiTraining);
         });
-        
-        ToggleResult usageResult = createToggleRow("Share anonymized usage data", "Help us improve the product", shareUsageData);
+
+        ToggleResult usageResult = createToggleRow("Share anonymized usage data", "Help us improve the product",
+                shareUsageData);
         usageTrack = usageResult.track;
         usageThumb = usageResult.thumb;
         usageTrack.addClickListener(e -> {
@@ -453,7 +459,8 @@ public class SettingsView extends VerticalLayout {
 
     private void showDeleteAccountDialog() {
         if (currentUser == null) {
-            Notification.show("Error: You must be logged in to delete your account", 3000, Notification.Position.TOP_CENTER);
+            Notification.show("Error: You must be logged in to delete your account", 3000,
+                    Notification.Position.TOP_CENTER);
             return;
         }
 
@@ -492,7 +499,8 @@ public class SettingsView extends VerticalLayout {
                     dialog.close();
                     getUI().ifPresent(ui -> ui.navigate(LoginView.class));
                 } else {
-                    Notification.show("Error deleting account. Please try again.", 3000, Notification.Position.TOP_CENTER);
+                    Notification.show("Error deleting account. Please try again.", 3000,
+                            Notification.Position.TOP_CENTER);
                 }
             } else {
                 Notification.show("Incorrect password", 3000, Notification.Position.TOP_CENTER);
@@ -576,7 +584,8 @@ public class SettingsView extends VerticalLayout {
                 // Reload so MainLayout and all components rebuild with the new locale
                 getUI().ifPresent(ui -> ui.getPage().reload());
             } else {
-                Notification.show("Error: Failed to save settings. The database may be unavailable.", 5000, Notification.Position.TOP_CENTER);
+                Notification.show("Error: Failed to save settings. The database may be unavailable.", 5000,
+                        Notification.Position.TOP_CENTER);
                 System.err.println("ERROR: Failed to save settings for user " + currentUser.getPin());
             }
         } catch (Exception e) {

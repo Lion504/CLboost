@@ -13,40 +13,39 @@ import java.util.*;
 
 @Component
 public class TranslationService implements I18NProvider {
-    
+
     private static final String BUNDLE_PREFIX = "messages";
     private static final Locale DEFAULT_LOCALE = new Locale("en");
-    
+
     private final SettingsService settingsService;
     private final AuthenticationService authService;
-    
+
     public TranslationService() {
         this.settingsService = new SettingsService();
         this.authService = new AuthenticationService();
     }
-    
+
     @Override
     public List<Locale> getProvidedLocales() {
-        return Arrays.asList(
-            new Locale("en"),    // English
-            new Locale("fi"),    // Finnish
-            new Locale("sv"),    // Swedish
-            new Locale("de"),    // German
-            new Locale("fr")     // French
+        return Arrays.asList(new Locale("en"), // English
+                new Locale("fi"), // Finnish
+                new Locale("sv"), // Swedish
+                new Locale("de"), // German
+                new Locale("fr") // French
         );
     }
-    
+
     @Override
     public String getTranslation(String key, Locale locale, Object... params) {
         // Use provided locale or get from user settings
         Locale effectiveLocale = locale != null ? locale : getCurrentLocale();
-        
+
         ResourceBundle bundle = getBundle(effectiveLocale);
         if (bundle == null) {
             // Fallback to default locale
             bundle = getBundle(DEFAULT_LOCALE);
         }
-        
+
         if (bundle != null && bundle.containsKey(key)) {
             String value = bundle.getString(key);
             if (params != null && params.length > 0) {
@@ -54,11 +53,11 @@ public class TranslationService implements I18NProvider {
             }
             return value;
         }
-        
+
         // Return key if not found
         return key;
     }
-    
+
     private ResourceBundle getBundle(Locale locale) {
         try {
             return ResourceBundle.getBundle(BUNDLE_PREFIX, locale);
@@ -66,16 +65,17 @@ public class TranslationService implements I18NProvider {
             return null;
         }
     }
-    
+
     public Locale getCurrentLocale() {
         // First check session
-        Locale sessionLocale = VaadinSession.getCurrent() != null ? 
-            (Locale) VaadinSession.getCurrent().getAttribute("locale") : null;
-        
+        Locale sessionLocale = VaadinSession.getCurrent() != null
+                ? (Locale) VaadinSession.getCurrent().getAttribute("locale")
+                : null;
+
         if (sessionLocale != null) {
             return sessionLocale;
         }
-        
+
         // Then check user settings
         if (authService.getCurrentUser() != null) {
             int userPin = authService.getCurrentUserPin();
@@ -89,35 +89,36 @@ public class TranslationService implements I18NProvider {
                 }
             }
         }
-        
+
         // Default to English
         return DEFAULT_LOCALE;
     }
-    
+
     public void setCurrentLocale(Locale locale) {
         if (VaadinSession.getCurrent() != null) {
             VaadinSession.getCurrent().setAttribute("locale", locale);
         }
-        
+
         // Update UI locale
         UI currentUI = UI.getCurrent();
         if (currentUI != null) {
             currentUI.setLocale(locale);
         }
     }
-    
+
     public void setLanguage(String languageName) {
         Locale locale = parseLanguage(languageName);
         if (locale != null) {
             setCurrentLocale(locale);
         }
     }
-    
+
     private Locale parseLanguage(String languageName) {
-        if (languageName == null) return DEFAULT_LOCALE;
-        
+        if (languageName == null)
+            return DEFAULT_LOCALE;
+
         String lower = languageName.toLowerCase();
-        
+
         if (lower.contains("finnish") || lower.equals("suomi") || lower.equals("fi")) {
             return new Locale("fi");
         } else if (lower.contains("swedish") || lower.equals("svenska") || lower.equals("sv")) {
@@ -130,7 +131,7 @@ public class TranslationService implements I18NProvider {
             return new Locale("en");
         }
     }
-    
+
     public String translate(String key, Object... params) {
         return getTranslation(key, getCurrentLocale(), params);
     }
