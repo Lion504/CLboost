@@ -133,19 +133,11 @@ During the sprint review, we demonstrated:
 
 ## Time Tracking
 
-<<<<<<< HEAD
 | Team Member | Hours Spent | Tasks Contributions |
-| ----------------- | ----------- | ------------------------------------------ |
-| Wang Yongzhi | 60 | Scrum Master, frontend building |
-| Taysa Abinader | | Jenkins CI/CD setup, automated testing |
-| Tamseela Mahmood | | DAO and Services creation, database models |
-| Kiavash Montazeri | | Docker image development and testing |
-=======
-| Team Member | Hours Spent | Tasks Contributions |
-| ----------------- |---| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Wang Yongzhi | | |
-| Taysa Abinader | | |
-| Tamseela Mahmood | 4 | worked on remaining dao and services functionalities and tests |
-| Kiavash Montazeri | | |
+| ----------------- |-------------| ------------------------------------------ |
+| Wang Yongzhi | 60          | Scrum Master, frontend building |
+| Taysa Abinader | 6           | Jenkins CI/CD setup, automated testing |
+| Tamseela Mahmood | 4           | DAO and Services creation, database models |
+| Kiavash Montazeri |             | Docker image development and testing |
 
 **Total Sprint Hours:**
