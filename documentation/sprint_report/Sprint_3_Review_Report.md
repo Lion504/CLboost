@@ -90,6 +90,8 @@
 
 During the sprint review, we demonstrated:
 
+<<<<<<< HEAD
+
 - **Backend Command Line Interface** - Resume scanning and cover letter generation
 - **Code Coverage Reports** - JaCoCo HTML reports showing test coverage
 - **Unit Tests** - JUnit test execution results
@@ -104,7 +106,13 @@ During the sprint review, we demonstrated:
 - **Relational Schema**
   - Located in: `documentation/diagrams/Relational Schema.png`
 
-- **Jira Board:** https://taysa-ferreira-abinader.atlassian.net/jira/software/projects/CLGEN/boards/67/backlog
+- # **Jira Board:** https://taysa-ferreira-abinader.atlassian.net/jira/software/projects/CLGEN/boards/67/backlog
+- Demonstrated functional application
+- Presented the Docker Image for the application
+- Presented the tests and code coverage report
+- Showed the Frontend Figma Prototype:
+  https://www.figma.com/proto/LFr0EooJ9Nmnfztwv4pO3F/CLbooster?node-id=4-2492&p=f&t=vZzS39YYiB2ldEY4-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=4%3A2492
+- Presented the Sprint 3 backlog: https://taysa-ferreira-abinader.atlassian.net/jira/software/projects/CLGEN/boards/67/backlog
 
 ## What Went Well
 
@@ -130,11 +138,21 @@ During the sprint review, we demonstrated:
 
 ## Time Tracking
 
-| Team Member       | Hours Spent | Tasks Contributions                        |
+<<<<<<< HEAD
+| Team Member | Hours Spent | Tasks Contributions |
 | ----------------- | ----------- | ------------------------------------------ |
-| Wang Yongzhi      | 60          | Scrum Master, frontend building            |
-| Taysa Abinader    |             | Jenkins CI/CD setup, automated testing     |
-| Tamseela Mahmood  |             | DAO and Services creation, database models |
-| Kiavash Montazeri |             | Docker image development and testing       |
+| Wang Yongzhi | 60 | Scrum Master, frontend building |
+| Taysa Abinader | | Jenkins CI/CD setup, automated testing |
+| Tamseela Mahmood | | DAO and Services creation, database models |
+| Kiavash Montazeri | | Docker image development and testing |
+=======
+| Team Member | Hours Spent | Tasks Contributions |
+| ----------------- |---| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wang Yongzhi | | |
+| Taysa Abinader | | |
+| Tamseela Mahmood | 4 | worked on remaining dao and services functionalities and tests |
+| Kiavash Montazeri | | |
 
-**Total Sprint Hours:** 46 hours
+> > > > > > > c0d8fc43816b53c488b228f5f3e8376df50666c0
+
+**Total Sprint Hours:**
