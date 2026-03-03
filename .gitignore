@@ -8,6 +8,8 @@
 
 *.iml
 .DS_Store
+#cover letter files don't get committed
+storage/
 
 # The following files are generated/updated by vaadin-maven-plugin
 node_modules/
@@ -30,5 +32,4 @@ test-jobads.md
 *.docx
 *.pdf
 
-bin/*
-figma-clbooster/
+bin/
