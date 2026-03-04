@@ -9,8 +9,8 @@ pipeline {
     }
 
     tools {
-        // This name must match the "Name" you gave the JDK in Jenkins Global Tool Configuration
-        jdk 'JDK25'
+        // This name must match the "Name" you gave the JDK in Jenkins Global Tool Configuration (Java 21)
+        jdk 'JDK21'
         maven 'Maven3'
     }
 
