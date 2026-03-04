@@ -2,14 +2,53 @@ package com.clbooster.app.backend.service.authentication;
 
 import com.clbooster.app.backend.service.profile.User;
 import com.clbooster.app.backend.service.profile.UserDAO;
+import com.vaadin.flow.server.VaadinSession;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class AuthenticationService {
     private UserDAO userDAO;
-    private User currentUser;
+    private Map<String, Object> sessionStore;
+    private static final String USER_SESSION_ATTRIBUTE = "currentUser";
 
+    // Production constructor - uses VaadinSession
     public AuthenticationService() {
         this.userDAO = new UserDAO();
-        this.currentUser = null;
+        this.sessionStore = null;
+    }
+
+    // Test constructor - accepts HashMap for mocking session
+    public AuthenticationService(Map<String, Object> sessionStore) {
+        this.userDAO = new UserDAO();
+        this.sessionStore = sessionStore;
+    }
+
+    // Store user in session (VaadinSession or HashMap for tests)
+    private void storeUserInSession(User user) {
+        if (sessionStore != null) {
+            sessionStore.put(USER_SESSION_ATTRIBUTE, user);
+        } else {
+            VaadinSession.getCurrent().setAttribute(USER_SESSION_ATTRIBUTE, user);
+        }
+    }
+
+    // Get user from session (VaadinSession or HashMap for tests)
+    private User getUserFromSession() {
+        if (sessionStore != null) {
+            return (User) sessionStore.get(USER_SESSION_ATTRIBUTE);
+        }
+        return (User) VaadinSession.getCurrent().getAttribute(USER_SESSION_ATTRIBUTE);
+    }
+
+    // Remove user from session (VaadinSession or HashMap for tests)
+    private void removeUserFromSession() {
+        if (sessionStore != null) {
+            sessionStore.remove(USER_SESSION_ATTRIBUTE);
+        } else {
+            VaadinSession.getCurrent().setAttribute(USER_SESSION_ATTRIBUTE, null);
+        }
     }
 
     public static void showPasswordRequirements() {
@@ -80,7 +119,8 @@ public class AuthenticationService {
 
         User user = userDAO.loginUser(username, password);
         if (user != null) {
-            this.currentUser = user;
+            // Store user in session for persistence
+            storeUserInSession(user);
             System.out.println("✓ Login successful!");
             System.out.println("✓ Welcome, " + user.getFirstName() + " " + user.getLastName());
             // System.out.println("✓ PIN: " + user.getPin());
@@ -92,27 +132,54 @@ public class AuthenticationService {
     }
 
     public void logout() {
-        if (currentUser != null) {
-            System.out.println("✓ Logged out successfully. Goodbye, " + currentUser.getFirstName() + "!");
-            currentUser = null;
+        User user = getUserFromSession();
+        if (user != null) {
+            System.out.println("✓ Logged out successfully. Goodbye, " + user.getFirstName() + "!");
+            removeUserFromSession();
         }
     }
 
     // Check if user is logged in
     public boolean isLoggedIn() {
-        return currentUser != null;
+        return getUserFromSession() != null;
     }
 
     // Get current logged-in user
     public User getCurrentUser() {
-        return currentUser;
+        return getUserFromSession();
     }
 
     // Get current user's PIN
     public int getCurrentUserPin() {
-        if (currentUser != null) {
-            return currentUser.getPin();
+        User user = getUserFromSession();
+        if (user != null) {
+            return user.getPin();
         }
         return -1;
+    }
+
+    // Change password for current user
+    public boolean changePassword(String currentPassword, String newPassword) {
+        User user = getUserFromSession();
+        if (user == null) {
+            System.out.println("Error: No user logged in");
+            return false;
+        }
+
+        // Verify current password
+        User verifiedUser = userDAO.loginUser(user.getUsername(), currentPassword);
+        if (verifiedUser == null) {
+            System.out.println("Error: Current password is incorrect");
+            return false;
+        }
+
+        // Update password in database
+        boolean updated = userDAO.updatePassword(user.getPin(), newPassword);
+        if (updated) {
+            System.out.println("✓ Password changed successfully!");
+        } else {
+            System.out.println("Error: Failed to update password");
+        }
+        return updated;
     }
 }

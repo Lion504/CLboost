@@ -3,6 +3,7 @@ version: '3.8'
 services:
   app:
     build: .
+    container_name: clboost-app
     ports:
       - '8080:8080'
     environment:
@@ -14,8 +15,11 @@ services:
       - DB_NAME=CL_generator
       - DB_USERNAME=root
       - DB_PASSWORD=${DB_PASSWORD:-password}
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       - db
+    restart: unless-stopped
 
   # MariaDB database for CLI backend
   db:
@@ -32,3 +36,4 @@ services:
 
 volumes:
   mariadb_data:
+  uploads_data:

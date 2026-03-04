@@ -35,6 +35,12 @@ public class ProfileService {
         }
     }
 
+    /**
+     * @deprecated ProfileView already renders all profile fields via
+     *             {@link #getProfile(int)}. This CLI-era method is no longer needed
+     *             and will be removed in a future version.
+     */
+    @Deprecated
     public void displayProfile(int pin) {
         Profile profile = profileDAO.getProfileByPin(pin);
 

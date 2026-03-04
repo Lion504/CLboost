@@ -179,4 +179,21 @@ public class UserDAO {
             return false;
         }
     }
+
+    public boolean updatePassword(int pin, String newPassword) {
+        String sql = "UPDATE identification SET Password = ? WHERE Pin = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, hashPassword(newPassword));
+            pstmt.setInt(2, pin);
+
+            return pstmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

@@ -2,14 +2,32 @@ package com.clbooster.aiservice;
 
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 
+@Service
+@Lazy
 public class AIService {
 
-    private final ChatLanguageModel languageModel;
+    private ChatLanguageModel languageModel;
+    private final String apiKey;
 
-    public AIService(String apiKey) {
-        this.languageModel = GoogleAiGeminiChatModel.builder().apiKey(apiKey).modelName("gemini-2.5-flash-lite")
-                .temperature(0.7).build();
+    public AIService(@Value("${spring.ai.vertex.ai.gemini.api-key:}") String apiKey) {
+        this.apiKey = apiKey;
+        // Defer actual initialization to first use
+    }
+
+    private synchronized ChatLanguageModel getLanguageModel() {
+        if (languageModel == null) {
+            if (apiKey == null || apiKey.isBlank()) {
+                throw new IllegalStateException("GEMINI_API_KEY environment variable is not set. "
+                        + "Set it and restart the application before generating cover letters.");
+            }
+            languageModel = GoogleAiGeminiChatModel.builder().apiKey(apiKey).modelName("gemini-2.5-flash-lite")
+                    .temperature(0.7).timeout(java.time.Duration.ofSeconds(30)).build();
+        }
+        return languageModel;
     }
 
     private String matchQualification(String resume, String jobDetails) {
@@ -24,10 +42,26 @@ public class AIService {
 
         String finalPrompt = matchPrompt.replace("{{RESUME}}", resume).replace("{{JOBDETAILS}}", jobDetails);
 
-        return languageModel.generate(finalPrompt);
+        return getLanguageModel().generate(finalPrompt);
     }
 
-    private String writeCoverLetter(String matchAnalysis, String jobDetails) {
+    private String toneInstruction(String tone) {
+        if (tone == null || tone.isBlank())
+            return "";
+        switch (tone.trim()) {
+        case "Creative":
+            return "TONE: Write in a creative, enthusiastic and bold voice. Show genuine personality, "
+                    + "use vivid language, and let the candidate's passion stand out. Best for startups and agencies.";
+        case "Storyteller":
+            return "TONE: Write in a storytelling narrative voice. Focus on the candidate's journey, "
+                    + "key moments of impact, and what drives them. Best for senior and lead roles.";
+        default: // Professional
+            return "TONE: Write in a formal, structured and strictly professional voice. "
+                    + "Keep language concise, confident and business-appropriate. Best for corporate roles.";
+        }
+    }
+
+    private String writeCoverLetter(String matchAnalysis, String jobDetails, String tone) {
         String coverLetterPrompt = """
                 You are a professional resume writer. Take the ANALYSIS and the JOBDETAILS below and write a cover letter following the rules below:
 
@@ -35,6 +69,7 @@ public class AIService {
                 2. Focus on the value the candidate brings to the company;
                 3. Keep the following structure: The hook: establish why you want this specific job at this specific company; The pitch: in 1 to 2 paragraphs provide the evidence to why you would be the best option to solve the company's problems without repeating the resume's content; The close: reiterate the enthusiasm for the position and actively ask for an interview opportunity.
                 4. Output only the body of the cover letter.
+                5. {{TONE}}
 
                 --- ANALYSIS ---
                 {{ANALYSIS}}
@@ -43,19 +78,21 @@ public class AIService {
                 {{JOB}}
                 """;
 
-        String finalPrompt = coverLetterPrompt.replace("{{ANALYSIS}}", matchAnalysis).replace("{{JOB}}", jobDetails);
+        String finalPrompt = coverLetterPrompt.replace("{{TONE}}", toneInstruction(tone))
+                .replace("{{ANALYSIS}}", matchAnalysis).replace("{{JOB}}", jobDetails);
 
-        return languageModel.generate(finalPrompt);
+        return getLanguageModel().generate(finalPrompt);
     }
 
     public String generateCoverLetter(String resume, String jobDetails) {
+        return generateCoverLetter(resume, jobDetails, "Professional");
+    }
+
+    public String generateCoverLetter(String resume, String jobDetails, String tone) {
         System.out.println("Matching Resume and Job Details...");
         String analysis = matchQualification(resume, jobDetails);
 
-        System.out.println("Drafting Cover Letter...");
-        String buildCL = writeCoverLetter(analysis, jobDetails);
-
-        return buildCL;
-
+        System.out.println("Drafting Cover Letter (tone: " + tone + ")...");
+        return writeCoverLetter(analysis, jobDetails, tone);
     }
 }
