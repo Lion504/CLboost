@@ -27,8 +27,9 @@ WORKDIR /app
 # Copy the built JAR from the builder stage
 COPY --from=builder /app/target/*.jar app.jar
 
-# Change ownership to non-root user
-RUN chown -R spring:spring /app
+# Create upload directories WITH ROOT, then give to spring user
+RUN mkdir -p /app/uploads/coverletters /app/uploads/resumes && \
+    chown -R spring:spring /app/uploads
 
 # Switch to non-root user
 USER spring
