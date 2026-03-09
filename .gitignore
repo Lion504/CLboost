@@ -8,6 +8,8 @@
 
 *.iml
 .DS_Store
+#cover letter files don't get committed
+storage/
 
 # The following files are generated/updated by vaadin-maven-plugin
 node_modules/
@@ -24,3 +26,10 @@ webpack.generated.js
 # Log files
 *.log
 target/
+src/main/java/com/clbooster/app/backend/service/database/DatabaseConnection.java
+uploads/resumes/*
+test-jobads.md
+*.docx
+*.pdf
+
+bin/
