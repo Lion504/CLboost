@@ -415,8 +415,7 @@ public class GeneratorWizardView extends VerticalLayout {
                     int _pin = _resumeUser.getPin();
                     File[] existing = resumeDir.toFile().listFiles((d, n) -> n.startsWith(_pin + "_"));
                     if (existing != null) {
-                        java.util.Arrays.stream(existing)
-                                .filter(File::isFile)
+                        java.util.Arrays.stream(existing).filter(File::isFile)
                                 .sorted(java.util.Comparator.comparingLong(File::lastModified).reversed())
                                 .forEach(f -> {
                                     // Strip pin_timestamp_ prefix for display
@@ -437,8 +436,8 @@ public class GeneratorWizardView extends VerticalLayout {
 
         Div savedResumeCard = new Div();
         savedResumeCard.getStyle().set("background", GREEN_LIGHT).set("border", "1.5px solid " + GREEN)
-                .set("border-radius", "16px").set("padding", "16px 24px").set("width", "100%")
-                .set("max-width", "600px").set("margin-top", "16px");
+                .set("border-radius", "16px").set("padding", "16px 24px").set("width", "100%").set("max-width", "600px")
+                .set("margin-top", "16px");
 
         if (!resumeFileMap.isEmpty()) {
             HorizontalLayout savedRow = new HorizontalLayout();
@@ -453,8 +452,8 @@ public class GeneratorWizardView extends VerticalLayout {
 
                 Span singleLabel = new Span("\uD83D\uDCCE " + singleName);
                 singleLabel.getStyle().set("flex", "1").set("font-size", "14px").set("font-weight", "600")
-                        .set("color", TEXT_PRIMARY).set("overflow", "hidden")
-                        .set("text-overflow", "ellipsis").set("white-space", "nowrap");
+                        .set("color", TEXT_PRIMARY).set("overflow", "hidden").set("text-overflow", "ellipsis")
+                        .set("white-space", "nowrap");
 
                 Button useBtn = new Button("Use this resume", VaadinIcon.CHECK_CIRCLE.create());
                 useBtn.getStyle().set("background", GREEN).set("color", "white").set("font-weight", "600")
@@ -473,8 +472,8 @@ public class GeneratorWizardView extends VerticalLayout {
                 resumeSelect.getElement().setAttribute("title", "Select a saved resume");
 
                 Span selectHint = new Span("\uD83D\uDCCE Saved resumes:");
-                selectHint.getStyle().set("font-size", "13px").set("font-weight", "600")
-                        .set("color", TEXT_PRIMARY).set("white-space", "nowrap");
+                selectHint.getStyle().set("font-size", "13px").set("font-weight", "600").set("color", TEXT_PRIMARY)
+                        .set("white-space", "nowrap");
 
                 Button useBtn = new Button("Use selected", VaadinIcon.CHECK_CIRCLE.create());
                 useBtn.getStyle().set("background", GREEN).set("color", "white").set("font-weight", "600")
@@ -1436,8 +1435,8 @@ public class GeneratorWizardView extends VerticalLayout {
     }
 
     /**
-     * Parses {@code file}, extracts matching skills, selects them in the UI,
-     * and shows a notification. Used by both single- and multi-resume selectors.
+     * Parses {@code file}, extracts matching skills, selects them in the UI, and
+     * shows a notification. Used by both single- and multi-resume selectors.
      */
     private void loadResumeSkills(File file) {
         try {
@@ -1446,15 +1445,13 @@ public class GeneratorWizardView extends VerticalLayout {
             if (!skills.isEmpty()) {
                 selectedSkills.addAll(skills);
                 updateSkillButtonsUI();
-                Notification.show("Skills loaded: " + String.join(", ", skills),
-                        5000, Notification.Position.TOP_CENTER);
-            } else {
-                Notification.show("Resume loaded — no matching skills found.", 3000,
+                Notification.show("Skills loaded: " + String.join(", ", skills), 5000,
                         Notification.Position.TOP_CENTER);
+            } else {
+                Notification.show("Resume loaded — no matching skills found.", 3000, Notification.Position.TOP_CENTER);
             }
         } catch (Exception ex) {
-            Notification.show("Could not read resume: " + ex.getMessage(), 3000,
-                    Notification.Position.TOP_CENTER);
+            Notification.show("Could not read resume: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
         }
     }
 
