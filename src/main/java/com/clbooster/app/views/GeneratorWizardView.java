@@ -1203,7 +1203,6 @@ public class GeneratorWizardView extends VerticalLayout {
             ui.access(() -> {
                 editorTextArea.setValue(result);
                 editorTextArea.setEnabled(true);
-                savedFilePath = saveGeneratedCoverLetter(result);
             });
         });
         genThread.setDaemon(true);
