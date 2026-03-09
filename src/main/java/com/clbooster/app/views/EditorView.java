@@ -68,6 +68,7 @@ public class EditorView extends HorizontalLayout {
     private String jobDescription;
     private String userName;
     private String savedFilePath; // path of the saved .docx after generation
+    private String existingContent; // non-null when opened from history (skip generation)
 
     // Loading indicator shown while AI generates
     private Div loadingOverlay;
@@ -90,6 +91,9 @@ public class EditorView extends HorizontalLayout {
         Set<String> skills = (Set<String>) session.getAttribute("gen.skills");
         this.selectedSkills = skills != null ? skills : Set.of();
         this.jobDescription = getSessionAttribute(session, "gen.jobDesc", "");
+        this.existingContent = getSessionAttribute(session, "gen.existingContent", null);
+        // Clear so a subsequent fresh generation doesn't reuse this
+        session.setAttribute("gen.existingContent", null);
 
         // Validate required session data
         if (this.jobTitle == null || this.companyName == null) {
@@ -122,7 +126,12 @@ public class EditorView extends HorizontalLayout {
         super.onAttach(attachEvent);
         if (editorArea == null)
             return; // redirected case
-
+        // If opened from history, show the existing content directly
+        if (existingContent != null && !existingContent.isBlank()) {
+            editorArea.setValue(existingContent);
+            editorArea.setEnabled(true);
+            return;
+        }
         // Show loading state
         editorArea.setValue("⏳ Generating your cover letter with AI, please wait...");
         editorArea.setEnabled(false);

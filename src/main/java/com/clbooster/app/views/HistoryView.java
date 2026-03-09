@@ -352,6 +352,13 @@ public class HistoryView extends VerticalLayout {
             session.setAttribute("gen.tone", "Professional");
             session.setAttribute("gen.skills", new java.util.HashSet<>());
             session.setAttribute("gen.jobDesc", "");
+            // Load existing content so the editor skips re-generation
+            File coverFile = new File(item.filePath);
+            if (coverFile.exists()) {
+                session.setAttribute("gen.existingContent", extractTextFromFile(coverFile));
+            } else {
+                session.setAttribute("gen.existingContent", null);
+            }
             getUI().ifPresent(ui -> ui.navigate("editor"));
         });
 

@@ -17,6 +17,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -402,6 +403,100 @@ public class GeneratorWizardView extends VerticalLayout {
             skillsGrid.add(skillBtn);
         }
 
+        // ── Use saved resume ───────────────────────────────────────────────
+        // Collect all resume files for this user, newest first
+        java.util.Map<String, File> resumeFileMap = new java.util.LinkedHashMap<>();
+        try {
+            AuthenticationService _authForResume = new AuthenticationService();
+            com.clbooster.app.backend.service.profile.User _resumeUser = _authForResume.getCurrentUser();
+            if (_resumeUser != null) {
+                Path resumeDir = Paths.get("uploads", "resumes");
+                if (Files.exists(resumeDir)) {
+                    int _pin = _resumeUser.getPin();
+                    File[] existing = resumeDir.toFile().listFiles((d, n) -> n.startsWith(_pin + "_"));
+                    if (existing != null) {
+                        java.util.Arrays.stream(existing)
+                                .filter(File::isFile)
+                                .sorted(java.util.Comparator.comparingLong(File::lastModified).reversed())
+                                .forEach(f -> {
+                                    // Strip pin_timestamp_ prefix for display
+                                    String display = f.getName().replaceFirst("^\\d+_\\d+_", "");
+                                    // Deduplicate display names by appending index if needed
+                                    String key = display;
+                                    int idx = 2;
+                                    while (resumeFileMap.containsKey(key))
+                                        key = display + " (" + idx++ + ")";
+                                    resumeFileMap.put(key, f);
+                                });
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+            // If we can't list resumes, skip the saved-resume section
+        }
+
+        Div savedResumeCard = new Div();
+        savedResumeCard.getStyle().set("background", GREEN_LIGHT).set("border", "1.5px solid " + GREEN)
+                .set("border-radius", "16px").set("padding", "16px 24px").set("width", "100%")
+                .set("max-width", "600px").set("margin-top", "16px");
+
+        if (!resumeFileMap.isEmpty()) {
+            HorizontalLayout savedRow = new HorizontalLayout();
+            savedRow.setWidthFull();
+            savedRow.setAlignItems(FlexComponent.Alignment.CENTER);
+            savedRow.getStyle().set("gap", "12px");
+
+            if (resumeFileMap.size() == 1) {
+                // Single resume — show label + button
+                File singleFile = resumeFileMap.values().iterator().next();
+                String singleName = resumeFileMap.keySet().iterator().next();
+
+                Span singleLabel = new Span("\uD83D\uDCCE " + singleName);
+                singleLabel.getStyle().set("flex", "1").set("font-size", "14px").set("font-weight", "600")
+                        .set("color", TEXT_PRIMARY).set("overflow", "hidden")
+                        .set("text-overflow", "ellipsis").set("white-space", "nowrap");
+
+                Button useBtn = new Button("Use this resume", VaadinIcon.CHECK_CIRCLE.create());
+                useBtn.getStyle().set("background", GREEN).set("color", "white").set("font-weight", "600")
+                        .set("border-radius", "9999px").set("border", "none").set("white-space", "nowrap");
+                useBtn.addClickListener(e -> loadResumeSkills(singleFile));
+
+                savedRow.add(singleLabel, useBtn);
+                savedRow.expand(singleLabel);
+            } else {
+                // Multiple resumes — show dropdown + button
+                Select<String> resumeSelect = new Select<>();
+                resumeSelect.setItems(resumeFileMap.keySet());
+                resumeSelect.setValue(resumeFileMap.keySet().iterator().next()); // preselect newest
+                resumeSelect.setLabel(null);
+                resumeSelect.getStyle().set("flex", "1").set("min-width", "0");
+                resumeSelect.getElement().setAttribute("title", "Select a saved resume");
+
+                Span selectHint = new Span("\uD83D\uDCCE Saved resumes:");
+                selectHint.getStyle().set("font-size", "13px").set("font-weight", "600")
+                        .set("color", TEXT_PRIMARY).set("white-space", "nowrap");
+
+                Button useBtn = new Button("Use selected", VaadinIcon.CHECK_CIRCLE.create());
+                useBtn.getStyle().set("background", GREEN).set("color", "white").set("font-weight", "600")
+                        .set("border-radius", "9999px").set("border", "none").set("white-space", "nowrap");
+                useBtn.addClickListener(e -> {
+                    String selected = resumeSelect.getValue();
+                    if (selected != null) {
+                        File selectedFile = resumeFileMap.get(selected);
+                        if (selectedFile != null)
+                            loadResumeSkills(selectedFile);
+                    }
+                });
+
+                savedRow.add(selectHint, resumeSelect, useBtn);
+                savedRow.expand(resumeSelect);
+            }
+
+            savedResumeCard.add(savedRow);
+        } else {
+            savedResumeCard.setVisible(false);
+        }
+
         // Import from Resume card
         Div importCard = new Div();
         importCard.getStyle().set("background", BG_GRAY);
@@ -425,7 +520,7 @@ public class GeneratorWizardView extends VerticalLayout {
         importTitle.getStyle().set("color", TEXT_PRIMARY);
         importTitle.getStyle().set("margin", "0 0 4px 0");
 
-        Paragraph importDesc = new Paragraph("Upload PDF or DOCX to auto-fill skills");
+        Paragraph importDesc = new Paragraph("Upload a new PDF or DOCX to auto-fill skills");
         importDesc.getStyle().set("font-size", "13px");
         importDesc.getStyle().set("color", TEXT_SECONDARY);
         importDesc.getStyle().set("margin", "0 0 16px 0");
@@ -508,6 +603,25 @@ public class GeneratorWizardView extends VerticalLayout {
                 Set<String> extractedSkills = extractSkillsFromText(resumeText);
                 LOGGER.info("[UPLOAD] Skills extracted: " + extractedSkills.size() + " skills found");
 
+                // Persist the file to uploads/resumes/ so it appears in Resume Manager
+                // and is picked up by loadUserResumeText during cover letter generation
+                try {
+                    AuthenticationService _authSvc2 = new AuthenticationService();
+                    com.clbooster.app.backend.service.profile.User _u2 = _authSvc2.getCurrentUser();
+                    if (_u2 != null) {
+                        Path resumeDir = Paths.get("uploads", "resumes");
+                        if (!Files.exists(resumeDir))
+                            Files.createDirectories(resumeDir);
+                        String safeOriginal = originalFileName.replaceAll("[^a-zA-Z0-9.\\-]", "_");
+                        String persistedName = _u2.getPin() + "_" + System.currentTimeMillis() + "_" + safeOriginal;
+                        Files.copy(tempFile.toPath(), resumeDir.resolve(persistedName),
+                                java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                        LOGGER.info("[UPLOAD] Resume persisted to uploads/resumes/" + persistedName);
+                    }
+                } catch (Exception persistEx) {
+                    LOGGER.warning("[UPLOAD] Could not persist resume: " + persistEx.getMessage());
+                }
+
                 // Show the uploaded filename in the card
                 fileTag.setText("\uD83D\uDCCE " + originalFileName);
                 fileTag.setVisible(true);
@@ -563,7 +677,7 @@ public class GeneratorWizardView extends VerticalLayout {
 
         importCard.add(fileIcon, importTitle, importDesc, upload, fileTag);
 
-        layout.add(title, subtitle, skillsGrid, importCard);
+        layout.add(title, subtitle, skillsGrid, savedResumeCard, importCard);
 
         return layout;
     }
@@ -1319,6 +1433,29 @@ public class GeneratorWizardView extends VerticalLayout {
     private String fallbackSkillsSummary() {
         return String.format("Experienced professional with skills in %s. Seeking a %s role at %s.",
                 String.join(", ", selectedSkills), jobTitle, companyName);
+    }
+
+    /**
+     * Parses {@code file}, extracts matching skills, selects them in the UI,
+     * and shows a notification. Used by both single- and multi-resume selectors.
+     */
+    private void loadResumeSkills(File file) {
+        try {
+            String text = new Parser().parseFileToJson(file.getAbsolutePath());
+            Set<String> skills = extractSkillsFromText(text);
+            if (!skills.isEmpty()) {
+                selectedSkills.addAll(skills);
+                updateSkillButtonsUI();
+                Notification.show("Skills loaded: " + String.join(", ", skills),
+                        5000, Notification.Position.TOP_CENTER);
+            } else {
+                Notification.show("Resume loaded — no matching skills found.", 3000,
+                        Notification.Position.TOP_CENTER);
+            }
+        } catch (Exception ex) {
+            Notification.show("Could not read resume: " + ex.getMessage(), 3000,
+                    Notification.Position.TOP_CENTER);
+        }
     }
 
     /**
