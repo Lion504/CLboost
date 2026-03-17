@@ -9,48 +9,79 @@
 
 ## Local Development Setup
 
-### 1. Clone and Configure
+### 1. Clone the repository
 
 ```bash
 git clone <repository-url>
 cd cl-booster
 ```
 
-### 2. Environment Variables
-
-Copy the example environment file and configure:
+### 2. Configure environment
 
 ```bash
 cp .env.example .env
+# Edit .env — add your GEMINI_API_KEY and GOOGLE_PROJECT_ID
 ```
 
-Edit `.env` with your values:
-
-```bash
-GEMINI_API_KEY=your_gemini_api_key_here
-GOOGLE_PROJECT_ID=your_google_project_id
-GOOGLE_LOCATION=us-central1
-PORT=8080
-```
-
-The app uses `spring-dotenv` to auto-load `.env` at startup. No need to set OS environment variables manually in development — just fill in `.env`.
-
-### 3. Build and Run
+### 3. Run
 
 ```powershell
 # Build the application
 mvn clean install
-
-# Recommended — .env handles API keys automatically
 mvn spring-boot:run -DskipTests
-
-# Manual override if needed (PowerShell — single line)
-$env:GEMINI_API_KEY="key"; $env:GOOGLE_PROJECT_ID="your-project-id"; mvn spring-boot:run -DskipTests
 ```
 
-Application will be available at http://localhost:8080 by default.
+- Open http://localhost:8080 in your browser
 
-### 4. Run CLI Backend (Alternative)
+### 4. Run App on Docker
+
+**Option A - Docker Compose (recommended):**
+
+```bash
+docker-compose up -d
+```
+
+**Option B - Pull from Docker Hub:**
+
+```bash
+docker pull timo2233/clboost:v1.0.2
+docker run -d -p 8080:8080 --name clboost-app \
+  -e GEMINI_API_KEY=your_api_key \
+  -e DB_HOST=db \
+  -e DB_PORT=3306 \
+  -e DB_NAME=CL_generator \
+  -e DB_USERNAME=root \
+  -e DB_PASSWORD=password \
+  timo2233/clboost:v1.0.2
+```
+
+**Option C - Build and run locally:**
+
+```bash
+docker build -t clboost-app .
+docker run -d -p 8080:8080 --name clboost-app \
+  -e GEMINI_API_KEY=your_api_key \
+  -e DB_HOST=db \
+  -e DB_PORT=3306 \
+  -e DB_NAME=CL_generator \
+  -e DB_USERNAME=root \
+  -e DB_PASSWORD=password \
+  clboost-app
+```
+
+Application will be available at http://localhost:8080
+
+# View logs
+
+docker-compose logs -f
+
+# Stop the application
+
+docker-compose down
+
+````
+
+### 5. Run CLI Backend (Alternative)
 
 The application also provides a command-line interface for cover letter generation.
 
@@ -64,7 +95,7 @@ docker-compose up -d db
 
 # Wait for database to be ready (about 10 seconds)
 # The database will be automatically initialized with the schema
-```
+````
 
 Option B - Using local MariaDB installation:
 
@@ -102,27 +133,6 @@ The CLI uses environment variables for database connection:
 
 **Test credentials** are defined in:
 `src/main/java/com/clbooster/app/backend/service/database/coverletter_generator_script.sql`
-
-## Docker Development
-
-### Using Docker Compose
-
-```bash
-# Start the application
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop the application
-docker-compose down
-```
-
-### Testing Environment
-
-```bash
-docker-compose -f docker-compose.test.yml up --abort-on-container-exit
-```
 
 ## Project Structure
 
@@ -170,8 +180,16 @@ cl-booster/
 ### Code Style
 
 - Follow Eclipse formatter configuration (`eclipse-formatter.xml`)
-- Use Spotless for code formatting: `mvn spotless:apply`
-- Check code formatting: `mvn spotless:check`
+- Use Spotless for code formatting:
+
+```bash
+# Check code formatting
+mvn spotless:check
+
+# Apply code formatting
+mvn spotless:apply
+```
+
 - Maximum line length: 120 characters
 
 ### Testing
