@@ -5,7 +5,7 @@ services:
     build: .
     container_name: clboost-app
     ports:
-      - '8080:8080'
+      - '${PORT:-8080}:8080'
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - PORT=8080
@@ -19,11 +19,9 @@ services:
     volumes:
       - uploads_data:/app/uploads
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: unless-stopped
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
 
   # MariaDB database for CLI backend
   db:
@@ -36,7 +34,14 @@ services:
       - '3306:3306'
     volumes:
       - mariadb_data:/var/lib/mysql
-      - ./src/main/java/com/clbooster/app/backend/service/database/coverletter_generator_script.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./src/main/java/com/clbooster/app/backend/service/database/coverletter_generator_script.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./src/main/java/com/clbooster/app/backend/service/database/user_settings.sql:/docker-entrypoint-initdb.d/02_user_settings.sql
+    healthcheck:
+      test: ['CMD', 'healthcheck.sh', '--connect', '--innodb_initialized']
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 volumes:
   mariadb_data:
