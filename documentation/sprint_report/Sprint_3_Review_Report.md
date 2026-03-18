@@ -138,6 +138,6 @@ During the sprint review, we demonstrated:
 | Wang Yongzhi | 60          | Scrum Master, frontend building |
 | Taysa Abinader | 6           | Jenkins CI/CD setup, automated testing |
 | Tamseela Mahmood | 4           | DAO and Services creation, database models |
-| Kiavash Montazeri |             | Docker image development and testing |
+| Kiavash Montazeri | 8            | Docker image development and testing |
 
 **Total Sprint Hours:**
