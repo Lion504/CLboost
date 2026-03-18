@@ -2,18 +2,17 @@
 
 ## Sprint Goal
 
-1. - **Finalize functionality of the prototype**  
-2. - **Containerize the project using Docker**  
-3. - **Create and push Docker image to Docker Hub**  
-4. - **Test the deployed image in a suitable environment**  
-5. - **Share the project with classmates for feedback**  
-6. - **Prepare for the final demonstration (Week 8)**  
+1. - **Finalize functionality of the prototype**
+2. - **Containerize the project using Docker**
+3. - **Create and push Docker image to Docker Hub**
+4. - **Test the deployed image in a suitable environment**
+5. - **Share the project with classmates for feedback**
+6. - **Prepare for the final demonstration (Week 8)**
 
 ---
 
 ## Completed User Stories / Tasks
 
-	
 - CLGEN-44 Finalize functionality of the prototype
 - CLGEN-45 Containerize the project using Docker
 - CLGEN-46 Create and push Docker image to Docker Hub
@@ -21,41 +20,41 @@
 - CLGEN-48 Share the project with classmates for feedback
 - CLGEN-49 Prepare for the final demonstration
 - CLGEN-24 Create an app setup installer file
+
 ---
 
-
-- **Frontend Prototype:**  
+- **Frontend Prototype:**
 
 ---
 
 ## What Went Well
 
--  project demonstration and presentation went well, the docker Image UI was perfectly handled by our frontend developer.
+- The project demonstration and presentation went well; the Docker image UI was perfectly handled by our frontend developer.
 
 ---
 
 ## What Could Be Improved
 
--  time management due to exam weeks
+- Time management due to exam weeks
 
 ---
 
 ## Next Sprint Focus
 
--   UI Localization
--  Linkedin API profile linking
+- UI Localization
+- LinkedIn API profile linking
 
 ---
 
 ## Time Tracking
 
-| Team Member | Hours Spent | Tasks Contributions |
-|-------------|-------------|---------------------|
-|   Kiavash   |   26        | Scrum master, prototype Testing, Linkedin API  |
-|             |             |                     |
-|             |             |                     |
-|             |             |                     |
+| Team Member  | Hours Spent | Tasks Contributions                                                      |
+| ------------ | ----------- | ------------------------------------------------------------------------ |
+| Kiavash      | 26          | Scrum master, prototype Testing, Linkedin API                            |
+| Wang Yongzhi | 10          | Create DockerHub image, Test deployed in different environment, fix bugs |
+|              |             |                                                                          |
+|              |             |                                                                          |
 
-**Total Sprint Hours:**  
+**Total Sprint Hours:**
 
 ---
