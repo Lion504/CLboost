@@ -15,11 +15,15 @@ services:
       - DB_NAME=CL_generator
       - DB_USERNAME=root
       - DB_PASSWORD=${DB_PASSWORD:-password}
+      - JAVA_TOOL_OPTIONS="-Djava.net.preferIPv4Stack=true"
     volumes:
       - uploads_data:/app/uploads
     depends_on:
       - db
     restart: unless-stopped
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
 
   # MariaDB database for CLI backend
   db:

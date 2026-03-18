@@ -343,22 +343,44 @@ public class DashboardView extends VerticalLayout {
     // Data helpers
     // ─────────────────────────────────────────────────────────────────────────
 
-    /** Count files in a directory (returns 0 if it doesn't exist). */
+    /**
+     * Count files in a directory for the current user (returns 0 if it doesn't
+     * exist or no user logged in).
+     */
     private int countFiles(String dir) {
+        int userPin = currentUser != null ? currentUser.getPin() : -1;
+        if (userPin == -1) {
+            return 0;
+        }
         try {
             Path p = Paths.get(dir);
             if (!Files.exists(p))
                 return 0;
             try (Stream<Path> s = Files.list(p)) {
-                return (int) s.filter(Files::isRegularFile).count();
+                return (int) s.filter(Files::isRegularFile).filter(f -> {
+                    String name = f.getFileName().toString();
+                    String[] parts = name.split("_");
+                    if (parts.length < 1)
+                        return false;
+                    try {
+                        int filePin = Integer.parseInt(parts[0].replaceAll("\\.[^.]+$", ""));
+                        return filePin == userPin;
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                }).count();
             }
         } catch (IOException e) {
             return 0;
         }
     }
 
-    /** Count cover letters created in the last 7 days. */
+    /** Count cover letters created in the last 7 days for current user. */
     private int countLettersThisWeek() {
+        int userPin = currentUser != null ? currentUser.getPin() : -1;
+        if (userPin == -1) {
+            return 0;
+        }
         try {
             Path p = Paths.get(COVER_LETTERS_DIR);
             if (!Files.exists(p))
@@ -366,6 +388,19 @@ public class DashboardView extends VerticalLayout {
             Instant weekAgo = Instant.now().minus(7, ChronoUnit.DAYS);
             try (Stream<Path> s = Files.list(p)) {
                 return (int) s.filter(Files::isRegularFile).filter(f -> {
+                    // Filter by user PIN
+                    String name = f.getFileName().toString();
+                    String[] parts = name.split("_");
+                    if (parts.length < 1)
+                        return false;
+                    try {
+                        int filePin = Integer.parseInt(parts[0].replaceAll("\\.[^.]+$", ""));
+                        if (filePin != userPin)
+                            return false;
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                    // Filter by date (last 7 days)
                     try {
                         return Files.getLastModifiedTime(f).toInstant().isAfter(weekAgo);
                     } catch (IOException ex) {
@@ -380,10 +415,18 @@ public class DashboardView extends VerticalLayout {
 
     /**
      * Load up to 6 most recent cover letters from uploads/coverletters/. Filename
-     * format: {pin}_{yyyyMMdd}_{HHmmss}_{company}_{jobtitle}.docx
+     * format: {pin}_{yyyyMMdd}_{HHmmss}_{company}_{jobtitle}.docx NOW FIXED: Only
+     * loads files belonging to the current user.
      */
     private List<LetterCardData> loadLetterData() {
         List<LetterCardData> letters = new ArrayList<>();
+
+        // Get current user's PIN for filtering
+        int userPin = currentUser != null ? currentUser.getPin() : -1;
+        if (userPin == -1) {
+            return letters;
+        }
+
         try {
             Path dir = Paths.get(COVER_LETTERS_DIR);
             if (Files.exists(dir)) {
@@ -393,11 +436,21 @@ public class DashboardView extends VerticalLayout {
                     } catch (IOException e) {
                         return 0;
                     }
-                }).limit(6)) {
+                }).limit(20)) {
                     stream.forEach(file -> {
                         String name = file.getFileName().toString().replaceAll("\\.[^.]+$", ""); // strip extension
                         String[] parts = name.split("_");
-                        // parts[0]=pin, parts[1]=date, parts[2]=time,
+                        // parts[0]=pin - filter by user PIN!
+                        if (parts.length < 1)
+                            return;
+                        try {
+                            int filePin = Integer.parseInt(parts[0]);
+                            if (filePin != userPin)
+                                return; // Only show current user's files
+                        } catch (NumberFormatException e) {
+                            return; // Skip files without valid PIN
+                        }
+                        // parts[1]=date, parts[2]=time,
                         // parts[3]=company(first word), parts[4..]=jobtitle words
                         String company = parts.length > 3 ? parts[3].replace("-", " ") : "Company";
                         String jobTitle = parts.length > 4 ? String
@@ -416,7 +469,8 @@ public class DashboardView extends VerticalLayout {
             letters.add(new LetterCardData("React Developer", "Meta", "Yesterday", "ARCHIVED"));
             letters.add(new LetterCardData("UX Engineer", "Airbnb", "3 days ago", "ARCHIVED"));
         }
-        return letters;
+        // Limit to 6 items
+        return letters.stream().limit(6).collect(java.util.stream.Collectors.toList());
     }
 
     private String toTitleCase(String s) {
