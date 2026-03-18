@@ -15,30 +15,47 @@ CL Booster is an intelligent cover letter generation tool that leverages AI to c
 - Docker & Docker Compose
 - Google Gemini API key ([get one here](https://aistudio.google.com))
 
-### Local Development
+### Quick Start (Docker Hub)
 
-1. **Clone the repository**
+**Option A - Docker Compose (recommended):**
 
-   ```bash
-   git clone <repository-url>
-   cd cl-booster
-   ```
+```bash
+git clone <repository-url>
+cd cl-booster
+cp .env.example .env
+# Edit .env — add your GEMINI_API_KEY and GOOGLE_PROJECT_ID
+docker-compose up -d
+```
 
-2. **Configure environment**
+**Option B - Pull from Docker Hub:**
 
-   ```bash
-   cp .env.example .env
-   # Edit .env — add your GEMINI_API_KEY and GOOGLE_PROJECT_ID
-   ```
+```bash
+docker pull timo2233/clboost:v1.0.2
+docker run -d -p 8080:8080 --name clboost-app \
+  -e GEMINI_API_KEY=your_api_key \
+  -e DB_HOST=db \
+  -e DB_PORT=3306 \
+  -e DB_NAME=CL_generator \
+  -e DB_USERNAME=root \
+  -e DB_PASSWORD=password \
+  timo2233/clboost:v1.0.2
+```
 
-3. **Run**
+**Option C - Build locally:**
 
-   ```powershell
-   mvn spring-boot:run -DskipTests
-   ```
+```bash
+docker build -t clboost-app .
+docker run -d -p 8080:8080 --name clboost-app \
+  -e GEMINI_API_KEY=your_api_key \
+  -e DB_HOST=db \
+  -e DB_PORT=3306 \
+  -e DB_NAME=CL_generator \
+  -e DB_USERNAME=root \
+  -e DB_PASSWORD=password \
+  clboost-app
+```
 
-4. **Access the application**
-   - Open http://localhost:8080 in your browser
+Access the application at http://localhost:8080
 
 ## ✨ Features
 
