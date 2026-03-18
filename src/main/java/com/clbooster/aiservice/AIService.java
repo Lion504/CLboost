@@ -32,7 +32,13 @@ public class AIService {
 
     private String matchQualification(String resume, String jobDetails) {
         String matchPrompt = """
-                "You are a professional Job Recruiter, and you need to analyse a candidates RESUME and the required JOBDETAILS. Find the 3 most important qualifications on the resume related to the job position."
+                You are a Strategic Talent Headhunter. Analyze the candidate's RESUME against the JOB DETAILS.
+                Extract:
+                1. The top 3 technical skills/keywords mentioned in the job post that appear on the resume.
+                2. One specific achievement from the resume that proves the candidate can solve a pain point in the job post.
+
+                Keep the analysis concise and data-driven.
+
                 --- RESUME ---
                 {{RESUME}}
 
@@ -63,18 +69,21 @@ public class AIService {
 
     private String writeCoverLetter(String matchAnalysis, String jobDetails, String tone) {
         String coverLetterPrompt = """
-                You are a professional resume writer. Take the ANALYSIS and the JOBDETAILS below and write a cover letter following the rules below:
+                You are an Expert Career Copywriter. Write a high-conversion cover letter using the analysis and jobdetails.
 
-                1. No use of generic phrases;
-                2. Focus on the value the candidate brings to the company;
-                3. Keep the following structure: The hook: establish why you want this specific job at this specific company; The pitch: in 1 to 2 paragraphs provide the evidence to why you would be the best option to solve the company's problems without repeating the resume's content; The close: reiterate the enthusiasm for the position and actively ask for an interview opportunity.
-                4. Output only the body of the cover letter.
-                5. {{TONE}}
+                Rules:
+                1. Forbidden phrases: "I am writing to apply," "To whom it may concern," "hardworking individual," "think outside the box," "perfect fit."
+                2. Start with a 'Hook' that references a specific company goal or challenge.
+                3. Instead of saying "I am a leader," describe a time they led.
+                4. Identify a problem mentioned in the job details and explain how the candidate's specific experience is the solution.
+                5. Output ONLY the body text. Do not include addresses or dates.
 
-                --- ANALYSIS ---
+                {{TONE_INSTRUCTION}}
+
+                --- STRATEGIC ANALYSIS ---
                 {{ANALYSIS}}
 
-                --- JOBDETAILS ---
+                --- JOB DESCRIPTION ---
                 {{JOB}}
                 """;
 
