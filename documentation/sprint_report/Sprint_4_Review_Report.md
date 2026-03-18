@@ -2,124 +2,27 @@
 
 ## Sprint Goal
 
-1.  
-2.  
-3.  
-4.  
-5.  
-6.  
+1. - **Finalize functionality of the prototype**  
+2. - **Containerize the project using Docker**  
+3. - **Create and push Docker image to Docker Hub**  
+4. - **Test the deployed image in a suitable environment**  
+5. - **Share the project with classmates for feedback**  
+6. - **Prepare for the final demonstration (Week 8)**  
 
 ---
 
 ## Completed User Stories / Tasks
 
--  
--  
--  
--  
--  
--  
--  
--  
--  
--  
-
+	
+- CLGEN-44 Finalize functionality of the prototype
+- CLGEN-45 Containerize the project using Docker
+- CLGEN-46 Create and push Docker image to Docker Hub
+- CLGEN-47 Test the deployed image in different environment fix bugs
+- CLGEN-48 Share the project with classmates for feedback
+- CLGEN-49 Prepare for the final demonstration
+- CLGEN-24 Create an app setup installer file
 ---
 
-## Completed Tasks Detail
-
-### 1. ⬜ Task / Feature Title (Points)
-
-- **Feature Implementation:**
-  -  
-  -  
-  -  
-  -  
-
-- **Core Functionality Validation:**
-  -  
-  -  
-
-- **Bug Fixing and Optimization:**
-  -  
-  -  
-
----
-
-### 2. ⬜ Task / Feature Title (Points)
-
-- **Pipeline / Process / Feature Details:**
-  -  
-  -  
-  -  
-
----
-
-### 3. ⬜ Task / Feature Title
-
-- **Test Suite / Implementation Details:**
-  -  
-  -  
-
-- **Coverage / Metrics:**
-  -  
-  -  
-
----
-
-### 4. ⬜ Task / Feature Title
-
-- **End-to-End Functionality:**
-  -  
-  -  
-
-- **Feature Completeness:**
-  -  
-  -  
-
----
-
-### 5. ⬜ Task / Feature Title (Points)
-
--  
--  
--  
-
----
-
-### 6. ⬜ Task / Feature Title
-
-- **Demonstration Preparation:**
-  -  
-  -  
-  -  
-  -  
-
-- **Documentation Updates:**
-  -  
-  -  
-  -  
-
----
-
-## Demo Summary
-
-During the sprint review, we demonstrated:
-
--  
--  
--  
--  
--  
--  
-
-- **Entity Relation Diagram (Database ER Model)**
-  - Located in:  
-
-- **Relational Schema**
-  - Located in:  
-
-- **Jira Board:**  
 
 - **Frontend Prototype:**  
 
@@ -127,29 +30,20 @@ During the sprint review, we demonstrated:
 
 ## What Went Well
 
--  
--  
--  
--  
--  
+-  project demonstration and presentation went well, the docker Image UI was perfectly handled by our frontend developer.
 
 ---
 
 ## What Could Be Improved
 
--  
--  
--  
+-  time management due to exam weeks
 
 ---
 
 ## Next Sprint Focus
 
--  
--  
--  
--  
--  
+-   UI Localization
+-  Linkedin API profile linking
 
 ---
 
@@ -157,7 +51,7 @@ During the sprint review, we demonstrated:
 
 | Team Member | Hours Spent | Tasks Contributions |
 |-------------|-------------|---------------------|
-|             |             |                     |
+|   Kiavash   |   26        | Scrum master, prototype Testing, Linkedin API  |
 |             |             |                     |
 |             |             |                     |
 |             |             |                     |
