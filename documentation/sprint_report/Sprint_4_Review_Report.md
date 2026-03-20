@@ -52,7 +52,7 @@
 | ------------ | ----------- | ------------------------------------------------------------------------ |
 | Kiavash      | 26          | Scrum master, prototype Testing, Linkedin API                            |
 | Wang Yongzhi | 10          | Create DockerHub image, Test deployed in different environment, fix bugs |
-|              |             |                                                                          |
+|  Taysa |           4  |             Improved Cover Letter Generation                                                             |
 |              |             |                                                                          |
 
 **Total Sprint Hours:**
