@@ -1,6 +1,8 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.i18n.TranslationService;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
@@ -24,6 +26,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.tabs.TabsVariant;
 
 import java.util.List;
+import java.util.Locale;
 
 @Route("")
 @PageTitle("CL Booster — AI Cover Letter Generator")
@@ -40,8 +43,21 @@ public class LandingView extends VerticalLayout {
     private static final String BG_LIGHT = "#fbfbfb";
 
     private Dialog activeModal = null;
+    private final TranslationService translationService;
 
     public LandingView() {
+        this.translationService = new TranslationService();
+        
+        // Apply saved locale from session on page load
+        try {
+            Locale savedLocale = translationService.getCurrentLocale();
+            if (savedLocale != null) {
+                translationService.setCurrentLocale(savedLocale);
+            }
+        } catch (Exception e) {
+            // VaadinSession not available yet, use default
+        }
+        
         setPadding(false);
         setSpacing(false);
         setSizeFull();
@@ -109,18 +125,57 @@ public class LandingView extends VerticalLayout {
         centerSection.setSpacing(false);
         centerSection.getStyle().set("gap", "32px");
 
-        Button howItWorks = createNavButton("How it works", () -> openHowItWorksModal());
-        Button faq = createNavButton("FAQ", () -> openFaqModal());
+        Button howItWorks = createNavButton(translationService.translate("landing.howItWorks"), () -> openHowItWorksModal());
+        Button faq = createNavButton(translationService.translate("landing.faq"), () -> openFaqModal());
 
         centerSection.add(howItWorks, faq);
 
-        // Right section - Auth buttons (fixed width for balance)
+        // Right section - Language switcher + Auth buttons (fixed width for balance)
         HorizontalLayout rightSection = new HorizontalLayout();
-        rightSection.setWidth("200px");
+        rightSection.setWidth("280px");
         rightSection.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
         rightSection.setAlignItems(FlexComponent.Alignment.CENTER);
+        rightSection.getStyle().set("gap", "12px");
 
-        Button loginBtn = new Button("Log in", e -> getUI().ifPresent(ui -> ui.navigate(LoginView.class)));
+        // Language switcher - set current language based on saved locale
+        String currentLang = "English";
+        try {
+            Locale currentLocale = translationService.getCurrentLocale();
+            if (currentLocale != null) {
+                String lang = currentLocale.getLanguage();
+                if ("fi".equals(lang)) currentLang = "Suomi";
+                else if ("sv".equals(lang)) currentLang = "Svenska";
+                else if ("de".equals(lang)) currentLang = "Deutsch";
+                else if ("fr".equals(lang)) currentLang = "Français";
+            }
+        } catch (Exception e) {
+            // VaadinSession not available, use default
+        }
+        
+        Select<String> langSelect = new Select<>();
+        langSelect.setItems("English", "Suomi", "Svenska", "Deutsch", "Français");
+        langSelect.setValue(currentLang);
+        langSelect.setWidth("100px");
+        langSelect.getStyle().set("--vaadin-input-field-background", "transparent");
+        langSelect.getStyle().set("font-size", "13px");
+        langSelect.getStyle().set("font-weight", "600");
+        langSelect.addValueChangeListener(e -> {
+            String lang = e.getValue();
+            if (lang != null) {
+                String langCode;
+                switch (lang) {
+                    case "Suomi": langCode = "Finnish (Suomi)"; break;
+                    case "Svenska": langCode = "Swedish (Svenska)"; break;
+                    case "Deutsch": langCode = "German (Deutsch)"; break;
+                    case "Français": langCode = "French (Français)"; break;
+                    default: langCode = "English";
+                }
+                translationService.setLanguage(langCode);
+                getUI().ifPresent(ui -> ui.getPage().reload());
+            }
+        });
+
+        Button loginBtn = new Button(translationService.translate("landing.logIn"), e -> getUI().ifPresent(ui -> ui.navigate(LoginView.class)));
         loginBtn.getStyle().set("font-size", "13px");
         loginBtn.getStyle().set("font-weight", "700");
         loginBtn.getStyle().set("color", TEXT_PRIMARY);
@@ -129,11 +184,11 @@ public class LandingView extends VerticalLayout {
         loginBtn.getStyle().set("padding", "8px 16px");
         loginBtn.getStyle().set("transition", "background 0.2s");
 
-        Button signupBtn = createPrimaryButton("Sign up", () -> getUI().ifPresent(ui -> ui.navigate(SignUpView.class)));
+        Button signupBtn = createPrimaryButton(translationService.translate("signup.signup"), () -> getUI().ifPresent(ui -> ui.navigate(SignUpView.class)));
         signupBtn.getStyle().set("font-size", "13px");
         signupBtn.getStyle().set("padding", "8px 20px");
 
-        rightSection.add(loginBtn, signupBtn);
+        rightSection.add(langSelect, loginBtn, signupBtn);
 
         // Full navbar with three equal sections
         HorizontalLayout navbar = new HorizontalLayout(leftSection, centerSection, rightSection);
@@ -284,14 +339,14 @@ public class LandingView extends VerticalLayout {
         header.getStyle().set("gap", "16px");
         header.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
-        H2 title = new H2("Built for performance.");
+        H2 title = new H2(translationService.translate("landing.builtForPerformance"));
         title.getStyle().set("font-size", "36px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("color", TEXT_PRIMARY);
         title.getStyle().set("margin", "0");
         title.getStyle().set("text-align", "center");
 
-        Paragraph subtitle = new Paragraph("Stop wasting hours on repetitive writing.");
+        Paragraph subtitle = new Paragraph(translationService.translate("landing.stopWastingHours"));
         subtitle.getStyle().set("font-size", "15px");
         subtitle.getStyle().set("color", TEXT_SECONDARY);
         subtitle.getStyle().set("text-align", "center");
@@ -420,11 +475,11 @@ public class LandingView extends VerticalLayout {
         VerticalLayout titleGroup = new VerticalLayout();
         titleGroup.setPadding(false);
         titleGroup.setSpacing(false);
-        H3 title = new H3("Frequently Asked Questions");
+        H3 title = new H3(translationService.translate("help.faqTitle"));
         title.getStyle().set("font-size", "20px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("margin", "0");
-        Paragraph subtitle = new Paragraph("Everything you need to know");
+        Paragraph subtitle = new Paragraph(translationService.translate("landing.everythingYouNeed"));
         subtitle.getStyle().set("font-size", "13px");
         subtitle.getStyle().set("color", TEXT_SECONDARY);
         subtitle.getStyle().set("margin", "4px 0 0");
@@ -544,11 +599,11 @@ public class LandingView extends VerticalLayout {
         VerticalLayout titleGroup = new VerticalLayout();
         titleGroup.setPadding(false);
         titleGroup.setSpacing(false);
-        H3 title = new H3("Cover Letter Samples");
+        H3 title = new H3(translationService.translate("generator.title"));
         title.getStyle().set("font-size", "20px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("margin", "0");
-        Paragraph subtitle = new Paragraph("See what our AI can generate");
+        Paragraph subtitle = new Paragraph(translationService.translate("landing.seeWhatAiCanGenerate"));
         subtitle.getStyle().set("font-size", "13px");
         subtitle.getStyle().set("color", TEXT_SECONDARY);
         subtitle.getStyle().set("margin", "4px 0 0");
@@ -749,11 +804,11 @@ public class LandingView extends VerticalLayout {
         VerticalLayout titleGroup = new VerticalLayout();
         titleGroup.setPadding(false);
         titleGroup.setSpacing(false);
-        H3 title = new H3("How It Works");
+        H3 title = new H3(translationService.translate("help.howItWorks"));
         title.getStyle().set("font-size", "20px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("margin", "0");
-        Paragraph subtitle = new Paragraph("3 simple steps to your perfect cover letter");
+        Paragraph subtitle = new Paragraph(translationService.translate("landing.simpleSteps"));
         subtitle.getStyle().set("font-size", "13px");
         subtitle.getStyle().set("color", TEXT_SECONDARY);
         subtitle.getStyle().set("margin", "4px 0 0");
@@ -931,7 +986,7 @@ public class LandingView extends VerticalLayout {
         footer.getStyle().set("background", BG_LIGHT);
         footer.getStyle().set("gap", "12px");
 
-        Button copyBtn = new Button("Copy to Clipboard", VaadinIcon.COPY.create());
+        Button copyBtn = new Button(translationService.translate("landing.copyToClipboard"), VaadinIcon.COPY.create());
         copyBtn.getStyle().set("background", "rgba(0,0,0,0.05)");
         copyBtn.getStyle().set("color", TEXT_PRIMARY);
         copyBtn.getStyle().set("font-weight", "600");
@@ -940,11 +995,11 @@ public class LandingView extends VerticalLayout {
         copyBtn.getStyle().set("cursor", "pointer");
         copyBtn.addClickListener(e -> {
             copyBtn.getElement().executeJs("navigator.clipboard.writeText($0)", letterContent);
-            copyBtn.setText("Copied!");
+            copyBtn.setText(translationService.translate("landing.copied"));
             copyBtn.setIcon(VaadinIcon.CHECK.create());
         });
 
-        Button useTemplateBtn = createPrimaryButton("Use This Template", () -> {
+        Button useTemplateBtn = createPrimaryButton(translationService.translate("landing.useTemplate"), () -> {
             dialog.close();
             getUI().ifPresent(ui -> ui.navigate(LoginView.class));
         });
@@ -965,7 +1020,7 @@ public class LandingView extends VerticalLayout {
         footer.getStyle().set("padding", "32px");
         footer.getStyle().set("border-top", "1px solid rgba(0,0,0,0.05)");
 
-        Paragraph copyright = new Paragraph("© 2024 CL Booster. All rights reserved.");
+        Paragraph copyright = new Paragraph(translationService.translate("landing.copyright"));
         copyright.getStyle().set("font-size", "13px");
         copyright.getStyle().set("color", TEXT_SECONDARY);
         copyright.getStyle().set("text-align", "center");

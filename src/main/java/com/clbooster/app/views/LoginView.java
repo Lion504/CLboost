@@ -1,6 +1,7 @@
 package com.clbooster.app.views;
 
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
+import com.clbooster.app.i18n.TranslationService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.*;
@@ -26,11 +27,13 @@ public class LoginView extends VerticalLayout {
     private static final String BG_WHITE = "#ffffff";
 
     private final AuthenticationService authService;
+    private final TranslationService translationService;
     private TextField usernameField;
     private PasswordField passwordField;
 
     public LoginView() {
         this.authService = new AuthenticationService();
+        this.translationService = new TranslationService();
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
@@ -63,7 +66,7 @@ public class LoginView extends VerticalLayout {
         arrowLeft.getStyle().set("height", "14px");
         arrowLeft.getStyle().set("color", TEXT_SECONDARY);
 
-        Span backText = new Span("Back to home");
+        Span backText = new Span(translationService.translate("landing.backToHome"));
         backText.getStyle().set("font-size", "13px");
         backText.getStyle().set("font-weight", "500");
         backText.getStyle().set("color", TEXT_SECONDARY);
@@ -87,14 +90,14 @@ public class LoginView extends VerticalLayout {
         logoIcon.add(VaadinIcon.SPARK_LINE.create());
 
         // Title section
-        H2 title = new H2("Welcome back.");
+        H2 title = new H2(translationService.translate("login.title"));
         title.getStyle().set("font-size", "28px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("color", TEXT_PRIMARY);
         title.getStyle().set("margin", "0 0 8px 0");
         title.getStyle().set("letter-spacing", "-0.025em");
 
-        Paragraph subtitle = new Paragraph("Please enter your details to sign in.");
+        Paragraph subtitle = new Paragraph(translationService.translate("login.subtitle"));
         subtitle.getStyle().set("font-size", "15px");
         subtitle.getStyle().set("color", TEXT_SECONDARY);
         subtitle.getStyle().set("margin", "0 0 32px 0");
@@ -128,7 +131,7 @@ public class LoginView extends VerticalLayout {
             }
         });
 
-        Span forgot = new Span("Forgot password?");
+        Span forgot = new Span(translationService.translate("login.forgotPassword"));
         forgot.getStyle().set("font-size", "14px");
         forgot.getStyle().set("font-weight", "500");
         forgot.getStyle().set("color", PRIMARY);
@@ -160,7 +163,7 @@ public class LoginView extends VerticalLayout {
         line1.getStyle().set("height", "1px");
         line1.getStyle().set("background", "rgba(0, 0, 0, 0.1)");
 
-        Span orText = new Span("or continue with");
+        Span orText = new Span(translationService.translate("login.orContinueWith"));
         orText.getStyle().set("font-size", "13px");
         orText.getStyle().set("color", TEXT_SECONDARY);
         orText.getStyle().set("white-space", "nowrap");
@@ -190,7 +193,7 @@ public class LoginView extends VerticalLayout {
         signupRow.getStyle().set("margin-top", "24px");
         signupRow.getStyle().set("gap", "4px");
 
-        Span noAccount = new Span("Don't have an account?");
+        Span noAccount = new Span(translationService.translate("login.noAccount"));
         noAccount.getStyle().set("font-size", "14px");
         noAccount.getStyle().set("color", TEXT_SECONDARY);
 

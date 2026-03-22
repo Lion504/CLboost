@@ -98,14 +98,14 @@ public class SettingsView extends VerticalLayout {
         pageHeader.getStyle().set("gap", "4px");
         pageHeader.getStyle().set("margin-bottom", "8px");
 
-        H2 title = new H2("Preferences");
+        H2 title = new H2(translationService.translate("settings.preferences"));
         title.getStyle().set("font-size", "30px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("letter-spacing", "-0.025em");
         title.getStyle().set("color", TEXT_PRIMARY);
         title.getStyle().set("margin", "0");
 
-        Paragraph subtitle = new Paragraph("Manage your application experience and accessibility.");
+        Paragraph subtitle = new Paragraph(translationService.translate("settings.preferencesDesc"));
         subtitle.getStyle().set("font-size", "14px");
         subtitle.getStyle().set("color", TEXT_SECONDARY);
         subtitle.getStyle().set("margin", "0");
@@ -149,13 +149,13 @@ public class SettingsView extends VerticalLayout {
     private Div createAppearanceCard() {
         Div card = createCard();
 
-        H3 title = new H3("Appearance");
+        H3 title = new H3(translationService.translate("settings.appearance"));
         title.getStyle().set("font-size", "18px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("color", TEXT_PRIMARY);
         title.getStyle().set("margin", "0 0 8px 0");
 
-        Paragraph desc = new Paragraph("Customize how Cover Booster looks on your device.");
+        Paragraph desc = new Paragraph(translationService.translate("settings.appearance.desc"));
         desc.getStyle().set("font-size", "14px");
         desc.getStyle().set("color", TEXT_SECONDARY);
         desc.getStyle().set("margin", "0");
@@ -168,13 +168,13 @@ public class SettingsView extends VerticalLayout {
     private Div createLanguageCard() {
         Div card = createCard();
 
-        H3 title = new H3("Language & Region");
+        H3 title = new H3(translationService.translate("settings.language"));
         title.getStyle().set("font-size", "18px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("color", TEXT_PRIMARY);
         title.getStyle().set("margin", "0 0 8px 0");
 
-        Paragraph desc = new Paragraph("Select your preferred language for the interface and AI generation.");
+        Paragraph desc = new Paragraph(translationService.translate("settings.languageSelect"));
         desc.getStyle().set("font-size", "14px");
         desc.getStyle().set("color", TEXT_SECONDARY);
         desc.getStyle().set("margin", "0 0 24px 0");
