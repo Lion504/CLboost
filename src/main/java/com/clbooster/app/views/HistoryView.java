@@ -741,7 +741,7 @@ private List<HistoryItem> allItems = new ArrayList<>();
     }
 
     private Button createLoadMoreButton() {
-        Button btn = new Button("Load more generations");
+        Button btn = new Button(translationService.translate("history.loadMore"));
         btn.getStyle().set("background", "transparent").set("color", TEXT_SECONDARY).set("font-weight", "500")
                 .set("font-size", "14px").set("border", "1px dashed rgba(0,0,0,0.15)").set("border-radius", "12px")
                 .set("padding", "16px").set("width", "100%").set("margin-top", "8px");

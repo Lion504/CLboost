@@ -186,7 +186,7 @@ public class SettingsView extends VerticalLayout {
         selectGroup.getStyle().set("gap", "8px");
         selectGroup.setWidth("280px");
 
-        Span label = new Span("Language");
+        Span label = new Span(translationService.translate("label.language"));
         label.getStyle().set("font-size", "12px");
         label.getStyle().set("font-weight", "700");
         label.getStyle().set("color", TEXT_SECONDARY);
@@ -194,7 +194,13 @@ public class SettingsView extends VerticalLayout {
         label.getStyle().set("letter-spacing", "0.05em");
 
         langSelect = new Select<>();
-        langSelect.setItems("English", "Suomi", "Português", "فارسی", "中文");
+        langSelect.setItems(
+            translationService.translate("settings.langEnglish"),
+            translationService.translate("settings.langFinnish"),
+            translationService.translate("settings.langPortuguese"),
+            translationService.translate("settings.langPersian"),
+            translationService.translate("settings.langChinese")
+        );
         // Convert stored language code to display name
         String savedLanguage = userSettings.getLanguage();
         String displayValue = "English";
@@ -213,15 +219,20 @@ public class SettingsView extends VerticalLayout {
         langSelect.addValueChangeListener(e -> {
             if (e.getValue() != null) {
                 String langCode;
-                switch (e.getValue()) {
-                    case "Suomi": langCode = "Finnish (Suomi)"; break;
-                    case "Português": langCode = "Portuguese (Português)"; break;
-                    case "فارسی": langCode = "Persian (فارسی)"; break;
-                    case "中文": langCode = "Chinese (中文)"; break;
-                    default: langCode = "English";
+                String selectedDisplay = e.getValue();
+                if (selectedDisplay.equals(translationService.translate("settings.langFinnish"))) {
+                    langCode = "Finnish (Suomi)";
+                } else if (selectedDisplay.equals(translationService.translate("settings.langPortuguese"))) {
+                    langCode = "Portuguese (Português)";
+                } else if (selectedDisplay.equals(translationService.translate("settings.langPersian"))) {
+                    langCode = "Persian (فارسی)";
+                } else if (selectedDisplay.equals(translationService.translate("settings.langChinese"))) {
+                    langCode = "Chinese (中文)";
+                } else {
+                    langCode = "English";
                 }
                 translationService.setLanguage(langCode);
-                Notification.show("Language changed to " + e.getValue() + ". Save settings to apply permanently.", 3000,
+                Notification.show(translationService.translate("settings.languageChanged") + " " + selectedDisplay + ". " + translationService.translate("settings.saveToApply"), 3000,
                         Notification.Position.BOTTOM_END);
             }
         });
@@ -538,10 +549,10 @@ public class SettingsView extends VerticalLayout {
         actions.getStyle().set("gap", "12px");
         actions.getStyle().set("margin-top", "8px");
 
-        Button discardBtn = new Button("Discard Changes", e -> {
+        Button discardBtn = new Button(translationService.translate("action.discard"), e -> {
             loadSettings();
             getUI().ifPresent(ui -> ui.getPage().reload());
-            Notification.show("Changes discarded", 2000, Notification.Position.BOTTOM_END);
+            Notification.show(translationService.translate("settings.changesDiscarded"), 2000, Notification.Position.BOTTOM_END);
         });
         discardBtn.getStyle().set("background", "transparent");
         discardBtn.getStyle().set("color", TEXT_SECONDARY);
@@ -561,7 +572,7 @@ public class SettingsView extends VerticalLayout {
             discardBtn.getStyle().set("color", TEXT_SECONDARY);
         });
 
-        Button saveBtn = createPrimaryButton("Save Changes", () -> saveSettings());
+        Button saveBtn = createPrimaryButton(translationService.translate("action.save"), () -> saveSettings());
 
         actions.add(discardBtn, saveBtn);
 

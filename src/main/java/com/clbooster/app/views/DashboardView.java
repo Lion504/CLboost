@@ -167,7 +167,7 @@ public class DashboardView extends VerticalLayout {
         card.getStyle().set("background", BG_GRAY).set("border-radius", "20px").set("padding", "20px 24px").set("width",
                 "100%");
 
-        Span heading = new Span("Quick Actions");
+        Span heading = new Span(translationService.translate("dashboard.quickActions"));
         heading.getStyle().set("font-size", "12px").set("font-weight", "700").set("text-transform", "uppercase")
                 .set("letter-spacing", "0.08em").set("color", TEXT_SECONDARY).set("display", "block")
                 .set("margin-bottom", "14px");
@@ -496,19 +496,19 @@ public class DashboardView extends VerticalLayout {
             long diff = System.currentTimeMillis() - Files.getLastModifiedTime(file).toMillis();
             long hours = diff / 3_600_000L;
             if (hours < 1)
-                return "Just now";
+                return translationService.translate("dashboard.justNow");
             if (hours < 24)
-                return hours + "h ago";
+                return hours + translationService.translate("dashboard.hoursAgo");
             long days = hours / 24;
             if (days == 1)
-                return "Yesterday";
+                return translationService.translate("dashboard.yesterday");
             if (days < 7)
-                return days + " days ago";
+                return days + translationService.translate("dashboard.daysAgo");
             if (days < 30)
-                return (days / 7) + " weeks ago";
-            return (days / 30) + " months ago";
+                return (days / 7) + translationService.translate("dashboard.weeksAgo");
+            return (days / 30) + translationService.translate("dashboard.monthsAgo");
         } catch (IOException e) {
-            return "Recently";
+            return translationService.translate("dashboard.recently");
         }
     }
 
