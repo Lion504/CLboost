@@ -108,7 +108,7 @@ public class LandingView extends VerticalLayout {
         logoIcon.getStyle().set("color", "white");
         logoIcon.add(VaadinIcon.SPARK_LINE.create());
 
-        Span logoText = new Span("CL Booster");
+        Span logoText = new Span(translationService.translate("landing.clBooster"));
         logoText.getStyle().set("font-weight", "700");
         logoText.getStyle().set("font-size", "20px");
         logoText.getStyle().set("letter-spacing", "-0.025em");
@@ -182,7 +182,9 @@ public class LandingView extends VerticalLayout {
         loginBtn.getStyle().set("background", "transparent");
         loginBtn.getStyle().set("border-radius", "9999px");
         loginBtn.getStyle().set("padding", "8px 16px");
-        loginBtn.getStyle().set("transition", "background 0.2s");
+        loginBtn.getStyle().set("transition", "all 0.2s");
+        loginBtn.getElement().addEventListener("mouseenter", e -> loginBtn.getStyle().set("background", "rgba(0, 0, 0, 0.08)"));
+        loginBtn.getElement().addEventListener("mouseleave", e -> loginBtn.getStyle().set("background", "transparent"));
 
         Button signupBtn = createPrimaryButton(translationService.translate("signup.signup"), () -> getUI().ifPresent(ui -> ui.navigate(SignUpView.class)));
         signupBtn.getStyle().set("font-size", "13px");
@@ -244,14 +246,16 @@ public class LandingView extends VerticalLayout {
         headline.getStyle().set("max-width", "600px");
 
         // Set HTML content directly for gradient text support
-        headline.getElement().setProperty("innerHTML", "<div style='color: " + TEXT_PRIMARY + ";'>Elevate your</div>"
+        String elevateYour = translationService.translate("landing.elevateYour");
+        String jobHunting = translationService.translate("landing.jobHunting");
+        String withAI = translationService.translate("landing.withAI");
+        headline.getElement().setProperty("innerHTML", "<div style='color: " + TEXT_PRIMARY + ";'>" + elevateYour + "</div>"
                 + "<span style='background: linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT
-                + " 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent; display: inline-block;'>job hunting</span>"
-                + "<span style='color: " + TEXT_PRIMARY + ";'> with AI.</span>");
+                + " 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent; display: inline-block;'>" + jobHunting + "</span>"
+                + "<span style='color: " + TEXT_PRIMARY + ";'> " + withAI + "</span>");
 
         // Description
-        Paragraph description = new Paragraph(
-                "Generate perfectly tailored cover letters in seconds by analyzing your resume, the job ad, and company culture.");
+        Paragraph description = new Paragraph(translationService.translate("landing.heroDescription"));
         description.getStyle().set("font-size", "20px");
         description.getStyle().set("color", TEXT_SECONDARY);
         description.getStyle().set("line-height", "1.6");
@@ -264,12 +268,12 @@ public class LandingView extends VerticalLayout {
         ctaRow.getStyle().set("gap", "16px");
         ctaRow.getStyle().set("padding-top", "16px");
 
-        Button generateBtn = createPrimaryButton("Generate Now",
+        Button generateBtn = createPrimaryButton(translationService.translate("landing.generateNow"),
                 () -> getUI().ifPresent(ui -> ui.navigate(LoginView.class)));
         generateBtn.getStyle().set("font-size", "16px");
         generateBtn.getStyle().set("padding", "16px 40px");
 
-        Button samplesBtn = createSecondaryButton("See Samples", this::openSamplesModal);
+        Button samplesBtn = createSecondaryButton(translationService.translate("landing.seeSamples"), this::openSamplesModal);
         samplesBtn.getStyle().set("font-size", "16px");
         samplesBtn.getStyle().set("padding", "16px 40px");
 
@@ -361,14 +365,14 @@ public class LandingView extends VerticalLayout {
         cards.getStyle().set("justify-content", "center");
         cards.getStyle().set("flex-wrap", "wrap");
 
-        cards.add(createFeatureCard(VaadinIcon.BOLT, "#FF9500", "Instant Generation",
-                "Analyze complex job ads and extract key keywords automatically."));
+        cards.add(createFeatureCard(VaadinIcon.BOLT, "#FF9500", translationService.translate("landing.instantGeneration"),
+                translationService.translate("landing.instantGenerationDesc")));
 
-        cards.add(createFeatureCard(VaadinIcon.GLOBE, "#007AFF", "Company Intel",
-                "We research the company's mission to align your voice with their values."));
+        cards.add(createFeatureCard(VaadinIcon.GLOBE, "#007AFF", translationService.translate("landing.companyIntel"),
+                translationService.translate("landing.companyIntelDesc")));
 
-        cards.add(createFeatureCard(VaadinIcon.CHECK, "#34C759", "ATS Optimized",
-                "Strategically place keywords to ensure you pass through modern filters."));
+        cards.add(createFeatureCard(VaadinIcon.CHECK, "#34C759", translationService.translate("landing.atsOptimized"),
+                translationService.translate("landing.atsOptimizedDesc")));
 
         section.add(header, cards);
 
@@ -550,7 +554,7 @@ public class LandingView extends VerticalLayout {
         footer.getStyle().set("border-top", "1px solid rgba(0,0,0,0.05)");
         footer.getStyle().set("background", BG_LIGHT);
 
-        Button ctaBtn = createPrimaryButton("Try it for free", () -> {
+        Button ctaBtn = createPrimaryButton(translationService.translate("landing.tryItForFree"), () -> {
             dialog.close();
             getUI().ifPresent(ui -> ui.navigate(LoginView.class));
         });
@@ -709,7 +713,7 @@ public class LandingView extends VerticalLayout {
 
             textGroup.add(jobTitle, company);
 
-            Span matchBadge = new Span(sample.match() + " MATCH");
+            Span matchBadge = new Span(sample.match() + " " + translationService.translate("landing.match"));
             matchBadge.getStyle().set("font-size", "11px");
             matchBadge.getStyle().set("font-weight", "900");
             matchBadge.getStyle().set("color", PRIMARY);
@@ -755,7 +759,7 @@ public class LandingView extends VerticalLayout {
         footer.getStyle().set("border-top", "1px solid rgba(0,0,0,0.05)");
         footer.getStyle().set("background", BG_LIGHT);
 
-        Button ctaBtn = createPrimaryButton("Try it for free", () -> {
+        Button ctaBtn = createPrimaryButton(translationService.translate("landing.tryItForFree"), () -> {
             dialog.close();
             getUI().ifPresent(ui -> ui.navigate(LoginView.class));
         });
@@ -828,16 +832,16 @@ public class LandingView extends VerticalLayout {
         stepsContent.getStyle().set("gap", "24px");
 
         // Step 1
-        HorizontalLayout step1 = createStepItem("1", "Upload Your Resume",
-                "Upload your existing resume or create a new profile. Our AI will analyze your skills and experience.");
+        HorizontalLayout step1 = createStepItem("1", translationService.translate("landing.uploadYourResume"),
+                translationService.translate("landing.uploadYourResumeDesc"));
 
         // Step 2
-        HorizontalLayout step2 = createStepItem("2", "Paste Job Description",
-                "Copy and paste the job posting you're applying for. We'll extract key requirements and company details.");
+        HorizontalLayout step2 = createStepItem("2", translationService.translate("landing.pasteJobDescription"),
+                translationService.translate("landing.pasteJobDescriptionDesc"));
 
         // Step 3
-        HorizontalLayout step3 = createStepItem("3", "Generate & Download",
-                "Our AI creates a tailored cover letter in seconds. Edit if needed, then download as PDF or copy to clipboard.");
+        HorizontalLayout step3 = createStepItem("3", translationService.translate("landing.generateDownload"),
+                translationService.translate("landing.generateDownloadDesc"));
 
         stepsContent.add(step1, step2, step3);
 
@@ -850,7 +854,7 @@ public class LandingView extends VerticalLayout {
         footer.getStyle().set("border-top", "1px solid rgba(0,0,0,0.05)");
         footer.getStyle().set("background", BG_LIGHT);
 
-        Button ctaBtn = createPrimaryButton("Get Started", () -> {
+        Button ctaBtn = createPrimaryButton(translationService.translate("landing.getStarted"), () -> {
             dialog.close();
             getUI().ifPresent(ui -> ui.navigate(LoginView.class));
         });
