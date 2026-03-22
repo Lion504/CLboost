@@ -110,10 +110,10 @@ public class LoginView extends VerticalLayout {
         form.setWidthFull();
 
         // Username field
-        usernameField = createTextField("Username", "alexsmith");
+        usernameField = createTextField(translationService.translate("label.username"), "alexsmith");
 
         // Password field
-        passwordField = createPasswordField("Password");
+        passwordField = createPasswordField(translationService.translate("label.password"));
 
         // Remember me and Forgot password row
         HorizontalLayout rememberRow = new HorizontalLayout();
@@ -121,7 +121,7 @@ public class LoginView extends VerticalLayout {
         rememberRow.setAlignItems(FlexComponent.Alignment.CENTER);
         rememberRow.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 
-        Checkbox remember = new Checkbox("Remember me");
+        Checkbox remember = new Checkbox(translationService.translate("action.rememberMe"));
         remember.getStyle().set("font-size", "14px");
         remember.getStyle().set("color", TEXT_PRIMARY);
         remember.addValueChangeListener(e -> {
@@ -147,7 +147,7 @@ public class LoginView extends VerticalLayout {
         rememberRow.add(remember, forgot);
 
         // Sign In button
-        Button signIn = createPrimaryButton("Sign In", this::handleLogin);
+        Button signIn = createPrimaryButton(translationService.translate("action.login"), this::handleLogin);
         signIn.setWidthFull();
         signIn.getStyle().set("margin-top", "8px");
 
@@ -197,7 +197,7 @@ public class LoginView extends VerticalLayout {
         noAccount.getStyle().set("font-size", "14px");
         noAccount.getStyle().set("color", TEXT_SECONDARY);
 
-        Anchor createLink = new Anchor("signup", "Sign up");
+        Anchor createLink = new Anchor("signup", translationService.translate("signup.signup"));
         createLink.getStyle().set("font-size", "14px");
         createLink.getStyle().set("font-weight", "600");
         createLink.getStyle().set("color", PRIMARY);

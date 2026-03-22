@@ -1,6 +1,7 @@
 package com.clbooster.app.views;
 
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
+import com.clbooster.app.i18n.TranslationService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.*;
@@ -31,6 +32,7 @@ public class SignUpView extends VerticalLayout {
     private static final String GRAY = "rgba(0, 0, 0, 0.1)";
 
     private final AuthenticationService authService;
+    private final TranslationService translationService;
     private TextField firstNameField;
     private TextField lastNameField;
     private TextField usernameField;
@@ -41,6 +43,7 @@ public class SignUpView extends VerticalLayout {
 
     public SignUpView() {
         this.authService = new AuthenticationService();
+        this.translationService = new TranslationService();
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
@@ -73,7 +76,7 @@ public class SignUpView extends VerticalLayout {
         arrowLeft.getStyle().set("height", "14px");
         arrowLeft.getStyle().set("color", TEXT_SECONDARY);
 
-        Span backText = new Span("Back to home");
+        Span backText = new Span(translationService.translate("landing.backToHome"));
         backText.getStyle().set("font-size", "13px");
         backText.getStyle().set("font-weight", "500");
         backText.getStyle().set("color", TEXT_SECONDARY);
@@ -97,14 +100,14 @@ public class SignUpView extends VerticalLayout {
         logoIcon.add(VaadinIcon.SPARK_LINE.create());
 
         // Title section
-        H2 title = new H2("Create account.");
+        H2 title = new H2(translationService.translate("signup.createAccount"));
         title.getStyle().set("font-size", "28px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("color", TEXT_PRIMARY);
         title.getStyle().set("margin", "0 0 8px 0");
         title.getStyle().set("letter-spacing", "-0.025em");
 
-        Paragraph subtitle = new Paragraph("Join thousands of job seekers today.");
+        Paragraph subtitle = new Paragraph(translationService.translate("signup.joinThousands"));
         subtitle.getStyle().set("font-size", "15px");
         subtitle.getStyle().set("color", TEXT_SECONDARY);
         subtitle.getStyle().set("margin", "0 0 32px 0");
@@ -121,13 +124,13 @@ public class SignUpView extends VerticalLayout {
         nameRow.setWidthFull();
         nameRow.getStyle().set("gap", "12px");
 
-        firstNameField = new TextField("First Name");
+        firstNameField = new TextField(translationService.translate("label.firstName"));
         firstNameField.setPlaceholder("Alex");
         firstNameField.setWidthFull();
         firstNameField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
         firstNameField.getStyle().set("--vaadin-input-field-border-radius", "12px");
 
-        lastNameField = new TextField("Last Name");
+        lastNameField = new TextField(translationService.translate("label.lastName"));
         lastNameField.setPlaceholder("Riviera");
         lastNameField.setWidthFull();
         lastNameField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
@@ -137,21 +140,21 @@ public class SignUpView extends VerticalLayout {
         nameRow.expand(firstNameField, lastNameField);
 
         // Username field
-        usernameField = new TextField("Username");
+        usernameField = new TextField(translationService.translate("label.username"));
         usernameField.setPlaceholder("alexriviera");
         usernameField.setWidthFull();
         usernameField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
         usernameField.getStyle().set("--vaadin-input-field-border-radius", "12px");
 
         // Email field
-        emailField = new EmailField("Email Address");
+        emailField = new EmailField(translationService.translate("label.email"));
         emailField.setPlaceholder("alex@example.com");
         emailField.setWidthFull();
         emailField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
         emailField.getStyle().set("--vaadin-input-field-border-radius", "12px");
 
         // Password field
-        passwordField = new PasswordField("Password");
+        passwordField = new PasswordField(translationService.translate("label.password"));
         passwordField.setWidthFull();
         passwordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
         passwordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
@@ -179,7 +182,7 @@ public class SignUpView extends VerticalLayout {
             strengthBarsLayout.add(bar);
         }
 
-        strengthText = new Span("Password strength: Enter password");
+        strengthText = new Span(translationService.translate("signup.passwordStrength"));
         strengthText.getStyle().set("font-size", "12px");
         strengthText.getStyle().set("color", TEXT_SECONDARY);
         strengthText.getStyle().set("font-weight", "500");
@@ -224,11 +227,11 @@ public class SignUpView extends VerticalLayout {
         termsLine1.getStyle().set("gap", "4px");
         termsLine1.getStyle().set("flex-wrap", "nowrap");
 
-        Span agreeText = new Span("By signing up, you agree to our");
+        Span agreeText = new Span(translationService.translate("signup.bySigningUp"));
         agreeText.getStyle().set("font-size", "13px");
         agreeText.getStyle().set("color", TEXT_SECONDARY);
 
-        Span termsLink = new Span("Terms of Service");
+        Span termsLink = new Span(translationService.translate("signup.termsOfService"));
         termsLink.getStyle().set("font-size", "13px");
         termsLink.getStyle().set("font-weight", "500");
         termsLink.getStyle().set("color", PRIMARY);
@@ -244,11 +247,11 @@ public class SignUpView extends VerticalLayout {
         termsLine2.getStyle().set("gap", "4px");
         termsLine2.getStyle().set("flex-wrap", "nowrap");
 
-        Span andText = new Span("and");
+        Span andText = new Span(translationService.translate("signup.and"));
         andText.getStyle().set("font-size", "13px");
         andText.getStyle().set("color", TEXT_SECONDARY);
 
-        Span privacyLink = new Span("Privacy Policy");
+        Span privacyLink = new Span(translationService.translate("signup.privacyPolicy"));
         privacyLink.getStyle().set("font-size", "13px");
         privacyLink.getStyle().set("font-weight", "500");
         privacyLink.getStyle().set("color", PRIMARY);
@@ -262,7 +265,7 @@ public class SignUpView extends VerticalLayout {
         termsRow.add(checkIcon, termsTextLayout);
 
         // Create Account button
-        Button createBtn = createPrimaryButton("Create Account", this::handleRegistration);
+        Button createBtn = createPrimaryButton(translationService.translate("signup.createAccount"), this::handleRegistration);
         createBtn.setWidthFull();
         createBtn.getStyle().set("margin-top", "8px");
 
@@ -278,7 +281,7 @@ public class SignUpView extends VerticalLayout {
         line1.getStyle().set("height", "1px");
         line1.getStyle().set("background", "rgba(0, 0, 0, 0.1)");
 
-        Span orText = new Span("or continue with");
+        Span orText = new Span(translationService.translate("login.orContinueWith"));
         orText.getStyle().set("font-size", "13px");
         orText.getStyle().set("color", TEXT_SECONDARY);
         orText.getStyle().set("white-space", "nowrap");
@@ -308,11 +311,11 @@ public class SignUpView extends VerticalLayout {
         loginRow.getStyle().set("margin-top", "24px");
         loginRow.getStyle().set("gap", "4px");
 
-        Span haveAccount = new Span("Already have an account?");
+        Span haveAccount = new Span(translationService.translate("signup.haveAccount"));
         haveAccount.getStyle().set("font-size", "14px");
         haveAccount.getStyle().set("color", TEXT_SECONDARY);
 
-        Anchor loginLink = new Anchor("login", "Log in");
+        Anchor loginLink = new Anchor("login", translationService.translate("landing.logIn"));
         loginLink.getStyle().set("font-size", "14px");
         loginLink.getStyle().set("font-weight", "600");
         loginLink.getStyle().set("color", PRIMARY);
@@ -532,7 +535,7 @@ public class SignUpView extends VerticalLayout {
 
     private void showTermsOfServiceDialog() {
         Dialog dialog = new Dialog();
-        dialog.setHeaderTitle("Terms of Service");
+        dialog.setHeaderTitle(translationService.translate("terms.title"));
         dialog.setWidth("500px");
         dialog.setHeight("600px");
 
@@ -540,42 +543,36 @@ public class SignUpView extends VerticalLayout {
         content.setPadding(true);
         content.setSpacing(true);
 
-        H3 title = new H3("CL Booster Terms of Service");
+        H3 title = new H3(translationService.translate("terms.title"));
         title.getStyle().set("margin-top", "0");
 
-        Paragraph intro = new Paragraph(
-                "Welcome to CL Booster! By using our service, you agree to these terms. Please read them carefully.");
+        Paragraph intro = new Paragraph(translationService.translate("terms.intro"));
 
-        H4 section1 = new H4("1. Acceptance of Terms");
-        Paragraph text1 = new Paragraph(
-                "By accessing or using CL Booster, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this service.");
+        H4 section1 = new H4(translationService.translate("terms.section1.title"));
+        Paragraph text1 = new Paragraph(translationService.translate("terms.section1.text"));
 
-        H4 section2 = new H4("2. Use License");
-        Paragraph text2 = new Paragraph(
-                "Permission is granted to temporarily use CL Booster for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title. Under this license you may not:");
-        UnorderedList list2 = new UnorderedList(new ListItem("Modify or copy the materials"),
-                new ListItem("Use the materials for any commercial purpose"),
-                new ListItem("Attempt to decompile or reverse engineer any software"),
-                new ListItem("Remove any copyright or proprietary notations"));
+        H4 section2 = new H4(translationService.translate("terms.section2.title"));
+        Paragraph text2 = new Paragraph(translationService.translate("terms.section2.text"));
+        UnorderedList list2 = new UnorderedList(new ListItem(translationService.translate("terms.section2.list.item1")),
+                new ListItem(translationService.translate("terms.section2.list.item2")),
+                new ListItem(translationService.translate("terms.section2.list.item3")),
+                new ListItem(translationService.translate("terms.section2.list.item4")));
 
-        H4 section3 = new H4("3. User Accounts");
-        Paragraph text3 = new Paragraph(
-                "You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account or password.");
+        H4 section3 = new H4(translationService.translate("terms.section3.title"));
+        Paragraph text3 = new Paragraph(translationService.translate("terms.section3.text"));
 
-        H4 section4 = new H4("4. Disclaimer");
-        Paragraph text4 = new Paragraph(
-                "The materials on CL Booster are provided on an 'as is' basis. CL Booster makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property.");
+        H4 section4 = new H4(translationService.translate("terms.section4.title"));
+        Paragraph text4 = new Paragraph(translationService.translate("terms.section4.text"));
 
-        H4 section5 = new H4("5. Limitations");
-        Paragraph text5 = new Paragraph(
-                "In no event shall CL Booster or its suppliers be liable for any damages arising out of the use or inability to use the materials on CL Booster.");
+        H4 section5 = new H4(translationService.translate("terms.section5.title"));
+        Paragraph text5 = new Paragraph(translationService.translate("terms.section5.text"));
 
         content.add(title, intro, section1, text1, section2, text2, list2, section3, text3, section4, text4, section5,
                 text5);
         content.getStyle().set("overflow", "auto");
         content.setHeight("400px");
 
-        Button closeButton = new Button("I Understand", e -> dialog.close());
+        Button closeButton = new Button(translationService.translate("landing.iUnderstand"), e -> dialog.close());
         closeButton.getStyle().set("background", PRIMARY);
         closeButton.getStyle().set("color", "white");
 
@@ -586,7 +583,7 @@ public class SignUpView extends VerticalLayout {
 
     private void showPrivacyPolicyDialog() {
         Dialog dialog = new Dialog();
-        dialog.setHeaderTitle("Privacy Policy");
+        dialog.setHeaderTitle(translationService.translate("privacy.title"));
         dialog.setWidth("500px");
         dialog.setHeight("600px");
 
@@ -594,51 +591,47 @@ public class SignUpView extends VerticalLayout {
         content.setPadding(true);
         content.setSpacing(true);
 
-        H3 title = new H3("CL Booster Privacy Policy");
+        H3 title = new H3(translationService.translate("privacy.title"));
         title.getStyle().set("margin-top", "0");
 
-        Paragraph intro = new Paragraph(
-                "Your privacy is important to us. This Privacy Policy explains how CL Booster collects, uses, and protects your personal information.");
+        Paragraph intro = new Paragraph(translationService.translate("privacy.intro"));
 
-        H4 section1 = new H4("1. Information We Collect");
-        Paragraph text1 = new Paragraph("We collect information you provide directly to us, including:");
-        UnorderedList list1 = new UnorderedList(new ListItem("Personal information (name, email address, username)"),
-                new ListItem("Resume and job application data"), new ListItem("Usage data and analytics"),
-                new ListItem("Device and browser information"));
+        H4 section1 = new H4(translationService.translate("privacy.section1.title"));
+        Paragraph text1 = new Paragraph(translationService.translate("privacy.section1.text"));
+        UnorderedList list1 = new UnorderedList(new ListItem(translationService.translate("privacy.section1.list.item1")),
+                new ListItem(translationService.translate("privacy.section1.list.item2")),
+                new ListItem(translationService.translate("privacy.section1.list.item3")),
+                new ListItem(translationService.translate("privacy.section1.list.item4")));
 
-        H4 section2 = new H4("2. How We Use Your Information");
-        Paragraph text2 = new Paragraph("We use the information we collect to:");
-        UnorderedList list2 = new UnorderedList(new ListItem("Provide and maintain our services"),
-                new ListItem("Generate personalized cover letters"), new ListItem("Improve and optimize our platform"),
-                new ListItem("Communicate with you about updates and features"),
-                new ListItem("Protect against fraud and abuse"));
+        H4 section2 = new H4(translationService.translate("privacy.section2.title"));
+        Paragraph text2 = new Paragraph(translationService.translate("privacy.section2.text"));
+        UnorderedList list2 = new UnorderedList(new ListItem(translationService.translate("privacy.section2.list.item1")),
+                new ListItem(translationService.translate("privacy.section2.list.item2")),
+                new ListItem(translationService.translate("privacy.section2.list.item3")),
+                new ListItem(translationService.translate("privacy.section2.list.item4")),
+                new ListItem(translationService.translate("privacy.section2.list.item5")));
 
-        H4 section3 = new H4("3. Data Security");
-        Paragraph text3 = new Paragraph(
-                "We implement appropriate technical and organizational measures to protect your personal data against unauthorized access, alteration, disclosure, or destruction. All passwords are securely hashed using industry-standard encryption.");
+        H4 section3 = new H4(translationService.translate("privacy.section3.title"));
+        Paragraph text3 = new Paragraph(translationService.translate("privacy.section3.text"));
 
-        H4 section4 = new H4("4. Data Retention");
-        Paragraph text4 = new Paragraph(
-                "We retain your personal information for as long as your account is active or as needed to provide you services. You may request deletion of your account and associated data at any time by contacting us.");
+        H4 section4 = new H4(translationService.translate("privacy.section4.title"));
+        Paragraph text4 = new Paragraph(translationService.translate("privacy.section4.text"));
 
-        H4 section5 = new H4("5. Third-Party Services");
-        Paragraph text5 = new Paragraph(
-                "We may use third-party services for hosting, analytics, and AI processing. These services have their own privacy policies and we encourage you to read them.");
+        H4 section5 = new H4(translationService.translate("privacy.section5.title"));
+        Paragraph text5 = new Paragraph(translationService.translate("privacy.section5.text"));
 
-        H4 section6 = new H4("6. Your Rights");
-        Paragraph text6 = new Paragraph(
-                "You have the right to access, correct, or delete your personal information. You may also object to or restrict certain processing of your data. Contact us at privacy@clbooster.com for any privacy-related requests.");
+        H4 section6 = new H4(translationService.translate("privacy.section6.title"));
+        Paragraph text6 = new Paragraph(translationService.translate("privacy.section6.text"));
 
-        H4 section7 = new H4("7. Changes to This Policy");
-        Paragraph text7 = new Paragraph(
-                "We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the effective date.");
+        H4 section7 = new H4(translationService.translate("privacy.section7.title"));
+        Paragraph text7 = new Paragraph(translationService.translate("privacy.section7.text"));
 
         content.add(title, intro, section1, text1, list1, section2, text2, list2, section3, text3, section4, text4,
                 section5, text5, section6, text6, section7, text7);
         content.getStyle().set("overflow", "auto");
         content.setHeight("400px");
 
-        Button closeButton = new Button("I Understand", e -> dialog.close());
+        Button closeButton = new Button(translationService.translate("landing.iUnderstand"), e -> dialog.close());
         closeButton.getStyle().set("background", PRIMARY);
         closeButton.getStyle().set("color", "white");
 
