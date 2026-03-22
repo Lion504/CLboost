@@ -300,7 +300,7 @@ public class LandingView extends VerticalLayout {
         glow.getStyle().set("z-index", "-1");
         glow.getStyle().set("animation", "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite");
 
-        Image heroImage = new Image("images/hero.jpg", "Hero");
+        Image heroImage = new Image("images/hero.jpg", translationService.translate("landing.heroImage"));
         heroImage.getStyle().set("width", "100%");
         heroImage.getStyle().set("max-width", "560px");
         heroImage.getStyle().set("border-radius", "48px");
@@ -502,14 +502,14 @@ public class LandingView extends VerticalLayout {
         faqContent.getStyle().set("padding", "32px");
         faqContent.getStyle().set("gap", "32px");
 
-        List<String[]> faqItems = List.of(new String[] { "Is it really free?",
-                "Yes, Cover Booster is currently free for all job seekers. Our mission is to democratize high-quality job application tools." },
-                new String[] { "How does the AI work?",
-                        "We use advanced Large Language Models specifically tuned for career coaching. We cross-reference your resume against the job description to find the most impactful overlaps." },
-                new String[] { "Is my data safe?",
-                        "Absolutely. We encrypt all uploaded resumes and do not sell your personal data to third parties. Your privacy is our priority." },
-                new String[] { "Can I use multiple resumes?",
-                        "Yes, you can upload up to 5 different versions of your resume to target various roles (e.g., Design vs. Management)." });
+        List<String[]> faqItems = List.of(new String[] { translationService.translate("landing.faqIsFree"),
+                translationService.translate("landing.faqIsFreeAnswer") },
+                new String[] { translationService.translate("landing.faqHowAi"),
+                        translationService.translate("landing.faqHowAiAnswer") },
+                new String[] { translationService.translate("landing.faqDataSafe"),
+                        translationService.translate("landing.faqDataSafeAnswer") },
+                new String[] { translationService.translate("landing.faqMultipleResumes"),
+                        translationService.translate("landing.faqMultipleResumesAnswer") });
 
         for (String[] item : faqItems) {
             VerticalLayout faqItem = new VerticalLayout();
