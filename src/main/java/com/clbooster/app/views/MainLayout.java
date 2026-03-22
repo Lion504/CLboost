@@ -107,10 +107,10 @@ public class MainLayout extends AppLayout {
         avatarMenu.setOpenOnClick(true);
 
         // Add menu items
-        avatarMenu.addItem("Profile", e -> getUI().ifPresent(ui -> ui.navigate(ProfileView.class)));
-        avatarMenu.addItem("Settings", e -> getUI().ifPresent(ui -> ui.navigate(SettingsView.class)));
+        avatarMenu.addItem(translationService.translate("mainlayout.profile"), e -> getUI().ifPresent(ui -> ui.navigate(ProfileView.class)));
+        avatarMenu.addItem(translationService.translate("mainlayout.settings"), e -> getUI().ifPresent(ui -> ui.navigate(SettingsView.class)));
         avatarMenu.addSeparator();
-        avatarMenu.addItem("Sign Out", e -> {
+        avatarMenu.addItem(translationService.translate("mainlayout.signOut"), e -> {
             authService.logout();
             getUI().ifPresent(ui -> ui.navigate(LoginView.class));
         });
@@ -255,7 +255,7 @@ public class MainLayout extends AppLayout {
         versionInfo.getStyle().set("padding", "20px");
         versionInfo.getStyle().set("gap", "8px");
 
-        Span versionLabel = new Span("v4.0.0");
+        Span versionLabel = new Span(translationService.translate("mainlayout.version") + ": 4.0.0");
         versionLabel.getStyle().set("font-size", "12px");
         versionLabel.getStyle().set("color", SIDEBAR_LABEL);
 
@@ -265,7 +265,7 @@ public class MainLayout extends AppLayout {
         dot.getStyle().set("background", "#34C759");
         dot.getStyle().set("border-radius", "50%");
 
-        Span statusLabel = new Span("Online");
+        Span statusLabel = new Span(translationService.translate("mainlayout.online"));
         statusLabel.getStyle().set("font-size", "12px");
         statusLabel.getStyle().set("color", SIDEBAR_TEXT);
 

@@ -4,6 +4,7 @@ import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.Profile;
 import com.clbooster.app.backend.service.profile.ProfileService;
 import com.clbooster.app.backend.service.profile.User;
+import com.clbooster.app.i18n.TranslationService;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -37,6 +38,7 @@ public class ProfileView extends VerticalLayout {
 
     private final AuthenticationService authService;
     private final ProfileService profileService;
+    private final TranslationService translationService;
     private User currentUser;
     private Profile userProfile;
 
@@ -64,6 +66,7 @@ public class ProfileView extends VerticalLayout {
     public ProfileView() {
         this.authService = new AuthenticationService();
         this.profileService = new ProfileService();
+        this.translationService = new TranslationService();
         this.currentUser = authService.getCurrentUser();
         this.userProfile = currentUser != null ? profileService.getProfile(currentUser.getPin()) : null;
 
@@ -144,7 +147,7 @@ public class ProfileView extends VerticalLayout {
         badgeRow.getStyle().set("gap", "8px");
         badgeRow.getStyle().set("margin-top", "4px");
 
-        Span planBadge = new Span("STANDARD ACCOUNT");
+        Span planBadge = new Span(translationService.translate("profile.standardAccount"));
         planBadge.getStyle().set("font-size", "11px");
         planBadge.getStyle().set("font-weight", "700");
         planBadge.getStyle().set("padding", "4px 10px");
@@ -153,7 +156,7 @@ public class ProfileView extends VerticalLayout {
         planBadge.getStyle().set("border-radius", "9999px");
         planBadge.getStyle().set("letter-spacing", "0.05em");
 
-        Span versionBadge = new Span("V4.0 PRO");
+        Span versionBadge = new Span(translationService.translate("profile.v4pro"));
         versionBadge.getStyle().set("font-size", "11px");
         versionBadge.getStyle().set("font-weight", "700");
         versionBadge.getStyle().set("padding", "4px 10px");
@@ -171,7 +174,7 @@ public class ProfileView extends VerticalLayout {
         HorizontalLayout actions = new HorizontalLayout();
         actions.getStyle().set("gap", "12px");
 
-        editBtn = new Button("Edit Profile", VaadinIcon.PENCIL.create());
+        editBtn = new Button(translationService.translate("profile.editProfile"), VaadinIcon.PENCIL.create());
         editBtn.getStyle().set("background", BG_GRAY);
         editBtn.getStyle().set("color", TEXT_PRIMARY);
         editBtn.getStyle().set("font-weight", "600");
@@ -208,8 +211,8 @@ public class ProfileView extends VerticalLayout {
         tabs.setWidthFull();
         tabs.getStyle().set("background", "transparent");
 
-        Tab general = new Tab("General");
-        Tab security = new Tab("Security");
+        Tab general = new Tab(translationService.translate("profile.general"));
+        Tab security = new Tab(translationService.translate("profile.security"));
         // Notifications and Data & Privacy tabs removed - available via dedicated views
 
         general.getStyle().set("font-weight", "600");
@@ -221,10 +224,10 @@ public class ProfileView extends VerticalLayout {
         // Add selection listener to handle tab switching
         tabs.addSelectedChangeListener(event -> {
             String selectedLabel = event.getSelectedTab().getLabel();
-            if (selectedLabel.equals("General")) {
+            if (selectedLabel.equals(translationService.translate("profile.general"))) {
                 generalContent.setVisible(true);
                 securityContent.setVisible(false);
-            } else if (selectedLabel.equals("Security")) {
+            } else if (selectedLabel.equals(translationService.translate("profile.security"))) {
                 generalContent.setVisible(false);
                 securityContent.setVisible(true);
             }
@@ -243,13 +246,13 @@ public class ProfileView extends VerticalLayout {
         card.getStyle().set("box-shadow", "0 2px 12px rgba(0, 0, 0, 0.04)");
 
         // Section title
-        H3 title = new H3("Account Details");
+        H3 title = new H3(translationService.translate("profile.accountDetails"));
         title.getStyle().set("font-size", "20px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("color", TEXT_PRIMARY);
         title.getStyle().set("margin", "0 0 8px 0");
 
-        Paragraph subtitle = new Paragraph("Personal information and preferences");
+        Paragraph subtitle = new Paragraph(translationService.translate("profile.personalInfo"));
         subtitle.getStyle().set("font-size", "14px");
         subtitle.getStyle().set("color", TEXT_SECONDARY);
         subtitle.getStyle().set("margin", "0 0 32px 0");
@@ -268,21 +271,21 @@ public class ProfileView extends VerticalLayout {
 
         // First Name
         String firstName = currentUser != null ? currentUser.getFirstName() : "";
-        firstNameField = createFormField("First Name", firstName);
-        leftCol.add(createFormGroup("First Name", firstNameField));
+        firstNameField = createFormField(translationService.translate("profile.firstName"), firstName);
+        leftCol.add(createFormGroup(translationService.translate("profile.firstName"), firstNameField));
 
         // Username
         String username = currentUser != null ? currentUser.getUsername() : "";
-        usernameField = createFormField("Username", username);
+        usernameField = createFormField(translationService.translate("profile.username"), username);
         usernameField.setReadOnly(true); // Username cannot be changed
-        leftCol.add(createFormGroup("Username", usernameField));
+        leftCol.add(createFormGroup(translationService.translate("profile.username"), usernameField));
 
         // Experience Level (from Profile)
         String expLevel = userProfile != null && userProfile.getExperienceLevel() != null
                 ? userProfile.getExperienceLevel()
                 : "";
-        experienceField = createFormField("Experience Level", expLevel);
-        leftCol.add(createFormGroup("Experience Level", experienceField));
+        experienceField = createFormField(translationService.translate("profile.experienceLevel"), expLevel);
+        leftCol.add(createFormGroup(translationService.translate("profile.experienceLevel"), experienceField));
 
         // Right column - Profile Info
         VerticalLayout rightCol = new VerticalLayout();
@@ -293,32 +296,32 @@ public class ProfileView extends VerticalLayout {
 
         // Last Name
         String lastName = currentUser != null ? currentUser.getLastName() : "";
-        lastNameField = createFormField("Last Name", lastName);
-        rightCol.add(createFormGroup("Last Name", lastNameField));
+        lastNameField = createFormField(translationService.translate("profile.lastName"), lastName);
+        rightCol.add(createFormGroup(translationService.translate("profile.lastName"), lastNameField));
 
         // Email
         String email = currentUser != null ? currentUser.getIdentityEmail() : "";
-        emailField = createEmailField("Email Address", email);
-        rightCol.add(createFormGroup("Email Address", emailField));
+        emailField = createEmailField(translationService.translate("profile.email"), email);
+        rightCol.add(createFormGroup(translationService.translate("profile.email"), emailField));
 
         formGrid.add(leftCol, rightCol);
 
         // Skills Section (from Profile)
         String skills = userProfile != null && userProfile.getSkills() != null ? userProfile.getSkills() : "";
-        skillsArea = createTextArea("Skills", skills, "Add your skills...");
-        VerticalLayout skillsGroup = createFormGroup("Skills", skillsArea);
+        skillsArea = createTextArea(translationService.translate("profile.skills"), skills, translationService.translate("profile.addSkills"));
+        VerticalLayout skillsGroup = createFormGroup(translationService.translate("profile.skills"), skillsArea);
         skillsGroup.getStyle().set("margin-top", "24px");
 
         // Tools Section (from Profile)
         String tools = userProfile != null && userProfile.getTools() != null ? userProfile.getTools() : "";
-        toolsArea = createTextArea("Tools & Technologies", tools, "Add tools you use...");
-        VerticalLayout toolsGroup = createFormGroup("Tools & Technologies", toolsArea);
+        toolsArea = createTextArea(translationService.translate("profile.tools"), tools, translationService.translate("profile.addTools"));
+        VerticalLayout toolsGroup = createFormGroup(translationService.translate("profile.tools"), toolsArea);
         toolsGroup.getStyle().set("margin-top", "16px");
 
         // Profile Link (from Profile)
         String profileLink = userProfile != null && userProfile.getLink() != null ? userProfile.getLink() : "";
-        linkField = createFormField("Portfolio/LinkedIn", profileLink);
-        VerticalLayout linkGroup = createFormGroup("Portfolio/LinkedIn", linkField);
+        linkField = createFormField(translationService.translate("profile.portfolio"), profileLink);
+        VerticalLayout linkGroup = createFormGroup(translationService.translate("profile.portfolio"), linkField);
         linkGroup.getStyle().set("margin-top", "16px");
 
         card.add(title, subtitle, formGrid, skillsGroup, toolsGroup, linkGroup);
@@ -336,13 +339,13 @@ public class ProfileView extends VerticalLayout {
         card.getStyle().set("box-shadow", "0 2px 12px rgba(0, 0, 0, 0.04)");
 
         // Section title
-        H3 title = new H3("Security Settings");
+        H3 title = new H3(translationService.translate("profile.securitySettings"));
         title.getStyle().set("font-size", "20px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("color", TEXT_PRIMARY);
         title.getStyle().set("margin", "0 0 8px 0");
 
-        Paragraph subtitle = new Paragraph("Manage your password and account security");
+        Paragraph subtitle = new Paragraph(translationService.translate("profile.managePassword"));
         subtitle.getStyle().set("font-size", "14px");
         subtitle.getStyle().set("color", TEXT_SECONDARY);
         subtitle.getStyle().set("margin", "0 0 32px 0");
@@ -356,38 +359,37 @@ public class ProfileView extends VerticalLayout {
 
         // Current Password
         currentPasswordField = new com.vaadin.flow.component.textfield.PasswordField();
-        currentPasswordField.setPlaceholder("Enter current password");
+        currentPasswordField.setPlaceholder(translationService.translate("profile.currentPassword"));
         currentPasswordField.setWidthFull();
         currentPasswordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
         currentPasswordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
-        passwordSection.add(createFormGroup("Current Password", currentPasswordField));
+        passwordSection.add(createFormGroup(translationService.translate("profile.currentPassword"), currentPasswordField));
 
         // New Password
         newPasswordField = new com.vaadin.flow.component.textfield.PasswordField();
-        newPasswordField.setPlaceholder("Enter new password");
+        newPasswordField.setPlaceholder(translationService.translate("profile.newPassword"));
         newPasswordField.setWidthFull();
         newPasswordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
         newPasswordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
-        passwordSection.add(createFormGroup("New Password", newPasswordField));
+        passwordSection.add(createFormGroup(translationService.translate("profile.newPassword"), newPasswordField));
 
         // Confirm Password
         confirmPasswordField = new com.vaadin.flow.component.textfield.PasswordField();
-        confirmPasswordField.setPlaceholder("Confirm new password");
+        confirmPasswordField.setPlaceholder(translationService.translate("profile.confirmPassword"));
         confirmPasswordField.setWidthFull();
         confirmPasswordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
         confirmPasswordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
-        passwordSection.add(createFormGroup("Confirm New Password", confirmPasswordField));
+        passwordSection.add(createFormGroup(translationService.translate("profile.confirmPassword"), confirmPasswordField));
 
         // Password requirements info
-        Paragraph requirements = new Paragraph(
-                "Password must be at least 10 characters with uppercase, lowercase, number, and special character.");
+        Paragraph requirements = new Paragraph(translationService.translate("profile.passwordRequirements"));
         requirements.getStyle().set("font-size", "12px");
         requirements.getStyle().set("color", TEXT_SECONDARY);
         requirements.getStyle().set("margin", "8px 0 0 0");
         passwordSection.add(requirements);
 
         // Change Password Button
-        Button changePasswordBtn = createPrimaryButton("Change Password", this::changePassword);
+        Button changePasswordBtn = createPrimaryButton(translationService.translate("profile.changePassword"), this::changePassword);
         changePasswordBtn.getStyle().set("margin-top", "16px");
         passwordSection.add(changePasswordBtn);
 
@@ -411,14 +413,14 @@ public class ProfileView extends VerticalLayout {
         securityOptions.getStyle().set("gap", "16px");
 
         // Two-Factor Authentication (placeholder)
-        HorizontalLayout twoFactorRow = createSecurityOption("Two-Factor Authentication",
-                "Add an extra layer of security to your account", "Enable",
+        HorizontalLayout twoFactorRow = createSecurityOption(translationService.translate("profile.twoFactor"),
+                translationService.translate("profile.addSecurity"), translationService.translate("profile.enable"),
                 () -> Notification.show("2FA setup coming soon!", 3000, Notification.Position.TOP_CENTER));
         securityOptions.add(twoFactorRow);
 
         // Login Notifications (placeholder)
-        HorizontalLayout loginNotifRow = createSecurityOption("Login Notifications",
-                "Get notified when someone logs into your account", "Enable",
+        HorizontalLayout loginNotifRow = createSecurityOption(translationService.translate("profile.loginNotifications"),
+                translationService.translate("profile.getNotified"), translationService.translate("profile.enable"),
                 () -> Notification.show("Login notifications coming soon!", 3000, Notification.Position.TOP_CENTER));
         securityOptions.add(loginNotifRow);
 
@@ -567,11 +569,11 @@ public class ProfileView extends VerticalLayout {
         setFieldsEditable(editMode);
 
         if (editMode) {
-            editBtn.setText("Cancel");
+            editBtn.setText(translationService.translate("action.cancel"));
             editBtn.setIcon(VaadinIcon.CLOSE.create());
             saveBtn.setVisible(true);
         } else {
-            editBtn.setText("Edit Profile");
+            editBtn.setText(translationService.translate("profile.editProfile"));
             editBtn.setIcon(VaadinIcon.PENCIL.create());
             saveBtn.setVisible(false);
             // Reload original values

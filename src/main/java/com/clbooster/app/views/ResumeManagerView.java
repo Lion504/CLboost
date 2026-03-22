@@ -3,6 +3,7 @@ package com.clbooster.app.views;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.document.DocumentService;
 import com.clbooster.app.backend.service.profile.ProfileService;
+import com.clbooster.app.i18n.TranslationService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.html.Div;
@@ -60,12 +61,14 @@ public class ResumeManagerView extends VerticalLayout {
     private static final Logger LOGGER = Logger.getLogger(ResumeManagerView.class.getName());
 
     private final DocumentService documentService;
+    private final TranslationService translationService;
     private List<ResumeData> resumes = new ArrayList<>();
     private VerticalLayout resumeListContainer;
     private Span countBadge;
 
     public ResumeManagerView(DocumentService documentService) {
         this.documentService = documentService;
+        this.translationService = new TranslationService();
         setPadding(true);
         setSpacing(true);
         getStyle().set("gap", "32px");
@@ -112,14 +115,14 @@ public class ResumeManagerView extends VerticalLayout {
         titleGroup.setSpacing(false);
         titleGroup.getStyle().set("gap", "4px");
 
-        H1 title = new H1("Resume Manager");
+        H1 title = new H1(translationService.translate("resume.title"));
         title.getStyle().set("font-size", "30px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("letter-spacing", "-0.025em");
         title.getStyle().set("color", TEXT_PRIMARY);
         title.getStyle().set("margin", "0");
 
-        Paragraph subtitle = new Paragraph("Upload, manage, and optimize your resumes with AI.");
+        Paragraph subtitle = new Paragraph(translationService.translate("resume.uploadManage"));
         subtitle.getStyle().set("font-size", "14px");
         subtitle.getStyle().set("color", TEXT_SECONDARY);
         subtitle.getStyle().set("margin", "0");
@@ -130,7 +133,7 @@ public class ResumeManagerView extends VerticalLayout {
         HorizontalLayout actions = new HorizontalLayout();
         actions.getStyle().set("gap", "12px");
 
-        Button importBtn = new Button("Import from LinkedIn", VaadinIcon.LINK.create());
+        Button importBtn = new Button(translationService.translate("resume.importLinkedIn"), VaadinIcon.LINK.create());
         importBtn.getStyle().set("background", BG_GRAY);
         importBtn.getStyle().set("color", TEXT_PRIMARY);
         importBtn.getStyle().set("font-weight", "600");
@@ -140,7 +143,7 @@ public class ResumeManagerView extends VerticalLayout {
         importBtn.getStyle().set("cursor", "pointer");
 
         importBtn.addClickListener(e -> {
-            Notification.show("LinkedIn import is coming soon! This feature will be available in a future update.",
+            Notification.show(translationService.translate("resume.linkedInComing"),
                     5000, Notification.Position.TOP_CENTER);
         });
 
@@ -172,8 +175,8 @@ public class ResumeManagerView extends VerticalLayout {
         tabToggle.getStyle().set("background", BG_GRAY).set("border-radius", "12px").set("padding", "4px")
                 .set("gap", "4px").set("width", "fit-content");
 
-        Button uploadTabBtn = new Button("Upload File");
-        Button pasteTabBtn = new Button("Paste Text");
+        Button uploadTabBtn = new Button(translationService.translate("resume.uploadFile"));
+        Button pasteTabBtn = new Button(translationService.translate("resume.pasteText"));
 
         styleActiveTab(uploadTabBtn, true);
         styleActiveTab(pasteTabBtn, false);
@@ -204,7 +207,7 @@ public class ResumeManagerView extends VerticalLayout {
         listHeader.setAlignItems(FlexComponent.Alignment.CENTER);
         listHeader.getStyle().set("margin-top", "8px");
 
-        H2 listTitle = new H2("Your Resumes");
+        H2 listTitle = new H2(translationService.translate("resume.yourResumes"));
         listTitle.getStyle().set("font-size", "18px");
         listTitle.getStyle().set("font-weight", "700");
         listTitle.getStyle().set("color", TEXT_PRIMARY);
@@ -224,7 +227,7 @@ public class ResumeManagerView extends VerticalLayout {
         titleWithBadge.add(listTitle, countBadge);
 
         // Sort dropdown button
-        Button sortBtn = new Button("Sort by: Recent", VaadinIcon.CHEVRON_DOWN.create());
+        Button sortBtn = new Button(translationService.translate("resume.sortByRecent"), VaadinIcon.CHEVRON_DOWN.create());
         sortBtn.getStyle().set("background", "transparent");
         sortBtn.getStyle().set("color", TEXT_SECONDARY);
         sortBtn.getStyle().set("font-weight", "500");
@@ -235,21 +238,21 @@ public class ResumeManagerView extends VerticalLayout {
         ContextMenu sortMenu = new ContextMenu();
         sortMenu.setTarget(sortBtn);
         sortMenu.setOpenOnClick(true);
-        sortMenu.addItem("Recent", e -> {
+        sortMenu.addItem(translationService.translate("resume.sortByRecent"), e -> {
             sortResumes(ResumeSort.RECENT);
-            sortBtn.setText("Sort by: Recent");
+            sortBtn.setText(translationService.translate("resume.sortByRecent"));
         });
-        sortMenu.addItem("Name (A-Z)", e -> {
+        sortMenu.addItem(translationService.translate("resume.sortByName"), e -> {
             sortResumes(ResumeSort.NAME_ASC);
-            sortBtn.setText("Sort by: Name");
+            sortBtn.setText(translationService.translate("resume.sortByName"));
         });
-        sortMenu.addItem("Name (Z-A)", e -> {
+        sortMenu.addItem(translationService.translate("resume.sortByNameZA"), e -> {
             sortResumes(ResumeSort.NAME_DESC);
-            sortBtn.setText("Sort by: Name (Z-A)");
+            sortBtn.setText(translationService.translate("resume.sortByNameZA"));
         });
-        sortMenu.addItem("Size", e -> {
+        sortMenu.addItem(translationService.translate("resume.sortBySize"), e -> {
             sortResumes(ResumeSort.SIZE);
-            sortBtn.setText("Sort by: Size");
+            sortBtn.setText(translationService.translate("resume.sortBySize"));
         });
 
         listHeader.add(titleWithBadge, sortBtn);
@@ -301,11 +304,11 @@ public class ResumeManagerView extends VerticalLayout {
         uploadIcon.getStyle().set("color", PRIMARY).set("width", "32px").set("height", "32px");
         iconContainer.add(uploadIcon);
 
-        H3 title = new H3("Drop your resume here");
+        H3 title = new H3(translationService.translate("resume.dropResume"));
         title.getStyle().set("font-size", "20px").set("font-weight", "700").set("color", TEXT_PRIMARY).set("margin",
                 "0 0 8px 0");
 
-        Paragraph subtitle = new Paragraph("or click to browse files (PDF, DOCX, TXT, up to 10MB)");
+        Paragraph subtitle = new Paragraph(translationService.translate("resume.orClickBrowse"));
         subtitle.getStyle().set("font-size", "14px").set("color", TEXT_SECONDARY).set("margin", "0 0 24px 0");
 
         HorizontalLayout formats = new HorizontalLayout();
@@ -388,24 +391,24 @@ public class ResumeManagerView extends VerticalLayout {
         inner.setSpacing(false);
         inner.getStyle().set("gap", "16px");
 
-        H3 heading = new H3("Paste Resume Text");
+        H3 heading = new H3(translationService.translate("resume.pasteResumeText"));
         heading.getStyle().set("font-size", "18px").set("font-weight", "700").set("color", TEXT_PRIMARY).set("margin",
                 "0");
 
         TextArea resumeTextArea = new TextArea();
-        resumeTextArea.setPlaceholder("Paste the plain text of your resume here...");
+        resumeTextArea.setPlaceholder(translationService.translate("resume.pastePlainText"));
         resumeTextArea.setWidthFull();
         resumeTextArea.setMinHeight("200px");
         resumeTextArea.getStyle().set("--vaadin-input-field-background", BG_GRAY)
                 .set("--vaadin-input-field-border-radius", "12px");
 
         TextField filenameField = new TextField();
-        filenameField.setPlaceholder("Filename (e.g. my-resume.txt)");
+        filenameField.setPlaceholder(translationService.translate("resume.filename"));
         filenameField.setWidthFull();
         filenameField.getStyle().set("--vaadin-input-field-background", BG_GRAY)
                 .set("--vaadin-input-field-border-radius", "12px");
 
-        Button saveBtn = new Button("Save as Text File");
+        Button saveBtn = new Button(translationService.translate("resume.saveAsText"));
         saveBtn.getStyle().set("background", "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)")
                 .set("color", "white").set("font-weight", "600").set("border-radius", "9999px").set("border", "none")
                 .set("padding", "12px 24px").set("cursor", "pointer")
@@ -414,7 +417,7 @@ public class ResumeManagerView extends VerticalLayout {
         saveBtn.addClickListener(e -> {
             String text = resumeTextArea.getValue();
             if (text == null || text.trim().isEmpty()) {
-                Notification.show("Please paste some resume text first.", 3000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("resume.pastePlainText"), 3000, Notification.Position.TOP_CENTER);
                 return;
             }
             String filename = filenameField.getValue();
@@ -479,11 +482,11 @@ public class ResumeManagerView extends VerticalLayout {
         Icon emptyIcon = VaadinIcon.FILE_TEXT_O.create();
         emptyIcon.getStyle().set("color", TEXT_SECONDARY).set("width", "64px").set("height", "64px");
 
-        H3 title = new H3("No resumes yet");
+        H3 title = new H3(translationService.translate("resume.noResumes"));
         title.getStyle().set("font-size", "20px").set("font-weight", "600").set("color", TEXT_PRIMARY).set("margin",
                 "0");
 
-        Paragraph description = new Paragraph("Upload your first resume to get started.");
+        Paragraph description = new Paragraph(translationService.translate("resume.uploadFirst"));
         description.getStyle().set("font-size", "14px").set("color", TEXT_SECONDARY).set("margin", "0");
 
         emptyState.add(emptyIcon, title, description);
@@ -588,10 +591,10 @@ public class ResumeManagerView extends VerticalLayout {
         ContextMenu contextMenu = new ContextMenu();
         contextMenu.setTarget(menuBtn);
         contextMenu.setOpenOnClick(true);
-        contextMenu.addItem("Download", e -> downloadResume(resume));
-        contextMenu.addItem("View", e -> viewResume(resume));
-        contextMenu.addItem("Toggle Star", e -> toggleStar(resume));
-        contextMenu.addItem("Delete", e -> deleteResume(resume));
+        contextMenu.addItem(translationService.translate("resume.download"), e -> downloadResume(resume));
+        contextMenu.addItem(translationService.translate("resume.view"), e -> viewResume(resume));
+        contextMenu.addItem(translationService.translate("profile.edit"), e -> toggleStar(resume));
+        contextMenu.addItem(translationService.translate("resume.delete"), e -> deleteResume(resume));
 
         content.add(fileIcon, fileInfo, menuBtn);
         content.expand(fileInfo);
@@ -665,10 +668,11 @@ public class ResumeManagerView extends VerticalLayout {
         if (documentService.deleteResumeFile(resume.filePath)) {
             resumes.remove(resume);
             refreshResumeList();
-            Notification.show("Resume deleted", 2000, Notification.Position.TOP_CENTER);
-        } else {
-            Notification.show("Failed to delete resume", 3000, Notification.Position.TOP_CENTER);
-        }
+Notification.show(translationService.translate("resume.resumeDeleted"), 2000,
+                Notification.Position.TOP_CENTER);
+    } else {
+        Notification.show(translationService.translate("resume.failedDelete"), 3000, Notification.Position.TOP_CENTER);
+    }
     }
 
     private void sortResumes(ResumeSort sort) {
