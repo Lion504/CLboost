@@ -308,13 +308,15 @@ public class ProfileView extends VerticalLayout {
 
         // Skills Section (from Profile)
         String skills = userProfile != null && userProfile.getSkills() != null ? userProfile.getSkills() : "";
-        skillsArea = createTextArea(translationService.translate("profile.skills"), skills, translationService.translate("profile.addSkills"));
+        skillsArea = createTextArea(translationService.translate("profile.skills"), skills,
+                translationService.translate("profile.addSkills"));
         VerticalLayout skillsGroup = createFormGroup(translationService.translate("profile.skills"), skillsArea);
         skillsGroup.getStyle().set("margin-top", "24px");
 
         // Tools Section (from Profile)
         String tools = userProfile != null && userProfile.getTools() != null ? userProfile.getTools() : "";
-        toolsArea = createTextArea(translationService.translate("profile.tools"), tools, translationService.translate("profile.addTools"));
+        toolsArea = createTextArea(translationService.translate("profile.tools"), tools,
+                translationService.translate("profile.addTools"));
         VerticalLayout toolsGroup = createFormGroup(translationService.translate("profile.tools"), toolsArea);
         toolsGroup.getStyle().set("margin-top", "16px");
 
@@ -363,7 +365,8 @@ public class ProfileView extends VerticalLayout {
         currentPasswordField.setWidthFull();
         currentPasswordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
         currentPasswordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
-        passwordSection.add(createFormGroup(translationService.translate("profile.currentPassword"), currentPasswordField));
+        passwordSection
+                .add(createFormGroup(translationService.translate("profile.currentPassword"), currentPasswordField));
 
         // New Password
         newPasswordField = new com.vaadin.flow.component.textfield.PasswordField();
@@ -379,7 +382,8 @@ public class ProfileView extends VerticalLayout {
         confirmPasswordField.setWidthFull();
         confirmPasswordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
         confirmPasswordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
-        passwordSection.add(createFormGroup(translationService.translate("profile.confirmPassword"), confirmPasswordField));
+        passwordSection
+                .add(createFormGroup(translationService.translate("profile.confirmPassword"), confirmPasswordField));
 
         // Password requirements info
         Paragraph requirements = new Paragraph(translationService.translate("profile.passwordRequirements"));
@@ -389,7 +393,8 @@ public class ProfileView extends VerticalLayout {
         passwordSection.add(requirements);
 
         // Change Password Button
-        Button changePasswordBtn = createPrimaryButton(translationService.translate("profile.changePassword"), this::changePassword);
+        Button changePasswordBtn = createPrimaryButton(translationService.translate("profile.changePassword"),
+                this::changePassword);
         changePasswordBtn.getStyle().set("margin-top", "16px");
         passwordSection.add(changePasswordBtn);
 
@@ -419,7 +424,8 @@ public class ProfileView extends VerticalLayout {
         securityOptions.add(twoFactorRow);
 
         // Login Notifications (placeholder)
-        HorizontalLayout loginNotifRow = createSecurityOption(translationService.translate("profile.loginNotifications"),
+        HorizontalLayout loginNotifRow = createSecurityOption(
+                translationService.translate("profile.loginNotifications"),
                 translationService.translate("profile.getNotified"), translationService.translate("profile.enable"),
                 () -> Notification.show("Login notifications coming soon!", 3000, Notification.Position.TOP_CENTER));
         securityOptions.add(loginNotifRow);

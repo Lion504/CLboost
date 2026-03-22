@@ -31,7 +31,7 @@ public class TranslationService implements I18NProvider {
                 new Locale("fi"), // Finnish
                 new Locale("pt"), // Portuguese
                 new Locale("fa"), // Persian
-                new Locale("zh")  // Chinese
+                new Locale("zh") // Chinese
         );
     }
 

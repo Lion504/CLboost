@@ -130,8 +130,7 @@ public class HelpView extends VerticalLayout {
         links.getStyle().set("justify-content", "center");
         links.getStyle().set("flex-wrap", "wrap");
 
-        String[][] linkData = {
-                { translationService.translate("help.gettingStarted"), VaadinIcon.ROCKET.name() },
+        String[][] linkData = { { translationService.translate("help.gettingStarted"), VaadinIcon.ROCKET.name() },
                 { translationService.translate("help.accountBilling"), VaadinIcon.USER_CARD.name() },
                 { translationService.translate("help.aiFeatures"), VaadinIcon.MAGIC.name() },
                 { translationService.translate("help.exportShare"), VaadinIcon.DOWNLOAD.name() } };
@@ -165,7 +164,8 @@ public class HelpView extends VerticalLayout {
             btn.getStyle().set("border-color", "rgba(0,0,0,0.1)");
         });
 
-        btn.addClickListener(e -> Notification.show(translationService.translate("help.opening", text), 3000, Notification.Position.TOP_CENTER));
+        btn.addClickListener(e -> Notification.show(translationService.translate("help.opening", text), 3000,
+                Notification.Position.TOP_CENTER));
 
         return btn;
     }
@@ -291,24 +291,18 @@ public class HelpView extends VerticalLayout {
         cards.getStyle().set("margin-top", "20px");
 
         // Contact support card
-        Div contactCard = createSupportCard(
-                translationService.translate("help.contactSupport"),
-                translationService.translate("help.getInTouch"),
-                VaadinIcon.ENVELOPE, PRIMARY,
+        Div contactCard = createSupportCard(translationService.translate("help.contactSupport"),
+                translationService.translate("help.getInTouch"), VaadinIcon.ENVELOPE, PRIMARY,
                 translationService.translate("help.emailUs"));
 
         // Community card
-        Div communityCard = createSupportCard(
-                translationService.translate("help.community"),
-                translationService.translate("help.joinDiscussions"),
-                VaadinIcon.USERS, "#AF52DE",
+        Div communityCard = createSupportCard(translationService.translate("help.community"),
+                translationService.translate("help.joinDiscussions"), VaadinIcon.USERS, "#AF52DE",
                 translationService.translate("help.joinCommunity"));
 
         // Documentation card
-        Div docsCard = createSupportCard(
-                translationService.translate("help.documentation"),
-                translationService.translate("help.readGuides"),
-                VaadinIcon.BOOK, "#34C759",
+        Div docsCard = createSupportCard(translationService.translate("help.documentation"),
+                translationService.translate("help.readGuides"), VaadinIcon.BOOK, "#34C759",
                 translationService.translate("help.viewDocs"));
 
         cards.add(contactCard, communityCard, docsCard);
@@ -400,6 +394,7 @@ public class HelpView extends VerticalLayout {
         if (searchTerm == null || searchTerm.isEmpty()) {
             return;
         }
-        Notification.show(translationService.translate("help.searching") + ": " + searchTerm, 2000, Notification.Position.TOP_CENTER);
+        Notification.show(translationService.translate("help.searching") + ": " + searchTerm, 2000,
+                Notification.Position.TOP_CENTER);
     }
 }

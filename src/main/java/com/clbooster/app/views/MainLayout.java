@@ -107,8 +107,10 @@ public class MainLayout extends AppLayout {
         avatarMenu.setOpenOnClick(true);
 
         // Add menu items
-        avatarMenu.addItem(translationService.translate("mainlayout.profile"), e -> getUI().ifPresent(ui -> ui.navigate(ProfileView.class)));
-        avatarMenu.addItem(translationService.translate("mainlayout.settings"), e -> getUI().ifPresent(ui -> ui.navigate(SettingsView.class)));
+        avatarMenu.addItem(translationService.translate("mainlayout.profile"),
+                e -> getUI().ifPresent(ui -> ui.navigate(ProfileView.class)));
+        avatarMenu.addItem(translationService.translate("mainlayout.settings"),
+                e -> getUI().ifPresent(ui -> ui.navigate(SettingsView.class)));
         avatarMenu.addSeparator();
         avatarMenu.addItem(translationService.translate("mainlayout.signOut"), e -> {
             authService.logout();
@@ -205,8 +207,10 @@ public class MainLayout extends AppLayout {
         mainLabel.getStyle().set("padding", "0 20px");
         mainLabel.getStyle().set("letter-spacing", "0.1em");
 
-        SideNavItem dashboard = createNavItem(translationService.translate("nav.dashboard"), "dashboard", VaadinIcon.DASHBOARD);
-        SideNavItem generate = createNavItem(translationService.translate("nav.generator"), "generator-wizard", VaadinIcon.MAGIC);
+        SideNavItem dashboard = createNavItem(translationService.translate("nav.dashboard"), "dashboard",
+                VaadinIcon.DASHBOARD);
+        SideNavItem generate = createNavItem(translationService.translate("nav.generator"), "generator-wizard",
+                VaadinIcon.MAGIC);
         SideNavItem history = createNavItem(translationService.translate("nav.history"), "history", VaadinIcon.CLOCK);
 
         // Add Resume section

@@ -61,7 +61,7 @@ public class HistoryView extends VerticalLayout {
 
     private static final Logger LOGGER = Logger.getLogger(HistoryView.class.getName());
 
-private List<HistoryItem> allItems = new ArrayList<>();
+    private List<HistoryItem> allItems = new ArrayList<>();
     private Div cardsGrid;
     private TextField searchField;
     private String currentStatusFilter = "ALL";
@@ -276,7 +276,8 @@ private List<HistoryItem> allItems = new ArrayList<>();
         Paragraph description = new Paragraph(translationService.translate("history.generateFirst"));
         description.getStyle().set("font-size", "14px").set("color", TEXT_SECONDARY).set("margin", "0");
 
-        Button createBtn = new Button(translationService.translate("history.createCoverLetter"), VaadinIcon.PLUS.create());
+        Button createBtn = new Button(translationService.translate("history.createCoverLetter"),
+                VaadinIcon.PLUS.create());
         createBtn.getStyle().set("background", PRIMARY).set("color", "white").set("font-weight", "600")
                 .set("border-radius", "9999px").set("padding", "12px 24px").set("border", "none")
                 .set("margin-top", "8px");
@@ -407,9 +408,11 @@ private List<HistoryItem> allItems = new ArrayList<>();
             if (file.exists() && file.delete()) {
                 allItems.remove(item);
                 applyFilters();
-                Notification.show(translationService.translate("history.deleted"), 2000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("history.deleted"), 2000,
+                        Notification.Position.TOP_CENTER);
             } else {
-                Notification.show(translationService.translate("history.deleteFailed"), 3000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("history.deleteFailed"), 3000,
+                        Notification.Position.TOP_CENTER);
             }
             confirm.close();
         });
@@ -554,7 +557,8 @@ private List<HistoryItem> allItems = new ArrayList<>();
     private void downloadCoverLetter(HistoryItem item) {
         File file = new File(item.filePath);
         if (!file.exists()) {
-            Notification.show(translationService.translate("history.fileNotFound", item.filePath), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("history.fileNotFound", item.filePath), 3000,
+                    Notification.Position.TOP_CENTER);
             return;
         }
         try {

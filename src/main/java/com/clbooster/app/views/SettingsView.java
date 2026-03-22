@@ -194,21 +194,23 @@ public class SettingsView extends VerticalLayout {
         label.getStyle().set("letter-spacing", "0.05em");
 
         langSelect = new Select<>();
-        langSelect.setItems(
-            translationService.translate("settings.langEnglish"),
-            translationService.translate("settings.langFinnish"),
-            translationService.translate("settings.langPortuguese"),
-            translationService.translate("settings.langPersian"),
-            translationService.translate("settings.langChinese")
-        );
+        langSelect.setItems(translationService.translate("settings.langEnglish"),
+                translationService.translate("settings.langFinnish"),
+                translationService.translate("settings.langPortuguese"),
+                translationService.translate("settings.langPersian"),
+                translationService.translate("settings.langChinese"));
         // Convert stored language code to display name
         String savedLanguage = userSettings.getLanguage();
         String displayValue = "English";
         if (savedLanguage != null) {
-            if (savedLanguage.contains("Finnish")) displayValue = "Suomi";
-            else if (savedLanguage.contains("Portuguese")) displayValue = "Português";
-            else if (savedLanguage.contains("Persian")) displayValue = "فارسی";
-            else if (savedLanguage.contains("Chinese")) displayValue = "中文";
+            if (savedLanguage.contains("Finnish"))
+                displayValue = "Suomi";
+            else if (savedLanguage.contains("Portuguese"))
+                displayValue = "Português";
+            else if (savedLanguage.contains("Persian"))
+                displayValue = "فارسی";
+            else if (savedLanguage.contains("Chinese"))
+                displayValue = "中文";
         }
         langSelect.setValue(displayValue);
         langSelect.setWidthFull();
@@ -232,8 +234,10 @@ public class SettingsView extends VerticalLayout {
                     langCode = "English";
                 }
                 translationService.setLanguage(langCode);
-                Notification.show(translationService.translate("settings.languageChanged") + " " + selectedDisplay + ". " + translationService.translate("settings.saveToApply"), 3000,
-                        Notification.Position.BOTTOM_END);
+                Notification.show(
+                        translationService.translate("settings.languageChanged") + " " + selectedDisplay + ". "
+                                + translationService.translate("settings.saveToApply"),
+                        3000, Notification.Position.BOTTOM_END);
             }
         });
 
@@ -263,8 +267,8 @@ public class SettingsView extends VerticalLayout {
         toggles.setSpacing(false);
         toggles.getStyle().set("gap", "0");
 
-        ToggleResult emailResult = createToggleRow(translationService.translate("settings.emailNotifications"), translationService.translate("settings.emailNotifications.desc"),
-                emailNotifications);
+        ToggleResult emailResult = createToggleRow(translationService.translate("settings.emailNotifications"),
+                translationService.translate("settings.emailNotifications.desc"), emailNotifications);
         emailTrack = emailResult.track;
         emailThumb = emailResult.thumb;
         emailTrack.addClickListener(e -> {
@@ -272,8 +276,8 @@ public class SettingsView extends VerticalLayout {
             updateToggleVisual(emailTrack, emailThumb, emailNotifications);
         });
 
-        ToggleResult pushResult = createToggleRow(translationService.translate("settings.pushNotifications"), translationService.translate("settings.pushNotifications.desc"),
-                pushNotifications);
+        ToggleResult pushResult = createToggleRow(translationService.translate("settings.pushNotifications"),
+                translationService.translate("settings.pushNotifications.desc"), pushNotifications);
         pushTrack = pushResult.track;
         pushThumb = pushResult.thumb;
         pushTrack.addClickListener(e -> {
@@ -281,7 +285,8 @@ public class SettingsView extends VerticalLayout {
             updateToggleVisual(pushTrack, pushThumb, pushNotifications);
         });
 
-        ToggleResult productResult = createToggleRow(translationService.translate("settings.productUpdates"), translationService.translate("settings.productUpdates.desc"), productUpdates);
+        ToggleResult productResult = createToggleRow(translationService.translate("settings.productUpdates"),
+                translationService.translate("settings.productUpdates.desc"), productUpdates);
         productTrack = productResult.track;
         productThumb = productResult.thumb;
         productTrack.addClickListener(e -> {
@@ -289,7 +294,8 @@ public class SettingsView extends VerticalLayout {
             updateToggleVisual(productTrack, productThumb, productUpdates);
         });
 
-        ToggleResult marketingResult = createToggleRow(translationService.translate("settings.marketing"), translationService.translate("settings.marketing.desc"), marketing);
+        ToggleResult marketingResult = createToggleRow(translationService.translate("settings.marketing"),
+                translationService.translate("settings.marketing.desc"), marketing);
         marketingTrack = marketingResult.track;
         marketingThumb = marketingResult.thumb;
         marketingTrack.addClickListener(e -> {
@@ -401,8 +407,8 @@ public class SettingsView extends VerticalLayout {
         options.setSpacing(false);
         options.getStyle().set("gap", "0");
 
-        ToggleResult cloudResult = createToggleRow(translationService.translate("settings.cloudStorage"), translationService.translate("settings.cloudStorage.desc"),
-                storeInCloud);
+        ToggleResult cloudResult = createToggleRow(translationService.translate("settings.cloudStorage"),
+                translationService.translate("settings.cloudStorage.desc"), storeInCloud);
         cloudTrack = cloudResult.track;
         cloudThumb = cloudResult.thumb;
         cloudTrack.addClickListener(e -> {
@@ -410,8 +416,8 @@ public class SettingsView extends VerticalLayout {
             updateToggleVisual(cloudTrack, cloudThumb, storeInCloud);
         });
 
-        ToggleResult aiResult = createToggleRow(translationService.translate("settings.aiTraining"), translationService.translate("settings.aiTraining.desc"),
-                allowAiTraining);
+        ToggleResult aiResult = createToggleRow(translationService.translate("settings.aiTraining"),
+                translationService.translate("settings.aiTraining.desc"), allowAiTraining);
         aiTrack = aiResult.track;
         aiThumb = aiResult.thumb;
         aiTrack.addClickListener(e -> {
@@ -419,8 +425,8 @@ public class SettingsView extends VerticalLayout {
             updateToggleVisual(aiTrack, aiThumb, allowAiTraining);
         });
 
-        ToggleResult usageResult = createToggleRow(translationService.translate("settings.usageData"), translationService.translate("settings.usageData.desc"),
-                shareUsageData);
+        ToggleResult usageResult = createToggleRow(translationService.translate("settings.usageData"),
+                translationService.translate("settings.usageData.desc"), shareUsageData);
         usageTrack = usageResult.track;
         usageThumb = usageResult.thumb;
         usageTrack.addClickListener(e -> {
@@ -515,7 +521,8 @@ public class SettingsView extends VerticalLayout {
         Button confirmBtn = new Button(translationService.translate("settings.deleteAccountTitle"), e -> {
             String password = passwordField.getValue();
             if (password == null || password.isEmpty()) {
-                Notification.show(translationService.translate("settings.enterPassword"), 3000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("settings.enterPassword"), 3000,
+                        Notification.Position.TOP_CENTER);
                 return;
             }
 
@@ -552,7 +559,8 @@ public class SettingsView extends VerticalLayout {
         Button discardBtn = new Button(translationService.translate("action.discard"), e -> {
             loadSettings();
             getUI().ifPresent(ui -> ui.getPage().reload());
-            Notification.show(translationService.translate("settings.changesDiscarded"), 2000, Notification.Position.BOTTOM_END);
+            Notification.show(translationService.translate("settings.changesDiscarded"), 2000,
+                    Notification.Position.BOTTOM_END);
         });
         discardBtn.getStyle().set("background", "transparent");
         discardBtn.getStyle().set("color", TEXT_SECONDARY);

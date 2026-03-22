@@ -163,7 +163,8 @@ public class GeneratorWizardView extends VerticalLayout {
         header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 
         // Back button
-        Button backBtn = new Button(translationService.translate("generator.wizard.exit"), VaadinIcon.ARROW_LEFT.create());
+        Button backBtn = new Button(translationService.translate("generator.wizard.exit"),
+                VaadinIcon.ARROW_LEFT.create());
         backBtn.getStyle().set("background", "transparent");
         backBtn.getStyle().set("color", TEXT_SECONDARY);
         backBtn.getStyle().set("border", "none");
@@ -183,13 +184,11 @@ public class GeneratorWizardView extends VerticalLayout {
         indicator.getStyle().set("gap", "0");
         indicator.getStyle().set("margin-bottom", "24px");
 
-        String[] stepTitles = {
-            translationService.translate("generator.step1.title"),
-            translationService.translate("generator.step2.title"),
-            translationService.translate("generator.step3.title"),
-            translationService.translate("generator.step4.title"),
-            translationService.translate("generator.step5.title")
-        };
+        String[] stepTitles = { translationService.translate("generator.step1.title"),
+                translationService.translate("generator.step2.title"),
+                translationService.translate("generator.step3.title"),
+                translationService.translate("generator.step4.title"),
+                translationService.translate("generator.step5.title") };
         VaadinIcon[] stepIcons = { VaadinIcon.BUILDING, VaadinIcon.LIST_SELECT, VaadinIcon.STAR,
                 VaadinIcon.CHECK_CIRCLE, VaadinIcon.EDIT };
 
@@ -320,7 +319,8 @@ public class GeneratorWizardView extends VerticalLayout {
         form.setPadding(false);
 
         // Job Title
-        VerticalLayout jobTitleGroup = createFormField("generator.form.jobTitle", "generator.form.jobTitlePlaceholder", VaadinIcon.BRIEFCASE);
+        VerticalLayout jobTitleGroup = createFormField("generator.form.jobTitle", "generator.form.jobTitlePlaceholder",
+                VaadinIcon.BRIEFCASE);
         step1JobTitleField = (TextField) jobTitleGroup.getComponentAt(1);
         step1JobTitleField.setValue(jobTitle);
         step1JobTitleField.addValueChangeListener(e -> {
@@ -329,7 +329,8 @@ public class GeneratorWizardView extends VerticalLayout {
         });
 
         // Company Name
-        VerticalLayout companyGroup = createFormField("generator.form.companyName", "generator.form.companyNamePlaceholder", VaadinIcon.BUILDING);
+        VerticalLayout companyGroup = createFormField("generator.form.companyName",
+                "generator.form.companyNamePlaceholder", VaadinIcon.BUILDING);
         step1CompanyField = (TextField) companyGroup.getComponentAt(1);
         step1CompanyField.setValue(companyName);
         step1CompanyField.addValueChangeListener(e -> {
@@ -464,7 +465,8 @@ public class GeneratorWizardView extends VerticalLayout {
                         .set("color", TEXT_PRIMARY).set("overflow", "hidden").set("text-overflow", "ellipsis")
                         .set("white-space", "nowrap");
 
-                Button useBtn = new Button(translationService.translate("generator.step2.useResume"), VaadinIcon.CHECK_CIRCLE.create());
+                Button useBtn = new Button(translationService.translate("generator.step2.useResume"),
+                        VaadinIcon.CHECK_CIRCLE.create());
                 useBtn.getStyle().set("background", GREEN).set("color", "white").set("font-weight", "600")
                         .set("border-radius", "9999px").set("border", "none").set("white-space", "nowrap");
                 useBtn.addClickListener(e -> loadResumeSkills(singleFile));
@@ -478,13 +480,16 @@ public class GeneratorWizardView extends VerticalLayout {
                 resumeSelect.setValue(resumeFileMap.keySet().iterator().next()); // preselect newest
                 resumeSelect.setLabel(null);
                 resumeSelect.getStyle().set("flex", "1").set("min-width", "0");
-                resumeSelect.getElement().setAttribute("title", translationService.translate("generator.step2.selectSavedResume"));
+                resumeSelect.getElement().setAttribute("title",
+                        translationService.translate("generator.step2.selectSavedResume"));
 
-                Span selectHint = new Span("\uD83D\uDCCE " + translationService.translate("generator.step2.savedResumes"));
+                Span selectHint = new Span(
+                        "\uD83D\uDCCE " + translationService.translate("generator.step2.savedResumes"));
                 selectHint.getStyle().set("font-size", "13px").set("font-weight", "600").set("color", TEXT_PRIMARY)
                         .set("white-space", "nowrap");
 
-                Button useBtn = new Button(translationService.translate("generator.step2.useSelected"), VaadinIcon.CHECK_CIRCLE.create());
+                Button useBtn = new Button(translationService.translate("generator.step2.useSelected"),
+                        VaadinIcon.CHECK_CIRCLE.create());
                 useBtn.getStyle().set("background", GREEN).set("color", "white").set("font-weight", "600")
                         .set("border-radius", "9999px").set("border", "none").set("white-space", "nowrap");
                 useBtn.addClickListener(e -> {
@@ -650,7 +655,8 @@ public class GeneratorWizardView extends VerticalLayout {
 
             } catch (IllegalArgumentException e) {
                 LOGGER.warning("[UPLOAD] Validation error: " + e.getMessage());
-                Notification.show(translationService.translate("generator.notif.uploadError", e.getMessage()), 5000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("generator.notif.uploadError", e.getMessage()), 5000,
+                        Notification.Position.TOP_CENTER);
                 upload.getElement().executeJs("this.files = []");
             } catch (IOException e) {
                 LOGGER.severe("[UPLOAD] File I/O error: " + e.getMessage());
@@ -660,8 +666,7 @@ public class GeneratorWizardView extends VerticalLayout {
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE,
                         "[UPLOAD] Unexpected error processing file '" + fileName + "': " + e.getMessage(), e);
-                Notification.show(
-                        translationService.translate("generator.notif.fileProcessError", e.getMessage()),
+                Notification.show(translationService.translate("generator.notif.fileProcessError", e.getMessage()),
                         5000, Notification.Position.TOP_CENTER);
                 upload.getElement().executeJs("this.files = []");
             }
@@ -680,7 +685,8 @@ public class GeneratorWizardView extends VerticalLayout {
         // Handle file rejection (wrong type, too large, etc.)
         upload.addFileRejectedListener(event -> {
             LOGGER.warning("[UPLOAD] File rejected: " + event.getErrorMessage());
-            Notification.show(translationService.translate("generator.notif.fileRejected", event.getErrorMessage()), 5000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("generator.notif.fileRejected", event.getErrorMessage()),
+                    5000, Notification.Position.TOP_CENTER);
         });
 
         importCard.add(fileIcon, importTitle, importDesc, upload, fileTag);
@@ -775,8 +781,7 @@ public class GeneratorWizardView extends VerticalLayout {
         title.getStyle().set("text-align", "center");
         title.getStyle().set("margin", "0");
 
-        Paragraph subtitle = new Paragraph(
-                translationService.translate("generator.step3.description"));
+        Paragraph subtitle = new Paragraph(translationService.translate("generator.step3.description"));
         subtitle.getStyle().set("font-size", "18px");
         subtitle.getStyle().set("color", TEXT_SECONDARY);
         subtitle.getStyle().set("text-align", "center");
@@ -795,8 +800,8 @@ public class GeneratorWizardView extends VerticalLayout {
                 VaadinIcon.BRIEFCASE, "#e3f2fd", PRIMARY, "professional".equals(selectedTone)));
 
         // Creative card (selected by default)
-        cards.add(createToneCard("creative", "generator.tone.creative", "generator.tone.creativeDesc",
-                VaadinIcon.STAR, "#f3e5f5", PURPLE, "creative".equals(selectedTone)));
+        cards.add(createToneCard("creative", "generator.tone.creative", "generator.tone.creativeDesc", VaadinIcon.STAR,
+                "#f3e5f5", PURPLE, "creative".equals(selectedTone)));
 
         // Storyteller card
         cards.add(createToneCard("storyteller", "generator.tone.storyteller", "generator.tone.storytellerDesc",
@@ -807,8 +812,8 @@ public class GeneratorWizardView extends VerticalLayout {
         return layout;
     }
 
-    private Div createToneCard(String toneId, String titleKey, String descKey, VaadinIcon iconName, String bgColor, String iconColor,
-            boolean isSelected) {
+    private Div createToneCard(String toneId, String titleKey, String descKey, VaadinIcon iconName, String bgColor,
+            String iconColor, boolean isSelected) {
         Div card = new Div();
         card.getStyle().set("background", BG_WHITE);
         card.getStyle().set("border-radius", "20px");
@@ -918,8 +923,10 @@ public class GeneratorWizardView extends VerticalLayout {
         summary.setSpacing(false);
         summary.getStyle().set("gap", "12px");
 
-        summary.add(createSummaryRow("generator.step4.role", jobTitle.isEmpty() ? "Senior Product Designer" : jobTitle, TEXT_PRIMARY));
-        summary.add(createSummaryRow("generator.step4.company", companyName.isEmpty() ? "Apple Inc." : companyName, TEXT_PRIMARY));
+        summary.add(createSummaryRow("generator.step4.role", jobTitle.isEmpty() ? "Senior Product Designer" : jobTitle,
+                TEXT_PRIMARY));
+        summary.add(createSummaryRow("generator.step4.company", companyName.isEmpty() ? "Apple Inc." : companyName,
+                TEXT_PRIMARY));
         summary.add(createSummaryRow("generator.step4.tone", selectedTone, TEXT_PRIMARY));
 
         // Divider
@@ -929,7 +936,8 @@ public class GeneratorWizardView extends VerticalLayout {
         divider.getStyle().set("margin", "8px 0");
         summary.add(divider);
 
-        summary.add(createSummaryRow("generator.step4.access", translationService.translate("generator.step4.freeForever"), GREEN));
+        summary.add(createSummaryRow("generator.step4.access",
+                translationService.translate("generator.step4.freeForever"), GREEN));
 
         card.add(summary);
 
@@ -1048,7 +1056,8 @@ public class GeneratorWizardView extends VerticalLayout {
         saveButton.setVisible(false);
         saveButton.addClickListener(e -> {
             if (editorTextArea == null || editorTextArea.getValue().isBlank()) {
-                Notification.show(translationService.translate("generator.notif.nothingToSave"), 2000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("generator.notif.nothingToSave"), 2000,
+                        Notification.Position.TOP_CENTER);
                 return;
             }
             saveButton.setEnabled(false);
@@ -1057,10 +1066,12 @@ public class GeneratorWizardView extends VerticalLayout {
             if (path != null) {
                 savedFilePath = path;
                 saveButton.setText(translationService.translate("generator.notif.saved"));
-                Notification.show(translationService.translate("generator.notif.coverLetterSaved"), 2500, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("generator.notif.coverLetterSaved"), 2500,
+                        Notification.Position.TOP_CENTER);
             } else {
                 saveButton.setText(translationService.translate("action.save"));
-                Notification.show(translationService.translate("generator.notif.saveFailed"), 3000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("generator.notif.saveFailed"), 3000,
+                        Notification.Position.TOP_CENTER);
             }
             saveButton.setEnabled(true);
         });
@@ -1105,7 +1116,8 @@ public class GeneratorWizardView extends VerticalLayout {
             // Validate Step 3 tone selection before proceeding
             if (currentStep == 3) {
                 if (selectedTone == null || selectedTone.isEmpty()) {
-                    Notification.show(translationService.translate("generator.error.selectTone"), 3000, Notification.Position.TOP_CENTER);
+                    Notification.show(translationService.translate("generator.error.selectTone"), 3000,
+                            Notification.Position.TOP_CENTER);
                     return; // Validation failed, don't proceed
                 }
             }
@@ -1216,7 +1228,8 @@ public class GeneratorWizardView extends VerticalLayout {
         H1 jobTitleLabel = new H1(jobTitle);
         jobTitleLabel.getStyle().set("font-size", "20px").set("font-weight", "700").set("color", TEXT_PRIMARY)
                 .set("margin", "0");
-        Paragraph subLabel = new Paragraph(companyName + " \u2022 " + translationService.translate("history.tone") + ": " + selectedTone);
+        Paragraph subLabel = new Paragraph(
+                companyName + " \u2022 " + translationService.translate("history.tone") + ": " + selectedTone);
         subLabel.getStyle().set("font-size", "13px").set("color", TEXT_SECONDARY).set("margin", "0");
         titleGroup.add(jobTitleLabel, subLabel);
 
@@ -1224,12 +1237,14 @@ public class GeneratorWizardView extends VerticalLayout {
         actions.setAlignItems(FlexComponent.Alignment.CENTER);
         actions.getStyle().set("gap", "12px");
 
-        Button saveDocxBtn = new Button(translationService.translate("generator.step5.saveDocx"), VaadinIcon.DOWNLOAD.create());
+        Button saveDocxBtn = new Button(translationService.translate("generator.step5.saveDocx"),
+                VaadinIcon.DOWNLOAD.create());
         saveDocxBtn.getStyle().set("background", "rgba(0,0,0,0.05)").set("color", TEXT_PRIMARY)
                 .set("font-weight", "600").set("border-radius", "9999px").set("padding", "10px 20px");
         saveDocxBtn.addClickListener(e -> downloadEditorAsDocx());
 
-        Button exportPdfBtn = new Button(translationService.translate("generator.step5.exportPdf"), VaadinIcon.FILE_TEXT.create());
+        Button exportPdfBtn = new Button(translationService.translate("generator.step5.exportPdf"),
+                VaadinIcon.FILE_TEXT.create());
         exportPdfBtn.getStyle().set("background", PRIMARY).set("color", "white").set("font-weight", "600")
                 .set("border-radius", "9999px").set("padding", "10px 24px").set("border", "none")
                 .set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
@@ -1246,22 +1261,28 @@ public class GeneratorWizardView extends VerticalLayout {
         toolbar.getStyle().set("gap", "8px").set("padding", "12px 16px").set("background", BG_GRAY).set("border-radius",
                 "12px");
 
-        Button boldBtn = createEditorToolbarButton(VaadinIcon.BOLD, translationService.translate("editor.toolbar.bold"));
+        Button boldBtn = createEditorToolbarButton(VaadinIcon.BOLD,
+                translationService.translate("editor.toolbar.bold"));
         boldBtn.addClickListener(e -> wrapEditorContent("**", "**"));
-        Button italicBtn = createEditorToolbarButton(VaadinIcon.ITALIC, translationService.translate("editor.toolbar.italic"));
+        Button italicBtn = createEditorToolbarButton(VaadinIcon.ITALIC,
+                translationService.translate("editor.toolbar.italic"));
         italicBtn.addClickListener(e -> wrapEditorContent("_", "_"));
-        Button underlineBtn = createEditorToolbarButton(VaadinIcon.UNDERLINE, translationService.translate("editor.toolbar.underline"));
+        Button underlineBtn = createEditorToolbarButton(VaadinIcon.UNDERLINE,
+                translationService.translate("editor.toolbar.underline"));
         underlineBtn.addClickListener(e -> wrapEditorContent("__", "__"));
 
-        Button copyBtn = createEditorToolbarButton(VaadinIcon.COPY, translationService.translate("editor.toolbar.copyAll"));
+        Button copyBtn = createEditorToolbarButton(VaadinIcon.COPY,
+                translationService.translate("editor.toolbar.copyAll"));
         copyBtn.addClickListener(e -> {
             if (editorTextArea != null) {
                 UI.getCurrent().getPage().executeJs("navigator.clipboard.writeText($0)", editorTextArea.getValue());
-                Notification.show(translationService.translate("editor.notif.copiedToClipboard"), 2000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("editor.notif.copiedToClipboard"), 2000,
+                        Notification.Position.TOP_CENTER);
             }
         });
 
-        Button clearBtn = createEditorToolbarButton(VaadinIcon.TRASH, translationService.translate("editor.toolbar.clear"));
+        Button clearBtn = createEditorToolbarButton(VaadinIcon.TRASH,
+                translationService.translate("editor.toolbar.clear"));
         clearBtn.addClickListener(e -> {
             if (editorTextArea != null)
                 editorTextArea.setValue("");
@@ -1270,7 +1291,8 @@ public class GeneratorWizardView extends VerticalLayout {
         Div divider = new Div();
         divider.getStyle().set("width", "1px").set("height", "24px").set("background", "rgba(0,0,0,0.1)");
 
-        Button regenBtn = new Button(translationService.translate("editor.toolbar.regenerate"), VaadinIcon.MAGIC.create());
+        Button regenBtn = new Button(translationService.translate("editor.toolbar.regenerate"),
+                VaadinIcon.MAGIC.create());
         regenBtn.getStyle().set("background", PRIMARY + "15").set("color", PRIMARY).set("font-weight", "600")
                 .set("border-radius", "9999px").set("padding", "8px 16px").set("border", "none");
         regenBtn.addClickListener(e -> {
@@ -1454,13 +1476,16 @@ public class GeneratorWizardView extends VerticalLayout {
             if (!skills.isEmpty()) {
                 selectedSkills.addAll(skills);
                 updateSkillButtonsUI();
-                Notification.show(translationService.translate("generator.notif.skillsLoaded", String.join(", ", skills)), 5000,
+                Notification.show(
+                        translationService.translate("generator.notif.skillsLoaded", String.join(", ", skills)), 5000,
                         Notification.Position.TOP_CENTER);
             } else {
-                Notification.show(translationService.translate("generator.notif.resumeLoadedNoSkills"), 3000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("generator.notif.resumeLoadedNoSkills"), 3000,
+                        Notification.Position.TOP_CENTER);
             }
         } catch (Exception ex) {
-            Notification.show(translationService.translate("generator.notif.couldNotReadResume", ex.getMessage()), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("generator.notif.couldNotReadResume", ex.getMessage()), 3000,
+                    Notification.Position.TOP_CENTER);
         }
     }
 
@@ -1532,7 +1557,8 @@ public class GeneratorWizardView extends VerticalLayout {
             return;
         String content = editorTextArea.getValue();
         if (content == null || content.isBlank()) {
-            Notification.show(translationService.translate("generator.notif.nothingToDownload"), 2000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("generator.notif.nothingToDownload"), 2000,
+                    Notification.Position.TOP_CENTER);
             return;
         }
         try {
@@ -1549,7 +1575,8 @@ public class GeneratorWizardView extends VerticalLayout {
                     fileName);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "DOCX export failed: " + ex.getMessage(), ex);
-            Notification.show(translationService.translate("generator.notif.exportFailed", ex.getMessage()), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("generator.notif.exportFailed", ex.getMessage()), 3000,
+                    Notification.Position.TOP_CENTER);
         }
     }
 
@@ -1558,7 +1585,8 @@ public class GeneratorWizardView extends VerticalLayout {
             return;
         String content = editorTextArea.getValue();
         if (content == null || content.isBlank()) {
-            Notification.show(translationService.translate("generator.notif.nothingToExport"), 2000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("generator.notif.nothingToExport"), 2000,
+                    Notification.Position.TOP_CENTER);
             return;
         }
         try {
@@ -1581,7 +1609,8 @@ public class GeneratorWizardView extends VerticalLayout {
         anchor.getElement().executeJs(
                 "var a=$0;setTimeout(function(){a.click();setTimeout(function(){a.remove();},1000);},100);",
                 anchor.getElement());
-        Notification.show(translationService.translate("generator.notif.downloading", fileName) + "\u2026", 2000, Notification.Position.TOP_CENTER);
+        Notification.show(translationService.translate("generator.notif.downloading", fileName) + "\u2026", 2000,
+                Notification.Position.TOP_CENTER);
     }
 
     private byte[] generateSimplePdf(String text) throws IOException {

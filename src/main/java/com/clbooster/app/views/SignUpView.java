@@ -265,7 +265,8 @@ public class SignUpView extends VerticalLayout {
         termsRow.add(checkIcon, termsTextLayout);
 
         // Create Account button
-        Button createBtn = createPrimaryButton(translationService.translate("signup.createAccount"), this::handleRegistration);
+        Button createBtn = createPrimaryButton(translationService.translate("signup.createAccount"),
+                this::handleRegistration);
         createBtn.setWidthFull();
         createBtn.getStyle().set("margin-top", "8px");
 
@@ -598,14 +599,16 @@ public class SignUpView extends VerticalLayout {
 
         H4 section1 = new H4(translationService.translate("privacy.section1.title"));
         Paragraph text1 = new Paragraph(translationService.translate("privacy.section1.text"));
-        UnorderedList list1 = new UnorderedList(new ListItem(translationService.translate("privacy.section1.list.item1")),
+        UnorderedList list1 = new UnorderedList(
+                new ListItem(translationService.translate("privacy.section1.list.item1")),
                 new ListItem(translationService.translate("privacy.section1.list.item2")),
                 new ListItem(translationService.translate("privacy.section1.list.item3")),
                 new ListItem(translationService.translate("privacy.section1.list.item4")));
 
         H4 section2 = new H4(translationService.translate("privacy.section2.title"));
         Paragraph text2 = new Paragraph(translationService.translate("privacy.section2.text"));
-        UnorderedList list2 = new UnorderedList(new ListItem(translationService.translate("privacy.section2.list.item1")),
+        UnorderedList list2 = new UnorderedList(
+                new ListItem(translationService.translate("privacy.section2.list.item1")),
                 new ListItem(translationService.translate("privacy.section2.list.item2")),
                 new ListItem(translationService.translate("privacy.section2.list.item3")),
                 new ListItem(translationService.translate("privacy.section2.list.item4")),

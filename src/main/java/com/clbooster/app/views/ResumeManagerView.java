@@ -143,8 +143,8 @@ public class ResumeManagerView extends VerticalLayout {
         importBtn.getStyle().set("cursor", "pointer");
 
         importBtn.addClickListener(e -> {
-            Notification.show(translationService.translate("resume.linkedInComing"),
-                    5000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("resume.linkedInComing"), 5000,
+                    Notification.Position.TOP_CENTER);
         });
 
         importBtn.getElement().addEventListener("mouseenter", e -> {
@@ -227,7 +227,8 @@ public class ResumeManagerView extends VerticalLayout {
         titleWithBadge.add(listTitle, countBadge);
 
         // Sort dropdown button
-        Button sortBtn = new Button(translationService.translate("resume.sortByRecent"), VaadinIcon.CHEVRON_DOWN.create());
+        Button sortBtn = new Button(translationService.translate("resume.sortByRecent"),
+                VaadinIcon.CHEVRON_DOWN.create());
         sortBtn.getStyle().set("background", "transparent");
         sortBtn.getStyle().set("color", TEXT_SECONDARY);
         sortBtn.getStyle().set("font-weight", "500");
@@ -417,7 +418,8 @@ public class ResumeManagerView extends VerticalLayout {
         saveBtn.addClickListener(e -> {
             String text = resumeTextArea.getValue();
             if (text == null || text.trim().isEmpty()) {
-                Notification.show(translationService.translate("resume.pastePlainText"), 3000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("resume.pastePlainText"), 3000,
+                        Notification.Position.TOP_CENTER);
                 return;
             }
             String filename = filenameField.getValue();
@@ -668,11 +670,12 @@ public class ResumeManagerView extends VerticalLayout {
         if (documentService.deleteResumeFile(resume.filePath)) {
             resumes.remove(resume);
             refreshResumeList();
-Notification.show(translationService.translate("resume.resumeDeleted"), 2000,
-                Notification.Position.TOP_CENTER);
-    } else {
-        Notification.show(translationService.translate("resume.failedDelete"), 3000, Notification.Position.TOP_CENTER);
-    }
+            Notification.show(translationService.translate("resume.resumeDeleted"), 2000,
+                    Notification.Position.TOP_CENTER);
+        } else {
+            Notification.show(translationService.translate("resume.failedDelete"), 3000,
+                    Notification.Position.TOP_CENTER);
+        }
     }
 
     private void sortResumes(ResumeSort sort) {

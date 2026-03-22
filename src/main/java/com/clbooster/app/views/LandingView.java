@@ -47,7 +47,7 @@ public class LandingView extends VerticalLayout {
 
     public LandingView() {
         this.translationService = new TranslationService();
-        
+
         // Apply saved locale from session on page load
         try {
             Locale savedLocale = translationService.getCurrentLocale();
@@ -57,7 +57,7 @@ public class LandingView extends VerticalLayout {
         } catch (Exception e) {
             // VaadinSession not available yet, use default
         }
-        
+
         setPadding(false);
         setSpacing(false);
         setSizeFull();
@@ -125,7 +125,8 @@ public class LandingView extends VerticalLayout {
         centerSection.setSpacing(false);
         centerSection.getStyle().set("gap", "32px");
 
-        Button howItWorks = createNavButton(translationService.translate("landing.howItWorks"), () -> openHowItWorksModal());
+        Button howItWorks = createNavButton(translationService.translate("landing.howItWorks"),
+                () -> openHowItWorksModal());
         Button faq = createNavButton(translationService.translate("landing.faq"), () -> openFaqModal());
 
         centerSection.add(howItWorks, faq);
@@ -143,15 +144,19 @@ public class LandingView extends VerticalLayout {
             Locale currentLocale = translationService.getCurrentLocale();
             if (currentLocale != null) {
                 String lang = currentLocale.getLanguage();
-            if ("fi".equals(lang)) currentLang = "Suomi";
-            else if ("pt".equals(lang)) currentLang = "Português";
-            else if ("fa".equals(lang)) currentLang = "فارسی";
-            else if ("zh".equals(lang)) currentLang = "中文";
+                if ("fi".equals(lang))
+                    currentLang = "Suomi";
+                else if ("pt".equals(lang))
+                    currentLang = "Português";
+                else if ("fa".equals(lang))
+                    currentLang = "فارسی";
+                else if ("zh".equals(lang))
+                    currentLang = "中文";
             }
         } catch (Exception e) {
             // VaadinSession not available, use default
         }
-        
+
         Select<String> langSelect = new Select<>();
         langSelect.setItems("English", "Suomi", "Português", "فارسی", "中文");
         langSelect.setValue(currentLang);
@@ -164,18 +169,28 @@ public class LandingView extends VerticalLayout {
             if (lang != null) {
                 String langCode;
                 switch (lang) {
-                    case "Suomi": langCode = "Finnish (Suomi)"; break;
-                    case "Português": langCode = "Portuguese (Português)"; break;
-                    case "فارسی": langCode = "Persian (فارسی)"; break;
-                    case "中文": langCode = "Chinese (中文)"; break;
-                    default: langCode = "English";
+                case "Suomi":
+                    langCode = "Finnish (Suomi)";
+                    break;
+                case "Português":
+                    langCode = "Portuguese (Português)";
+                    break;
+                case "فارسی":
+                    langCode = "Persian (فارسی)";
+                    break;
+                case "中文":
+                    langCode = "Chinese (中文)";
+                    break;
+                default:
+                    langCode = "English";
                 }
                 translationService.setLanguage(langCode);
                 getUI().ifPresent(ui -> ui.getPage().reload());
             }
         });
 
-        Button loginBtn = new Button(translationService.translate("landing.logIn"), e -> getUI().ifPresent(ui -> ui.navigate(LoginView.class)));
+        Button loginBtn = new Button(translationService.translate("landing.logIn"),
+                e -> getUI().ifPresent(ui -> ui.navigate(LoginView.class)));
         loginBtn.getStyle().set("font-size", "13px");
         loginBtn.getStyle().set("font-weight", "700");
         loginBtn.getStyle().set("color", TEXT_PRIMARY);
@@ -183,10 +198,12 @@ public class LandingView extends VerticalLayout {
         loginBtn.getStyle().set("border-radius", "9999px");
         loginBtn.getStyle().set("padding", "8px 16px");
         loginBtn.getStyle().set("transition", "all 0.2s");
-        loginBtn.getElement().addEventListener("mouseenter", e -> loginBtn.getStyle().set("background", "rgba(0, 0, 0, 0.08)"));
+        loginBtn.getElement().addEventListener("mouseenter",
+                e -> loginBtn.getStyle().set("background", "rgba(0, 0, 0, 0.08)"));
         loginBtn.getElement().addEventListener("mouseleave", e -> loginBtn.getStyle().set("background", "transparent"));
 
-        Button signupBtn = createPrimaryButton(translationService.translate("signup.signup"), () -> getUI().ifPresent(ui -> ui.navigate(SignUpView.class)));
+        Button signupBtn = createPrimaryButton(translationService.translate("signup.signup"),
+                () -> getUI().ifPresent(ui -> ui.navigate(SignUpView.class)));
         signupBtn.getStyle().set("font-size", "13px");
         signupBtn.getStyle().set("padding", "8px 20px");
 
@@ -249,10 +266,10 @@ public class LandingView extends VerticalLayout {
         String elevateYour = translationService.translate("landing.elevateYour");
         String jobHunting = translationService.translate("landing.jobHunting");
         String withAI = translationService.translate("landing.withAI");
-        headline.getElement().setProperty("innerHTML", "<div style='color: " + TEXT_PRIMARY + ";'>" + elevateYour + "</div>"
-                + "<span style='background: linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT
-                + " 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent; display: inline-block;'>" + jobHunting + "</span>"
-                + "<span style='color: " + TEXT_PRIMARY + ";'> " + withAI + "</span>");
+        headline.getElement().setProperty("innerHTML", "<div style='color: " + TEXT_PRIMARY + ";'>" + elevateYour
+                + "</div>" + "<span style='background: linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT
+                + " 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent; display: inline-block;'>"
+                + jobHunting + "</span>" + "<span style='color: " + TEXT_PRIMARY + ";'> " + withAI + "</span>");
 
         // Description
         Paragraph description = new Paragraph(translationService.translate("landing.heroDescription"));
@@ -273,7 +290,8 @@ public class LandingView extends VerticalLayout {
         generateBtn.getStyle().set("font-size", "16px");
         generateBtn.getStyle().set("padding", "16px 40px");
 
-        Button samplesBtn = createSecondaryButton(translationService.translate("landing.seeSamples"), this::openSamplesModal);
+        Button samplesBtn = createSecondaryButton(translationService.translate("landing.seeSamples"),
+                this::openSamplesModal);
         samplesBtn.getStyle().set("font-size", "16px");
         samplesBtn.getStyle().set("padding", "16px 40px");
 
@@ -365,8 +383,9 @@ public class LandingView extends VerticalLayout {
         cards.getStyle().set("justify-content", "center");
         cards.getStyle().set("flex-wrap", "wrap");
 
-        cards.add(createFeatureCard(VaadinIcon.BOLT, "#FF9500", translationService.translate("landing.instantGeneration"),
-                translationService.translate("landing.instantGenerationDesc")));
+        cards.add(
+                createFeatureCard(VaadinIcon.BOLT, "#FF9500", translationService.translate("landing.instantGeneration"),
+                        translationService.translate("landing.instantGenerationDesc")));
 
         cards.add(createFeatureCard(VaadinIcon.GLOBE, "#007AFF", translationService.translate("landing.companyIntel"),
                 translationService.translate("landing.companyIntelDesc")));
@@ -502,8 +521,9 @@ public class LandingView extends VerticalLayout {
         faqContent.getStyle().set("padding", "32px");
         faqContent.getStyle().set("gap", "32px");
 
-        List<String[]> faqItems = List.of(new String[] { translationService.translate("landing.faqIsFree"),
-                translationService.translate("landing.faqIsFreeAnswer") },
+        List<String[]> faqItems = List.of(
+                new String[] { translationService.translate("landing.faqIsFree"),
+                        translationService.translate("landing.faqIsFreeAnswer") },
                 new String[] { translationService.translate("landing.faqHowAi"),
                         translationService.translate("landing.faqHowAiAnswer") },
                 new String[] { translationService.translate("landing.faqDataSafe"),

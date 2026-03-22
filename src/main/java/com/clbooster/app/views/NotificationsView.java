@@ -100,7 +100,8 @@ public class NotificationsView extends VerticalLayout {
         actions.setAlignItems(FlexComponent.Alignment.CENTER);
         actions.getStyle().set("gap", "12px");
 
-        Button markAllBtn = new Button(translationService.translate("notifications.markAllRead"), VaadinIcon.CHECK_CIRCLE.create());
+        Button markAllBtn = new Button(translationService.translate("notifications.markAllRead"),
+                VaadinIcon.CHECK_CIRCLE.create());
         markAllBtn.getStyle().set("background", "transparent");
         markAllBtn.getStyle().set("color", TEXT_SECONDARY);
         markAllBtn.getStyle().set("font-weight", "500");
@@ -108,7 +109,8 @@ public class NotificationsView extends VerticalLayout {
         markAllBtn.getStyle().set("border", "none");
         markAllBtn.getStyle().set("cursor", "pointer");
         markAllBtn.addClickListener(e -> {
-            Notification.show(translationService.translate("notifications.allRead"), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("notifications.allRead"), 3000,
+                    Notification.Position.TOP_CENTER);
             markAllAsRead();
         });
 
@@ -160,14 +162,13 @@ public class NotificationsView extends VerticalLayout {
         notificationsList.add(todayLabel);
 
         // Today's notifications
-        notificationsList
-                .add(createNotificationCard(translationService.translate("notifications.aiGenerated"),
-                        translationService.translate("notifications.coverLetterReady"),
-                        "2 hours ago", VaadinIcon.MAGIC, PRIMARY, true, true));
+        notificationsList.add(createNotificationCard(translationService.translate("notifications.aiGenerated"),
+                translationService.translate("notifications.coverLetterReady"), "2 hours ago", VaadinIcon.MAGIC,
+                PRIMARY, true, true));
 
         notificationsList.add(createNotificationCard(translationService.translate("notifications.optimizationComplete"),
-                translationService.translate("notifications.scoreImproved"),
-                "4 hours ago", VaadinIcon.CHART, "#34C759", false, true));
+                translationService.translate("notifications.scoreImproved"), "4 hours ago", VaadinIcon.CHART, "#34C759",
+                false, true));
 
         // Yesterday section
         Span yesterdayLabel = new Span(translationService.translate("notifications.yesterday"));
@@ -181,12 +182,12 @@ public class NotificationsView extends VerticalLayout {
         notificationsList.add(yesterdayLabel);
 
         notificationsList.add(createNotificationCard(translationService.translate("notifications.documentExported"),
-                translationService.translate("notifications.exportedAsPDF"),
-                "Yesterday", VaadinIcon.FILE_TEXT, TEXT_SECONDARY, false, false));
+                translationService.translate("notifications.exportedAsPDF"), "Yesterday", VaadinIcon.FILE_TEXT,
+                TEXT_SECONDARY, false, false));
 
         notificationsList.add(createNotificationCard(translationService.translate("notifications.newFeature"),
-                translationService.translate("notifications.tryToneCustomization"),
-                "Yesterday", VaadinIcon.SPARK_LINE, "#AF52DE", false, false));
+                translationService.translate("notifications.tryToneCustomization"), "Yesterday", VaadinIcon.SPARK_LINE,
+                "#AF52DE", false, false));
 
         // Earlier section
         Span earlierLabel = new Span(translationService.translate("notifications.earlier"));
@@ -199,10 +200,9 @@ public class NotificationsView extends VerticalLayout {
 
         notificationsList.add(earlierLabel);
 
-        notificationsList
-                .add(createNotificationCard(translationService.translate("notifications.welcome"),
-                        translationService.translate("notifications.getStarted"),
-                        "3 days ago", VaadinIcon.HANDSHAKE, "#FF9500", false, false));
+        notificationsList.add(createNotificationCard(translationService.translate("notifications.welcome"),
+                translationService.translate("notifications.getStarted"), "3 days ago", VaadinIcon.HANDSHAKE, "#FF9500",
+                false, false));
     }
 
     private Div createNotificationCard(String title, String message, String time, VaadinIcon iconType, String iconColor,
@@ -298,7 +298,8 @@ public class NotificationsView extends VerticalLayout {
         });
 
         card.addClickListener(e -> {
-            Notification.show(translationService.translate("notifications.opening", title), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("notifications.opening", title), 3000,
+                    Notification.Position.TOP_CENTER);
         });
 
         return card;

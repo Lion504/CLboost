@@ -91,7 +91,8 @@ public class DashboardView extends VerticalLayout {
 
         text.add(title, sub);
 
-        Button createBtn = new Button(translationService.translate("dashboard.newCoverLetter"), VaadinIcon.PLUS.create());
+        Button createBtn = new Button(translationService.translate("dashboard.newCoverLetter"),
+                VaadinIcon.PLUS.create());
         createBtn.getStyle().set("background", PRIMARY).set("color", "white").set("font-weight", "600")
                 .set("border-radius", "9999px").set("padding", "12px 24px")
                 .set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
@@ -116,14 +117,20 @@ public class DashboardView extends VerticalLayout {
         row.setWidthFull();
         row.getStyle().set("gap", "20px").set("flex-wrap", "wrap");
 
-        row.add(createStatTile(translationService.translate("dashboard.coverLetters"), String.valueOf(totalLetters), translationService.translate("dashboard.allTimeGenerated"),
-                VaadinIcon.FILE_TEXT, PRIMARY, "rgba(0,122,255,0.08)"),
-                createStatTile(translationService.translate("dashboard.resumesUploaded"), String.valueOf(totalResumes), translationService.translate("dashboard.storedOnAccount"), VaadinIcon.UPLOAD,
-                        "#5856D6", "rgba(88,86,214,0.08)"),
-                createStatTile(translationService.translate("dashboard.thisWeek"), String.valueOf(thisWeek), translationService.translate("dashboard.lettersGenerated2"), VaadinIcon.CALENDAR, GREEN,
+        row.add(createStatTile(translationService.translate("dashboard.coverLetters"), String.valueOf(totalLetters),
+                translationService.translate("dashboard.allTimeGenerated"), VaadinIcon.FILE_TEXT, PRIMARY,
+                "rgba(0,122,255,0.08)"),
+                createStatTile(translationService.translate("dashboard.resumesUploaded"), String.valueOf(totalResumes),
+                        translationService.translate("dashboard.storedOnAccount"), VaadinIcon.UPLOAD, "#5856D6",
+                        "rgba(88,86,214,0.08)"),
+                createStatTile(translationService.translate("dashboard.thisWeek"), String.valueOf(thisWeek),
+                        translationService.translate("dashboard.lettersGenerated2"), VaadinIcon.CALENDAR, GREEN,
                         "rgba(52,199,89,0.08)"),
-                createStatTile(translationService.translate("dashboard.tonesAvailable"), "3", translationService.translate("dashboard.professional") + " · " + translationService.translate("dashboard.creative") + " · " + translationService.translate("dashboard.storyteller"), VaadinIcon.MAGIC,
-                        ORANGE, "rgba(255,149,0,0.08)"));
+                createStatTile(translationService.translate("dashboard.tonesAvailable"), "3",
+                        translationService.translate("dashboard.professional") + " · "
+                                + translationService.translate("dashboard.creative") + " · "
+                                + translationService.translate("dashboard.storyteller"),
+                        VaadinIcon.MAGIC, ORANGE, "rgba(255,149,0,0.08)"));
 
         return row;
     }
@@ -177,14 +184,14 @@ public class DashboardView extends VerticalLayout {
         actions.getStyle().set("gap", "12px").set("flex-wrap", "wrap");
 
         actions.add(
-                createActionBtn(translationService.translate("dashboard.generateLetter"), VaadinIcon.MAGIC, PRIMARY, "white",
-                        () -> getUI().ifPresent(ui -> ui.navigate(GeneratorWizardView.class))),
-                createActionBtn(translationService.translate("dashboard.myHistory"), VaadinIcon.CLOCK, "white", TEXT_PRIMARY,
-                        () -> getUI().ifPresent(ui -> ui.navigate(HistoryView.class))),
-                createActionBtn(translationService.translate("dashboard.manageResumes"), VaadinIcon.FILE_SEARCH, "white", TEXT_PRIMARY,
-                        () -> getUI().ifPresent(ui -> ui.navigate(ResumeManagerView.class))),
-                createActionBtn(translationService.translate("dashboard.profileSettings"), VaadinIcon.USER, "white", TEXT_PRIMARY,
-                        () -> getUI().ifPresent(ui -> ui.navigate(ProfileView.class))));
+                createActionBtn(translationService.translate("dashboard.generateLetter"), VaadinIcon.MAGIC, PRIMARY,
+                        "white", () -> getUI().ifPresent(ui -> ui.navigate(GeneratorWizardView.class))),
+                createActionBtn(translationService.translate("dashboard.myHistory"), VaadinIcon.CLOCK, "white",
+                        TEXT_PRIMARY, () -> getUI().ifPresent(ui -> ui.navigate(HistoryView.class))),
+                createActionBtn(translationService.translate("dashboard.manageResumes"), VaadinIcon.FILE_SEARCH,
+                        "white", TEXT_PRIMARY, () -> getUI().ifPresent(ui -> ui.navigate(ResumeManagerView.class))),
+                createActionBtn(translationService.translate("dashboard.profileSettings"), VaadinIcon.USER, "white",
+                        TEXT_PRIMARY, () -> getUI().ifPresent(ui -> ui.navigate(ProfileView.class))));
 
         card.add(heading, actions);
         return card;
