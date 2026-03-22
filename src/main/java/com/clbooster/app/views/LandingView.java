@@ -143,17 +143,17 @@ public class LandingView extends VerticalLayout {
             Locale currentLocale = translationService.getCurrentLocale();
             if (currentLocale != null) {
                 String lang = currentLocale.getLanguage();
-                if ("fi".equals(lang)) currentLang = "Suomi";
-                else if ("sv".equals(lang)) currentLang = "Svenska";
-                else if ("de".equals(lang)) currentLang = "Deutsch";
-                else if ("fr".equals(lang)) currentLang = "Français";
+            if ("fi".equals(lang)) currentLang = "Suomi";
+            else if ("pt".equals(lang)) currentLang = "Português";
+            else if ("fa".equals(lang)) currentLang = "فارسی";
+            else if ("zh".equals(lang)) currentLang = "中文";
             }
         } catch (Exception e) {
             // VaadinSession not available, use default
         }
         
         Select<String> langSelect = new Select<>();
-        langSelect.setItems("English", "Suomi", "Svenska", "Deutsch", "Français");
+        langSelect.setItems("English", "Suomi", "Português", "فارسی", "中文");
         langSelect.setValue(currentLang);
         langSelect.setWidth("100px");
         langSelect.getStyle().set("--vaadin-input-field-background", "transparent");
@@ -165,9 +165,9 @@ public class LandingView extends VerticalLayout {
                 String langCode;
                 switch (lang) {
                     case "Suomi": langCode = "Finnish (Suomi)"; break;
-                    case "Svenska": langCode = "Swedish (Svenska)"; break;
-                    case "Deutsch": langCode = "German (Deutsch)"; break;
-                    case "Français": langCode = "French (Français)"; break;
+                    case "Português": langCode = "Portuguese (Português)"; break;
+                    case "فارسی": langCode = "Persian (فارسی)"; break;
+                    case "中文": langCode = "Chinese (中文)"; break;
                     default: langCode = "English";
                 }
                 translationService.setLanguage(langCode);

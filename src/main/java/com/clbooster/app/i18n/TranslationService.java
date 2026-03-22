@@ -29,9 +29,9 @@ public class TranslationService implements I18NProvider {
     public List<Locale> getProvidedLocales() {
         return Arrays.asList(new Locale("en"), // English
                 new Locale("fi"), // Finnish
-                new Locale("sv"), // Swedish
-                new Locale("de"), // German
-                new Locale("fr") // French
+                new Locale("pt"), // Portuguese
+                new Locale("fa"), // Persian
+                new Locale("zh")  // Chinese
         );
     }
 
@@ -121,12 +121,12 @@ public class TranslationService implements I18NProvider {
 
         if (lower.contains("finnish") || lower.equals("suomi") || lower.equals("fi")) {
             return new Locale("fi");
-        } else if (lower.contains("swedish") || lower.equals("svenska") || lower.equals("sv")) {
-            return new Locale("sv");
-        } else if (lower.contains("german") || lower.equals("deutsch") || lower.equals("de")) {
-            return new Locale("de");
-        } else if (lower.contains("french") || lower.equals("français") || lower.equals("fr")) {
-            return new Locale("fr");
+        } else if (lower.contains("portuguese") || lower.equals("português") || lower.equals("pt")) {
+            return new Locale("pt");
+        } else if (lower.contains("persian") || lower.equals("فارسی") || lower.equals("fa") || lower.equals("farsi")) {
+            return new Locale("fa");
+        } else if (lower.contains("chinese") || lower.equals("中文") || lower.equals("zh")) {
+            return new Locale("zh");
         } else {
             return new Locale("en");
         }
