@@ -24,20 +24,39 @@ public class AIService {
                 throw new IllegalStateException("GEMINI_API_KEY environment variable is not set. "
                         + "Set it and restart the application before generating cover letters.");
             }
-            languageModel = GoogleAiGeminiChatModel.builder().apiKey(apiKey).modelName("gemini-2.5-flash-lite")
-                    .temperature(0.7).timeout(java.time.Duration.ofSeconds(30)).build();
+            languageModel = GoogleAiGeminiChatModel.builder()
+                    .apiKey(apiKey)
+                    .modelName("gemini-2.5-flash-lite")
+                    .temperature(0.7)
+                    .timeout(java.time.Duration.ofSeconds(30))
+                    .build();
         }
         return languageModel;
     }
 
     private String matchQualification(String resume, String jobDetails) {
         String matchPrompt = """
-                You are a Strategic Talent Headhunter. Analyze the candidate's RESUME against the JOB DETAILS.
-                Extract:
-                1. The top 3 technical skills/keywords mentioned in the job post that appear on the resume.
-                2. One specific achievement from the resume that proves the candidate can solve a pain point in the job post.
-
-                Keep the analysis concise and data-driven.
+                You are a professional Job Recruiter and Strategic Talent Headhunter.
+                Extract structured insights from the RESUME based on JOBDETAILS.
+                
+                Return ONLY JSON:
+                {
+                  "key_requirements": ["..."],
+                  "matching_skills": ["..."],
+                  "relevant_achievements": [
+                    "achievement with measurable impact",
+                    "project or experience aligned with job"
+                  ],
+                  "value_summary": "why this candidate fits THIS job"
+                }
+                
+                Rules:
+                - Use only information provided
+                - Prefer measurable results
+                - No generic phrases
+                - No hallucination, If information is missing, omit it
+                - Highlight top 3 technical skills/keywords from job details present in resume
+                - Identify one specific achievement that solves a job pain point
 
                 --- RESUME ---
                 {{RESUME}}
@@ -47,7 +66,6 @@ public class AIService {
                 """;
 
         String finalPrompt = matchPrompt.replace("{{RESUME}}", resume).replace("{{JOBDETAILS}}", jobDetails);
-
         return getLanguageModel().generate(finalPrompt);
     }
 
@@ -55,40 +73,51 @@ public class AIService {
         if (tone == null || tone.isBlank())
             return "";
         switch (tone.trim()) {
-        case "Creative":
-            return "TONE: Write in a creative, enthusiastic and bold voice. Show genuine personality, "
-                    + "use vivid language, and let the candidate's passion stand out. Best for startups and agencies.";
-        case "Storyteller":
-            return "TONE: Write in a storytelling narrative voice. Focus on the candidate's journey, "
-                    + "key moments of impact, and what drives them. Best for senior and lead roles.";
-        default: // Professional
-            return "TONE: Write in a formal, structured and strictly professional voice. "
-                    + "Keep language concise, confident and business-appropriate. Best for corporate roles.";
+            case "Creative":
+                return "TONE: Write in a creative, enthusiastic and bold voice. Show genuine personality, "
+                        + "use vivid language, and let the candidate's passion stand out. Best for startups and agencies.";
+            case "Storyteller":
+                return "TONE: Write in a storytelling narrative voice. Focus on the candidate's journey, "
+                        + "key moments of impact, and what drives them. Best for senior and lead roles.";
+            default: // Professional
+                return "TONE: Write in a formal, structured and strictly professional voice. "
+                        + "Keep language concise, confident and business-appropriate. Best for corporate roles.";
         }
     }
 
     private String writeCoverLetter(String matchAnalysis, String jobDetails, String tone) {
         String coverLetterPrompt = """
-                You are an Expert Career Copywriter. Write a high-conversion cover letter using the analysis and jobdetails.
-
-                Rules:
-                1. Forbidden phrases: "I am writing to apply," "To whom it may concern," "hardworking individual," "think outside the box," "perfect fit."
-                2. Start with a 'Hook' that references a specific company goal or challenge.
-                3. Instead of saying "I am a leader," describe a time they led.
-                4. Identify a problem mentioned in the job details and explain how the candidate's specific experience is the solution.
-                5. Output ONLY the body text. Do not include addresses or dates.
+                You are an Expert Career Copywriter.
+                Take the ANALYSIS and JOBDETAILS below and write a cover letter following the rules:
 
                 {{TONE_INSTRUCTION}}
 
-                --- STRATEGIC ANALYSIS ---
+                RULES:
+                1. Never use generic AI filler phrases like: "I am excited to apply", 
+                   "I believe I would be a great fit", "leverage my skills", 
+                   "passionate about", "dynamic team", "cutting-edge technologies",
+                   "I am writing to apply", "To whom it may concern", "hardworking individual", 
+                   "think outside the box", "perfect fit".
+                2. Do not follow a generic cover letter template; every sentence must feel written for this job and this company only.
+                3. Output only the body of the cover letter; do not include addresses or dates.
+                4. Cover letter length: Minimum 250 words, Maximum 400 words.
+                5. Focus on the value the candidate brings to the company.
+                6. Connect candidate's experience or projects directly to key requirements in the analysis.
+                7. Cover letter should complement the matched analysis content, not duplicate it.
+                8. Start with a hook referencing a company goal/problem, using "value_summary".
+                9. In 1-2 paragraphs, provide evidence using "matching_skills" or "relevant_achievements" without repeating the resume.
+                10. Close by reiterating enthusiasm and confidently requesting an interview opportunity.
+
+                --- ANALYSIS ---
                 {{ANALYSIS}}
 
-                --- JOB DESCRIPTION ---
+                --- JOBDETAILS ---
                 {{JOB}}
                 """;
 
-        String finalPrompt = coverLetterPrompt.replace("{{TONE}}", toneInstruction(tone))
-                .replace("{{ANALYSIS}}", matchAnalysis).replace("{{JOB}}", jobDetails);
+        String finalPrompt = coverLetterPrompt.replace("{{TONE_INSTRUCTION}}", toneInstruction(tone))
+                .replace("{{ANALYSIS}}", matchAnalysis)
+                .replace("{{JOB}}", jobDetails);
 
         return getLanguageModel().generate(finalPrompt);
     }
@@ -99,7 +128,8 @@ public class AIService {
 
     public String generateCoverLetter(String resume, String jobDetails, String tone) {
         System.out.println("Matching Resume and Job Details...");
-        String analysis = matchQualification(resume, jobDetails);
+        String rawAnalysis = matchQualification(resume, jobDetails);
+        String analysis = rawAnalysis.replaceAll("(?s)```json\\s*", "").replaceAll("(?s)```\\s*", "").trim();
 
         System.out.println("Drafting Cover Letter (tone: " + tone + ")...");
         return writeCoverLetter(analysis, jobDetails, tone);
