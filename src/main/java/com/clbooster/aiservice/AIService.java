@@ -24,12 +24,8 @@ public class AIService {
                 throw new IllegalStateException("GEMINI_API_KEY environment variable is not set. "
                         + "Set it and restart the application before generating cover letters.");
             }
-            languageModel = GoogleAiGeminiChatModel.builder()
-                    .apiKey(apiKey)
-                    .modelName("gemini-2.5-flash-lite")
-                    .temperature(0.7)
-                    .timeout(java.time.Duration.ofSeconds(30))
-                    .build();
+            languageModel = GoogleAiGeminiChatModel.builder().apiKey(apiKey).modelName("gemini-2.5-flash-lite")
+                    .temperature(0.7).timeout(java.time.Duration.ofSeconds(30)).build();
         }
         return languageModel;
     }
@@ -38,7 +34,7 @@ public class AIService {
         String matchPrompt = """
                 You are a professional Job Recruiter and Strategic Talent Headhunter.
                 Extract structured insights from the RESUME based on JOBDETAILS.
-                
+
                 Return ONLY JSON:
                 {
                   "key_requirements": ["..."],
@@ -49,7 +45,7 @@ public class AIService {
                   ],
                   "value_summary": "why this candidate fits THIS job"
                 }
-                
+
                 Rules:
                 - Use only information provided
                 - Prefer measurable results
@@ -73,15 +69,15 @@ public class AIService {
         if (tone == null || tone.isBlank())
             return "";
         switch (tone.trim()) {
-            case "Creative":
-                return "TONE: Write in a creative, enthusiastic and bold voice. Show genuine personality, "
-                        + "use vivid language, and let the candidate's passion stand out. Best for startups and agencies.";
-            case "Storyteller":
-                return "TONE: Write in a storytelling narrative voice. Focus on the candidate's journey, "
-                        + "key moments of impact, and what drives them. Best for senior and lead roles.";
-            default: // Professional
-                return "TONE: Write in a formal, structured and strictly professional voice. "
-                        + "Keep language concise, confident and business-appropriate. Best for corporate roles.";
+        case "Creative":
+            return "TONE: Write in a creative, enthusiastic and bold voice. Show genuine personality, "
+                    + "use vivid language, and let the candidate's passion stand out. Best for startups and agencies.";
+        case "Storyteller":
+            return "TONE: Write in a storytelling narrative voice. Focus on the candidate's journey, "
+                    + "key moments of impact, and what drives them. Best for senior and lead roles.";
+        default: // Professional
+            return "TONE: Write in a formal, structured and strictly professional voice. "
+                    + "Keep language concise, confident and business-appropriate. Best for corporate roles.";
         }
     }
 
@@ -93,10 +89,10 @@ public class AIService {
                 {{TONE_INSTRUCTION}}
 
                 RULES:
-                1. Never use generic AI filler phrases like: "I am excited to apply", 
-                   "I believe I would be a great fit", "leverage my skills", 
+                1. Never use generic AI filler phrases like: "I am excited to apply",
+                   "I believe I would be a great fit", "leverage my skills",
                    "passionate about", "dynamic team", "cutting-edge technologies",
-                   "I am writing to apply", "To whom it may concern", "hardworking individual", 
+                   "I am writing to apply", "To whom it may concern", "hardworking individual",
                    "think outside the box", "perfect fit".
                 2. Do not follow a generic cover letter template; every sentence must feel written for this job and this company only.
                 3. Output only the body of the cover letter; do not include addresses or dates.
@@ -116,8 +112,7 @@ public class AIService {
                 """;
 
         String finalPrompt = coverLetterPrompt.replace("{{TONE_INSTRUCTION}}", toneInstruction(tone))
-                .replace("{{ANALYSIS}}", matchAnalysis)
-                .replace("{{JOB}}", jobDetails);
+                .replace("{{ANALYSIS}}", matchAnalysis).replace("{{JOB}}", jobDetails);
 
         return getLanguageModel().generate(finalPrompt);
     }
