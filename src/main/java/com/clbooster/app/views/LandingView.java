@@ -144,6 +144,7 @@ public class LandingView extends VerticalLayout {
             Locale currentLocale = translationService.getCurrentLocale();
             if (currentLocale != null) {
                 String lang = currentLocale.getLanguage();
+                String country = currentLocale.getCountry();
                 if ("fi".equals(lang))
                     currentLang = "Suomi";
                 else if ("pt".equals(lang))
@@ -152,13 +153,15 @@ public class LandingView extends VerticalLayout {
                     currentLang = "فارسی";
                 else if ("zh".equals(lang))
                     currentLang = "中文";
+                else if ("ur".equals(lang))
+                    currentLang = "اردو";
             }
         } catch (Exception e) {
             // VaadinSession not available, use default
         }
 
         Select<String> langSelect = new Select<>();
-        langSelect.setItems("English", "Suomi", "Português", "فارسی", "中文");
+        langSelect.setItems("English", "Suomi", "Português", "فارسی", "中文", "اردو");
         langSelect.setValue(currentLang);
         langSelect.setWidth("100px");
         langSelect.getStyle().set("--vaadin-input-field-background", "transparent");
@@ -180,6 +183,9 @@ public class LandingView extends VerticalLayout {
                     break;
                 case "中文":
                     langCode = "Chinese (中文)";
+                    break;
+                case "اردو":
+                    langCode = "Urdu (اردو)";
                     break;
                 default:
                     langCode = "English";

@@ -31,7 +31,8 @@ public class TranslationService implements I18NProvider {
                 new Locale("fi"), // Finnish
                 new Locale("pt"), // Portuguese
                 new Locale("fa"), // Persian
-                new Locale("zh") // Chinese
+                new Locale("zh"), // Chinese
+                new Locale("ur") // Urdu
         );
     }
 
@@ -127,6 +128,8 @@ public class TranslationService implements I18NProvider {
             return new Locale("fa");
         } else if (lower.contains("chinese") || lower.equals("中文") || lower.equals("zh")) {
             return new Locale("zh");
+        } else if (lower.contains("urdu") || lower.equals("اردو") || lower.equals("ur")) {
+            return new Locale("ur");
         } else {
             return new Locale("en");
         }

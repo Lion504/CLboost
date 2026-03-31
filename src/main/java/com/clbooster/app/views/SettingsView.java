@@ -198,7 +198,8 @@ public class SettingsView extends VerticalLayout {
                 translationService.translate("settings.langFinnish"),
                 translationService.translate("settings.langPortuguese"),
                 translationService.translate("settings.langPersian"),
-                translationService.translate("settings.langChinese"));
+                translationService.translate("settings.langChinese"),
+                translationService.translate("settings.langUrdu"));
         // Convert stored language code to display name
         String savedLanguage = userSettings.getLanguage();
         String displayValue = "English";
@@ -211,6 +212,8 @@ public class SettingsView extends VerticalLayout {
                 displayValue = "فارسی";
             else if (savedLanguage.contains("Chinese"))
                 displayValue = "中文";
+            else if (savedLanguage.contains("Urdu"))
+                displayValue = "اردو";
         }
         langSelect.setValue(displayValue);
         langSelect.setWidthFull();
@@ -230,6 +233,8 @@ public class SettingsView extends VerticalLayout {
                     langCode = "Persian (فارسی)";
                 } else if (selectedDisplay.equals(translationService.translate("settings.langChinese"))) {
                     langCode = "Chinese (中文)";
+                } else if (selectedDisplay.equals("اردو")) {
+                    langCode = "Urdu (اردو)";
                 } else {
                     langCode = "English";
                 }
