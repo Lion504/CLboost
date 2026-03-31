@@ -348,7 +348,7 @@ public class ResumeManagerView extends VerticalLayout {
 
                 String safeOriginalName = fileName.replaceAll("[^a-zA-Z0-9._\\-]", "_");
                 LOGGER.info("Resume uploaded via DocumentService: " + storedPath);
-                Notification.show("\"" + safeOriginalName + "\" uploaded successfully!", 3000,
+                Notification.show(translationService.translate("resume.uploadedSuccessfully", safeOriginalName), 3000,
                         Notification.Position.TOP_CENTER);
 
                 resumes = loadResumesFromFilesystem();
@@ -356,15 +356,17 @@ public class ResumeManagerView extends VerticalLayout {
 
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, "Upload failed", ex);
-                Notification.show("Upload failed: " + ex.getMessage(), 5000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("resume.uploadFailed", ex.getMessage()), 5000, Notification.Position.TOP_CENTER);
             }
         });
 
         upload.addFailedListener(event -> Notification.show(
-                "Upload failed: " + (event.getReason() != null ? event.getReason().getMessage() : "Unknown error"),
+                translationService.translate("resume.uploadFailed",
+                        event.getReason() != null ? event.getReason().getMessage() : "Unknown error"),
                 5000, Notification.Position.TOP_CENTER));
 
-        upload.addFileRejectedListener(event -> Notification.show("File rejected: " + event.getErrorMessage(), 5000,
+        upload.addFileRejectedListener(event -> Notification.show(
+                translationService.translate("resume.fileRejected", event.getErrorMessage()), 5000,
                 Notification.Position.TOP_CENTER));
 
         return uploadContainer;
@@ -432,14 +434,14 @@ public class ResumeManagerView extends VerticalLayout {
             try {
                 String storedPath = documentService.storeResumeText(text, filename, String.valueOf(userPin));
                 LOGGER.info("Resume text saved via DocumentService: " + storedPath);
-                Notification.show("Resume text saved as \"" + filename + "\"!", 3000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("resume.textSaved", filename), 3000, Notification.Position.TOP_CENTER);
                 resumeTextArea.clear();
                 filenameField.clear();
                 resumes = loadResumesFromFilesystem();
                 refreshResumeList();
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, "Save resume text failed", ex);
-                Notification.show("Failed to save: " + ex.getMessage(), 5000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("resume.failedToSave", ex.getMessage()), 5000, Notification.Position.TOP_CENTER);
             }
         });
 
@@ -625,10 +627,10 @@ public class ResumeManagerView extends VerticalLayout {
             String mimeType = resume.format.equalsIgnoreCase("PDF") ? "application/pdf"
                     : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             serveDownload(bytes, mimeType, resume.name);
-            Notification.show("Downloading " + resume.name, 2000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("resume.downloading", resume.name), 2000, Notification.Position.TOP_CENTER);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Download error", ex);
-            Notification.show("Error downloading file: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("resume.downloadError", ex.getMessage()), 3000, Notification.Position.TOP_CENTER);
         }
     }
 
@@ -654,7 +656,7 @@ public class ResumeManagerView extends VerticalLayout {
 
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "View error", ex);
-            Notification.show("Error opening file: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("resume.openError", ex.getMessage()), 3000, Notification.Position.TOP_CENTER);
         }
     }
 
@@ -662,7 +664,7 @@ public class ResumeManagerView extends VerticalLayout {
         resume.starred = !resume.starred;
         // In a real app, you would persist this to the database
         refreshResumeList();
-        Notification.show(resume.starred ? "Resume starred" : "Resume unstarred", 2000,
+        Notification.show(resume.starred ? translationService.translate("resume.resumeStarred") : translationService.translate("resume.resumeUnstarred"), 2000,
                 Notification.Position.TOP_CENTER);
     }
 

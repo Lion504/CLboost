@@ -567,14 +567,14 @@ public class HistoryView extends VerticalLayout {
                     : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             serveDownload(bytes, mimeType, file.getName());
         } catch (IOException ex) {
-            Notification.show("Error reading file: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("history.fileNotFound", ex.getMessage()), 3000, Notification.Position.TOP_CENTER);
             LOGGER.log(Level.SEVERE, "Download error", ex);
         }
     }
 
     private void exportAllFiles() {
         if (allItems.isEmpty()) {
-            Notification.show("No files to export", 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("history.noFilesToExport"), 3000, Notification.Position.TOP_CENTER);
             return;
         }
         try {
@@ -593,9 +593,9 @@ public class HistoryView extends VerticalLayout {
             }
             String zipName = "cover_letters_export_" + System.currentTimeMillis() + ".zip";
             serveDownload(baos.toByteArray(), "application/zip", zipName);
-            Notification.show("Exporting " + added.size() + " files…", 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("history.exporting", added.size()), 3000, Notification.Position.TOP_CENTER);
         } catch (Exception ex) {
-            Notification.show("Export error: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("history.exportError", ex.getMessage()), 3000, Notification.Position.TOP_CENTER);
             LOGGER.log(Level.SEVERE, "Export all error", ex);
         }
     }

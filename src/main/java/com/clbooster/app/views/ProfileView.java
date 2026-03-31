@@ -193,7 +193,7 @@ public class ProfileView extends VerticalLayout {
 
         editBtn.addClickListener(e -> toggleEditMode());
 
-        saveBtn = createPrimaryButton("Save Changes", this::saveProfile);
+        saveBtn = createPrimaryButton(translationService.translate("profile.saveChanges"), this::saveProfile);
         saveBtn.setVisible(false); // Hidden initially
 
         actions.add(editBtn, saveBtn);
@@ -420,14 +420,14 @@ public class ProfileView extends VerticalLayout {
         // Two-Factor Authentication (placeholder)
         HorizontalLayout twoFactorRow = createSecurityOption(translationService.translate("profile.twoFactor"),
                 translationService.translate("profile.addSecurity"), translationService.translate("profile.enable"),
-                () -> Notification.show("2FA setup coming soon!", 3000, Notification.Position.TOP_CENTER));
+                () -> Notification.show(translationService.translate("profile.twoFactorComingSoon"), 3000, Notification.Position.TOP_CENTER));
         securityOptions.add(twoFactorRow);
 
         // Login Notifications (placeholder)
         HorizontalLayout loginNotifRow = createSecurityOption(
                 translationService.translate("profile.loginNotifications"),
                 translationService.translate("profile.getNotified"), translationService.translate("profile.enable"),
-                () -> Notification.show("Login notifications coming soon!", 3000, Notification.Position.TOP_CENTER));
+                () -> Notification.show(translationService.translate("profile.loginNotifComingSoon"), 3000, Notification.Position.TOP_CENTER));
         securityOptions.add(loginNotifRow);
 
         card.add(title, subtitle, passwordSection, divider, securityTitle, securityOptions);
@@ -477,7 +477,7 @@ public class ProfileView extends VerticalLayout {
 
     private void changePassword() {
         if (currentUser == null) {
-            Notification.show("Error: Not logged in", 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.notLoggedIn"), 3000, Notification.Position.TOP_CENTER);
             return;
         }
 
@@ -487,17 +487,17 @@ public class ProfileView extends VerticalLayout {
 
         // Validation
         if (currentPwd == null || currentPwd.isEmpty()) {
-            Notification.show("Error: Please enter current password", 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.enterCurrentPassword"), 3000, Notification.Position.TOP_CENTER);
             return;
         }
 
         if (newPwd == null || newPwd.isEmpty()) {
-            Notification.show("Error: Please enter new password", 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.enterNewPassword"), 3000, Notification.Position.TOP_CENTER);
             return;
         }
 
         if (!newPwd.equals(confirmPwd)) {
-            Notification.show("Error: New passwords do not match", 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.passwordsNotMatch"), 3000, Notification.Position.TOP_CENTER);
             return;
         }
 
@@ -505,7 +505,7 @@ public class ProfileView extends VerticalLayout {
         if (newPwd.length() < 10 || !newPwd.matches(".*[A-Z].*") || !newPwd.matches(".*[a-z].*")
                 || !newPwd.matches(".*\\d.*") || !newPwd.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*")) {
             Notification.show(
-                    "Error: Password must be at least 10 characters with uppercase, lowercase, number, and special character",
+                    translationService.translate("profile.passwordRequirementsError"),
                     5000, Notification.Position.TOP_CENTER);
             return;
         }
@@ -513,13 +513,13 @@ public class ProfileView extends VerticalLayout {
         // Use AuthenticationService to change password
         boolean success = authService.changePassword(currentPwd, newPwd);
         if (success) {
-            Notification.show("Password changed successfully!", 3000, Notification.Position.BOTTOM_END);
+            Notification.show(translationService.translate("profile.passwordChanged"), 3000, Notification.Position.BOTTOM_END);
             // Clear fields
             currentPasswordField.clear();
             newPasswordField.clear();
             confirmPasswordField.clear();
         } else {
-            Notification.show("Error: Current password is incorrect", 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.incorrectPassword"), 3000, Notification.Position.TOP_CENTER);
         }
     }
 
@@ -615,14 +615,14 @@ public class ProfileView extends VerticalLayout {
 
     private void saveProfile() {
         if (currentUser == null) {
-            Notification.show("Error: Not logged in", 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.notLoggedIn"), 3000, Notification.Position.TOP_CENTER);
             return;
         }
 
         // Validate email
         String email = emailField.getValue();
         if (email == null || email.trim().isEmpty() || !email.contains("@")) {
-            Notification.show("Error: Please enter a valid email address", 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.enterValidEmail"), 3000, Notification.Position.TOP_CENTER);
             return;
         }
 
@@ -631,13 +631,13 @@ public class ProfileView extends VerticalLayout {
                 toolsArea.getValue(), skillsArea.getValue(), linkField.getValue(), email);
 
         if (success) {
-            Notification.show("Profile saved successfully!", 3000, Notification.Position.BOTTOM_END);
+            Notification.show(translationService.translate("profile.profileSaved"), 3000, Notification.Position.BOTTOM_END);
             // Reload profile data
             this.userProfile = profileService.getProfile(currentUser.getPin());
             // Exit edit mode
             toggleEditMode();
         } else {
-            Notification.show("Error: Failed to save profile. Please try again.", 3000,
+            Notification.show(translationService.translate("profile.saveFailed"), 3000,
                     Notification.Position.TOP_CENTER);
         }
     }
