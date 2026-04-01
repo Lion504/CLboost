@@ -109,7 +109,8 @@ public class TranslationService implements I18NProvider {
     }
 
     public boolean isRtl(Locale locale) {
-        if (locale == null) return false;
+        if (locale == null)
+            return false;
         String lang = locale.getLanguage();
         return "fa".equals(lang) || "ur".equals(lang) || "ar".equals(lang) || "he".equals(lang);
     }
