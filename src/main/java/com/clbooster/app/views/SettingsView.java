@@ -383,13 +383,9 @@ public class SettingsView extends VerticalLayout {
 
     private void updateToggleVisual(Div track, Div thumb, boolean enabled) {
         track.getStyle().set("background", enabled ? SUCCESS : "rgba(0, 0, 0, 0.2)");
-        if (enabled) {
-            thumb.getStyle().set("right", "2px");
-            thumb.getStyle().remove("left");
-        } else {
-            thumb.getStyle().set("left", "2px");
-            thumb.getStyle().remove("right");
-        }
+        thumb.getStyle().set("inset-inline-start", enabled ? "auto" : "2px");
+        thumb.getStyle().set("inset-inline-end", enabled ? "2px" : "auto");
+        thumb.getStyle().remove(enabled ? "left" : "right");
     }
 
     private Div createPrivacyCard() {

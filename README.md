@@ -149,7 +149,34 @@ messages*.properties  (en, fi, zh, ur, fa, pt)
 
 ## 🔀 RTL Support
 
-Urdu (اردو) and Persian (فارسی) use **right-to-left (RTL)** text direction. Vaadin Flow 24.9+ automatically applies `dir="rtl"` on the `<html>` element when an RTL locale is active, flipping layout direction for all standard components.
+Urdu (اردو) and Persian (فارسی) use **right-to-left (RTL)** text direction. The application handles RTL through three layers:
+
+### How RTL Works
+
+1. **`dir` attribute** — `TranslationService.setCurrentLocale()` sets `dir="rtl"` on the `<html>` element whenever an RTL language (fa, ur, ar, he) is selected
+2. **Vaadin auto-flip** — Vaadin Flow 24.9+ reads `dir="rtl"` and automatically flips `AppLayout` drawer position, navbar order, and component flow direction
+3. **Custom CSS overrides** — `styles.css` adds RTL-specific rules for cards, forms, navigation items, toggle switches, and animations
+
+### What Flips Automatically
+
+- Sidebar drawer position (left ↔ right)
+- Form label/input alignment
+- Navigation menu order
+- Table column order
+- Button group ordering
+- Toggle switch thumb position (uses CSS `inset-inline-start/end`)
+
+### RTL Font Fallbacks
+
+RTL languages use Arabic-script fonts with cascading fallbacks: `Noto Sans Arabic` → `Noto Nastaliq Urdu` → `Vazirmatn` → system defaults.
+
+### Testing RTL
+
+1. Launch the application
+2. Open **Settings → Language**
+3. Select **فارسی** (Persian) or **اردو** (Urdu)
+4. Verify: sidebar moves right, all text aligns right, toggle switches flip, no overlapping or clipped content
+5. Switch back to English — verify everything flips back to LTR
 
 ## 🔧 Development
 
