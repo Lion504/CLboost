@@ -30,7 +30,7 @@ docker-compose up -d
 **Option B - Pull from Docker Hub:**
 
 ```bash
-docker pull timo2233/clboost:v1.0.2
+docker pull timo2233/clboost:v1.0.4
 docker run -d -p 8080:8080 --name clboost-app \
   -e GEMINI_API_KEY=your_api_key \
   -e DB_HOST=db \
@@ -38,7 +38,7 @@ docker run -d -p 8080:8080 --name clboost-app \
   -e DB_NAME=CL_generator \
   -e DB_USERNAME=root \
   -e DB_PASSWORD=password \
-  timo2233/clboost:v1.0.2
+  timo2233/clboost:v1.0.4
 ```
 
 **Option C - Build locally:**
@@ -64,7 +64,7 @@ Access the application at http://localhost:8080
 - **3 tone styles** — Professional, Creative, Storyteller
 - **Resume manager** — upload, preview, download, delete resumes
 - **History** — browse, re-edit, and export past cover letters
-- **Multi-language UI** — English, Finnish, Swedish, German, French
+- **Multi-language UI** — English, Finnish, Chinese, Urdu, Persian, Portuguese
 - **Export** — DOCX and PDF from the editor
 
 ## 🏗️ Architecture
@@ -110,11 +110,46 @@ cl-booster/
 │       └── views/                          # All Vaadin views
 ├── src/main/resources/
 │   ├── application.properties
-│   └── i18n/                               # en, fi, sv, de, fr translations
+│   └── messages*.properties                # en, fi, zh, ur, fa, pt translations
 ├── uploads/                                # Runtime file storage (gitignored)
 ├── .env                                    # Local secrets (gitignored)
 └── .env.example                            # Template
 ```
+
+## 🌐 Localization Framework
+
+CL Booster uses a **Java `ResourceBundle`-based localization system** integrated with **Vaadin's `I18NProvider`** interface for seamless server-side UI translation.
+
+### Architecture
+
+```
+UI Views (DashboardView, HistoryView, etc.)
+         │ translate("key", params)
+         ▼
+TranslationService.java (implements I18NProvider)
+  - Resolves locale: session → user settings → default
+  - Loads ResourceBundle for the active locale
+  - Falls back to English if a key is missing
+  - Formats {0}, {1} placeholders via MessageFormat
+         │ ResourceBundle.getBundle()
+         ▼
+messages*.properties  (en, fi, zh, ur, fa, pt)
+```
+
+### Supported Languages
+
+| Language   | Code | File                     | Script    | Direction |
+| ---------- | ---- | ------------------------ | --------- | --------- |
+| English    | `en` | `messages.properties`    | Latin     | LTR       |
+| Finnish    | `fi` | `messages_fi.properties` | Latin     | LTR       |
+| Portuguese | `pt` | `messages_pt.properties` | Latin     | LTR       |
+| Chinese    | `zh` | `messages_zh.properties` | Han (CJK) | LTR       |
+| Urdu       | `ur` | `messages_ur.properties` | Arabic    | RTL       |
+| Persian    | `fa` | `messages_fa.properties` | Arabic    | RTL       |
+
+## 🔀 RTL Support
+
+Urdu (اردو) and Persian (فارسی) use **right-to-left (RTL)** text direction. Vaadin Flow 24.9+ automatically applies `dir="rtl"` on the `<html>` element when an RTL locale is active, flipping layout direction for all standard components.
 
 ## 🔧 Development
 
