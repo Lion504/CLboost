@@ -420,14 +420,16 @@ public class ProfileView extends VerticalLayout {
         // Two-Factor Authentication (placeholder)
         HorizontalLayout twoFactorRow = createSecurityOption(translationService.translate("profile.twoFactor"),
                 translationService.translate("profile.addSecurity"), translationService.translate("profile.enable"),
-                () -> Notification.show(translationService.translate("profile.twoFactorComingSoon"), 3000, Notification.Position.TOP_CENTER));
+                () -> Notification.show(translationService.translate("profile.twoFactorComingSoon"), 3000,
+                        Notification.Position.TOP_CENTER));
         securityOptions.add(twoFactorRow);
 
         // Login Notifications (placeholder)
         HorizontalLayout loginNotifRow = createSecurityOption(
                 translationService.translate("profile.loginNotifications"),
                 translationService.translate("profile.getNotified"), translationService.translate("profile.enable"),
-                () -> Notification.show(translationService.translate("profile.loginNotifComingSoon"), 3000, Notification.Position.TOP_CENTER));
+                () -> Notification.show(translationService.translate("profile.loginNotifComingSoon"), 3000,
+                        Notification.Position.TOP_CENTER));
         securityOptions.add(loginNotifRow);
 
         card.add(title, subtitle, passwordSection, divider, securityTitle, securityOptions);
@@ -477,7 +479,8 @@ public class ProfileView extends VerticalLayout {
 
     private void changePassword() {
         if (currentUser == null) {
-            Notification.show(translationService.translate("profile.notLoggedIn"), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.notLoggedIn"), 3000,
+                    Notification.Position.TOP_CENTER);
             return;
         }
 
@@ -487,39 +490,43 @@ public class ProfileView extends VerticalLayout {
 
         // Validation
         if (currentPwd == null || currentPwd.isEmpty()) {
-            Notification.show(translationService.translate("profile.enterCurrentPassword"), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.enterCurrentPassword"), 3000,
+                    Notification.Position.TOP_CENTER);
             return;
         }
 
         if (newPwd == null || newPwd.isEmpty()) {
-            Notification.show(translationService.translate("profile.enterNewPassword"), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.enterNewPassword"), 3000,
+                    Notification.Position.TOP_CENTER);
             return;
         }
 
         if (!newPwd.equals(confirmPwd)) {
-            Notification.show(translationService.translate("profile.passwordsNotMatch"), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.passwordsNotMatch"), 3000,
+                    Notification.Position.TOP_CENTER);
             return;
         }
 
         // Check password requirements
         if (newPwd.length() < 10 || !newPwd.matches(".*[A-Z].*") || !newPwd.matches(".*[a-z].*")
                 || !newPwd.matches(".*\\d.*") || !newPwd.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*")) {
-            Notification.show(
-                    translationService.translate("profile.passwordRequirementsError"),
-                    5000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.passwordRequirementsError"), 5000,
+                    Notification.Position.TOP_CENTER);
             return;
         }
 
         // Use AuthenticationService to change password
         boolean success = authService.changePassword(currentPwd, newPwd);
         if (success) {
-            Notification.show(translationService.translate("profile.passwordChanged"), 3000, Notification.Position.BOTTOM_END);
+            Notification.show(translationService.translate("profile.passwordChanged"), 3000,
+                    Notification.Position.BOTTOM_END);
             // Clear fields
             currentPasswordField.clear();
             newPasswordField.clear();
             confirmPasswordField.clear();
         } else {
-            Notification.show(translationService.translate("profile.incorrectPassword"), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.incorrectPassword"), 3000,
+                    Notification.Position.TOP_CENTER);
         }
     }
 
@@ -615,14 +622,16 @@ public class ProfileView extends VerticalLayout {
 
     private void saveProfile() {
         if (currentUser == null) {
-            Notification.show(translationService.translate("profile.notLoggedIn"), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.notLoggedIn"), 3000,
+                    Notification.Position.TOP_CENTER);
             return;
         }
 
         // Validate email
         String email = emailField.getValue();
         if (email == null || email.trim().isEmpty() || !email.contains("@")) {
-            Notification.show(translationService.translate("profile.enterValidEmail"), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("profile.enterValidEmail"), 3000,
+                    Notification.Position.TOP_CENTER);
             return;
         }
 
@@ -631,7 +640,8 @@ public class ProfileView extends VerticalLayout {
                 toolsArea.getValue(), skillsArea.getValue(), linkField.getValue(), email);
 
         if (success) {
-            Notification.show(translationService.translate("profile.profileSaved"), 3000, Notification.Position.BOTTOM_END);
+            Notification.show(translationService.translate("profile.profileSaved"), 3000,
+                    Notification.Position.BOTTOM_END);
             // Reload profile data
             this.userProfile = profileService.getProfile(currentUser.getPin());
             // Exit edit mode

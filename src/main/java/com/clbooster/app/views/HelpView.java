@@ -385,7 +385,8 @@ public class HelpView extends VerticalLayout {
             iconContainer.getStyle().set("transform", "scale(1)");
         });
 
-        card.addClickListener(e -> Notification.show(translationService.translate("help.opening", title), 3000, Notification.Position.TOP_CENTER));
+        card.addClickListener(e -> Notification.show(translationService.translate("help.opening", title), 3000,
+                Notification.Position.TOP_CENTER));
 
         return card;
     }
