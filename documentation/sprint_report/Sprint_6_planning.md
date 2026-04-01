@@ -1,6 +1,6 @@
 # Sprint 6 Demo Presentation
 
-## Project Name
+## Project Name:
 **CLboost Application**
 
 ## Sprint Number
@@ -13,11 +13,9 @@ _April 1 – April 15, 2026_
 
 ## 1. Sprint Goal
 
-Briefly explain the goal of this sprint:
-
 - Extend database localization
 - Improve code quality through analysis and refactoring
-- Prepare for project acceptance
+- Finalize LinkedIn API
 
 ---
 
@@ -37,9 +35,9 @@ Briefly explain the goal of this sprint:
 
 ### 3.1 Database Localization
 
-**What was implemented:**
+**What shold be implemented:**
 - Multilingual database support
-- UTF-8 encoding configuration
+- UTF-8 encoding configuration for database
 - Updated schema for localization
 
 **Demo Steps:**
@@ -70,10 +68,7 @@ Briefly explain the goal of this sprint:
 ## 5. Code Refactoring
 
 **What was improved:**
-- Simplified complex methods
-- Removed duplicate code
-- Improved naming conventions
-- Added documentation/comments
+
 
 **Before vs After:**
 - Show example code snippets
