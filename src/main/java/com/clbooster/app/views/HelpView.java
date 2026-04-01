@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.clbooster.app.i18n.TranslationService;
 
 import java.util.List;
 
@@ -34,9 +35,11 @@ public class HelpView extends VerticalLayout {
     private static final String BG_WHITE = "#ffffff";
     private static final String BG_GRAY = "#f5f5f7";
 
+    private final TranslationService translationService;
     private VerticalLayout faqContainer;
 
     public HelpView() {
+        this.translationService = new TranslationService();
         setSizeFull();
         setPadding(true);
         getStyle().set("gap", "40px");
@@ -87,7 +90,7 @@ public class HelpView extends VerticalLayout {
         iconContainer.add(helpIcon);
 
         // Title
-        H1 title = new H1("How can we help?");
+        H1 title = new H1(translationService.translate("help.howCanWeHelp"));
         title.getStyle().set("font-size", "40px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("color", TEXT_PRIMARY);
@@ -95,14 +98,14 @@ public class HelpView extends VerticalLayout {
         title.getStyle().set("letter-spacing", "-0.025em");
 
         // Subtitle
-        Paragraph subtitle = new Paragraph("Search our knowledge base or browse categories below");
+        Paragraph subtitle = new Paragraph(translationService.translate("help.searchKnowledgeBase"));
         subtitle.getStyle().set("font-size", "17px");
         subtitle.getStyle().set("color", TEXT_SECONDARY);
         subtitle.getStyle().set("margin", "0");
 
         // Search bar
         TextField searchField = new TextField();
-        searchField.setPlaceholder("Search for answers...");
+        searchField.setPlaceholder(translationService.translate("help.searchPlaceholder"));
         searchField.setPrefixComponent(VaadinIcon.SEARCH.create());
         searchField.setClearButtonVisible(true);
         searchField.setWidthFull();
@@ -127,9 +130,10 @@ public class HelpView extends VerticalLayout {
         links.getStyle().set("justify-content", "center");
         links.getStyle().set("flex-wrap", "wrap");
 
-        String[][] linkData = { { "Getting Started", VaadinIcon.ROCKET.name() },
-                { "Account & Billing", VaadinIcon.USER_CARD.name() }, { "AI Features", VaadinIcon.MAGIC.name() },
-                { "Export & Share", VaadinIcon.DOWNLOAD.name() } };
+        String[][] linkData = { { translationService.translate("help.gettingStarted"), VaadinIcon.ROCKET.name() },
+                { translationService.translate("help.accountBilling"), VaadinIcon.USER_CARD.name() },
+                { translationService.translate("help.aiFeatures"), VaadinIcon.MAGIC.name() },
+                { translationService.translate("help.exportShare"), VaadinIcon.DOWNLOAD.name() } };
 
         for (String[] data : linkData) {
             Button linkBtn = createQuickLinkButton(data[0], VaadinIcon.valueOf(data[1]));
@@ -160,7 +164,8 @@ public class HelpView extends VerticalLayout {
             btn.getStyle().set("border-color", "rgba(0,0,0,0.1)");
         });
 
-        btn.addClickListener(e -> Notification.show("Opening " + text, 3000, Notification.Position.TOP_CENTER));
+        btn.addClickListener(e -> Notification.show(translationService.translate("help.opening", text), 3000,
+                Notification.Position.TOP_CENTER));
 
         return btn;
     }
@@ -172,7 +177,7 @@ public class HelpView extends VerticalLayout {
         section.getStyle().set("gap", "20px");
         section.setWidthFull();
 
-        H2 title = new H2("Frequently Asked Questions");
+        H2 title = new H2(translationService.translate("help.faqTitle"));
         title.getStyle().set("font-size", "24px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("color", TEXT_PRIMARY);
@@ -184,18 +189,19 @@ public class HelpView extends VerticalLayout {
         faqContainer.getStyle().set("gap", "12px");
 
         // FAQ items
-        List<String[]> faqs = List.of(new String[] { "Is CL Booster really free?",
-                "Yes! CL Booster is free for all job seekers. You can generate unlimited cover letters with our AI. Premium features like advanced customization and priority support are available in our Pro plan." },
-                new String[] { "How does the AI generate cover letters?",
-                        "Our AI analyzes your resume and the job description to create personalized cover letters. It identifies key skills, experiences, and company values to craft compelling narratives that match the role." },
-                new String[] { "Can I edit the generated cover letter?",
-                        "Absolutely! After generation, you can edit your cover letter in our built-in editor. You also get AI-powered suggestions to improve your letter further." },
-                new String[] { "What file formats can I export?",
-                        "You can export your cover letters as PDF, DOCX, or plain text. PDF is recommended for job applications as it preserves formatting across all devices." },
-                new String[] { "Is my data secure?",
-                        "We take data security seriously. Your resume and personal information are encrypted and stored securely. We never share your data with third parties." },
-                new String[] { "How do I improve my match score?",
-                        "To improve your match score, make sure to include relevant keywords from the job description, highlight quantifiable achievements, and tailor your skills to match the role requirements." });
+        List<String[]> faqs = List.of(
+                new String[] { translationService.translate("help.isCLBoosterFree"),
+                        translationService.translate("help.isCLBoosterFreeAnswer") },
+                new String[] { translationService.translate("help.howAIGenerate"),
+                        translationService.translate("help.howAIGenerateAnswer") },
+                new String[] { translationService.translate("help.canIEdit"),
+                        translationService.translate("help.canIEditAnswer") },
+                new String[] { translationService.translate("help.whatFormats"),
+                        translationService.translate("help.whatFormatsAnswer") },
+                new String[] { translationService.translate("help.isDataSecure"),
+                        translationService.translate("help.isDataSecurityAnswer") },
+                new String[] { translationService.translate("help.howImproveMatch"),
+                        translationService.translate("help.howImproveMatchAnswer") });
 
         for (String[] faq : faqs) {
             faqContainer.add(createFAQItem(faq[0], faq[1]));
@@ -285,16 +291,19 @@ public class HelpView extends VerticalLayout {
         cards.getStyle().set("margin-top", "20px");
 
         // Contact support card
-        Div contactCard = createSupportCard("Contact Support", "Get in touch with our team", VaadinIcon.ENVELOPE,
-                PRIMARY, "Email Us");
+        Div contactCard = createSupportCard(translationService.translate("help.contactSupport"),
+                translationService.translate("help.getInTouch"), VaadinIcon.ENVELOPE, PRIMARY,
+                translationService.translate("help.emailUs"));
 
         // Community card
-        Div communityCard = createSupportCard("Community", "Join discussions with other users", VaadinIcon.USERS,
-                "#AF52DE", "Join Community");
+        Div communityCard = createSupportCard(translationService.translate("help.community"),
+                translationService.translate("help.joinDiscussions"), VaadinIcon.USERS, "#AF52DE",
+                translationService.translate("help.joinCommunity"));
 
         // Documentation card
-        Div docsCard = createSupportCard("Documentation", "Read our detailed guides", VaadinIcon.BOOK, "#34C759",
-                "View Docs");
+        Div docsCard = createSupportCard(translationService.translate("help.documentation"),
+                translationService.translate("help.readGuides"), VaadinIcon.BOOK, "#34C759",
+                translationService.translate("help.viewDocs"));
 
         cards.add(contactCard, communityCard, docsCard);
 
@@ -376,18 +385,17 @@ public class HelpView extends VerticalLayout {
             iconContainer.getStyle().set("transform", "scale(1)");
         });
 
-        card.addClickListener(e -> Notification.show("Opening " + title, 3000, Notification.Position.TOP_CENTER));
+        card.addClickListener(e -> Notification.show(translationService.translate("help.opening", title), 3000,
+                Notification.Position.TOP_CENTER));
 
         return card;
     }
 
     private void filterFAQs(String searchTerm) {
-        // Simple filter implementation - in production, this would search through
-        // actual data
         if (searchTerm == null || searchTerm.isEmpty()) {
             return;
         }
-        // Notification to show search is working
-        Notification.show("Searching for: " + searchTerm, 2000, Notification.Position.TOP_CENTER);
+        Notification.show(translationService.translate("help.searching") + ": " + searchTerm, 2000,
+                Notification.Position.TOP_CENTER);
     }
 }

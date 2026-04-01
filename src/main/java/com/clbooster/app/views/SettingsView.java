@@ -98,14 +98,14 @@ public class SettingsView extends VerticalLayout {
         pageHeader.getStyle().set("gap", "4px");
         pageHeader.getStyle().set("margin-bottom", "8px");
 
-        H2 title = new H2("Preferences");
+        H2 title = new H2(translationService.translate("settings.preferences"));
         title.getStyle().set("font-size", "30px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("letter-spacing", "-0.025em");
         title.getStyle().set("color", TEXT_PRIMARY);
         title.getStyle().set("margin", "0");
 
-        Paragraph subtitle = new Paragraph("Manage your application experience and accessibility.");
+        Paragraph subtitle = new Paragraph(translationService.translate("settings.preferencesDesc"));
         subtitle.getStyle().set("font-size", "14px");
         subtitle.getStyle().set("color", TEXT_SECONDARY);
         subtitle.getStyle().set("margin", "0");
@@ -149,13 +149,13 @@ public class SettingsView extends VerticalLayout {
     private Div createAppearanceCard() {
         Div card = createCard();
 
-        H3 title = new H3("Appearance");
+        H3 title = new H3(translationService.translate("settings.appearance"));
         title.getStyle().set("font-size", "18px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("color", TEXT_PRIMARY);
         title.getStyle().set("margin", "0 0 8px 0");
 
-        Paragraph desc = new Paragraph("Customize how Cover Booster looks on your device.");
+        Paragraph desc = new Paragraph(translationService.translate("settings.appearance.desc"));
         desc.getStyle().set("font-size", "14px");
         desc.getStyle().set("color", TEXT_SECONDARY);
         desc.getStyle().set("margin", "0");
@@ -168,13 +168,13 @@ public class SettingsView extends VerticalLayout {
     private Div createLanguageCard() {
         Div card = createCard();
 
-        H3 title = new H3("Language & Region");
+        H3 title = new H3(translationService.translate("settings.language"));
         title.getStyle().set("font-size", "18px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("color", TEXT_PRIMARY);
         title.getStyle().set("margin", "0 0 8px 0");
 
-        Paragraph desc = new Paragraph("Select your preferred language for the interface and AI generation.");
+        Paragraph desc = new Paragraph(translationService.translate("settings.languageSelect"));
         desc.getStyle().set("font-size", "14px");
         desc.getStyle().set("color", TEXT_SECONDARY);
         desc.getStyle().set("margin", "0 0 24px 0");
@@ -186,7 +186,7 @@ public class SettingsView extends VerticalLayout {
         selectGroup.getStyle().set("gap", "8px");
         selectGroup.setWidth("280px");
 
-        Span label = new Span("Language");
+        Span label = new Span(translationService.translate("label.language"));
         label.getStyle().set("font-size", "12px");
         label.getStyle().set("font-weight", "700");
         label.getStyle().set("color", TEXT_SECONDARY);
@@ -194,8 +194,28 @@ public class SettingsView extends VerticalLayout {
         label.getStyle().set("letter-spacing", "0.05em");
 
         langSelect = new Select<>();
-        langSelect.setItems("English", "Finnish (Suomi)", "Swedish (Svenska)", "German (Deutsch)", "French (Français)");
-        langSelect.setValue(userSettings.getLanguage() != null ? userSettings.getLanguage() : "English");
+        langSelect.setItems(translationService.translate("settings.langEnglish"),
+                translationService.translate("settings.langFinnish"),
+                translationService.translate("settings.langPortuguese"),
+                translationService.translate("settings.langPersian"),
+                translationService.translate("settings.langChinese"),
+                translationService.translate("settings.langUrdu"));
+        // Convert stored language code to display name
+        String savedLanguage = userSettings.getLanguage();
+        String displayValue = "English";
+        if (savedLanguage != null) {
+            if (savedLanguage.contains("Finnish"))
+                displayValue = "Suomi";
+            else if (savedLanguage.contains("Portuguese"))
+                displayValue = "Português";
+            else if (savedLanguage.contains("Persian"))
+                displayValue = "فارسی";
+            else if (savedLanguage.contains("Chinese"))
+                displayValue = "中文";
+            else if (savedLanguage.contains("Urdu"))
+                displayValue = "اردو";
+        }
+        langSelect.setValue(displayValue);
         langSelect.setWidthFull();
         langSelect.getStyle().set("--vaadin-input-field-background", BG_GRAY);
         langSelect.getStyle().set("--vaadin-input-field-border-radius", "12px");
@@ -203,9 +223,26 @@ public class SettingsView extends VerticalLayout {
         // Apply language change immediately when selected
         langSelect.addValueChangeListener(e -> {
             if (e.getValue() != null) {
-                translationService.setLanguage(e.getValue());
-                Notification.show("Language changed to " + e.getValue() + ". Save settings to apply permanently.", 3000,
-                        Notification.Position.BOTTOM_END);
+                String langCode;
+                String selectedDisplay = e.getValue();
+                if (selectedDisplay.equals(translationService.translate("settings.langFinnish"))) {
+                    langCode = "Finnish (Suomi)";
+                } else if (selectedDisplay.equals(translationService.translate("settings.langPortuguese"))) {
+                    langCode = "Portuguese (Português)";
+                } else if (selectedDisplay.equals(translationService.translate("settings.langPersian"))) {
+                    langCode = "Persian (فارسی)";
+                } else if (selectedDisplay.equals(translationService.translate("settings.langChinese"))) {
+                    langCode = "Chinese (中文)";
+                } else if (selectedDisplay.equals("اردو")) {
+                    langCode = "Urdu (اردو)";
+                } else {
+                    langCode = "English";
+                }
+                translationService.setLanguage(langCode);
+                Notification.show(
+                        translationService.translate("settings.languageChanged") + " " + selectedDisplay + ". "
+                                + translationService.translate("settings.saveToApply"),
+                        3000, Notification.Position.BOTTOM_END);
             }
         });
 
@@ -218,13 +255,13 @@ public class SettingsView extends VerticalLayout {
     private Div createNotificationsCard() {
         Div card = createCard();
 
-        H3 title = new H3("Notifications");
+        H3 title = new H3(translationService.translate("settings.notifications"));
         title.getStyle().set("font-size", "18px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("color", TEXT_PRIMARY);
         title.getStyle().set("margin", "0 0 8px 0");
 
-        Paragraph desc = new Paragraph("Manage how and when you receive updates from us.");
+        Paragraph desc = new Paragraph(translationService.translate("settings.notificationsDesc"));
         desc.getStyle().set("font-size", "14px");
         desc.getStyle().set("color", TEXT_SECONDARY);
         desc.getStyle().set("margin", "0 0 24px 0");
@@ -235,8 +272,8 @@ public class SettingsView extends VerticalLayout {
         toggles.setSpacing(false);
         toggles.getStyle().set("gap", "0");
 
-        ToggleResult emailResult = createToggleRow("Email Notifications", "Weekly summaries and match alerts",
-                emailNotifications);
+        ToggleResult emailResult = createToggleRow(translationService.translate("settings.emailNotifications"),
+                translationService.translate("settings.emailNotifications.desc"), emailNotifications);
         emailTrack = emailResult.track;
         emailThumb = emailResult.thumb;
         emailTrack.addClickListener(e -> {
@@ -244,8 +281,8 @@ public class SettingsView extends VerticalLayout {
             updateToggleVisual(emailTrack, emailThumb, emailNotifications);
         });
 
-        ToggleResult pushResult = createToggleRow("Push Notifications", "Real-time generation status",
-                pushNotifications);
+        ToggleResult pushResult = createToggleRow(translationService.translate("settings.pushNotifications"),
+                translationService.translate("settings.pushNotifications.desc"), pushNotifications);
         pushTrack = pushResult.track;
         pushThumb = pushResult.thumb;
         pushTrack.addClickListener(e -> {
@@ -253,7 +290,8 @@ public class SettingsView extends VerticalLayout {
             updateToggleVisual(pushTrack, pushThumb, pushNotifications);
         });
 
-        ToggleResult productResult = createToggleRow("Product Updates", "New features and tips", productUpdates);
+        ToggleResult productResult = createToggleRow(translationService.translate("settings.productUpdates"),
+                translationService.translate("settings.productUpdates.desc"), productUpdates);
         productTrack = productResult.track;
         productThumb = productResult.thumb;
         productTrack.addClickListener(e -> {
@@ -261,7 +299,8 @@ public class SettingsView extends VerticalLayout {
             updateToggleVisual(productTrack, productThumb, productUpdates);
         });
 
-        ToggleResult marketingResult = createToggleRow("Marketing", "Special offers and promotions", marketing);
+        ToggleResult marketingResult = createToggleRow(translationService.translate("settings.marketing"),
+                translationService.translate("settings.marketing.desc"), marketing);
         marketingTrack = marketingResult.track;
         marketingThumb = marketingResult.thumb;
         marketingTrack.addClickListener(e -> {
@@ -356,13 +395,13 @@ public class SettingsView extends VerticalLayout {
     private Div createPrivacyCard() {
         Div card = createCard();
 
-        H3 title = new H3("Data & Privacy");
+        H3 title = new H3(translationService.translate("settings.privacy"));
         title.getStyle().set("font-size", "18px");
         title.getStyle().set("font-weight", "700");
         title.getStyle().set("color", TEXT_PRIMARY);
         title.getStyle().set("margin", "0 0 8px 0");
 
-        Paragraph desc = new Paragraph("Control your data and privacy settings.");
+        Paragraph desc = new Paragraph(translationService.translate("settings.privacyDesc"));
         desc.getStyle().set("font-size", "14px");
         desc.getStyle().set("color", TEXT_SECONDARY);
         desc.getStyle().set("margin", "0 0 24px 0");
@@ -373,8 +412,8 @@ public class SettingsView extends VerticalLayout {
         options.setSpacing(false);
         options.getStyle().set("gap", "0");
 
-        ToggleResult cloudResult = createToggleRow("Store cover letters in cloud", "Securely store your documents",
-                storeInCloud);
+        ToggleResult cloudResult = createToggleRow(translationService.translate("settings.cloudStorage"),
+                translationService.translate("settings.cloudStorage.desc"), storeInCloud);
         cloudTrack = cloudResult.track;
         cloudThumb = cloudResult.thumb;
         cloudTrack.addClickListener(e -> {
@@ -382,8 +421,8 @@ public class SettingsView extends VerticalLayout {
             updateToggleVisual(cloudTrack, cloudThumb, storeInCloud);
         });
 
-        ToggleResult aiResult = createToggleRow("Allow AI improvement training", "Help improve our AI models",
-                allowAiTraining);
+        ToggleResult aiResult = createToggleRow(translationService.translate("settings.aiTraining"),
+                translationService.translate("settings.aiTraining.desc"), allowAiTraining);
         aiTrack = aiResult.track;
         aiThumb = aiResult.thumb;
         aiTrack.addClickListener(e -> {
@@ -391,8 +430,8 @@ public class SettingsView extends VerticalLayout {
             updateToggleVisual(aiTrack, aiThumb, allowAiTraining);
         });
 
-        ToggleResult usageResult = createToggleRow("Share anonymized usage data", "Help us improve the product",
-                shareUsageData);
+        ToggleResult usageResult = createToggleRow(translationService.translate("settings.usageData"),
+                translationService.translate("settings.usageData.desc"), shareUsageData);
         usageTrack = usageResult.track;
         usageThumb = usageResult.thumb;
         usageTrack.addClickListener(e -> {
@@ -417,18 +456,18 @@ public class SettingsView extends VerticalLayout {
         dangerText.setSpacing(false);
         dangerText.getStyle().set("gap", "4px");
 
-        Span dangerTitle = new Span("Delete Account");
+        Span dangerTitle = new Span(translationService.translate("settings.deleteAccountTitle"));
         dangerTitle.getStyle().set("font-size", "15px");
         dangerTitle.getStyle().set("font-weight", "600");
         dangerTitle.getStyle().set("color", "#FF3B30");
 
-        Span dangerDesc = new Span("Permanently delete your account and all data");
+        Span dangerDesc = new Span(translationService.translate("settings.deleteAccountDesc2"));
         dangerDesc.getStyle().set("font-size", "13px");
         dangerDesc.getStyle().set("color", TEXT_SECONDARY);
 
         dangerText.add(dangerTitle, dangerDesc);
 
-        Button deleteBtn = new Button("Delete");
+        Button deleteBtn = new Button(translationService.translate("action.delete"));
         deleteBtn.getStyle().set("background", "rgba(255, 59, 48, 0.1)");
         deleteBtn.getStyle().set("color", "#FF3B30");
         deleteBtn.getStyle().set("font-weight", "600");
@@ -465,29 +504,30 @@ public class SettingsView extends VerticalLayout {
         }
 
         Dialog dialog = new Dialog();
-        dialog.setHeaderTitle("Delete Account");
+        dialog.setHeaderTitle(translationService.translate("settings.deleteAccountTitle"));
 
         VerticalLayout content = new VerticalLayout();
         content.setPadding(true);
         content.setSpacing(true);
 
-        Paragraph warning = new Paragraph("This action cannot be undone. Please enter your password to confirm.");
+        Paragraph warning = new Paragraph(translationService.translate("settings.deleteConfirm"));
         warning.getStyle().set("color", TEXT_SECONDARY);
 
-        PasswordField passwordField = new PasswordField("Password");
+        PasswordField passwordField = new PasswordField(translationService.translate("label.password"));
         passwordField.setWidthFull();
         passwordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
 
         content.add(warning, passwordField);
 
-        Button cancelBtn = new Button("Cancel", e -> dialog.close());
+        Button cancelBtn = new Button(translationService.translate("action.cancel"), e -> dialog.close());
         cancelBtn.getStyle().set("background", "transparent");
         cancelBtn.getStyle().set("color", TEXT_SECONDARY);
 
-        Button confirmBtn = new Button("Delete Account", e -> {
+        Button confirmBtn = new Button(translationService.translate("settings.deleteAccountTitle"), e -> {
             String password = passwordField.getValue();
             if (password == null || password.isEmpty()) {
-                Notification.show("Please enter your password", 3000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("settings.enterPassword"), 3000,
+                        Notification.Position.TOP_CENTER);
                 return;
             }
 
@@ -521,10 +561,11 @@ public class SettingsView extends VerticalLayout {
         actions.getStyle().set("gap", "12px");
         actions.getStyle().set("margin-top", "8px");
 
-        Button discardBtn = new Button("Discard Changes", e -> {
+        Button discardBtn = new Button(translationService.translate("action.discard"), e -> {
             loadSettings();
             getUI().ifPresent(ui -> ui.getPage().reload());
-            Notification.show("Changes discarded", 2000, Notification.Position.BOTTOM_END);
+            Notification.show(translationService.translate("settings.changesDiscarded"), 2000,
+                    Notification.Position.BOTTOM_END);
         });
         discardBtn.getStyle().set("background", "transparent");
         discardBtn.getStyle().set("color", TEXT_SECONDARY);
@@ -544,7 +585,7 @@ public class SettingsView extends VerticalLayout {
             discardBtn.getStyle().set("color", TEXT_SECONDARY);
         });
 
-        Button saveBtn = createPrimaryButton("Save Changes", () -> saveSettings());
+        Button saveBtn = createPrimaryButton(translationService.translate("action.save"), () -> saveSettings());
 
         actions.add(discardBtn, saveBtn);
 

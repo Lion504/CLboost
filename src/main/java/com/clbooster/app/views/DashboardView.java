@@ -2,6 +2,7 @@ package com.clbooster.app.views;
 
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.User;
+import com.clbooster.app.i18n.TranslationService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -49,10 +50,12 @@ public class DashboardView extends VerticalLayout {
     private List<LetterCardData> allLetters;
 
     private final AuthenticationService authService;
+    private final TranslationService translationService;
     private final User currentUser;
 
     public DashboardView() {
         this.authService = new AuthenticationService();
+        this.translationService = new TranslationService();
         this.currentUser = authService.getCurrentUser();
 
         setPadding(true);
@@ -76,19 +79,20 @@ public class DashboardView extends VerticalLayout {
         text.getStyle().set("gap", "4px");
 
         String firstName = currentUser != null ? currentUser.getFirstName() : "Guest";
-        H1 title = new H1("Welcome back, " + firstName + " 👋");
+        H1 title = new H1(translationService.translate("dashboard.welcome", firstName) + " 👋");
         title.getStyle().set("font-size", "28px").set("font-weight", "700").set("letter-spacing", "-0.02em")
                 .set("color", TEXT_PRIMARY).set("margin", "0");
 
         int weekCount = countLettersThisWeek();
-        String weekMsg = weekCount == 0 ? "No letters generated this week yet — let's change that."
-                : weekCount + " cover letter" + (weekCount > 1 ? "s" : "") + " generated this week. Keep it up!";
+        String weekMsg = weekCount == 0 ? translationService.translate("dashboard.noLettersYet")
+                : weekCount + " " + translationService.translate("dashboard.lettersGenerated");
         Paragraph sub = new Paragraph(weekMsg);
         sub.getStyle().set("font-size", "14px").set("color", TEXT_SECONDARY).set("margin", "0");
 
         text.add(title, sub);
 
-        Button createBtn = new Button("New Cover Letter", VaadinIcon.PLUS.create());
+        Button createBtn = new Button(translationService.translate("dashboard.newCoverLetter"),
+                VaadinIcon.PLUS.create());
         createBtn.getStyle().set("background", PRIMARY).set("color", "white").set("font-weight", "600")
                 .set("border-radius", "9999px").set("padding", "12px 24px")
                 .set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
@@ -113,14 +117,20 @@ public class DashboardView extends VerticalLayout {
         row.setWidthFull();
         row.getStyle().set("gap", "20px").set("flex-wrap", "wrap");
 
-        row.add(createStatTile("Cover Letters", String.valueOf(totalLetters), "All time generated",
-                VaadinIcon.FILE_TEXT, PRIMARY, "rgba(0,122,255,0.08)"),
-                createStatTile("Resumes Uploaded", String.valueOf(totalResumes), "Stored on account", VaadinIcon.UPLOAD,
-                        "#5856D6", "rgba(88,86,214,0.08)"),
-                createStatTile("This Week", String.valueOf(thisWeek), "Letters generated", VaadinIcon.CALENDAR, GREEN,
+        row.add(createStatTile(translationService.translate("dashboard.coverLetters"), String.valueOf(totalLetters),
+                translationService.translate("dashboard.allTimeGenerated"), VaadinIcon.FILE_TEXT, PRIMARY,
+                "rgba(0,122,255,0.08)"),
+                createStatTile(translationService.translate("dashboard.resumesUploaded"), String.valueOf(totalResumes),
+                        translationService.translate("dashboard.storedOnAccount"), VaadinIcon.UPLOAD, "#5856D6",
+                        "rgba(88,86,214,0.08)"),
+                createStatTile(translationService.translate("dashboard.thisWeek"), String.valueOf(thisWeek),
+                        translationService.translate("dashboard.lettersGenerated2"), VaadinIcon.CALENDAR, GREEN,
                         "rgba(52,199,89,0.08)"),
-                createStatTile("Tones Available", "3", "Professional · Creative · Storyteller", VaadinIcon.MAGIC,
-                        ORANGE, "rgba(255,149,0,0.08)"));
+                createStatTile(translationService.translate("dashboard.tonesAvailable"), "3",
+                        translationService.translate("dashboard.professional") + " · "
+                                + translationService.translate("dashboard.creative") + " · "
+                                + translationService.translate("dashboard.storyteller"),
+                        VaadinIcon.MAGIC, ORANGE, "rgba(255,149,0,0.08)"));
 
         return row;
     }
@@ -164,7 +174,7 @@ public class DashboardView extends VerticalLayout {
         card.getStyle().set("background", BG_GRAY).set("border-radius", "20px").set("padding", "20px 24px").set("width",
                 "100%");
 
-        Span heading = new Span("Quick Actions");
+        Span heading = new Span(translationService.translate("dashboard.quickActions"));
         heading.getStyle().set("font-size", "12px").set("font-weight", "700").set("text-transform", "uppercase")
                 .set("letter-spacing", "0.08em").set("color", TEXT_SECONDARY).set("display", "block")
                 .set("margin-bottom", "14px");
@@ -174,14 +184,14 @@ public class DashboardView extends VerticalLayout {
         actions.getStyle().set("gap", "12px").set("flex-wrap", "wrap");
 
         actions.add(
-                createActionBtn("Generate Letter", VaadinIcon.MAGIC, PRIMARY, "white",
-                        () -> getUI().ifPresent(ui -> ui.navigate(GeneratorWizardView.class))),
-                createActionBtn("My History", VaadinIcon.CLOCK, "white", TEXT_PRIMARY,
-                        () -> getUI().ifPresent(ui -> ui.navigate(HistoryView.class))),
-                createActionBtn("Manage Resumes", VaadinIcon.FILE_SEARCH, "white", TEXT_PRIMARY,
-                        () -> getUI().ifPresent(ui -> ui.navigate(ResumeManagerView.class))),
-                createActionBtn("Profile Settings", VaadinIcon.USER, "white", TEXT_PRIMARY,
-                        () -> getUI().ifPresent(ui -> ui.navigate(ProfileView.class))));
+                createActionBtn(translationService.translate("dashboard.generateLetter"), VaadinIcon.MAGIC, PRIMARY,
+                        "white", () -> getUI().ifPresent(ui -> ui.navigate(GeneratorWizardView.class))),
+                createActionBtn(translationService.translate("dashboard.myHistory"), VaadinIcon.CLOCK, "white",
+                        TEXT_PRIMARY, () -> getUI().ifPresent(ui -> ui.navigate(HistoryView.class))),
+                createActionBtn(translationService.translate("dashboard.manageResumes"), VaadinIcon.FILE_SEARCH,
+                        "white", TEXT_PRIMARY, () -> getUI().ifPresent(ui -> ui.navigate(ResumeManagerView.class))),
+                createActionBtn(translationService.translate("dashboard.profileSettings"), VaadinIcon.USER, "white",
+                        TEXT_PRIMARY, () -> getUI().ifPresent(ui -> ui.navigate(ProfileView.class))));
 
         card.add(heading, actions);
         return card;
@@ -211,12 +221,12 @@ public class DashboardView extends VerticalLayout {
         section.setWidthFull();
 
         // Section header
-        H2 sectionTitle = new H2("Recent Letters");
+        H2 sectionTitle = new H2(translationService.translate("dashboard.recentLetters"));
         sectionTitle.getStyle().set("font-size", "18px").set("font-weight", "700").set("color", TEXT_PRIMARY)
                 .set("margin", "0");
 
         TextField searchField = new TextField();
-        searchField.setPlaceholder("Search letters…");
+        searchField.setPlaceholder(translationService.translate("dashboard.searchLetters"));
         searchField.setPrefixComponent(VaadinIcon.SEARCH.create());
         searchField.getStyle().set("max-width", "220px");
         searchField.addValueChangeListener(e -> filterLetters(e.getValue()));
@@ -259,7 +269,7 @@ public class DashboardView extends VerticalLayout {
                 .set("justify-content", "center");
         plus.add(VaadinIcon.PLUS.create());
 
-        Span txt = new Span("New Cover Letter");
+        Span txt = new Span(translationService.translate("dashboard.newCoverLetter"));
         txt.getStyle().set("font-weight", "600").set("font-size", "14px");
 
         card.add(plus, txt);
@@ -493,19 +503,19 @@ public class DashboardView extends VerticalLayout {
             long diff = System.currentTimeMillis() - Files.getLastModifiedTime(file).toMillis();
             long hours = diff / 3_600_000L;
             if (hours < 1)
-                return "Just now";
+                return translationService.translate("dashboard.justNow");
             if (hours < 24)
-                return hours + "h ago";
+                return hours + translationService.translate("dashboard.hoursAgo");
             long days = hours / 24;
             if (days == 1)
-                return "Yesterday";
+                return translationService.translate("dashboard.yesterday");
             if (days < 7)
-                return days + " days ago";
+                return days + translationService.translate("dashboard.daysAgo");
             if (days < 30)
-                return (days / 7) + " weeks ago";
-            return (days / 30) + " months ago";
+                return (days / 7) + translationService.translate("dashboard.weeksAgo");
+            return (days / 30) + translationService.translate("dashboard.monthsAgo");
         } catch (IOException e) {
-            return "Recently";
+            return translationService.translate("dashboard.recently");
         }
     }
 

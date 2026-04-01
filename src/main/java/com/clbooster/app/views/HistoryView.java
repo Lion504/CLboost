@@ -1,6 +1,7 @@
 package com.clbooster.app.views;
 
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
+import com.clbooster.app.i18n.TranslationService;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -66,8 +67,10 @@ public class HistoryView extends VerticalLayout {
     private String currentStatusFilter = "ALL";
     private LocalDate dateFrom = null;
     private LocalDate dateTo = null;
+    private final TranslationService translationService;
 
     public HistoryView() {
+        this.translationService = new TranslationService();
         setPadding(true);
         setSpacing(true);
         getStyle().set("gap", "32px").set("padding", "32px").set("background", BG_WHITE).set("font-family",
@@ -93,15 +96,15 @@ public class HistoryView extends VerticalLayout {
         titleGroup.setPadding(false);
         titleGroup.setSpacing(false);
 
-        H2 title = new H2("Generation History");
+        H2 title = new H2(translationService.translate("history.title"));
         title.getStyle().set("font-size", "30px").set("font-weight", "700").set("color", TEXT_PRIMARY).set("margin",
                 "0");
 
-        Paragraph subtitle = new Paragraph("Review, refine, or regenerate your previous successful applications.");
+        Paragraph subtitle = new Paragraph(translationService.translate("history.reviewRefine"));
         subtitle.getStyle().set("font-size", "14px").set("color", TEXT_SECONDARY).set("margin", "0");
         titleGroup.add(title, subtitle);
 
-        Button exportBtn = new Button("Export All", VaadinIcon.DOWNLOAD.create());
+        Button exportBtn = new Button(translationService.translate("history.exportAll"), VaadinIcon.DOWNLOAD.create());
         exportBtn.getStyle().set("background", "rgba(0,0,0,0.05)").set("color", TEXT_PRIMARY).set("font-weight", "600")
                 .set("border-radius", "9999px").set("padding", "10px 20px").set("border", "none");
         exportBtn.addClickListener(e -> exportAllFiles());
@@ -121,17 +124,17 @@ public class HistoryView extends VerticalLayout {
         filters.getStyle().set("gap", "12px");
 
         searchField = new TextField();
-        searchField.setPlaceholder("Search by company or role...");
+        searchField.setPlaceholder(translationService.translate("history.searchByCompany"));
         searchField.setPrefixComponent(VaadinIcon.SEARCH.create());
         searchField.setWidth("320px");
         searchField.getStyle().set("--vaadin-input-field-background", BG_GRAY).set("--vaadin-input-field-border-radius",
                 "12px");
         searchField.addValueChangeListener(e -> applyFilters());
 
-        Button dateFilter = createFilterButton("Date Range", VaadinIcon.CALENDAR);
+        Button dateFilter = createFilterButton(translationService.translate("history.dateRange"), VaadinIcon.CALENDAR);
         dateFilter.addClickListener(e -> showDateFilterDialog());
 
-        Button statusFilter = createFilterButton("Status", VaadinIcon.FILTER);
+        Button statusFilter = createFilterButton(translationService.translate("history.status"), VaadinIcon.FILTER);
         statusFilter.addClickListener(e -> showStatusFilterDialog());
 
         filters.add(searchField, dateFilter, statusFilter);
@@ -148,11 +151,11 @@ public class HistoryView extends VerticalLayout {
 
     private void showDateFilterDialog() {
         Dialog dialog = new Dialog();
-        dialog.setHeaderTitle("Filter by Date Range");
+        dialog.setHeaderTitle(translationService.translate("history.filterByDate"));
         VerticalLayout content = new VerticalLayout();
 
-        DatePicker fromDate = new DatePicker("From");
-        DatePicker toDate = new DatePicker("To");
+        DatePicker fromDate = new DatePicker(translationService.translate("history.from"));
+        DatePicker toDate = new DatePicker(translationService.translate("history.to"));
         if (dateFrom != null)
             fromDate.setValue(dateFrom);
         if (dateTo != null)
@@ -163,7 +166,7 @@ public class HistoryView extends VerticalLayout {
         buttons.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
         buttons.setWidthFull();
 
-        Button clearBtn = new Button("Clear", e -> {
+        Button clearBtn = new Button(translationService.translate("history.clear"), e -> {
             dateFrom = null;
             dateTo = null;
             applyFilters();
@@ -171,7 +174,7 @@ public class HistoryView extends VerticalLayout {
         });
         clearBtn.getStyle().set("color", TEXT_SECONDARY);
 
-        Button applyBtn = new Button("Apply", e -> {
+        Button applyBtn = new Button(translationService.translate("history.apply"), e -> {
             dateFrom = fromDate.getValue();
             dateTo = toDate.getValue();
             applyFilters();
@@ -187,11 +190,11 @@ public class HistoryView extends VerticalLayout {
 
     private void showStatusFilterDialog() {
         Dialog dialog = new Dialog();
-        dialog.setHeaderTitle("Filter by Status");
+        dialog.setHeaderTitle(translationService.translate("history.filterByStatus"));
         VerticalLayout content = new VerticalLayout();
 
         Select<String> statusSelect = new Select<>();
-        statusSelect.setLabel("Status");
+        statusSelect.setLabel(translationService.translate("history.status"));
         statusSelect.setItems("ALL", "SENT", "FINALIZED", "ARCHIVED");
         statusSelect.setValue(currentStatusFilter);
         statusSelect.setWidthFull();
@@ -201,14 +204,14 @@ public class HistoryView extends VerticalLayout {
         buttons.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
         buttons.setWidthFull();
 
-        Button clearBtn = new Button("Clear", e -> {
+        Button clearBtn = new Button(translationService.translate("history.clear"), e -> {
             currentStatusFilter = "ALL";
             applyFilters();
             dialog.close();
         });
         clearBtn.getStyle().set("color", TEXT_SECONDARY);
 
-        Button applyBtn = new Button("Apply", e -> {
+        Button applyBtn = new Button(translationService.translate("history.apply"), e -> {
             currentStatusFilter = statusSelect.getValue();
             applyFilters();
             dialog.close();
@@ -266,14 +269,15 @@ public class HistoryView extends VerticalLayout {
         Icon emptyIcon = VaadinIcon.FILE_TEXT_O.create();
         emptyIcon.getStyle().set("color", TEXT_SECONDARY).set("width", "64px").set("height", "64px");
 
-        H3 title = new H3("No cover letters yet");
+        H3 title = new H3(translationService.translate("history.noCoverLetters"));
         title.getStyle().set("font-size", "20px").set("font-weight", "600").set("color", TEXT_PRIMARY).set("margin",
                 "0");
 
-        Paragraph description = new Paragraph("Generate your first cover letter to see it here.");
+        Paragraph description = new Paragraph(translationService.translate("history.generateFirst"));
         description.getStyle().set("font-size", "14px").set("color", TEXT_SECONDARY).set("margin", "0");
 
-        Button createBtn = new Button("Create Cover Letter", VaadinIcon.PLUS.create());
+        Button createBtn = new Button(translationService.translate("history.createCoverLetter"),
+                VaadinIcon.PLUS.create());
         createBtn.getStyle().set("background", PRIMARY).set("color", "white").set("font-weight", "600")
                 .set("border-radius", "9999px").set("padding", "12px 24px").set("border", "none")
                 .set("margin-top", "8px");
@@ -334,17 +338,17 @@ public class HistoryView extends VerticalLayout {
 
         // View button
         Button viewBtn = createIconButton(VaadinIcon.EYE);
-        viewBtn.getElement().setAttribute("title", "Preview");
+        viewBtn.getElement().setAttribute("title", translationService.translate("history.preview"));
         viewBtn.addClickListener(e -> openPreviewDialog(item));
 
         // Download button
         Button downloadBtn = createIconButton(VaadinIcon.DOWNLOAD);
-        downloadBtn.getElement().setAttribute("title", "Download");
+        downloadBtn.getElement().setAttribute("title", translationService.translate("history.download"));
         downloadBtn.addClickListener(e -> downloadCoverLetter(item));
 
         // Edit button - navigates to editor with item metadata in session
         Button editBtn = createIconButton(VaadinIcon.EDIT);
-        editBtn.getElement().setAttribute("title", "Edit");
+        editBtn.getElement().setAttribute("title", translationService.translate("history.edit"));
         editBtn.addClickListener(e -> {
             VaadinSession session = VaadinSession.getCurrent();
             session.setAttribute("gen.jobTitle", item.title);
@@ -364,7 +368,7 @@ public class HistoryView extends VerticalLayout {
 
         // Delete button
         Button deleteBtn = createIconButton(VaadinIcon.TRASH);
-        deleteBtn.getElement().setAttribute("title", "Delete");
+        deleteBtn.getElement().setAttribute("title", translationService.translate("history.delete"));
         deleteBtn.getStyle().set("color", "#FF3B30");
         deleteBtn.addClickListener(e -> confirmAndDelete(item, card));
 
@@ -387,26 +391,28 @@ public class HistoryView extends VerticalLayout {
 
     private void confirmAndDelete(HistoryItem item, Div card) {
         Dialog confirm = new Dialog();
-        confirm.setHeaderTitle("Delete Cover Letter");
+        confirm.setHeaderTitle(translationService.translate("history.deleteConfirm"));
 
         VerticalLayout content = new VerticalLayout();
-        content.add(new Paragraph("Are you sure you want to delete \"" + item.title + "\"? This cannot be undone."));
+        content.add(new Paragraph(translationService.translate("history.deleteConfirmText", item.title)));
 
         HorizontalLayout buttons = new HorizontalLayout();
         buttons.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
         buttons.setWidthFull();
 
-        Button cancelBtn = new Button("Cancel", e -> confirm.close());
+        Button cancelBtn = new Button(translationService.translate("history.cancel"), e -> confirm.close());
         cancelBtn.getStyle().set("color", TEXT_SECONDARY);
 
-        Button deleteBtn = new Button("Delete", e -> {
+        Button deleteBtn = new Button(translationService.translate("history.delete"), e -> {
             File file = new File(item.filePath);
             if (file.exists() && file.delete()) {
                 allItems.remove(item);
                 applyFilters();
-                Notification.show("Cover letter deleted", 2000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("history.deleted"), 2000,
+                        Notification.Position.TOP_CENTER);
             } else {
-                Notification.show("Failed to delete file", 3000, Notification.Position.TOP_CENTER);
+                Notification.show(translationService.translate("history.deleteFailed"), 3000,
+                        Notification.Position.TOP_CENTER);
             }
             confirm.close();
         });
@@ -446,7 +452,7 @@ public class HistoryView extends VerticalLayout {
                     .set("margin", "0").set("width", "100%");
             content.add(pre);
         } else {
-            content.add(new Paragraph("File not found: " + item.filePath));
+            content.add(new Paragraph(translationService.translate("history.fileNotFound", item.filePath)));
         }
 
         HorizontalLayout footer = new HorizontalLayout();
@@ -456,8 +462,8 @@ public class HistoryView extends VerticalLayout {
         footer.getStyle().set("padding", "12px 16px").set("border-top", "1px solid rgba(0,0,0,0.08)")
                 .set("flex", "0 0 auto").set("background", BG_WHITE);
 
-        Button closeBtn = new Button("Close", e -> dialog.close());
-        Button dlBtn = new Button("Download", VaadinIcon.DOWNLOAD.create(), e -> {
+        Button closeBtn = new Button(translationService.translate("history.cancel"), e -> dialog.close());
+        Button dlBtn = new Button(translationService.translate("history.download"), VaadinIcon.DOWNLOAD.create(), e -> {
             downloadCoverLetter(item);
             dialog.close();
         });
@@ -551,7 +557,8 @@ public class HistoryView extends VerticalLayout {
     private void downloadCoverLetter(HistoryItem item) {
         File file = new File(item.filePath);
         if (!file.exists()) {
-            Notification.show("File not found: " + item.filePath, 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("history.fileNotFound", item.filePath), 3000,
+                    Notification.Position.TOP_CENTER);
             return;
         }
         try {
@@ -560,14 +567,16 @@ public class HistoryView extends VerticalLayout {
                     : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             serveDownload(bytes, mimeType, file.getName());
         } catch (IOException ex) {
-            Notification.show("Error reading file: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("history.fileNotFound", ex.getMessage()), 3000,
+                    Notification.Position.TOP_CENTER);
             LOGGER.log(Level.SEVERE, "Download error", ex);
         }
     }
 
     private void exportAllFiles() {
         if (allItems.isEmpty()) {
-            Notification.show("No files to export", 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("history.noFilesToExport"), 3000,
+                    Notification.Position.TOP_CENTER);
             return;
         }
         try {
@@ -586,9 +595,11 @@ public class HistoryView extends VerticalLayout {
             }
             String zipName = "cover_letters_export_" + System.currentTimeMillis() + ".zip";
             serveDownload(baos.toByteArray(), "application/zip", zipName);
-            Notification.show("Exporting " + added.size() + " files…", 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("history.exporting", added.size()), 3000,
+                    Notification.Position.TOP_CENTER);
         } catch (Exception ex) {
-            Notification.show("Export error: " + ex.getMessage(), 3000, Notification.Position.TOP_CENTER);
+            Notification.show(translationService.translate("history.exportError", ex.getMessage()), 3000,
+                    Notification.Position.TOP_CENTER);
             LOGGER.log(Level.SEVERE, "Export all error", ex);
         }
     }
@@ -738,7 +749,7 @@ public class HistoryView extends VerticalLayout {
     }
 
     private Button createLoadMoreButton() {
-        Button btn = new Button("Load more generations");
+        Button btn = new Button(translationService.translate("history.loadMore"));
         btn.getStyle().set("background", "transparent").set("color", TEXT_SECONDARY).set("font-weight", "500")
                 .set("font-size", "14px").set("border", "1px dashed rgba(0,0,0,0.15)").set("border-radius", "12px")
                 .set("padding", "16px").set("width", "100%").set("margin-top", "8px");
