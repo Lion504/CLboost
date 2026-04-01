@@ -106,11 +106,11 @@ _April 1 – April 15, 2026_
 
 ## 8. Team Contributions
 
-| Team Member | Tasks Completed | Time Spent (hrs) |
-|------------|----------------|------------------|
-| Name       | Task           | Hours            |
-| Name       | Task           | Hours            |
-| Name       | Task           | Hours            |
+| Team Member      | Tasks assigned | Time Spent (hrs) |
+|------------------|---------|------------------|
+| Tamseela Mahmood |Static Code Analysis| 10               |
+| Taysa Abinader   | Static Code Analysis  | Hours            |
+| Name             | Task    | Hours            |
 
 ---
 
