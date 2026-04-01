@@ -100,11 +100,19 @@ public class TranslationService implements I18NProvider {
             VaadinSession.getCurrent().setAttribute("locale", locale);
         }
 
-        // Update UI locale
         UI currentUI = UI.getCurrent();
         if (currentUI != null) {
             currentUI.setLocale(locale);
+            currentUI.getPage().executeJs("document.documentElement.setAttribute('dir', $0)",
+                    isRtl(locale) ? "rtl" : "ltr");
         }
+    }
+
+    public boolean isRtl(Locale locale) {
+        if (locale == null)
+            return false;
+        String lang = locale.getLanguage();
+        return "fa".equals(lang) || "ur".equals(lang) || "ar".equals(lang) || "he".equals(lang);
     }
 
     public void setLanguage(String languageName) {

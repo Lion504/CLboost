@@ -676,3 +676,70 @@ html {
     padding: 24px;
   }
 }
+
+/* ============================================
+   RTL SUPPORT
+   ============================================ */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .sidebar {
+  border-right: none;
+  border-left: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[dir="rtl"] .cl-card,
+[dir="rtl"] .feature-card {
+  text-align: right;
+}
+
+[dir="rtl"] .form-label {
+  text-align: right;
+}
+
+[dir="rtl"] .btn-primary,
+[dir="rtl"] .btn-secondary,
+[dir="rtl"] .btn-tertiary {
+  direction: rtl;
+}
+
+[dir="rtl"] vaadin-side-nav-item::part(content) {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] vaadin-app-layout::part(drawer) {
+  inset-inline-start: 0;
+  inset-inline-end: auto;
+}
+
+[dir="rtl"] vaadin-app-layout::part(navbar) {
+  inset-inline-start: var(--vaadin-app-layout-nav-width, 0);
+}
+
+/* Flip margin/padding utilities */
+[dir="rtl"] [class*="margin-left"] {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] [class*="margin-right"] {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+/* Animations flip */
+[dir="rtl"] .animate-slide-in-right {
+  animation-name: slideInLeft;
+}
+
+[dir="rtl"] .animate-slide-in-left {
+  animation-name: slideInRight;
+}
+
+/* RTL font fallbacks */
+[dir="rtl"] {
+  font-family:
+    'Noto Sans Arabic', 'Noto Nastaliq Urdu', 'Vazirmatn',
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
