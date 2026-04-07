@@ -406,7 +406,7 @@ public class ProfileView extends VerticalLayout {
         divider.getStyle().set("margin", "32px 0");
 
         // Account Security Section
-        H3 securityTitle = new H3("Account Security");
+        H3 securityTitle = new H3(getTranslation("profile.securityTitle"));
         securityTitle.getStyle().set("font-size", "18px");
         securityTitle.getStyle().set("font-weight", "700");
         securityTitle.getStyle().set("color", TEXT_PRIMARY);
