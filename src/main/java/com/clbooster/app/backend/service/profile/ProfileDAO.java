@@ -1,10 +1,16 @@
 package com.clbooster.app.backend.service.profile;
 
+import com.clbooster.app.backend.dao.LocalizableDAO;
 import com.clbooster.app.backend.service.database.DatabaseConnection;
+import com.clbooster.app.backend.util.LocaleFallbackResolver;
+import com.clbooster.app.backend.util.Utf8Validator;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
-public class ProfileDAO {
+public class ProfileDAO implements LocalizableDAO<Profile> {
 
     public Profile getProfileByPin(int pin) {
         String sql = "SELECT Pin, Experience_Level, Tools, Skills, Link, Profile_Email, CV_Last_Updated FROM profile WHERE Pin = ?";
@@ -80,6 +86,113 @@ public class ProfileDAO {
             pstmt.setInt(1, pin);
             ResultSet rs = pstmt.executeQuery();
             return rs.next();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public Profile getById(int pin, Locale locale) {
+        Profile base = getProfileByPin(pin);
+        if (base == null || locale == null) return base;
+
+        String sql = "SELECT experience_level, tools, skills FROM profile_translation WHERE profile_pin = ? AND locale_code = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, pin);
+            pstmt.setString(2, locale.toLanguageTag().replace('-', '_'));
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                base.setExperienceLevel(rs.getString("experience_level"));
+                base.setTools(rs.getString("tools"));
+                base.setSkills(rs.getString("skills"));
+            }
+            return base;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return base;
+        }
+    }
+
+    @Override
+    public Profile getByIdWithFallback(int pin, Locale preferred, Locale fallback) {
+        for (Locale locale : LocaleFallbackResolver.getFallbackChain(preferred)) {
+            if (hasTranslation(pin, locale)) {
+                return getById(pin, locale);
+            }
+        }
+        return getProfileByPin(pin);
+    }
+
+    @Override
+    public void saveTranslation(Profile profile, Locale locale) {
+        if (!Utf8Validator.isValidUtf8(profile.getSkills())
+                || !Utf8Validator.isValidUtf8(profile.getTools())
+                || !Utf8Validator.isValidUtf8(profile.getExperienceLevel())) {
+            throw new IllegalArgumentException("Invalid UTF-8 sequence detected");
+        }
+
+        String sql = "INSERT INTO profile_translation (profile_pin, locale_code, experience_level, tools, skills) "
+                + "VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE experience_level = ?, tools = ?, skills = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            String code = locale.toLanguageTag().replace('-', '_');
+            pstmt.setInt(1, profile.getPin());
+            pstmt.setString(2, code);
+            pstmt.setString(3, Utf8Validator.sanitize(profile.getExperienceLevel()));
+            pstmt.setString(4, Utf8Validator.sanitize(profile.getTools()));
+            pstmt.setString(5, Utf8Validator.sanitize(profile.getSkills()));
+            pstmt.setString(6, Utf8Validator.sanitize(profile.getExperienceLevel()));
+            pstmt.setString(7, Utf8Validator.sanitize(profile.getTools()));
+            pstmt.setString(8, Utf8Validator.sanitize(profile.getSkills()));
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<Locale> getAvailableLocales(int entityId) {
+        List<Locale> locales = new ArrayList<>();
+        String sql = "SELECT locale_code FROM profile_translation WHERE profile_pin = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, entityId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                locales.add(Locale.forLanguageTag(rs.getString("locale_code").replace('_', '-')));
+            }
+            return locales;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return locales;
+        }
+    }
+
+    @Override
+    public boolean hasTranslation(int id, Locale locale) {
+        String sql = "SELECT 1 FROM profile_translation WHERE profile_pin = ? AND locale_code = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, id);
+            pstmt.setString(2, locale.toLanguageTag().replace('-', '_'));
+            return pstmt.executeQuery().next();
 
         } catch (SQLException e) {
             e.printStackTrace();
