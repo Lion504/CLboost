@@ -296,7 +296,7 @@ public class DashboardView extends VerticalLayout {
         fileIc.getStyle().set("color", PRIMARY).set("width", "22px").set("height", "22px");
         iconBox.add(fileIc);
 
-        Span badge = new Span(status);
+        Span badge = new Span(translationService.translate("dashboard.status." + status.toLowerCase()));
         badge.getStyle().set("font-size", "10px").set("font-weight", "700").set("padding", "3px 8px")
                 .set("border-radius", "9999px")
                 .set("background", "FINALIZED".equals(status) ? "rgba(52,199,89,0.12)" : "rgba(142,142,147,0.12)")
