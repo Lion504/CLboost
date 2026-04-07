@@ -51,6 +51,10 @@ public class AuthenticationService {
         }
     }
 
+    public void setCurrentUser(User user) {
+        storeUserInSession(user);
+    }
+
     public static void showPasswordRequirements() {
         System.out.println("\nPassword Requirements:");
         System.out.println("• At least 10 characters long");

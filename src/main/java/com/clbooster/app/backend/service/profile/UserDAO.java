@@ -196,4 +196,23 @@ public class UserDAO {
             return false;
         }
     }
+
+    public boolean updateUser(int pin, String firstName, String lastName, String email) {
+        String sql = "UPDATE identification SET First_Name = ?, Last_Name = ?, Identity_email = ? WHERE Pin = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, firstName);
+            pstmt.setString(2, lastName);
+            pstmt.setString(3, email);
+            pstmt.setInt(4, pin);
+
+            return pstmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

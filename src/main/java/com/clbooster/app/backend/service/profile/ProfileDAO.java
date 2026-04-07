@@ -3,6 +3,7 @@ package com.clbooster.app.backend.service.profile;
 import com.clbooster.app.backend.dao.LocalizableDAO;
 import com.clbooster.app.backend.service.database.DatabaseConnection;
 import com.clbooster.app.backend.util.LocaleFallbackResolver;
+import com.clbooster.app.backend.util.LocaleMapper;
 import com.clbooster.app.backend.util.Utf8Validator;
 
 import java.sql.*;
@@ -104,7 +105,7 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, pin);
-            pstmt.setString(2, locale.toLanguageTag().replace('-', '_'));
+            pstmt.setString(2, LocaleMapper.getDbCode(locale));
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
@@ -144,7 +145,7 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            String code = locale.toLanguageTag().replace('-', '_');
+            String code = LocaleMapper.getDbCode(locale);
             pstmt.setInt(1, profile.getPin());
             pstmt.setString(2, code);
             pstmt.setString(3, Utf8Validator.sanitize(profile.getExperienceLevel()));
@@ -155,6 +156,9 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
             pstmt.setString(8, Utf8Validator.sanitize(profile.getSkills()));
 
             pstmt.executeUpdate();
+
+            // Also update the base profile for core non-localizable fields (Link, Email)
+            updateProfile(profile);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -191,7 +195,7 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, id);
-            pstmt.setString(2, locale.toLanguageTag().replace('-', '_'));
+            pstmt.setString(2, LocaleMapper.getDbCode(locale));
             return pstmt.executeQuery().next();
 
         } catch (SQLException e) {
