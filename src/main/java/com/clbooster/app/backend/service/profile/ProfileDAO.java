@@ -5,6 +5,8 @@ import com.clbooster.app.backend.service.database.DatabaseConnection;
 import com.clbooster.app.backend.util.LocaleFallbackResolver;
 import com.clbooster.app.backend.util.LocaleMapper;
 import com.clbooster.app.backend.util.Utf8Validator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,6 +14,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class ProfileDAO implements LocalizableDAO<Profile> {
+
+    private static final Logger log = LoggerFactory.getLogger(ProfileDAO.class);
 
     public Profile getProfileByPin(int pin) {
         String sql = "SELECT Pin, Experience_Level, Tools, Skills, Link, Profile_Email, CV_Last_Updated FROM profile WHERE Pin = ?";
