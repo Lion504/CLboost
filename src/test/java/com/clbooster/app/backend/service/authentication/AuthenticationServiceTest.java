@@ -203,7 +203,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void setCurrentUser_productionMode_setsVaadinAndSpringSecurityContexts() throws Exception {
+    void setCurrentUser_productionMode_setsVaadinAndSpringSecurityContexts() {
         AuthenticationService prod = new AuthenticationService();
         User user = new User("test@mail.com", "user", "StrongPass1!", "John", "Doe");
 

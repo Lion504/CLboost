@@ -1,17 +1,19 @@
 package com.clbooster.app.security;
 
 import com.clbooster.app.views.LoginView;
-import com.vaadin.flow.spring.security.VaadinWebSecurity;
+import com.vaadin.flow.spring.security.VaadinSecurityConfigurer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
 @Configuration
-public class SecurityConfig extends VaadinWebSecurity {
+public class SecurityConfig {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
             .requestMatchers("/", "/signup", "/error", "/favicon.ico",
                 "/manifest.webmanifest", "/sw.js", "/offline.html",
@@ -19,7 +21,9 @@ public class SecurityConfig extends VaadinWebSecurity {
                 "/VAADIN/**", "/frontend/**", "/webjars/**")
             .permitAll());
 
-        super.configure(http);
-        setLoginView(http, LoginView.class);
+        http.with(VaadinSecurityConfigurer.vaadin(), configurer ->
+            configurer.loginView(LoginView.class));
+
+        return http.build();
     }
 }

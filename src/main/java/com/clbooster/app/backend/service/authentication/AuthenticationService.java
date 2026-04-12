@@ -2,10 +2,18 @@ package com.clbooster.app.backend.service.authentication;
 
 import com.clbooster.app.backend.service.profile.User;
 import com.clbooster.app.backend.service.profile.UserDAO;
+import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinSession;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 
 public class AuthenticationService {
@@ -55,6 +63,43 @@ public class AuthenticationService {
 
     public void setCurrentUser(User user) {
         storeUserInSession(user);
+        authenticateSpringSecurity(user);
+    }
+
+    private void authenticateSpringSecurity(User user) {
+        if (sessionStore != null) {
+            return;
+        }
+        try {
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    user.getUsername(),
+                    null,
+                    List.of(new SimpleGrantedAuthority("ROLE_USER")));
+
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+            SecurityContextHolder.setContext(context);
+
+            HttpSession httpSession = VaadinServletRequest.getCurrent().getHttpServletRequest().getSession(true);
+            httpSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+        } catch (Exception ex) {
+            log.warn("Could not bind Spring Security context for logged-in user", ex);
+        }
+    }
+
+    private void clearSpringSecurityAuthentication() {
+        SecurityContextHolder.clearContext();
+        if (sessionStore != null) {
+            return;
+        }
+        try {
+            HttpSession httpSession = VaadinServletRequest.getCurrent().getHttpServletRequest().getSession(false);
+            if (httpSession != null) {
+                httpSession.removeAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+            }
+        } catch (Exception ex) {
+            log.debug("Could not clear Spring Security context from session", ex);
+        }
     }
 
     public static void showPasswordRequirements() {
@@ -125,6 +170,7 @@ public class AuthenticationService {
         if (user != null) {
             // Store user in session for persistence
             storeUserInSession(user);
+            authenticateSpringSecurity(user);
             log.info("Login successful");
             return true;
         } else {
@@ -138,6 +184,7 @@ public class AuthenticationService {
         if (user != null) {
             log.info("Logout successful");
             removeUserFromSession();
+            clearSpringSecurityAuthentication();
         }
     }
 
