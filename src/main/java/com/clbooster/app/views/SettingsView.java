@@ -1,5 +1,6 @@
 package com.clbooster.app.views;
 
+import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.User;
 import com.clbooster.app.backend.service.profile.UserService;
@@ -26,6 +27,7 @@ import com.vaadin.flow.router.Route;
 
 @Route(value = "settings", layout = MainLayout.class)
 @PageTitle("Settings | CL Booster")
+@PermitAll
 public class SettingsView extends VerticalLayout {
     private static final Logger log = LoggerFactory.getLogger(SettingsView.class);
 

@@ -1,5 +1,6 @@
 package com.clbooster.app.views;
 
+import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.Profile;
 import com.clbooster.app.backend.service.profile.ProfileService;
@@ -27,6 +28,7 @@ import com.vaadin.flow.router.Route;
 
 @Route(value = "profile", layout = MainLayout.class)
 @PageTitle("Profile | CL Booster")
+@PermitAll
 public class ProfileView extends VerticalLayout {
 
     // Figma Design System Colors

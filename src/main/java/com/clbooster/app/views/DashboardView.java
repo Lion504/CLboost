@@ -1,5 +1,6 @@
 package com.clbooster.app.views;
 
+import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.User;
 import com.clbooster.app.i18n.TranslationService;
@@ -32,6 +33,7 @@ import java.util.stream.Stream;
 
 @Route(value = "dashboard", layout = MainLayout.class)
 @PageTitle("Dashboard | CL Booster")
+@PermitAll
 public class DashboardView extends VerticalLayout {
 
     private static final String PRIMARY = "#007AFF";

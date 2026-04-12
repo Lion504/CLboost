@@ -2,8 +2,16 @@ package com.clbooster.app.backend.service.authentication;
 
 import com.clbooster.app.backend.service.profile.User;
 import com.clbooster.app.backend.service.profile.UserDAO;
+import com.vaadin.flow.server.VaadinServletRequest;
+import com.vaadin.flow.server.VaadinSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -29,6 +37,11 @@ class AuthenticationServiceTest {
         Field daoField = AuthenticationService.class.getDeclaredField("userDAO");
         daoField.setAccessible(true);
         daoField.set(service, userDAOMock);
+    }
+
+    @AfterEach
+    void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
     }
 
     // ---------------- REGISTER VALIDATION ----------------
@@ -139,6 +152,17 @@ class AuthenticationServiceTest {
         verify(userDAOMock).registerUser(any(User.class));
     }
 
+    @Test
+    void register_databaseFailure() {
+        when(userDAOMock.usernameExists("user")).thenReturn(false);
+        when(userDAOMock.emailExists("test@mail.com")).thenReturn(false);
+        when(userDAOMock.registerUser(any(User.class))).thenReturn(false);
+
+        boolean result = service.register("test@mail.com", "user", "StrongPass1!", "John", "Doe");
+
+        assertFalse(result);
+    }
+
     // ---------------- LOGIN ----------------
 
     @Test
@@ -178,6 +202,61 @@ class AuthenticationServiceTest {
         assertEquals("user", service.getCurrentUser().getUsername());
     }
 
+    @Test
+    void setCurrentUser_productionMode_setsVaadinAndSpringSecurityContexts() throws Exception {
+        AuthenticationService prod = new AuthenticationService();
+        User user = new User("test@mail.com", "user", "StrongPass1!", "John", "Doe");
+
+        VaadinSession vaadinSession = mock(VaadinSession.class);
+        VaadinServletRequest vaadinRequest = mock(VaadinServletRequest.class);
+        HttpServletRequest httpRequest = mock(HttpServletRequest.class);
+        HttpSession httpSession = mock(HttpSession.class);
+
+        when(vaadinRequest.getHttpServletRequest()).thenReturn(httpRequest);
+        when(httpRequest.getSession(true)).thenReturn(httpSession);
+
+        try (MockedStatic<VaadinSession> sessionStatic = mockStatic(VaadinSession.class);
+                MockedStatic<VaadinServletRequest> requestStatic = mockStatic(VaadinServletRequest.class)) {
+            sessionStatic.when(VaadinSession::getCurrent).thenReturn(vaadinSession);
+            requestStatic.when(VaadinServletRequest::getCurrent).thenReturn(vaadinRequest);
+
+            prod.setCurrentUser(user);
+
+            verify(vaadinSession).setAttribute("currentUser", user);
+            verify(httpSession).setAttribute(eq(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY), any());
+            assertNotNull(SecurityContextHolder.getContext().getAuthentication());
+        }
+    }
+
+    @Test
+    void login_success_productionMode_setsSpringSecurityContext() throws Exception {
+        AuthenticationService prod = new AuthenticationService();
+        UserDAO dao = mock(UserDAO.class);
+        Field daoField = AuthenticationService.class.getDeclaredField("userDAO");
+        daoField.setAccessible(true);
+        daoField.set(prod, dao);
+
+        User user = new User("test@mail.com", "user", "StrongPass1!", "John", "Doe");
+        when(dao.loginUser("user", "StrongPass1!")).thenReturn(user);
+
+        VaadinSession vaadinSession = mock(VaadinSession.class);
+        VaadinServletRequest vaadinRequest = mock(VaadinServletRequest.class);
+        HttpServletRequest httpRequest = mock(HttpServletRequest.class);
+        HttpSession httpSession = mock(HttpSession.class);
+
+        when(vaadinRequest.getHttpServletRequest()).thenReturn(httpRequest);
+        when(httpRequest.getSession(true)).thenReturn(httpSession);
+
+        try (MockedStatic<VaadinSession> sessionStatic = mockStatic(VaadinSession.class);
+                MockedStatic<VaadinServletRequest> requestStatic = mockStatic(VaadinServletRequest.class)) {
+            sessionStatic.when(VaadinSession::getCurrent).thenReturn(vaadinSession);
+            requestStatic.when(VaadinServletRequest::getCurrent).thenReturn(vaadinRequest);
+
+            assertTrue(prod.login("user", "StrongPass1!"));
+            assertNotNull(SecurityContextHolder.getContext().getAuthentication());
+        }
+    }
+
     // ---------------- LOGOUT ----------------
 
     @Test
@@ -198,6 +277,33 @@ class AuthenticationServiceTest {
     void logout_whenNotLoggedIn_doesNotCrash() {
         service.logout();
         assertFalse(service.isLoggedIn());
+    }
+
+    @Test
+    void logout_productionMode_clearsSpringSecurityContextAndSession() {
+        AuthenticationService prod = new AuthenticationService();
+        User user = new User("test@mail.com", "user", "StrongPass1!", "John", "Doe");
+
+        VaadinSession vaadinSession = mock(VaadinSession.class);
+        VaadinServletRequest vaadinRequest = mock(VaadinServletRequest.class);
+        HttpServletRequest httpRequest = mock(HttpServletRequest.class);
+        HttpSession httpSession = mock(HttpSession.class);
+
+        when(vaadinSession.getAttribute("currentUser")).thenReturn(user);
+        when(vaadinRequest.getHttpServletRequest()).thenReturn(httpRequest);
+        when(httpRequest.getSession(false)).thenReturn(httpSession);
+
+        try (MockedStatic<VaadinSession> sessionStatic = mockStatic(VaadinSession.class);
+                MockedStatic<VaadinServletRequest> requestStatic = mockStatic(VaadinServletRequest.class)) {
+            sessionStatic.when(VaadinSession::getCurrent).thenReturn(vaadinSession);
+            requestStatic.when(VaadinServletRequest::getCurrent).thenReturn(vaadinRequest);
+
+            prod.logout();
+
+            verify(vaadinSession).setAttribute("currentUser", null);
+            verify(httpSession).removeAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+            assertNull(SecurityContextHolder.getContext().getAuthentication());
+        }
     }
 
     // ---------------- CHANGE PASSWORD ----------------
@@ -221,5 +327,40 @@ class AuthenticationServiceTest {
     void changePassword_noUserLoggedIn() {
         boolean result = service.changePassword("old", "new");
         assertFalse(result);
+    }
+
+    @Test
+    void changePassword_success() {
+        User user = new User("test@mail.com", "user", "StrongPass1!", "John", "Doe");
+        user.setPin(99);
+        sessionMap.put("currentUser", user);
+
+        when(userDAOMock.loginUser("user", "oldPass")).thenReturn(user);
+        when(userDAOMock.updatePassword(99, "newPass")).thenReturn(true);
+
+        boolean result = service.changePassword("oldPass", "newPass");
+
+        assertTrue(result);
+        verify(userDAOMock).updatePassword(99, "newPass");
+    }
+
+    @Test
+    void changePassword_updateFailure() {
+        User user = new User("test@mail.com", "user", "StrongPass1!", "John", "Doe");
+        user.setPin(99);
+        sessionMap.put("currentUser", user);
+
+        when(userDAOMock.loginUser("user", "oldPass")).thenReturn(user);
+        when(userDAOMock.updatePassword(99, "newPass")).thenReturn(false);
+
+        boolean result = service.changePassword("oldPass", "newPass");
+
+        assertFalse(result);
+        verify(userDAOMock).updatePassword(99, "newPass");
+    }
+
+    @Test
+    void showPasswordRequirements_runsWithoutThrowing() {
+        assertDoesNotThrow(AuthenticationService::showPasswordRequirements);
     }
 }

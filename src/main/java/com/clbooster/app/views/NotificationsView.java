@@ -1,5 +1,6 @@
 package com.clbooster.app.views;
 
+import jakarta.annotation.security.PermitAll;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -28,6 +29,7 @@ import java.util.List;
  */
 @Route(value = "notifications", layout = MainLayout.class)
 @PageTitle("Notifications | CL Booster")
+@PermitAll
 public class NotificationsView extends VerticalLayout {
 
     // Figma Design System Colors

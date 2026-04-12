@@ -1,5 +1,6 @@
 package com.clbooster.app.views;
 
+import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.document.DocumentService;
 import com.clbooster.app.backend.service.profile.ProfileService;
@@ -46,6 +47,7 @@ import java.util.logging.Logger;
 
 @Route(value = "resume", layout = MainLayout.class)
 @PageTitle("Resume Manager | CL Booster")
+@PermitAll
 public class ResumeManagerView extends VerticalLayout {
 
     private static final String PRIMARY = "#007AFF";

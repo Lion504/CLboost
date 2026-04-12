@@ -1,5 +1,6 @@
 package com.clbooster.app.views;
 
+import jakarta.annotation.security.PermitAll;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Paragraph;
@@ -25,6 +26,7 @@ import java.util.logging.Logger;
 
 @Route(value = "editor", layout = MainLayout.class)
 @PageTitle("Edit Cover Letter | CL Booster")
+@PermitAll
 public class CoverLetterEditorView extends VerticalLayout implements HasUrlParameter<String> {
 
     private static final String PRIMARY = "#007AFF";
