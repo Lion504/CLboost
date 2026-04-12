@@ -1,13 +1,17 @@
 package com.clbooster.app.backend.service.database;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseMigration {
+    private static final Logger log = LoggerFactory.getLogger(DatabaseMigration.class);
 
     public static void runMigration() {
-        System.out.println("Running database migration for localization...");
+        log.info("Running database migration for localization...");
 
         String[] createLocaleTable = { "CREATE TABLE IF NOT EXISTS locale (",
                 "    locale_code CHAR(5) PRIMARY KEY COMMENT 'ISO 639-1 + country code',",
@@ -51,31 +55,31 @@ public class DatabaseMigration {
             // Create locale table
             try (Statement stmt = conn.createStatement()) {
                 stmt.execute(String.join("\n", createLocaleTable));
-                System.out.println("✓ Locale table created/verified");
+                log.info("Locale table created/verified");
             }
 
             // Insert locale data
             try (Statement stmt = conn.createStatement()) {
                 stmt.execute(String.join("\n", insertLocales));
-                System.out.println("✓ Locale data inserted");
+                log.info("Locale data inserted");
             }
 
             // Create profile_translation table
             try (Statement stmt = conn.createStatement()) {
                 stmt.execute(String.join("\n", createProfileTranslationTable));
-                System.out.println("✓ Profile translation table created/verified");
+                log.info("Profile translation table created/verified");
             }
 
             // Create system_message_translation table
             try (Statement stmt = conn.createStatement()) {
                 stmt.execute(String.join("\n", createSystemMessageTranslationTable));
-                System.out.println("✓ System message translation table created/verified");
+                log.info("System message translation table created/verified");
             }
 
             // Migrate existing profile data
             try (Statement stmt = conn.createStatement()) {
                 stmt.execute(migrateProfileData);
-                System.out.println("✓ Profile data migrated to translation table");
+                log.info("Profile data migrated to translation table");
             }
 
             // Re-enable foreign key checks
@@ -83,11 +87,10 @@ public class DatabaseMigration {
                 stmt.execute("SET FOREIGN_KEY_CHECKS = 1");
             }
 
-            System.out.println("✓ Database migration completed successfully!");
+            log.info("Database migration completed successfully!");
 
         } catch (SQLException e) {
-            System.err.println("Error during database migration: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error during database migration", e);
         }
     }
 

@@ -3,12 +3,14 @@ package com.clbooster.app.backend.service.authentication;
 import com.clbooster.app.backend.service.profile.User;
 import com.clbooster.app.backend.service.profile.UserDAO;
 import com.vaadin.flow.server.VaadinSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 public class AuthenticationService {
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
+
     private UserDAO userDAO;
     private Map<String, Object> sessionStore;
     private static final String USER_SESSION_ATTRIBUTE = "currentUser";
@@ -56,68 +58,66 @@ public class AuthenticationService {
     }
 
     public static void showPasswordRequirements() {
-        System.out.println("\nPassword Requirements:");
-        System.out.println("• At least 10 characters long");
-        System.out.println("• At least one uppercase letter (A-Z)");
-        System.out.println("• At least one lowercase letter (a-z)");
-        System.out.println("• At least one number (0-9)");
-        System.out.println("• At least one special character (!@#$%^&*etc.)");
+        log.info("Password Requirements:");
+        log.info("At least 10 characters long");
+        log.info("At least one uppercase letter (A-Z)");
+        log.info("At least one lowercase letter (a-z)");
+        log.info("At least one number (0-9)");
+        log.info("At least one special character (!@#$%^&*etc.)");
     }
 
     public boolean register(String email, String username, String password, String firstName, String lastName) {
         if (email == null || email.trim().isEmpty()) {
-            System.out.println("Error: Email is required");
+            log.warn("Registration rejected: email is required");
             return false;
         }
         if (username == null || username.trim().isEmpty()) {
-            System.out.println("Error: Username is required");
+            log.warn("Registration rejected: username is required");
             return false;
         }
         if (password == null || password.length() < 10 || !password.matches(".*[A-Z].*")
                 || !password.matches(".*[a-z].*") || !password.matches(".*\\d.*")
                 || !password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*")) {
-            System.out.println("Error: Requirements not met");
+            log.warn("Registration rejected: password requirements not met");
             return false;
         }
         if (firstName == null || firstName.trim().isEmpty()) {
-            System.out.println("Error: First name is required");
+            log.warn("Registration rejected: first name is required");
             return false;
         }
         if (lastName == null || lastName.trim().isEmpty()) {
-            System.out.println("Error: Last name is required");
+            log.warn("Registration rejected: last name is required");
             return false;
         }
 
         // Check if username already exists
         if (userDAO.usernameExists(username)) {
-            System.out.println("Error: Username already exists");
+            log.warn("Registration rejected: user identifier already registered");
             return false;
         }
 
         if (userDAO.emailExists(email)) {
-            System.out.println("Error: Email already registered");
+            log.warn("Registration rejected: user identifier already registered");
             return false;
         }
 
         User user = new User(email, username, password, firstName, lastName);
         if (userDAO.registerUser(user)) {
-            System.out.println("✓ Registration successful!");
-            // System.out.println("✓ Your PIN: " + user.getPin());
-            System.out.println("✓ Username: " + username);
+            log.info("Registration successful");
             return true;
         } else {
-            System.out.println("Error: Registration failed. Please try again.");
+            log.warn("Registration failed");
             return false;
         }
     }
 
     public boolean login(String username, String password) {
         if (username == null || username.trim().isEmpty()) {
-            System.out.println("Error: Username is required");
+            log.warn("Login rejected: username is required");
             return false;
         }
         if (password == null || password.trim().isEmpty()) {
-            System.out.println("Error: Password is required");
+            log.warn("Login rejected: password is required");
             return false;
         }
 
@@ -125,12 +125,10 @@ public class AuthenticationService {
         if (user != null) {
             // Store user in session for persistence
             storeUserInSession(user);
-            System.out.println("✓ Login successful!");
-            System.out.println("✓ Welcome, " + user.getFirstName() + " " + user.getLastName());
-            // System.out.println("✓ PIN: " + user.getPin());
+            log.info("Login successful");
             return true;
         } else {
-            System.out.println("Error: Invalid username or password");
+            log.warn("Login rejected: invalid credentials");
             return false;
         }
     }
@@ -138,7 +136,7 @@ public class AuthenticationService {
     public void logout() {
         User user = getUserFromSession();
         if (user != null) {
-            System.out.println("✓ Logged out successfully. Goodbye, " + user.getFirstName() + "!");
+            log.info("Logout successful");
             removeUserFromSession();
         }
     }
@@ -166,23 +164,23 @@ public class AuthenticationService {
     public boolean changePassword(String currentPassword, String newPassword) {
         User user = getUserFromSession();
         if (user == null) {
-            System.out.println("Error: No user logged in");
+            log.warn("Password change rejected: no user logged in");
             return false;
         }
 
         // Verify current password
         User verifiedUser = userDAO.loginUser(user.getUsername(), currentPassword);
         if (verifiedUser == null) {
-            System.out.println("Error: Current password is incorrect");
+            log.warn("Password change rejected: current password invalid");
             return false;
         }
 
         // Update password in database
         boolean updated = userDAO.updatePassword(user.getPin(), newPassword);
         if (updated) {
-            System.out.println("✓ Password changed successfully!");
+            log.info("Password changed successfully");
         } else {
-            System.out.println("Error: Failed to update password");
+            log.warn("Password change failed");
         }
         return updated;
     }

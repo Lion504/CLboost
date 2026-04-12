@@ -6,6 +6,8 @@ import com.clbooster.app.backend.service.profile.UserService;
 import com.clbooster.app.backend.service.settings.Settings;
 import com.clbooster.app.backend.service.settings.SettingsService;
 import com.clbooster.app.i18n.TranslationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
@@ -25,6 +27,7 @@ import com.vaadin.flow.router.Route;
 @Route(value = "settings", layout = MainLayout.class)
 @PageTitle("Settings | CL Booster")
 public class SettingsView extends VerticalLayout {
+    private static final Logger log = LoggerFactory.getLogger(SettingsView.class);
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
@@ -610,9 +613,7 @@ public class SettingsView extends VerticalLayout {
         userSettings.setAllowAiTraining(allowAiTraining);
         userSettings.setShareUsageData(shareUsageData);
 
-        System.out.println("DEBUG: Saving settings for user " + currentUser.getPin());
-        System.out.println("DEBUG: Theme = system");
-        System.out.println("DEBUG: Language = " + languageValue);
+        log.debug("Saving settings from SettingsView");
 
         try {
             boolean success = settingsService.saveSettings(userSettings);
@@ -623,12 +624,11 @@ public class SettingsView extends VerticalLayout {
             } else {
                 Notification.show("Error: Failed to save settings. The database may be unavailable.", 5000,
                         Notification.Position.TOP_CENTER);
-                System.err.println("ERROR: Failed to save settings for user " + currentUser.getPin());
+                log.warn("Failed to save settings in SettingsView");
             }
         } catch (Exception e) {
-            Notification.show("Database error: " + e.getMessage(), 5000, Notification.Position.TOP_CENTER);
-            System.err.println("ERROR: Exception while saving settings: " + e.getMessage());
-            e.printStackTrace();
+            Notification.show("Database error. Please try again later.", 5000, Notification.Position.TOP_CENTER);
+            log.error("Unexpected exception while saving settings", e);
         }
     }
 

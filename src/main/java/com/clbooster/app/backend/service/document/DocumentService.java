@@ -160,7 +160,6 @@ public class DocumentService {
 
         } catch (Exception e) {
             logger.severe("Failed to export resume: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -176,7 +175,7 @@ public class DocumentService {
      */
     public byte[] retrieveResumeFile(String storagePath) throws IOException {
         try {
-            Path path = Paths.get(storagePath);
+            Path path = resolveStoragePath(storagePath);
             if (!Files.exists(path)) {
                 throw new IOException("File not found: " + storagePath);
             }
@@ -200,7 +199,7 @@ public class DocumentService {
      */
     public boolean deleteResumeFile(String storagePath) {
         try {
-            Path path = Paths.get(storagePath);
+            Path path = resolveStoragePath(storagePath);
             if (Files.exists(path)) {
                 Files.delete(path);
                 logger.info("Deleted resume file: " + storagePath);
@@ -214,6 +213,21 @@ public class DocumentService {
             logger.severe("Failed to delete resume file: " + e.getMessage());
             return false;
         }
+    }
+
+    private Path resolveStoragePath(String storagePath) throws IOException {
+        if (storagePath == null || storagePath.isBlank()) {
+            throw new IOException("Invalid storage path");
+        }
+
+        Path basePath = Paths.get(DOCUMENT_STORAGE_DIR).toAbsolutePath().normalize();
+        Path requestedPath = Paths.get(storagePath).toAbsolutePath().normalize();
+
+        if (!requestedPath.startsWith(basePath)) {
+            throw new IOException("Access denied: path outside storage directory");
+        }
+
+        return requestedPath;
     }
 
     /**

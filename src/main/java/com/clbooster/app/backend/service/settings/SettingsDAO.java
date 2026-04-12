@@ -1,6 +1,8 @@
 package com.clbooster.app.backend.service.settings;
 
 import com.clbooster.app.backend.service.database.DatabaseConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class SettingsDAO {
+    private static final Logger log = LoggerFactory.getLogger(SettingsDAO.class);
 
     public SettingsDAO() {
         // Ensure table exists when DAO is created
@@ -28,10 +31,9 @@ public class SettingsDAO {
 
         try (Connection conn = DatabaseConnection.getConnection(); Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
-            System.out.println("DEBUG: user_settings table checked/created successfully");
+            log.info("user_settings table checked/created successfully");
         } catch (SQLException e) {
-            System.err.println("ERROR: Failed to create user_settings table: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Failed to create user_settings table", e);
         }
     }
 
@@ -59,8 +61,7 @@ public class SettingsDAO {
                 return settings;
             }
         } catch (SQLException e) {
-            System.err.println("ERROR: Failed to get settings for user " + userPin + ": " + e.getMessage());
-            e.printStackTrace();
+            log.error("Failed to get user settings", e);
         }
 
         // Return default settings if none found
@@ -68,11 +69,11 @@ public class SettingsDAO {
     }
 
     public boolean saveSettings(Settings settings) {
-        System.out.println("DEBUG: Saving settings for user " + settings.getUserPin());
+        log.debug("Saving user settings");
 
         // Check if settings exist
         boolean exists = settingsExist(settings.getUserPin());
-        System.out.println("DEBUG: Settings exist = " + exists);
+        log.debug("Settings row exists: {}", exists);
 
         if (exists) {
             return updateSettings(settings);
@@ -92,8 +93,7 @@ public class SettingsDAO {
             return rs.next();
 
         } catch (SQLException e) {
-            System.err.println("ERROR: Failed to check if settings exist for user " + userPin + ": " + e.getMessage());
-            e.printStackTrace();
+            log.error("Failed to check whether settings row exists", e);
             return false;
         }
     }
@@ -118,14 +118,11 @@ public class SettingsDAO {
             pstmt.setBoolean(10, settings.isShareUsageData());
 
             int result = pstmt.executeUpdate();
-            System.out.println("DEBUG: Insert settings result = " + result);
+            log.debug("Insert settings result: {}", result);
             return result > 0;
 
         } catch (SQLException e) {
-            System.err.println("ERROR: Failed to insert settings for user " + settings.getUserPin());
-            System.err.println("SQL Error: " + e.getMessage());
-            System.err.println("SQL State: " + e.getSQLState());
-            e.printStackTrace();
+            log.error("Failed to insert user settings", e);
             return false;
         }
     }
@@ -150,14 +147,11 @@ public class SettingsDAO {
             pstmt.setInt(10, settings.getUserPin());
 
             int result = pstmt.executeUpdate();
-            System.out.println("DEBUG: Update settings result = " + result);
+            log.debug("Update settings result: {}", result);
             return result > 0;
 
         } catch (SQLException e) {
-            System.err.println("ERROR: Failed to update settings for user " + settings.getUserPin());
-            System.err.println("SQL Error: " + e.getMessage());
-            System.err.println("SQL State: " + e.getSQLState());
-            e.printStackTrace();
+            log.error("Failed to update user settings", e);
             return false;
         }
     }
@@ -170,12 +164,11 @@ public class SettingsDAO {
 
             pstmt.setInt(1, userPin);
             int result = pstmt.executeUpdate();
-            System.out.println("DEBUG: Delete settings result = " + result);
+            log.debug("Delete settings result: {}", result);
             return result > 0;
 
         } catch (SQLException e) {
-            System.err.println("ERROR: Failed to delete settings for user " + userPin + ": " + e.getMessage());
-            e.printStackTrace();
+            log.error("Failed to delete user settings", e);
             return false;
         }
     }
