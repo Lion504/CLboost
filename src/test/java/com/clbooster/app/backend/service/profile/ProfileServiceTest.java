@@ -1,12 +1,13 @@
 package com.clbooster.app.backend.service.profile;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.AfterEach;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -14,19 +15,24 @@ import static org.mockito.Mockito.*;
 class ProfileServiceTest {
 
     private ProfileService service;
-    private ProfileDAO dao;
-
+    private ProfileDAO profileDAOMock;
+    private UserDAO userDAOMock;
     private final PrintStream originalOut = System.out;
     private ByteArrayOutputStream outContent;
 
     @BeforeEach
     void setUp() throws Exception {
         service = new ProfileService();
-        dao = mock(ProfileDAO.class);
+        profileDAOMock = mock(ProfileDAO.class);
+        userDAOMock = mock(UserDAO.class);
 
-        Field field = ProfileService.class.getDeclaredField("profileDAO");
-        field.setAccessible(true);
-        field.set(service, dao);
+        Field daoField = ProfileService.class.getDeclaredField("profileDAO");
+        daoField.setAccessible(true);
+        daoField.set(service, profileDAOMock);
+
+        Field userDaoField = ProfileService.class.getDeclaredField("userDAO");
+        userDaoField.setAccessible(true);
+        userDaoField.set(service, userDAOMock);
 
         outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
@@ -37,110 +43,99 @@ class ProfileServiceTest {
         System.setOut(originalOut);
     }
 
-    // ---------------- getProfile ----------------
-
     @Test
     void getProfile_found() {
-        Profile p = new Profile();
-        p.setPin(1);
+        Profile profile = new Profile();
+        profile.setPin(1);
 
-        when(dao.getProfileByPin(1)).thenReturn(p);
+        when(profileDAOMock.getByIdWithFallback(1, Locale.getDefault(), Locale.US)).thenReturn(profile);
 
         Profile result = service.getProfile(1);
 
         assertNotNull(result);
         assertEquals(1, result.getPin());
+        verify(profileDAOMock).getByIdWithFallback(1, Locale.getDefault(), Locale.US);
     }
 
     @Test
     void getProfile_notFound() {
-        when(dao.getProfileByPin(99)).thenReturn(null);
+        when(profileDAOMock.getByIdWithFallback(99, Locale.getDefault(), Locale.US)).thenReturn(null);
 
         Profile result = service.getProfile(99);
 
         assertNull(result);
         assertTrue(outContent.toString().contains("Profile not found for PIN"));
+        verify(profileDAOMock).getByIdWithFallback(99, Locale.getDefault(), Locale.US);
     }
-
-    // ---------------- updateProfile ----------------
 
     @Test
     void updateProfile_success_validEmail() {
-        when(dao.updateProfile(any(Profile.class))).thenReturn(true);
-
-        boolean result = service.updateProfile(
-                1, "Senior", "Java", "Backend", "link", "test@mail.com");
+        boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "test@mail.com");
 
         assertTrue(result);
-        verify(dao).updateProfile(any(Profile.class));
+        verify(userDAOMock).updateUser(1, "", "", "test@mail.com");
+        verify(profileDAOMock).saveTranslation(any(Profile.class), eq(Locale.getDefault()));
     }
 
     @Test
     void updateProfile_invalidEmail_blocksDaoCall() {
-        boolean result = service.updateProfile(
-                1, "Senior", "Java", "Backend", "link", "bad-email");
+        boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "bad-email");
 
         assertFalse(result);
-        verify(dao, never()).updateProfile(any());
+        verifyNoInteractions(userDAOMock, profileDAOMock);
     }
 
     @Test
     void updateProfile_emptyEmail_allowed() {
-        when(dao.updateProfile(any(Profile.class))).thenReturn(true);
-
-        boolean result = service.updateProfile(
-                1, "Senior", "Java", "Backend", "link", "");
+        boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "");
 
         assertTrue(result);
+        verify(userDAOMock).updateUser(1, "", "", "");
+        verify(profileDAOMock).saveTranslation(any(Profile.class), eq(Locale.getDefault()));
     }
 
     @Test
-    void updateProfile_daoFails() {
-        when(dao.updateProfile(any(Profile.class))).thenReturn(false);
+    void updateProfile_daoFailure() {
+        doThrow(new RuntimeException("DB failure"))
+                .when(profileDAOMock)
+                .saveTranslation(any(Profile.class), any(Locale.class));
 
-        boolean result = service.updateProfile(
-                1, "Senior", "Java", "Backend", "link", "test@mail.com");
+        boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "test@mail.com");
 
         assertFalse(result);
     }
 
-    // ---------------- updateCVTimestamp ----------------
-
     @Test
     void updateCVTimestamp_success() {
-        when(dao.updateCVTimestamp(1)).thenReturn(true);
+        when(profileDAOMock.updateCVTimestamp(1)).thenReturn(true);
 
         assertTrue(service.updateCVTimestamp(1));
     }
 
     @Test
     void updateCVTimestamp_failure() {
-        when(dao.updateCVTimestamp(1)).thenReturn(false);
+        when(profileDAOMock.updateCVTimestamp(1)).thenReturn(false);
 
         assertFalse(service.updateCVTimestamp(1));
     }
 
-    // ---------------- profileExists ----------------
-
     @Test
     void profileExists_true() {
-        when(dao.profileExists(1)).thenReturn(true);
+        when(profileDAOMock.profileExists(1)).thenReturn(true);
 
         assertTrue(service.profileExists(1));
     }
 
     @Test
     void profileExists_false() {
-        when(dao.profileExists(1)).thenReturn(false);
+        when(profileDAOMock.profileExists(1)).thenReturn(false);
 
         assertFalse(service.profileExists(1));
     }
 
-    // ---------------- displayProfile (IMPORTANT COVERAGE) ----------------
-
     @Test
     void displayProfile_nullProfile() {
-        when(dao.getProfileByPin(1)).thenReturn(null);
+        when(profileDAOMock.getByIdWithFallback(1, Locale.getDefault(), Locale.US)).thenReturn(null);
 
         service.displayProfile(1);
 
@@ -149,19 +144,18 @@ class ProfileServiceTest {
 
     @Test
     void displayProfile_withNullFields() {
-        Profile p = new Profile();
-        p.setExperienceLevel(null);
-        p.setTools(null);
-        p.setSkills(null);
-        p.setLink(null);
-        p.setProfileEmail(null);
+        Profile profile = new Profile();
+        profile.setExperienceLevel(null);
+        profile.setTools(null);
+        profile.setSkills(null);
+        profile.setLink(null);
+        profile.setProfileEmail(null);
 
-        when(dao.getProfileByPin(1)).thenReturn(p);
+        when(profileDAOMock.getByIdWithFallback(1, Locale.getDefault(), Locale.US)).thenReturn(profile);
 
         service.displayProfile(1);
 
         String output = outContent.toString();
-
         assertTrue(output.contains("(Not set)"));
     }
 }

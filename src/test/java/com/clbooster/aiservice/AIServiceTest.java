@@ -5,8 +5,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -65,70 +70,62 @@ class AIServiceTest {
     }
 
     @Test
-    void generateCoverLetter_basicFlow_returnsFinalResult() {
-        String resume = "Java Developer with Spring Boot";
-        String jobDetails = "Senior Java Engineer role";
+    void testGenerateCoverLetter_StripsMarkdownJsonFence() {
+        when(mockModel.generate(anyString())).thenReturn("```json\n{\"key\":\"value\"}\n```")
+                .thenReturn("Final cover letter");
 
-        when(mockModel.generate(anyString()))
-                .thenReturn("analysis-json")
-                .thenReturn("final-cover-letter");
+        String result = aiService.generateCoverLetter("resume", "job", "Creative");
 
-        String result = aiService.generateCoverLetter(resume, jobDetails);
-
-        assertEquals("final-cover-letter", result);
+        assertEquals("Final cover letter", result);
         verify(mockModel, times(2)).generate(anyString());
     }
 
     @Test
-    void generateCoverLetter_emptyInputs_stillRunsFlow() {
-        when(mockModel.generate(anyString()))
-                .thenReturn("analysis")
-                .thenReturn("final");
+    void testToneInstruction_allBranches() throws Exception {
+        Method toneInstruction = AIService.class.getDeclaredMethod("toneInstruction", String.class);
+        toneInstruction.setAccessible(true);
 
-        String result = aiService.generateCoverLetter("", "");
+        String creative = (String) toneInstruction.invoke(aiService, "Creative");
+        String storyteller = (String) toneInstruction.invoke(aiService, "Storyteller");
+        String professional = (String) toneInstruction.invoke(aiService, "Professional");
+        String blank = (String) toneInstruction.invoke(aiService, " ");
 
-        assertEquals("final", result);
-        verify(mockModel, times(2)).generate(anyString());
+        assertTrue(creative.contains("creative"));
+        assertTrue(storyteller.contains("storytelling"));
+        assertTrue(professional.contains("formal"));
+        assertEquals("", blank);
     }
 
     @Test
-    void generateCoverLetter_defaultTone_executesFlow() {
-        when(mockModel.generate(anyString()))
-                .thenReturn("analysis")
-                .thenReturn("final");
+    void testGetLanguageModel_throwsWhenApiKeyMissing() throws Exception {
+        AIService noKeyService = new AIService(" ");
+        Method getLanguageModel = AIService.class.getDeclaredMethod("getLanguageModel");
+        getLanguageModel.setAccessible(true);
 
-        aiService.generateCoverLetter("resume", "job", "UNKNOWN");
-
-        verify(mockModel, times(2)).generate(anyString());
+        InvocationTargetException ex = assertThrows(InvocationTargetException.class,
+                () -> getLanguageModel.invoke(noKeyService));
+        assertTrue(ex.getCause() instanceof IllegalStateException);
+        assertTrue(ex.getCause().getMessage().contains("GEMINI_API_KEY"));
     }
+
     @Test
-    void generateCoverLetter_creativeTone_executesFullPipeline() {
-        when(mockModel.generate(anyString()))
-                .thenReturn("analysis")
-                .thenReturn("final");
+    void testGetLanguageModel_lazyInitAndCache_whenApiKeyPresent() throws Exception {
+        AIService service = new AIService("fake-key");
 
-        aiService.generateCoverLetter("resume", "job", "Creative");
+        // Clear pre-injected mock from setup for this test to exercise lazy init.
+        Field field = AIService.class.getDeclaredField("languageModel");
+        field.setAccessible(true);
+        field.set(service, null);
 
-        verify(mockModel, times(2)).generate(anyString());
-    }
-    @Test
-    void generateCoverLetter_storytellerTone_executesFullPipeline() {
-        when(mockModel.generate(anyString()))
-                .thenReturn("analysis")
-                .thenReturn("final");
+        Method getLanguageModel = AIService.class.getDeclaredMethod("getLanguageModel");
+        getLanguageModel.setAccessible(true);
 
-        aiService.generateCoverLetter("resume", "job", "Storyteller");
+        Object first = getLanguageModel.invoke(service);
+        Object second = getLanguageModel.invoke(service);
 
-        verify(mockModel, times(2)).generate(anyString());
-    }
-    @Test
-    void generateCoverLetter_removesCodeBlocks_fromAnalysis() {
-        when(mockModel.generate(anyString()))
-                .thenReturn("```json { \"key\": \"value\" } ```")
-                .thenReturn("final output");
-
-        String result = aiService.generateCoverLetter("resume", "job");
-
-        assertEquals("final output", result);
+        assertTrue(first != null);
+        assertTrue(second != null);
+        assertEquals(first, second);
+        assertTrue(!Modifier.isAbstract(first.getClass().getModifiers()));
     }
 }
