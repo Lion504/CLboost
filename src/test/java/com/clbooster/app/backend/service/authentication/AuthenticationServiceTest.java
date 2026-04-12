@@ -223,7 +223,8 @@ class AuthenticationServiceTest {
             prod.setCurrentUser(user);
 
             verify(vaadinSession).setAttribute("currentUser", user);
-            verify(httpSession).setAttribute(eq(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY), any());
+            verify(httpSession).setAttribute(eq(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY),
+                    any());
             assertNotNull(SecurityContextHolder.getContext().getAuthentication());
         }
     }

@@ -72,9 +72,7 @@ public class AuthenticationService {
         }
         try {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    user.getUsername(),
-                    null,
-                    List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                    user.getUsername(), null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
             SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(authentication);

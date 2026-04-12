@@ -14,15 +14,11 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth
-            .requestMatchers("/", "/signup", "/error", "/favicon.ico",
-                "/manifest.webmanifest", "/sw.js", "/offline.html",
-                "/images/**", "/icons/**", "/line-awesome/**",
-                "/VAADIN/**", "/frontend/**", "/webjars/**")
-            .permitAll());
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/", "/signup", "/error", "/favicon.ico",
+                "/manifest.webmanifest", "/sw.js", "/offline.html", "/images/**", "/icons/**", "/line-awesome/**",
+                "/VAADIN/**", "/frontend/**", "/webjars/**").permitAll());
 
-        http.with(VaadinSecurityConfigurer.vaadin(), configurer ->
-            configurer.loginView(LoginView.class));
+        http.with(VaadinSecurityConfigurer.vaadin(), configurer -> configurer.loginView(LoginView.class));
 
         return http.build();
     }

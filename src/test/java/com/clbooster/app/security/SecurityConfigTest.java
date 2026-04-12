@@ -18,13 +18,11 @@ class SecurityConfigTest {
 
     @Test
     void publicLoginRoute_isAccessibleWithoutAuth() throws Exception {
-        mockMvc.perform(get("/login"))
-                .andExpect(status().isOk());
+        mockMvc.perform(get("/login")).andExpect(status().isOk());
     }
 
     @Test
     void protectedRoute_redirectsToLoginWithoutAuth() throws Exception {
-        mockMvc.perform(get("/dashboard"))
-                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(get("/dashboard")).andExpect(status().is3xxRedirection());
     }
 }
