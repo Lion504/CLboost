@@ -21,6 +21,8 @@
         <sonar.organization>lion504</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.skip>false</sonar.coverage.skip>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
     </properties>
 
     <parent>
@@ -68,6 +70,12 @@
     </dependencyManagement>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.vaadin</groupId>
             <!-- Replace artifactId with vaadin-core to use only free components -->
@@ -214,6 +222,9 @@
                                 <format>XML</format>
                                 <format>HTML</format>
                             </formats>
+                            <includes>
+                                <include>com/clbooster/**/*</include>
+                            </includes>
                         </configuration>
                     </execution>
                 </executions>
