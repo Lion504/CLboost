@@ -63,4 +63,72 @@ class AIServiceTest {
         assertEquals("Result", result);
         verify(mockModel, times(2)).generate(anyString());
     }
+
+    @Test
+    void generateCoverLetter_basicFlow_returnsFinalResult() {
+        String resume = "Java Developer with Spring Boot";
+        String jobDetails = "Senior Java Engineer role";
+
+        when(mockModel.generate(anyString()))
+                .thenReturn("analysis-json")
+                .thenReturn("final-cover-letter");
+
+        String result = aiService.generateCoverLetter(resume, jobDetails);
+
+        assertEquals("final-cover-letter", result);
+        verify(mockModel, times(2)).generate(anyString());
+    }
+
+    @Test
+    void generateCoverLetter_emptyInputs_stillRunsFlow() {
+        when(mockModel.generate(anyString()))
+                .thenReturn("analysis")
+                .thenReturn("final");
+
+        String result = aiService.generateCoverLetter("", "");
+
+        assertEquals("final", result);
+        verify(mockModel, times(2)).generate(anyString());
+    }
+
+    @Test
+    void generateCoverLetter_defaultTone_executesFlow() {
+        when(mockModel.generate(anyString()))
+                .thenReturn("analysis")
+                .thenReturn("final");
+
+        aiService.generateCoverLetter("resume", "job", "UNKNOWN");
+
+        verify(mockModel, times(2)).generate(anyString());
+    }
+    @Test
+    void generateCoverLetter_creativeTone_executesFullPipeline() {
+        when(mockModel.generate(anyString()))
+                .thenReturn("analysis")
+                .thenReturn("final");
+
+        aiService.generateCoverLetter("resume", "job", "Creative");
+
+        verify(mockModel, times(2)).generate(anyString());
+    }
+    @Test
+    void generateCoverLetter_storytellerTone_executesFullPipeline() {
+        when(mockModel.generate(anyString()))
+                .thenReturn("analysis")
+                .thenReturn("final");
+
+        aiService.generateCoverLetter("resume", "job", "Storyteller");
+
+        verify(mockModel, times(2)).generate(anyString());
+    }
+    @Test
+    void generateCoverLetter_removesCodeBlocks_fromAnalysis() {
+        when(mockModel.generate(anyString()))
+                .thenReturn("```json { \"key\": \"value\" } ```")
+                .thenReturn("final output");
+
+        String result = aiService.generateCoverLetter("resume", "job");
+
+        assertEquals("final output", result);
+    }
 }
