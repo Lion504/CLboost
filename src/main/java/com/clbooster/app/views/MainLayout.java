@@ -90,9 +90,14 @@ public class MainLayout extends AppLayout {
         // Get current user from auth service
         User currentUser = authService.getCurrentUser();
         String userName = currentUser != null ? currentUser.getFirstName() + " " + currentUser.getLastName() : "Guest";
-        String userInitials = currentUser != null
-                ? (currentUser.getFirstName().substring(0, 1) + currentUser.getLastName().substring(0, 1)).toUpperCase()
-                : "G";
+        String userInitials = "G";
+        if (currentUser != null) {
+            String first = currentUser.getFirstName() != null && !currentUser.getFirstName().isBlank()
+                    ? currentUser.getFirstName().substring(0, 1) : "U";
+            String last = currentUser.getLastName() != null && !currentUser.getLastName().isBlank()
+                    ? currentUser.getLastName().substring(0, 1) : "";
+            userInitials = (first + last).toUpperCase();
+        }
 
         Avatar avatar = new Avatar(userName);
         avatar.setColorIndex(2);
