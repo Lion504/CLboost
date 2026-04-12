@@ -68,7 +68,9 @@ public class ProfileView extends VerticalLayout {
         this.profileService = new ProfileService();
         this.translationService = new TranslationService();
         this.currentUser = authService.getCurrentUser();
-        this.userProfile = currentUser != null ? profileService.getProfile(currentUser.getPin(), translationService.getCurrentLocale()) : null;
+        this.userProfile = currentUser != null
+                ? profileService.getProfile(currentUser.getPin(), translationService.getCurrentLocale())
+                : null;
 
         setPadding(true);
         setSpacing(true);
@@ -637,9 +639,8 @@ public class ProfileView extends VerticalLayout {
 
         // Update profile using ProfileService
         boolean success = profileService.updateProfile(currentUser.getPin(), firstNameField.getValue(),
-                lastNameField.getValue(), experienceField.getValue(),
-                toolsArea.getValue(), skillsArea.getValue(), linkField.getValue(), email,
-                translationService.getCurrentLocale());
+                lastNameField.getValue(), experienceField.getValue(), toolsArea.getValue(), skillsArea.getValue(),
+                linkField.getValue(), email, translationService.getCurrentLocale());
 
         if (success) {
             Notification.show(translationService.translate("profile.profileSaved"), 3000,
@@ -654,10 +655,10 @@ public class ProfileView extends VerticalLayout {
 
             // Reload profile data using the active locale
             this.userProfile = profileService.getProfile(currentUser.getPin(), translationService.getCurrentLocale());
-            
+
             // Reload all field values in UI to reflect database state
             reloadFieldValues();
-            
+
             // Exit edit mode (also reloads values but we do it twice to be safe)
             toggleEditMode();
         } else {

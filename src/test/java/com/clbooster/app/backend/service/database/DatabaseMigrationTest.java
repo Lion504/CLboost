@@ -37,8 +37,7 @@ class DatabaseMigrationTest {
     @Test
     void runMigration_handlesSqlExceptionFromConnection() {
         try (MockedStatic<DatabaseConnection> dbConnMock = Mockito.mockStatic(DatabaseConnection.class)) {
-            dbConnMock.when(DatabaseConnection::getConnection)
-                    .thenThrow(new SQLException("db unavailable"));
+            dbConnMock.when(DatabaseConnection::getConnection).thenThrow(new SQLException("db unavailable"));
 
             assertDoesNotThrow(DatabaseMigration::runMigration);
         }
@@ -47,8 +46,7 @@ class DatabaseMigrationTest {
     @Test
     void main_delegatesToRunMigration() {
         try (MockedStatic<DatabaseConnection> dbConnMock = Mockito.mockStatic(DatabaseConnection.class)) {
-            dbConnMock.when(DatabaseConnection::getConnection)
-                    .thenThrow(new SQLException("db unavailable"));
+            dbConnMock.when(DatabaseConnection::getConnection).thenThrow(new SQLException("db unavailable"));
 
             assertDoesNotThrow(() -> DatabaseMigration.main(new String[0]));
         }

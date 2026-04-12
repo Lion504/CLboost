@@ -40,7 +40,7 @@ class LoginViewTest extends BaseVaadinViewTest {
     @Test
     void handleLogin_emptyUsername_returnsEarly() throws Exception {
         try (MockedConstruction<AuthenticationService> mocked = Mockito.mockConstruction(AuthenticationService.class);
-             MockedConstruction<Notification> ignored = Mockito.mockConstruction(Notification.class)) {
+                MockedConstruction<Notification> ignored = Mockito.mockConstruction(Notification.class)) {
             LoginView view = new LoginView();
             AuthenticationService authMock = mocked.constructed().get(0);
 
@@ -58,7 +58,7 @@ class LoginViewTest extends BaseVaadinViewTest {
     @Test
     void handleLogin_emptyPassword_returnsEarly() throws Exception {
         try (MockedConstruction<AuthenticationService> mocked = Mockito.mockConstruction(AuthenticationService.class);
-             MockedConstruction<Notification> ignored = Mockito.mockConstruction(Notification.class)) {
+                MockedConstruction<Notification> ignored = Mockito.mockConstruction(Notification.class)) {
             LoginView view = new LoginView();
             AuthenticationService authMock = mocked.constructed().get(0);
 
@@ -76,7 +76,7 @@ class LoginViewTest extends BaseVaadinViewTest {
     @Test
     void handleLogin_failedLogin_clearsPassword() throws Exception {
         try (MockedConstruction<AuthenticationService> mocked = Mockito.mockConstruction(AuthenticationService.class);
-             MockedConstruction<Notification> ignored = Mockito.mockConstruction(Notification.class)) {
+                MockedConstruction<Notification> ignored = Mockito.mockConstruction(Notification.class)) {
             LoginView view = new LoginView();
             AuthenticationService authMock = mocked.constructed().get(0);
             when(authMock.login("user", "Secret123!")).thenReturn(false);

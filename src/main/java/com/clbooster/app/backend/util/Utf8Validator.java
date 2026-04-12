@@ -8,12 +8,13 @@ public final class Utf8Validator {
 
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    private Utf8Validator() {}
+    private Utf8Validator() {
+    }
 
     public static boolean isValidUtf8(String input) {
-        if (input == null) return true;
-        CharsetDecoder decoder = UTF8.newDecoder()
-                .onMalformedInput(CodingErrorAction.REPORT)
+        if (input == null)
+            return true;
+        CharsetDecoder decoder = UTF8.newDecoder().onMalformedInput(CodingErrorAction.REPORT)
                 .onUnmappableCharacter(CodingErrorAction.REPORT);
         try {
             decoder.decode(UTF8.encode(input));
@@ -24,10 +25,8 @@ public final class Utf8Validator {
     }
 
     public static String sanitize(String input) {
-        if (input == null) return null;
-        return input
-                .replaceAll("\\p{Cntrl}", "")
-                .replaceAll("\u0000", "")
-                .trim();
+        if (input == null)
+            return null;
+        return input.replaceAll("\\p{Cntrl}", "").replaceAll("\u0000", "").trim();
     }
 }

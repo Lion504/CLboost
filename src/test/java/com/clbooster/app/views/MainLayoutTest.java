@@ -20,9 +20,8 @@ public class MainLayoutTest extends BaseVaadinViewTest {
 
     @Test
     void constructorInitializesWithoutLoggedInUser() {
-        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(
-            AuthenticationService.class,
-            (mock, context) -> when(mock.getCurrentUser()).thenReturn(null))) {
+        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
+                (mock, context) -> when(mock.getCurrentUser()).thenReturn(null))) {
 
             MainLayout layout = new MainLayout();
             org.junit.jupiter.api.Assertions.assertNotNull(layout);
@@ -34,9 +33,8 @@ public class MainLayoutTest extends BaseVaadinViewTest {
         User testUser = new User("test@test.com", "testuser", "testpass", "Test", "User");
         testUser.setPin(1);
 
-        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(
-            AuthenticationService.class,
-            (mock, context) -> when(mock.getCurrentUser()).thenReturn(testUser))) {
+        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
+                (mock, context) -> when(mock.getCurrentUser()).thenReturn(testUser))) {
 
             MainLayout layout = new MainLayout();
             org.junit.jupiter.api.Assertions.assertNotNull(layout);
@@ -48,9 +46,8 @@ public class MainLayoutTest extends BaseVaadinViewTest {
         User testUser = new User("test@test.com", "testuser", "testpass", "", "");
         testUser.setPin(1);
 
-        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(
-            AuthenticationService.class,
-            (mock, context) -> when(mock.getCurrentUser()).thenReturn(testUser))) {
+        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
+                (mock, context) -> when(mock.getCurrentUser()).thenReturn(testUser))) {
 
             MainLayout layout = new MainLayout();
             org.junit.jupiter.api.Assertions.assertNotNull(layout);

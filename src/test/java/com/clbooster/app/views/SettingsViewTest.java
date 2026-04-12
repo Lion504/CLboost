@@ -45,10 +45,10 @@ class SettingsViewTest extends BaseVaadinViewTest {
 
     @Test
     void constructor_initializesWhenNoLoggedInUser() {
-        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-             MockedConstruction<SettingsService> settingsMocked = Mockito.mockConstruction(SettingsService.class);
-             MockedConstruction<UserService> userServiceMocked = Mockito.mockConstruction(UserService.class)) {
+        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
+                MockedConstruction<SettingsService> settingsMocked = Mockito.mockConstruction(SettingsService.class);
+                MockedConstruction<UserService> userServiceMocked = Mockito.mockConstruction(UserService.class)) {
 
             SettingsView view = new SettingsView();
             assertNotNull(view);
@@ -59,7 +59,7 @@ class SettingsViewTest extends BaseVaadinViewTest {
     }
 
     @Test
-        void loadSettings_withLoggedInUser_usesPersistedSettings() throws Exception {
+    void loadSettings_withLoggedInUser_usesPersistedSettings() throws Exception {
         User user = new User("mail@test.com", "user", "Pass123!pass", "Test", "User");
         user.setPin(4321);
 
@@ -68,10 +68,10 @@ class SettingsViewTest extends BaseVaadinViewTest {
         persisted.setPushNotifications(true);
         persisted.setProductUpdates(false);
 
-        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(AuthenticationService.class,
-            (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-             MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
-             MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class)) {
+        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
+                MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
+                MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class)) {
 
             SettingsView view = new SettingsView();
 
@@ -90,10 +90,10 @@ class SettingsViewTest extends BaseVaadinViewTest {
 
     @Test
     void updateToggleVisual_updatesTrackAndThumbStyles() throws Exception {
-        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-             MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
-             MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class)) {
+        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
+                MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
+                MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class)) {
 
             SettingsView view = new SettingsView();
             Method method = SettingsView.class.getDeclaredMethod("updateToggleVisual", Div.class, Div.class,
@@ -115,11 +115,11 @@ class SettingsViewTest extends BaseVaadinViewTest {
 
     @Test
     void saveSettings_handlesNotLoggedInAndServiceFailureBranches() throws Exception {
-        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-             MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
-             MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class);
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
+                MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
+                MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class);
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -142,11 +142,11 @@ class SettingsViewTest extends BaseVaadinViewTest {
 
     @Test
     void saveSettings_successPath_callsService() throws Exception {
-        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-             MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
-             MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class);
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
+                MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
+                MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class);
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -169,11 +169,11 @@ class SettingsViewTest extends BaseVaadinViewTest {
 
     @Test
     void showDeleteAccountDialog_notLoggedIn_returnsWithNotification() throws Exception {
-        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-             MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
-             MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class);
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
+                MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
+                MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class);
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -187,11 +187,11 @@ class SettingsViewTest extends BaseVaadinViewTest {
 
     @Test
     void languageSelect_listener_coversAllLanguageMappingBranches() throws Exception {
-        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-             MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
-             MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class);
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
+                MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
+                MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class);
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -214,11 +214,11 @@ class SettingsViewTest extends BaseVaadinViewTest {
 
     @Test
     void saveSettings_usesEnglishWhenLangNull_andHandlesFalseReturn() throws Exception {
-        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-             MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
-             MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class);
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
+                MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
+                MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class);
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -237,28 +237,28 @@ class SettingsViewTest extends BaseVaadinViewTest {
             setField(view, "userService", userService);
             setField(view, "settingsService", settingsService);
 
-                Select<String> langSelect = getField(view, "langSelect", Select.class);
-                langSelect.setValue(null);
+            Select<String> langSelect = getField(view, "langSelect", Select.class);
+            langSelect.setValue(null);
 
-                when(settingsService.saveSettings(any())).thenReturn(false);
+            when(settingsService.saveSettings(any())).thenReturn(false);
 
-                invokeNoArg(view, "saveSettings");
+            invokeNoArg(view, "saveSettings");
 
-                verify(settingsService).saveSettings(any(Settings.class));
-                Settings persisted = getField(view, "userSettings", Settings.class);
-                assertEquals("English", persisted.getLanguage());
-                notificationMock.verify(() -> Notification.show(contains("Failed to save settings"), anyInt(), any()),
+            verify(settingsService).saveSettings(any(Settings.class));
+            Settings persisted = getField(view, "userSettings", Settings.class);
+            assertEquals("English", persisted.getLanguage());
+            notificationMock.verify(() -> Notification.show(contains("Failed to save settings"), anyInt(), any()),
                     Mockito.atLeastOnce());
         }
     }
 
     @Test
     void createActionButtons_discard_click_reloadsSettingsAndNotifies() throws Exception {
-        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-             MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
-             MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class);
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
+                MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
+                MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class);
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -292,41 +292,41 @@ class SettingsViewTest extends BaseVaadinViewTest {
         List<Component> dialogContent = new ArrayList<>();
         List<Component> footerButtons = new ArrayList<>();
 
-        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-             MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
-             MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class);
-             MockedConstruction<Dialog> dialogMocked = Mockito.mockConstruction(Dialog.class, (mock, context) -> {
-                 Dialog.DialogFooter footer = Mockito.mock(Dialog.DialogFooter.class);
-                 when(mock.getFooter()).thenReturn(footer);
+        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
+                MockedConstruction<SettingsService> ignoredSettings = Mockito.mockConstruction(SettingsService.class);
+                MockedConstruction<UserService> ignoredUserService = Mockito.mockConstruction(UserService.class);
+                MockedConstruction<Dialog> dialogMocked = Mockito.mockConstruction(Dialog.class, (mock, context) -> {
+                    Dialog.DialogFooter footer = Mockito.mock(Dialog.DialogFooter.class);
+                    when(mock.getFooter()).thenReturn(footer);
 
-                 Mockito.doAnswer(invocation -> {
-                     for (Object arg : invocation.getArguments()) {
-                         if (arg instanceof Component component) {
-                             dialogContent.add(component);
-                         } else if (arg instanceof Component[] components) {
-                             for (Component c : components) {
-                                 dialogContent.add(c);
-                             }
-                         }
-                     }
-                     return null;
-                 }).when(mock).add(Mockito.<Component[]>any());
+                    Mockito.doAnswer(invocation -> {
+                        for (Object arg : invocation.getArguments()) {
+                            if (arg instanceof Component component) {
+                                dialogContent.add(component);
+                            } else if (arg instanceof Component[] components) {
+                                for (Component c : components) {
+                                    dialogContent.add(c);
+                                }
+                            }
+                        }
+                        return null;
+                    }).when(mock).add(Mockito.<Component[]> any());
 
-                 Mockito.doAnswer(invocation -> {
-                     for (Object arg : invocation.getArguments()) {
-                         if (arg instanceof Component component) {
-                             footerButtons.add(component);
-                         } else if (arg instanceof Component[] components) {
-                             for (Component c : components) {
-                                 footerButtons.add(c);
-                             }
-                         }
-                     }
-                     return null;
-                 }).when(footer).add(Mockito.<Component[]>any());
-             });
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+                    Mockito.doAnswer(invocation -> {
+                        for (Object arg : invocation.getArguments()) {
+                            if (arg instanceof Component component) {
+                                footerButtons.add(component);
+                            } else if (arg instanceof Component[] components) {
+                                for (Component c : components) {
+                                    footerButtons.add(c);
+                                }
+                            }
+                        }
+                        return null;
+                    }).when(footer).add(Mockito.<Component[]> any());
+                });
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -348,7 +348,8 @@ class SettingsViewTest extends BaseVaadinViewTest {
             invokeNoArg(view, "showDeleteAccountDialog");
             assertTrue(dialogMocked.constructed().size() >= 1);
 
-            // In unit context, we only assert the logged-in branch reaches dialog creation path.
+            // In unit context, we only assert the logged-in branch reaches dialog creation
+            // path.
             verify(settingsService, Mockito.never()).deleteSettings(anyInt());
             verify(authService, Mockito.never()).logout();
         }

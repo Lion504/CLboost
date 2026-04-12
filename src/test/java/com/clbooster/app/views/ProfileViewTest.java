@@ -45,10 +45,10 @@ class ProfileViewTest extends BaseVaadinViewTest {
         user.setPin(1234);
         Profile profile = new Profile(1234, "Senior", "Java", "Spring", "https://me.dev", "test@mail.com");
 
-        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
-             MockedConstruction<ProfileService> profileMocked = Mockito.mockConstruction(ProfileService.class,
-                     (mock, context) -> when(mock.getProfile(1234, Locale.getDefault())).thenReturn(profile))) {
+        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
+                MockedConstruction<ProfileService> profileMocked = Mockito.mockConstruction(ProfileService.class,
+                        (mock, context) -> when(mock.getProfile(1234, Locale.getDefault())).thenReturn(profile))) {
 
             ProfileView view = new ProfileView();
             assertNotNull(view);
@@ -61,8 +61,8 @@ class ProfileViewTest extends BaseVaadinViewTest {
     void createFormHelpers_returnStyledFields() throws Exception {
         ProfileView view = createViewWithUser();
 
-        TextField tf = invoke(view, "createFormField", TextField.class,
-                new Class<?>[] { String.class, String.class }, new Object[] { "Label", "Value" });
+        TextField tf = invoke(view, "createFormField", TextField.class, new Class<?>[] { String.class, String.class },
+                new Object[] { "Label", "Value" });
         EmailField ef = invoke(view, "createEmailField", EmailField.class,
                 new Class<?>[] { String.class, String.class }, new Object[] { "Email", "a@b.com" });
         TextArea ta = invoke(view, "createTextArea", TextArea.class,
@@ -102,10 +102,10 @@ class ProfileViewTest extends BaseVaadinViewTest {
         User user = new User("test@mail.com", "tester", "Pass123!pass", "Test", "User");
         user.setPin(1234);
 
-        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
-             MockedConstruction<ProfileService> profileMocked = Mockito.mockConstruction(ProfileService.class);
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
+                MockedConstruction<ProfileService> profileMocked = Mockito.mockConstruction(ProfileService.class);
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -131,18 +131,19 @@ class ProfileViewTest extends BaseVaadinViewTest {
         updatedUser.setPin(1234);
 
         Profile initialProfile = new Profile(1234, "Senior", "Java", "Spring", "https://me.dev", "test@mail.com");
-        Profile updatedProfile = new Profile(1234, "Lead", "Java,SQL", "Spring,Cloud", "https://new.dev", "new@mail.com");
+        Profile updatedProfile = new Profile(1234, "Lead", "Java,SQL", "Spring,Cloud", "https://new.dev",
+                "new@mail.com");
 
-        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
-             MockedConstruction<ProfileService> profileMocked = Mockito.mockConstruction(ProfileService.class,
-                     (mock, context) -> {
-                         when(mock.getProfile(1234, Locale.getDefault())).thenReturn(initialProfile, updatedProfile);
-                         when(mock.updateProfile(anyInt(), anyString(), anyString(), anyString(), anyString(), anyString(),
-                                 anyString(), anyString(), any())).thenReturn(true);
-                         when(mock.getUpdatedUser(1234)).thenReturn(updatedUser);
-                     });
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
+                MockedConstruction<ProfileService> profileMocked = Mockito.mockConstruction(ProfileService.class,
+                        (mock, context) -> {
+                            when(mock.getProfile(1234, Locale.getDefault())).thenReturn(initialProfile, updatedProfile);
+                            when(mock.updateProfile(anyInt(), anyString(), anyString(), anyString(), anyString(),
+                                    anyString(), anyString(), anyString(), any())).thenReturn(true);
+                            when(mock.getUpdatedUser(1234)).thenReturn(updatedUser);
+                        });
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -171,8 +172,8 @@ class ProfileViewTest extends BaseVaadinViewTest {
             ProfileService ps = profileMocked.constructed().get(0);
             AuthenticationService auth = authMocked.constructed().get(0);
 
-            verify(ps).updateProfile(anyInt(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString(),
-                    anyString(), any());
+            verify(ps).updateProfile(anyInt(), anyString(), anyString(), anyString(), anyString(), anyString(),
+                    anyString(), anyString(), any());
             verify(ps).getUpdatedUser(1234);
             verify(auth).setCurrentUser(updatedUser);
 
@@ -183,10 +184,10 @@ class ProfileViewTest extends BaseVaadinViewTest {
 
     @Test
     void saveProfile_notLoggedIn_doesNotAttemptUpdate() throws Exception {
-        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-             MockedConstruction<ProfileService> profileMocked = Mockito.mockConstruction(ProfileService.class);
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
+                MockedConstruction<ProfileService> profileMocked = Mockito.mockConstruction(ProfileService.class);
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -207,15 +208,15 @@ class ProfileViewTest extends BaseVaadinViewTest {
         user.setPin(1234);
         Profile profile = new Profile(1234, "Senior", "Java", "Spring", "https://me.dev", "test@mail.com");
 
-        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
-             MockedConstruction<ProfileService> profileMocked = Mockito.mockConstruction(ProfileService.class,
-                     (mock, context) -> {
-                         when(mock.getProfile(1234, Locale.getDefault())).thenReturn(profile);
-                         when(mock.updateProfile(anyInt(), anyString(), anyString(), anyString(), anyString(), anyString(),
-                                 anyString(), anyString(), any())).thenReturn(false);
-                     });
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
+                MockedConstruction<ProfileService> profileMocked = Mockito.mockConstruction(ProfileService.class,
+                        (mock, context) -> {
+                            when(mock.getProfile(1234, Locale.getDefault())).thenReturn(profile);
+                            when(mock.updateProfile(anyInt(), anyString(), anyString(), anyString(), anyString(),
+                                    anyString(), anyString(), anyString(), any())).thenReturn(false);
+                        });
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -237,10 +238,10 @@ class ProfileViewTest extends BaseVaadinViewTest {
         User user = new User("test@mail.com", "tester", "Pass123!pass", "Test", "User");
         user.setPin(1234);
 
-        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
-             MockedConstruction<ProfileService> ignoredProfile = Mockito.mockConstruction(ProfileService.class);
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
+                MockedConstruction<ProfileService> ignoredProfile = Mockito.mockConstruction(ProfileService.class);
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -283,10 +284,10 @@ class ProfileViewTest extends BaseVaadinViewTest {
 
     @Test
     void changePassword_notLoggedIn_andOtherValidationBranches() throws Exception {
-        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-             MockedConstruction<ProfileService> ignoredProfile = Mockito.mockConstruction(ProfileService.class);
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
+                MockedConstruction<ProfileService> ignoredProfile = Mockito.mockConstruction(ProfileService.class);
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -299,10 +300,10 @@ class ProfileViewTest extends BaseVaadinViewTest {
 
         User user = new User("test@mail.com", "tester", "Pass123!pass", "Test", "User");
         user.setPin(1234);
-        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
-             MockedConstruction<ProfileService> ignoredProfile = Mockito.mockConstruction(ProfileService.class);
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
+                MockedConstruction<ProfileService> ignoredProfile = Mockito.mockConstruction(ProfileService.class);
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -332,10 +333,10 @@ class ProfileViewTest extends BaseVaadinViewTest {
         user.setPin(1234);
         Profile profile = new Profile(1234, "Senior", "Java", "Spring", "https://me.dev", "test@mail.com");
 
-        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
-             MockedConstruction<ProfileService> ignoredProfile = Mockito.mockConstruction(ProfileService.class,
-                     (mock, context) -> when(mock.getProfile(1234, Locale.getDefault())).thenReturn(profile))) {
+        try (MockedConstruction<AuthenticationService> ignoredAuth = Mockito.mockConstruction(
+                AuthenticationService.class, (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
+                MockedConstruction<ProfileService> ignoredProfile = Mockito.mockConstruction(ProfileService.class,
+                        (mock, context) -> when(mock.getProfile(1234, Locale.getDefault())).thenReturn(profile))) {
             return new ProfileView();
         }
     }

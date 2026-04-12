@@ -30,8 +30,7 @@ class CoverLetterDAOTest {
         PreparedStatement stmt = mock(PreparedStatement.class);
         ResultSet rs = mock(ResultSet.class);
 
-        when(conn.prepareStatement(anyString(), eq(Statement.RETURN_GENERATED_KEYS)))
-                .thenReturn(stmt);
+        when(conn.prepareStatement(anyString(), eq(Statement.RETURN_GENERATED_KEYS))).thenReturn(stmt);
 
         when(stmt.getGeneratedKeys()).thenReturn(rs);
         when(stmt.executeUpdate()).thenReturn(1);
@@ -56,8 +55,7 @@ class CoverLetterDAOTest {
         Connection conn = mock(Connection.class);
         PreparedStatement stmt = mock(PreparedStatement.class);
 
-        when(conn.prepareStatement(anyString(), anyInt()))
-                .thenThrow(new SQLException());
+        when(conn.prepareStatement(anyString(), anyInt())).thenThrow(new SQLException());
 
         try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
             assertEquals(-1, dao.addCoverLetter(1, "/x.pdf"));

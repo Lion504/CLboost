@@ -27,7 +27,8 @@ class SignUpViewTest extends BaseVaadinViewTest {
 
     @Test
     void constructor_initializesView() {
-        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class)) {
+        try (MockedConstruction<AuthenticationService> ignored = Mockito
+                .mockConstruction(AuthenticationService.class)) {
             SignUpView view = new SignUpView();
             assertNotNull(view);
         }
@@ -35,7 +36,8 @@ class SignUpViewTest extends BaseVaadinViewTest {
 
     @Test
     void calculatePasswordStrength_scoresWeakToStrong() throws Exception {
-        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class)) {
+        try (MockedConstruction<AuthenticationService> ignored = Mockito
+                .mockConstruction(AuthenticationService.class)) {
             SignUpView view = new SignUpView();
             Method method = SignUpView.class.getDeclaredMethod("calculatePasswordStrength", String.class);
             method.setAccessible(true);
@@ -52,7 +54,8 @@ class SignUpViewTest extends BaseVaadinViewTest {
 
     @Test
     void updatePasswordStrength_updatesIndicatorText() throws Exception {
-        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class)) {
+        try (MockedConstruction<AuthenticationService> ignored = Mockito
+                .mockConstruction(AuthenticationService.class)) {
             SignUpView view = new SignUpView();
             Method method = SignUpView.class.getDeclaredMethod("updatePasswordStrength", String.class);
             method.setAccessible(true);
@@ -70,7 +73,7 @@ class SignUpViewTest extends BaseVaadinViewTest {
     @Test
     void handleRegistration_emptyFirstName_showsError() throws Exception {
         try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class);
-             MockedConstruction<Notification> notificationMock = Mockito.mockConstruction(Notification.class)) {
+                MockedConstruction<Notification> notificationMock = Mockito.mockConstruction(Notification.class)) {
             SignUpView view = new SignUpView();
 
             setFieldValue(view, "firstNameField", "");
@@ -89,13 +92,13 @@ class SignUpViewTest extends BaseVaadinViewTest {
 
     @Test
     void handleRegistration_success_callsAuthRegisterAndLogin() throws Exception {
-        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(AuthenticationService.class,
-                (mock, context) -> {
+        try (MockedConstruction<AuthenticationService> authMocked = Mockito
+                .mockConstruction(AuthenticationService.class, (mock, context) -> {
                     when(mock.register(anyString(), anyString(), anyString(), anyString(), anyString()))
                             .thenReturn(true);
                     when(mock.login(anyString(), anyString())).thenReturn(true);
                 });
-             MockedConstruction<Notification> ignoredNotification = Mockito.mockConstruction(Notification.class)) {
+                MockedConstruction<Notification> ignoredNotification = Mockito.mockConstruction(Notification.class)) {
             SignUpView view = new SignUpView();
 
             setFieldValue(view, "firstNameField", "Test");
@@ -116,10 +119,11 @@ class SignUpViewTest extends BaseVaadinViewTest {
 
     @Test
     void handleRegistration_registrationFails_doesNotLogin() throws Exception {
-        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(AuthenticationService.class,
+        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(
+                AuthenticationService.class,
                 (mock, context) -> when(mock.register(anyString(), anyString(), anyString(), anyString(), anyString()))
                         .thenReturn(false));
-             MockedConstruction<Notification> ignoredNotification = Mockito.mockConstruction(Notification.class)) {
+                MockedConstruction<Notification> ignoredNotification = Mockito.mockConstruction(Notification.class)) {
             SignUpView view = new SignUpView();
 
             setFieldValue(view, "firstNameField", "Test");
@@ -140,8 +144,9 @@ class SignUpViewTest extends BaseVaadinViewTest {
 
     @Test
     void handleRegistration_validationBranches_usernameEmailPassword() throws Exception {
-        try (MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(AuthenticationService.class);
-             MockedConstruction<Notification> notificationMock = Mockito.mockConstruction(Notification.class)) {
+        try (MockedConstruction<AuthenticationService> authMocked = Mockito
+                .mockConstruction(AuthenticationService.class);
+                MockedConstruction<Notification> notificationMock = Mockito.mockConstruction(Notification.class)) {
             SignUpView view = new SignUpView();
 
             Method method = SignUpView.class.getDeclaredMethod("handleRegistration");
@@ -174,7 +179,8 @@ class SignUpViewTest extends BaseVaadinViewTest {
 
     @Test
     void updatePasswordStrength_coversFairAndGoodLabels() throws Exception {
-        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class)) {
+        try (MockedConstruction<AuthenticationService> ignored = Mockito
+                .mockConstruction(AuthenticationService.class)) {
             SignUpView view = new SignUpView();
             Method method = SignUpView.class.getDeclaredMethod("updatePasswordStrength", String.class);
             method.setAccessible(true);
@@ -193,7 +199,7 @@ class SignUpViewTest extends BaseVaadinViewTest {
     @Test
     void showSuccessAndError_createNotifications() throws Exception {
         try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class);
-             MockedConstruction<Notification> notificationMock = Mockito.mockConstruction(Notification.class)) {
+                MockedConstruction<Notification> notificationMock = Mockito.mockConstruction(Notification.class)) {
             SignUpView view = new SignUpView();
 
             Method success = SignUpView.class.getDeclaredMethod("showSuccess", String.class);

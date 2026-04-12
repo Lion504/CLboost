@@ -81,8 +81,8 @@ class HistoryViewAdditionalTest extends BaseVaadinViewTest {
             Path existing = Files.createTempFile("history-card-", ".txt");
             Files.writeString(existing, "card text", StandardCharsets.UTF_8);
 
-            Object item = newHistoryItem("Role", "Acme", "Apr 12, 2026", "FINALIZED", 1,
-                    LocalDateTime.now(), existing.toString());
+            Object item = newHistoryItem("Role", "Acme", "Apr 12, 2026", "FINALIZED", 1, LocalDateTime.now(),
+                    existing.toString());
 
             Object card = createCard.invoke(view, item);
             assertNotNull(card);

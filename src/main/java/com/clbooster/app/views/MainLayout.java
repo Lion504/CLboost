@@ -93,9 +93,11 @@ public class MainLayout extends AppLayout {
         String userInitials = "G";
         if (currentUser != null) {
             String first = currentUser.getFirstName() != null && !currentUser.getFirstName().isBlank()
-                    ? currentUser.getFirstName().substring(0, 1) : "U";
+                    ? currentUser.getFirstName().substring(0, 1)
+                    : "U";
             String last = currentUser.getLastName() != null && !currentUser.getLastName().isBlank()
-                    ? currentUser.getLastName().substring(0, 1) : "";
+                    ? currentUser.getLastName().substring(0, 1)
+                    : "";
             userInitials = (first + last).toUpperCase();
         }
 

@@ -96,9 +96,8 @@ class ProfileServiceTest {
 
     @Test
     void updateProfile_daoFailure() {
-        doThrow(new RuntimeException("DB failure"))
-                .when(profileDAOMock)
-                .saveTranslation(any(Profile.class), any(Locale.class));
+        doThrow(new RuntimeException("DB failure")).when(profileDAOMock).saveTranslation(any(Profile.class),
+                any(Locale.class));
 
         boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "test@mail.com");
 

@@ -8,7 +8,8 @@ public final class LocaleFallbackResolver {
 
     private static final Locale DEFAULT_LOCALE = new Locale("en", "US");
 
-    private LocaleFallbackResolver() {}
+    private LocaleFallbackResolver() {
+    }
 
     public static List<Locale> getFallbackChain(Locale preferred) {
         List<Locale> chain = new ArrayList<>();

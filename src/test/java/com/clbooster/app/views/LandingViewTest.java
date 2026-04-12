@@ -90,8 +90,7 @@ class LandingViewTest extends BaseVaadinViewTest {
         int[] clicked = new int[] { 0 };
 
         Button navButton = invoke(view, "createNavButton", Button.class,
-                new Class<?>[] { String.class, Runnable.class },
-                new Object[] { "FAQ", (Runnable) () -> clicked[0]++ });
+                new Class<?>[] { String.class, Runnable.class }, new Object[] { "FAQ", (Runnable) () -> clicked[0]++ });
 
         assertNotNull(navButton);
         navButton.click();
@@ -159,12 +158,14 @@ class LandingViewTest extends BaseVaadinViewTest {
     void openCoverLetterModal_opensDialog() throws Exception {
         LandingView view = new LandingView();
 
-        Method method = LandingView.class.getDeclaredMethod("openCoverLetterModal", String.class, String.class, String.class);
+        Method method = LandingView.class.getDeclaredMethod("openCoverLetterModal", String.class, String.class,
+                String.class);
         method.setAccessible(true);
         assertThrows(java.lang.reflect.InvocationTargetException.class,
                 () -> method.invoke(view, "Software Engineer", "Acme", "Dear Hiring Team\nBody"));
 
-        // openCoverLetterModal opens a dialog directly, which needs a UI in unit context.
+        // openCoverLetterModal opens a dialog directly, which needs a UI in unit
+        // context.
         assertNotNull(view);
     }
 

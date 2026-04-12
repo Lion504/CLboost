@@ -40,7 +40,7 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
             return null;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to load profile by PIN {}", pin, e);
             return null;
         }
     }
@@ -61,7 +61,7 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
             return pstmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to update profile for PIN {}", profile.getPin(), e);
             return false;
         }
     }
@@ -77,7 +77,7 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
             return pstmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to update CV timestamp for PIN {}", pin, e);
             return false;
         }
     }
@@ -93,7 +93,7 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
             return rs.next();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to check profile existence for PIN {}", pin, e);
             return false;
         }
     }
@@ -101,12 +101,13 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
     @Override
     public Profile getById(int pin, Locale locale) {
         Profile base = getProfileByPin(pin);
-        if (base == null || locale == null) return base;
+        if (base == null || locale == null)
+            return base;
 
         String sql = "SELECT experience_level, tools, skills FROM profile_translation WHERE profile_pin = ? AND locale_code = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, pin);
             pstmt.setString(2, LocaleMapper.getDbCode(locale));
@@ -120,7 +121,7 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
             return base;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to load translated profile for PIN {} and locale {}", pin, locale, e);
             return base;
         }
     }
@@ -137,8 +138,7 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
 
     @Override
     public void saveTranslation(Profile profile, Locale locale) {
-        if (!Utf8Validator.isValidUtf8(profile.getSkills())
-                || !Utf8Validator.isValidUtf8(profile.getTools())
+        if (!Utf8Validator.isValidUtf8(profile.getSkills()) || !Utf8Validator.isValidUtf8(profile.getTools())
                 || !Utf8Validator.isValidUtf8(profile.getExperienceLevel())) {
             throw new IllegalArgumentException("Invalid UTF-8 sequence detected");
         }
@@ -147,7 +147,7 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
                 + "VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE experience_level = ?, tools = ?, skills = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             String code = LocaleMapper.getDbCode(locale);
             pstmt.setInt(1, profile.getPin());
@@ -165,7 +165,7 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
             updateProfile(profile);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to save profile translation for PIN {} and locale {}", profile.getPin(), locale, e);
         }
     }
 
@@ -175,7 +175,7 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
         String sql = "SELECT locale_code FROM profile_translation WHERE profile_pin = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, entityId);
             ResultSet rs = pstmt.executeQuery();
@@ -186,7 +186,7 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
             return locales;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to load available profile locales for PIN {}", entityId, e);
             return locales;
         }
     }
@@ -196,14 +196,14 @@ public class ProfileDAO implements LocalizableDAO<Profile> {
         String sql = "SELECT 1 FROM profile_translation WHERE profile_pin = ? AND locale_code = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, id);
             pstmt.setString(2, LocaleMapper.getDbCode(locale));
             return pstmt.executeQuery().next();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to check profile translation for PIN {} and locale {}", id, locale, e);
             return false;
         }
     }

@@ -65,8 +65,9 @@ class TranslationServiceTest {
         settings.setLanguage("Finnish (Suomi)");
 
         try (MockedStatic<VaadinSession> sessionMock = Mockito.mockStatic(VaadinSession.class);
-             MockedConstruction<SettingsService> settingsMocked = Mockito.mockConstruction(SettingsService.class);
-             MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(AuthenticationService.class)) {
+                MockedConstruction<SettingsService> settingsMocked = Mockito.mockConstruction(SettingsService.class);
+                MockedConstruction<AuthenticationService> authMocked = Mockito
+                        .mockConstruction(AuthenticationService.class)) {
 
             sessionMock.when(VaadinSession::getCurrent).thenReturn(session);
 
@@ -94,7 +95,7 @@ class TranslationServiceTest {
         when(ui.getPage()).thenReturn(page);
 
         try (MockedStatic<VaadinSession> sessionMock = Mockito.mockStatic(VaadinSession.class);
-             MockedStatic<UI> uiMock = Mockito.mockStatic(UI.class)) {
+                MockedStatic<UI> uiMock = Mockito.mockStatic(UI.class)) {
             sessionMock.when(VaadinSession::getCurrent).thenReturn(session);
             uiMock.when(UI::getCurrent).thenReturn(ui);
 
@@ -143,8 +144,9 @@ class TranslationServiceTest {
         settings.setLanguage(null);
 
         try (MockedStatic<VaadinSession> sessionMock = Mockito.mockStatic(VaadinSession.class);
-             MockedConstruction<SettingsService> settingsMocked = Mockito.mockConstruction(SettingsService.class);
-             MockedConstruction<AuthenticationService> authMocked = Mockito.mockConstruction(AuthenticationService.class)) {
+                MockedConstruction<SettingsService> settingsMocked = Mockito.mockConstruction(SettingsService.class);
+                MockedConstruction<AuthenticationService> authMocked = Mockito
+                        .mockConstruction(AuthenticationService.class)) {
 
             sessionMock.when(VaadinSession::getCurrent).thenReturn(session);
             TranslationService service = new TranslationService();

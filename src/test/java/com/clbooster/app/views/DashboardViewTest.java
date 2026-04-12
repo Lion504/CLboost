@@ -150,8 +150,7 @@ class DashboardViewTest extends BaseVaadinViewTest {
             grid.add(newCard);
 
             setField(view, "lettersGrid", grid);
-            setField(view, "allLetters", List.of(
-                    newLetter("Senior Product Designer", "Apple", "Today", "FINALIZED"),
+            setField(view, "allLetters", List.of(newLetter("Senior Product Designer", "Apple", "Today", "FINALIZED"),
                     newLetter("React Engineer", "Meta", "Yesterday", "ARCHIVED")));
 
             Method filter = DashboardView.class.getDeclaredMethod("filterLetters", String.class);

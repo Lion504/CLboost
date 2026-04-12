@@ -24,7 +24,7 @@ class ApplicationTest {
 
     @Test
     void main_delegatesToSpringApplicationRun() {
-        String[] args = new String[] {"--server.port=9090"};
+        String[] args = new String[] { "--server.port=9090" };
 
         try (MockedStatic<SpringApplication> springAppMock = Mockito.mockStatic(SpringApplication.class)) {
             Application.main(args);

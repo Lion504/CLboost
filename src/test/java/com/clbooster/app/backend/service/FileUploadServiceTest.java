@@ -55,7 +55,7 @@ class FileUploadServiceTest {
 
     @Test
     void saveFile_validFile_persistsCorrectly() throws Exception {
-        byte[] data = new byte[]{1, 2, 3};
+        byte[] data = new byte[] { 1, 2, 3 };
 
         when(file.isEmpty()).thenReturn(false);
         when(file.getOriginalFilename()).thenReturn("test.txt");
@@ -77,7 +77,7 @@ class FileUploadServiceTest {
         when(file.isEmpty()).thenReturn(false);
         when(file.getOriginalFilename()).thenReturn("file");
         when(file.getContentType()).thenReturn("type");
-        when(file.getBytes()).thenReturn(new byte[]{1});
+        when(file.getBytes()).thenReturn(new byte[] { 1 });
 
         service.saveFile(file);
 
@@ -103,7 +103,7 @@ class FileUploadServiceTest {
         when(file.isEmpty()).thenReturn(false);
         when(file.getOriginalFilename()).thenReturn(null);
         when(file.getContentType()).thenReturn(null);
-        when(file.getBytes()).thenReturn(new byte[]{1, 2});
+        when(file.getBytes()).thenReturn(new byte[] { 1, 2 });
 
         service.saveFile(file);
 

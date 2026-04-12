@@ -30,11 +30,9 @@ class UserDAOTest {
         PreparedStatement insertProfile = mock(PreparedStatement.class);
         ResultSet keys = mock(ResultSet.class);
 
-        when(conn.prepareStatement(anyString(), eq(Statement.RETURN_GENERATED_KEYS)))
-                .thenReturn(insertUser);
+        when(conn.prepareStatement(anyString(), eq(Statement.RETURN_GENERATED_KEYS))).thenReturn(insertUser);
 
-        when(conn.prepareStatement(anyString()))
-                .thenReturn(insertProfile);
+        when(conn.prepareStatement(anyString())).thenReturn(insertProfile);
 
         when(insertUser.executeUpdate()).thenReturn(1);
         when(insertUser.getGeneratedKeys()).thenReturn(keys);
@@ -66,8 +64,7 @@ class UserDAOTest {
 
         Connection conn = mock(Connection.class);
 
-        when(conn.prepareStatement(anyString(), anyInt()))
-                .thenThrow(new SQLException());
+        when(conn.prepareStatement(anyString(), anyInt())).thenThrow(new SQLException());
 
         try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
             assertFalse(dao.registerUser(new User("a", "b")));
@@ -88,8 +85,7 @@ class UserDAOTest {
         when(stmt.executeQuery()).thenReturn(rs);
 
         when(rs.next()).thenReturn(true);
-        when(rs.getString("Password"))
-                .thenReturn("5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"); // "password"
+        when(rs.getString("Password")).thenReturn("5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"); // "password"
 
         when(rs.getInt("Pin")).thenReturn(1);
         when(rs.getString("Username")).thenReturn("john");

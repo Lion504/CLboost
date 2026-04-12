@@ -50,14 +50,11 @@ class CoverLetterServiceTest {
         CoverLetterService spy = spy(service);
 
         // force write failure
-        doThrow(new RuntimeException("fail"))
-                .when(spy)
-                .saveCoverLetter(anyInt(), any(), anyString());
+        doThrow(new RuntimeException("fail")).when(spy).saveCoverLetter(anyInt(), any(), anyString());
 
         // cannot directly simulate internal Files.write easily → this is reality:
         // without wrapper abstraction, IO is NOT testable properly
-        assertThrows(RuntimeException.class,
-                () -> spy.saveCoverLetter(1, "x".getBytes(), "pdf"));
+        assertThrows(RuntimeException.class, () -> spy.saveCoverLetter(1, "x".getBytes(), "pdf"));
     }
 
     @Test

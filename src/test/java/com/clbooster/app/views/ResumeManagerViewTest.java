@@ -60,11 +60,15 @@ class ResumeManagerViewTest extends BaseVaadinViewTest {
         long mb = invoke(view, "parseSize", Long.class, new Class<?>[] { String.class }, new Object[] { "1.5 MB" });
         long bad = invoke(view, "parseSize", Long.class, new Class<?>[] { String.class }, new Object[] { "bad size" });
 
-        String pdfColor = invoke(view, "getFileColor", String.class, new Class<?>[] { String.class }, new Object[] { "PDF" });
-        String txtColor = invoke(view, "getFileColor", String.class, new Class<?>[] { String.class }, new Object[] { "TXT" });
+        String pdfColor = invoke(view, "getFileColor", String.class, new Class<?>[] { String.class },
+                new Object[] { "PDF" });
+        String txtColor = invoke(view, "getFileColor", String.class, new Class<?>[] { String.class },
+                new Object[] { "TXT" });
 
-        String bytes = invoke(view, "formatFileSize", String.class, new Class<?>[] { long.class }, new Object[] { 512L });
-        String kilobytes = invoke(view, "formatFileSize", String.class, new Class<?>[] { long.class }, new Object[] { 2048L });
+        String bytes = invoke(view, "formatFileSize", String.class, new Class<?>[] { long.class },
+                new Object[] { 512L });
+        String kilobytes = invoke(view, "formatFileSize", String.class, new Class<?>[] { long.class },
+                new Object[] { 2048L });
 
         String today = invoke(view, "formatDate", String.class, new Class<?>[] { LocalDateTime.class },
                 new Object[] { LocalDateTime.now() });
@@ -82,24 +86,24 @@ class ResumeManagerViewTest extends BaseVaadinViewTest {
         assertEquals("Yesterday", yesterday);
     }
 
-        @Test
-        void helperMethods_coverAdditionalSizeAndDateBranches() throws Exception {
+    @Test
+    void helperMethods_coverAdditionalSizeAndDateBranches() throws Exception {
         ResumeManagerView view = createViewWithNoUser();
 
         long gb = invoke(view, "parseSize", Long.class, new Class<?>[] { String.class }, new Object[] { "1.0 GB" });
         long unknownUnit = invoke(view, "parseSize", Long.class, new Class<?>[] { String.class },
-            new Object[] { "2.0 B" });
+                new Object[] { "2.0 B" });
 
         String withinWeek = invoke(view, "formatDate", String.class, new Class<?>[] { LocalDateTime.class },
-            new Object[] { LocalDateTime.now().minusDays(3) });
+                new Object[] { LocalDateTime.now().minusDays(3) });
         String oldDate = invoke(view, "formatDate", String.class, new Class<?>[] { LocalDateTime.class },
-            new Object[] { LocalDateTime.now().minusDays(20) });
+                new Object[] { LocalDateTime.now().minusDays(20) });
 
         assertTrue(gb >= 1024L * 1024 * 1024);
         assertEquals(2L, unknownUnit);
         assertFalse(withinWeek.equals("Today") || withinWeek.equals("Yesterday"));
         assertTrue(oldDate.contains(","));
-        }
+    }
 
     @Test
     void parseResumeFile_handlesValidAndInvalidNames() throws Exception {
@@ -113,10 +117,10 @@ class ResumeManagerViewTest extends BaseVaadinViewTest {
         Files.writeString(valid, "ok", StandardCharsets.UTF_8);
         Files.writeString(invalid, "bad", StandardCharsets.UTF_8);
 
-        Object parsed = invoke(view, "parseResumeFile", Object.class,
-                new Class<?>[] { File.class, int.class }, new Object[] { valid.toFile(), 0 });
-        Object rejected = invoke(view, "parseResumeFile", Object.class,
-                new Class<?>[] { File.class, int.class }, new Object[] { invalid.toFile(), 0 });
+        Object parsed = invoke(view, "parseResumeFile", Object.class, new Class<?>[] { File.class, int.class },
+                new Object[] { valid.toFile(), 0 });
+        Object rejected = invoke(view, "parseResumeFile", Object.class, new Class<?>[] { File.class, int.class },
+                new Object[] { invalid.toFile(), 0 });
 
         assertNotNull(parsed);
         assertNull(rejected);
@@ -187,7 +191,8 @@ class ResumeManagerViewTest extends BaseVaadinViewTest {
         ResumeManagerView view = createViewWithDocService(docService);
 
         Object resume = newResumeData("Card.docx", "DOCX", "1.0 KB", "Today", "/tmp/card", LocalDateTime.now(), false);
-        Div card = invoke(view, "createResumeCard", Div.class, new Class<?>[] { resume.getClass() }, new Object[] { resume });
+        Div card = invoke(view, "createResumeCard", Div.class, new Class<?>[] { resume.getClass() },
+                new Object[] { resume });
         assertNotNull(card);
 
         List<Object> resumes = new ArrayList<>();
@@ -294,7 +299,8 @@ class ResumeManagerViewTest extends BaseVaadinViewTest {
         return (T) method.invoke(target, args);
     }
 
-    private void invokeVoid(Object target, String methodName, Class<?>[] parameterTypes, Object[] args) throws Exception {
+    private void invokeVoid(Object target, String methodName, Class<?>[] parameterTypes, Object[] args)
+            throws Exception {
         Method method = target.getClass().getDeclaredMethod(methodName, parameterTypes);
         method.setAccessible(true);
         method.invoke(target, args);

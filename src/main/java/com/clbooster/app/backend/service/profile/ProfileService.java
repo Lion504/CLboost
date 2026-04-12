@@ -1,8 +1,13 @@
 package com.clbooster.app.backend.service.profile;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Locale;
 
 public class ProfileService {
+    private static final Logger log = LoggerFactory.getLogger(ProfileService.class);
+
     private ProfileDAO profileDAO;
     private UserDAO userDAO;
 
@@ -25,7 +30,7 @@ public class ProfileService {
 
         // Create profile object
         Profile profile = new Profile(pin, experienceLevel, tools, skills, link, profileEmail);
-        
+
         // Save translation and base profile in one go via ProfileDAO
         try {
             profileDAO.saveTranslation(profile, locale);
@@ -33,7 +38,7 @@ public class ProfileService {
             return true;
         } catch (Exception e) {
             System.out.println("Error: Failed to update profile - " + e.getMessage());
-            e.printStackTrace();
+            log.error("Failed to update profile for PIN {}", pin, e);
             return false;
         }
     }
@@ -59,7 +64,9 @@ public class ProfileService {
     }
 
     /**
-     * @deprecated Use {@link #updateProfile(int, String, String, String, String, String, String, String, Locale)} instead.
+     * @deprecated Use
+     *             {@link #updateProfile(int, String, String, String, String, String, String, String, Locale)}
+     *             instead.
      */
     @Deprecated
     public boolean updateProfile(int pin, String experienceLevel, String tools, String skills, String link,
@@ -68,7 +75,9 @@ public class ProfileService {
     }
 
     /**
-     * @deprecated Use {@link #updateProfile(int, String, String, String, String, String, String, String, Locale)} instead.
+     * @deprecated Use
+     *             {@link #updateProfile(int, String, String, String, String, String, String, String, Locale)}
+     *             instead.
      */
     @Deprecated
     public boolean updateProfile(int pin, String experienceLevel, String tools, String skills, String link,

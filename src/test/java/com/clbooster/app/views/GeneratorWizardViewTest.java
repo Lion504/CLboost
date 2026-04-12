@@ -145,8 +145,7 @@ class GeneratorWizardViewTest extends BaseVaadinViewTest {
         GeneratorWizardView view = new GeneratorWizardView(aiService);
 
         @SuppressWarnings("unchecked")
-        Set<String> skills = invoke(view, "extractSkillsFromText", Set.class,
-                new Class<?>[] { String.class },
+        Set<String> skills = invoke(view, "extractSkillsFromText", Set.class, new Class<?>[] { String.class },
                 new Object[] { "Experienced with React, Node.js, UI Design and AWS in Agile teams." });
 
         assertTrue(skills.contains("React"));
@@ -154,8 +153,8 @@ class GeneratorWizardViewTest extends BaseVaadinViewTest {
         assertTrue(skills.contains("UI Design"));
         assertTrue(skills.contains("AWS"));
 
-        Button skillButton = invoke(view, "createSkillButton", Button.class,
-                new Class<?>[] { String.class }, new Object[] { "React" });
+        Button skillButton = invoke(view, "createSkillButton", Button.class, new Class<?>[] { String.class },
+                new Object[] { "React" });
         skillButton.click();
         @SuppressWarnings("unchecked")
         Set<String> selected = getField(view, "selectedSkills", Set.class);
@@ -165,7 +164,7 @@ class GeneratorWizardViewTest extends BaseVaadinViewTest {
 
         try (MockedConstruction<Parser> parserMock = Mockito.mockConstruction(Parser.class,
                 (mock, context) -> when(mock.parseFileToJson(anyString())).thenReturn("React AWS"));
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -208,12 +207,12 @@ class GeneratorWizardViewTest extends BaseVaadinViewTest {
                 new Object[] { "**", "**" });
         assertEquals("content", editor.getValue());
 
-        String sanitized = invoke(view, "sanitizeEditorFilename", String.class,
-                new Class<?>[] { String.class }, new Object[] { "  ACME / Senior Dev!!!  " });
+        String sanitized = invoke(view, "sanitizeEditorFilename", String.class, new Class<?>[] { String.class },
+                new Object[] { "  ACME / Senior Dev!!!  " });
         assertEquals("ACME_Senior_Dev", sanitized);
 
-        byte[] pdf = invoke(view, "generateSimplePdf", byte[].class,
-                new Class<?>[] { String.class }, new Object[] { "Line 1\nLine 2" });
+        byte[] pdf = invoke(view, "generateSimplePdf", byte[].class, new Class<?>[] { String.class },
+                new Object[] { "Line 1\nLine 2" });
         assertNotNull(pdf);
         assertTrue(pdf.length > 20);
         assertEquals("%PDF-1.4", new String(pdf, 0, 8));
@@ -229,11 +228,11 @@ class GeneratorWizardViewTest extends BaseVaadinViewTest {
 
         try (MockedConstruction<AuthenticationService> authMock = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
-             MockedConstruction<Exporter> exporterMock = Mockito.mockConstruction(Exporter.class,
-                     (mock, context) -> Mockito.doNothing().when(mock).saveAsDoc(anyString(), anyString()))) {
+                MockedConstruction<Exporter> exporterMock = Mockito.mockConstruction(Exporter.class,
+                        (mock, context) -> Mockito.doNothing().when(mock).saveAsDoc(anyString(), anyString()))) {
 
-            String path = invoke(view, "saveGeneratedCoverLetter", String.class,
-                    new Class<?>[] { String.class }, new Object[] { "Generated text" });
+            String path = invoke(view, "saveGeneratedCoverLetter", String.class, new Class<?>[] { String.class },
+                    new Object[] { "Generated text" });
 
             assertNotNull(path);
             assertTrue(path.contains("uploads"));
@@ -248,8 +247,8 @@ class GeneratorWizardViewTest extends BaseVaadinViewTest {
         AIService aiService = Mockito.mock(AIService.class);
         GeneratorWizardView view = new GeneratorWizardView(aiService);
 
-        String resume = invoke(view, "loadUserResumeText", String.class,
-                new Class<?>[] { int.class }, new Object[] { 999999 });
+        String resume = invoke(view, "loadUserResumeText", String.class, new Class<?>[] { int.class },
+                new Object[] { 999999 });
 
         assertNull(resume);
     }
@@ -321,8 +320,8 @@ class GeneratorWizardViewTest extends BaseVaadinViewTest {
 
         try (MockedConstruction<AuthenticationService> authMock = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> Mockito.when(mock.getCurrentUser()).thenReturn(user));
-             MockedStatic<UI> uiMock = Mockito.mockStatic(UI.class);
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+                MockedStatic<UI> uiMock = Mockito.mockStatic(UI.class);
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             uiMock.when(UI::getCurrent).thenReturn(ui);
             notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
@@ -343,126 +342,129 @@ class GeneratorWizardViewTest extends BaseVaadinViewTest {
         }
     }
 
-            @Test
-            void buildCandidateContext_returnsFallbackSummaryWhenUserNotCaptured() throws Exception {
-            AIService aiService = Mockito.mock(AIService.class);
-            GeneratorWizardView view = new GeneratorWizardView(aiService);
+    @Test
+    void buildCandidateContext_returnsFallbackSummaryWhenUserNotCaptured() throws Exception {
+        AIService aiService = Mockito.mock(AIService.class);
+        GeneratorWizardView view = new GeneratorWizardView(aiService);
 
-            setIntField(view, "capturedUserPin", -1);
-            setStringField(view, "jobTitle", "Backend Engineer");
-            setStringField(view, "companyName", "Acme");
+        setIntField(view, "capturedUserPin", -1);
+        setStringField(view, "jobTitle", "Backend Engineer");
+        setStringField(view, "companyName", "Acme");
+        setField(view, "selectedSkills", new java.util.HashSet<>(Set.of("Java", "Spring")));
+
+        String context = invoke(view, "buildCandidateContext", String.class);
+        assertTrue(context.contains("Experienced professional with skills in"));
+        assertTrue(context.contains("Backend Engineer"));
+        assertTrue(context.contains("Acme"));
+    }
+
+    @Test
+    void buildCandidateContext_includesProfileAndWizardSkillsWhenNoResumeFound() throws Exception {
+        Path resumeDir = Path.of("uploads", "resumes");
+        Files.createDirectories(resumeDir);
+        Files.deleteIfExists(resumeDir.resolve("777_1700000000000_resume.pdf"));
+
+        AIService aiService = Mockito.mock(AIService.class);
+        Profile profile = new Profile();
+        profile.setExperienceLevel("Senior");
+        profile.setSkills("Java, Spring");
+        profile.setTools("Maven");
+        profile.setLink("https://example.com");
+        profile.setProfileEmail("jane@example.com");
+
+        try (MockedConstruction<ProfileDAO> profileDaoMock = Mockito.mockConstruction(ProfileDAO.class,
+                (mock, context) -> Mockito.when(mock.getProfileByPin(777)).thenReturn(profile))) {
+            GeneratorWizardView view = new GeneratorWizardView(aiService);
+            setIntField(view, "capturedUserPin", 777);
+            setStringField(view, "capturedUserName", "Jane Doe");
             setField(view, "selectedSkills", new java.util.HashSet<>(Set.of("Java", "Spring")));
 
             String context = invoke(view, "buildCandidateContext", String.class);
-            assertTrue(context.contains("Experienced professional with skills in"));
-            assertTrue(context.contains("Backend Engineer"));
-            assertTrue(context.contains("Acme"));
-            }
+            assertTrue(context.contains("Name: Jane Doe"));
+            assertTrue(context.contains("Experience Level: Senior"));
+            assertTrue(context.contains("Profile Skills: Java, Spring"));
+            assertTrue(context.contains("Tools & Technologies: Maven"));
+            assertTrue(context.contains("Portfolio/LinkedIn: https://example.com"));
+            assertTrue(context.contains("Contact Email: jane@example.com"));
+            assertTrue(context.contains("Selected Skills for this application"));
+            assertEquals(1, profileDaoMock.constructed().size());
+        }
+    }
 
-            @Test
-            void buildCandidateContext_includesProfileAndWizardSkillsWhenNoResumeFound() throws Exception {
-            Path resumeDir = Path.of("uploads", "resumes");
-            Files.createDirectories(resumeDir);
-            Files.deleteIfExists(resumeDir.resolve("777_1700000000000_resume.pdf"));
+    @Test
+    void loadResumeSkills_coversNoSkillsAndExceptionBranches() throws Exception {
+        AIService aiService = Mockito.mock(AIService.class);
+        GeneratorWizardView view = new GeneratorWizardView(aiService);
 
-            AIService aiService = Mockito.mock(AIService.class);
-            Profile profile = new Profile();
-            profile.setExperienceLevel("Senior");
-            profile.setSkills("Java, Spring");
-            profile.setTools("Maven");
-            profile.setLink("https://example.com");
-            profile.setProfileEmail("jane@example.com");
-
-            try (MockedConstruction<ProfileDAO> profileDaoMock = Mockito.mockConstruction(ProfileDAO.class,
-                (mock, context) -> Mockito.when(mock.getProfileByPin(777)).thenReturn(profile))) {
-                GeneratorWizardView view = new GeneratorWizardView(aiService);
-                setIntField(view, "capturedUserPin", 777);
-                setStringField(view, "capturedUserName", "Jane Doe");
-                setField(view, "selectedSkills", new java.util.HashSet<>(Set.of("Java", "Spring")));
-
-                String context = invoke(view, "buildCandidateContext", String.class);
-                assertTrue(context.contains("Name: Jane Doe"));
-                assertTrue(context.contains("Experience Level: Senior"));
-                assertTrue(context.contains("Profile Skills: Java, Spring"));
-                assertTrue(context.contains("Tools & Technologies: Maven"));
-                assertTrue(context.contains("Portfolio/LinkedIn: https://example.com"));
-                assertTrue(context.contains("Contact Email: jane@example.com"));
-                assertTrue(context.contains("Selected Skills for this application"));
-                assertEquals(1, profileDaoMock.constructed().size());
-            }
-            }
-
-            @Test
-            void loadResumeSkills_coversNoSkillsAndExceptionBranches() throws Exception {
-            AIService aiService = Mockito.mock(AIService.class);
-            GeneratorWizardView view = new GeneratorWizardView(aiService);
-
-            try (MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class);
-                 MockedConstruction<Parser> parserNoSkills = Mockito.mockConstruction(Parser.class,
-                     (mock, context) -> when(mock.parseFileToJson(anyString())).thenReturn("no matching tokens"))) {
-                notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
+        try (MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class);
+                MockedConstruction<Parser> parserNoSkills = Mockito.mockConstruction(Parser.class,
+                        (mock, context) -> when(mock.parseFileToJson(anyString())).thenReturn("no matching tokens"))) {
+            notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
 
-                invokeVoid(view, "loadResumeSkills", new Class<?>[] { File.class },
+            invokeVoid(view, "loadResumeSkills", new Class<?>[] { File.class },
                     new Object[] { new File("no_skills_resume.pdf") });
 
-                assertEquals(1, parserNoSkills.constructed().size());
-                notificationMock.verify(() -> Notification.show(anyString(), Mockito.anyInt(), any()), Mockito.atLeastOnce());
-            }
+            assertEquals(1, parserNoSkills.constructed().size());
+            notificationMock.verify(() -> Notification.show(anyString(), Mockito.anyInt(), any()),
+                    Mockito.atLeastOnce());
+        }
 
-            try (MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class);
-                 MockedConstruction<Parser> parserFail = Mockito.mockConstruction(Parser.class,
-                     (mock, context) -> when(mock.parseFileToJson(anyString()))
-                         .thenThrow(new RuntimeException("parse failure")))) {
-                notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
+        try (MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class);
+                MockedConstruction<Parser> parserFail = Mockito.mockConstruction(Parser.class,
+                        (mock, context) -> when(mock.parseFileToJson(anyString()))
+                                .thenThrow(new RuntimeException("parse failure")))) {
+            notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
 
-                invokeVoid(view, "loadResumeSkills", new Class<?>[] { File.class },
+            invokeVoid(view, "loadResumeSkills", new Class<?>[] { File.class },
                     new Object[] { new File("broken_resume.pdf") });
 
-                assertEquals(1, parserFail.constructed().size());
-                notificationMock.verify(() -> Notification.show(anyString(), Mockito.anyInt(), any()), Mockito.atLeastOnce());
-            }
-            }
+            assertEquals(1, parserFail.constructed().size());
+            notificationMock.verify(() -> Notification.show(anyString(), Mockito.anyInt(), any()),
+                    Mockito.atLeastOnce());
+        }
+    }
 
-            @Test
-            void editorDownloadMethods_coverNullBlankAndDocxFailureBranches() throws Exception {
-            AIService aiService = Mockito.mock(AIService.class);
-            GeneratorWizardView view = new GeneratorWizardView(aiService);
+    @Test
+    void editorDownloadMethods_coverNullBlankAndDocxFailureBranches() throws Exception {
+        AIService aiService = Mockito.mock(AIService.class);
+        GeneratorWizardView view = new GeneratorWizardView(aiService);
 
-            // Null editor branch: methods should return immediately.
-            setField(view, "editorTextArea", null);
+        // Null editor branch: methods should return immediately.
+        setField(view, "editorTextArea", null);
+        invokeNoArgs(view, "downloadEditorAsDocx");
+        invokeNoArgs(view, "downloadEditorAsPdf");
+
+        TextArea editor = new TextArea();
+        setField(view, "editorTextArea", editor);
+
+        try (MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+            notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
+                    .thenReturn(Mockito.mock(Notification.class));
+
+            // Blank content branches.
+            editor.setValue(" ");
             invokeNoArgs(view, "downloadEditorAsDocx");
             invokeNoArgs(view, "downloadEditorAsPdf");
+            notificationMock.verify(() -> Notification.show(anyString(), Mockito.anyInt(), any()), Mockito.atLeast(2));
+        }
 
-            TextArea editor = new TextArea();
-            setField(view, "editorTextArea", editor);
-
-            try (MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
-                notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
+        try (MockedConstruction<Exporter> exporterMock = Mockito.mockConstruction(Exporter.class,
+                (mock, context) -> Mockito.doThrow(new RuntimeException("disk error")).when(mock).saveAsDoc(anyString(),
+                        anyString()));
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+            notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
 
-                // Blank content branches.
-                editor.setValue(" ");
-                invokeNoArgs(view, "downloadEditorAsDocx");
-                invokeNoArgs(view, "downloadEditorAsPdf");
-                notificationMock.verify(() -> Notification.show(anyString(), Mockito.anyInt(), any()), Mockito.atLeast(2));
-            }
+            editor.setValue("Generated letter body");
+            invokeNoArgs(view, "downloadEditorAsDocx");
 
-            try (MockedConstruction<Exporter> exporterMock = Mockito.mockConstruction(Exporter.class,
-                (mock, context) -> Mockito.doThrow(new RuntimeException("disk error"))
-                    .when(mock).saveAsDoc(anyString(), anyString()));
-                 MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
-                notificationMock.when(() -> Notification.show(anyString(), Mockito.anyInt(), any()))
-                    .thenReturn(Mockito.mock(Notification.class));
-
-                editor.setValue("Generated letter body");
-                invokeNoArgs(view, "downloadEditorAsDocx");
-
-                assertEquals(1, exporterMock.constructed().size());
-                notificationMock.verify(() -> Notification.show(anyString(), Mockito.anyInt(), any()), Mockito.atLeastOnce());
-            }
-            }
+            assertEquals(1, exporterMock.constructed().size());
+            notificationMock.verify(() -> Notification.show(anyString(), Mockito.anyInt(), any()),
+                    Mockito.atLeastOnce());
+        }
+    }
 
     private <T extends Component> List<T> findComponents(Component root, Class<T> type) {
         List<T> results = new ArrayList<>();
@@ -488,7 +490,8 @@ class GeneratorWizardViewTest extends BaseVaadinViewTest {
         return (T) method.invoke(target, args);
     }
 
-    private void invokeVoid(Object target, String methodName, Class<?>[] parameterTypes, Object[] args) throws Exception {
+    private void invokeVoid(Object target, String methodName, Class<?>[] parameterTypes, Object[] args)
+            throws Exception {
         Method method = target.getClass().getDeclaredMethod(methodName, parameterTypes);
         method.setAccessible(true);
         method.invoke(target, args);

@@ -31,7 +31,8 @@ class NotificationsViewTest extends BaseVaadinViewTest {
 
     @Test
     void markAllAsRead_canBeInvoked() throws Exception {
-        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class)) {
+        try (MockedConstruction<AuthenticationService> ignored = Mockito
+                .mockConstruction(AuthenticationService.class)) {
             NotificationsView view = new NotificationsView();
             Method method = NotificationsView.class.getDeclaredMethod("markAllAsRead");
             method.setAccessible(true);

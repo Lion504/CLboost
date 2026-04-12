@@ -92,7 +92,8 @@ class ResumeManagerViewAdditionalTest extends BaseVaadinViewTest {
     @Test
     void createPasteTextPanel_saveButtonCoversValidationAndSuccessPath() throws Exception {
         DocumentService docService = Mockito.mock(DocumentService.class);
-        when(docService.storeResumeText(anyString(), anyString(), anyString())).thenReturn("uploads/resumes/stored.txt");
+        when(docService.storeResumeText(anyString(), anyString(), anyString()))
+                .thenReturn("uploads/resumes/stored.txt");
 
         ResumeManagerView view = createView(docService);
         Method createPastePanel = ResumeManagerView.class.getDeclaredMethod("createPasteTextPanel");
@@ -100,7 +101,8 @@ class ResumeManagerViewAdditionalTest extends BaseVaadinViewTest {
 
         Div panel = (Div) createPastePanel.invoke(view);
         Component inner = panel.getComponentAt(0);
-        TextArea textArea = (TextArea) ((com.vaadin.flow.component.orderedlayout.VerticalLayout) inner).getComponentAt(1);
+        TextArea textArea = (TextArea) ((com.vaadin.flow.component.orderedlayout.VerticalLayout) inner)
+                .getComponentAt(1);
         TextField filenameField = (TextField) ((com.vaadin.flow.component.orderedlayout.VerticalLayout) inner)
                 .getComponentAt(2);
         Button saveButton = (Button) ((com.vaadin.flow.component.orderedlayout.VerticalLayout) inner).getComponentAt(3);

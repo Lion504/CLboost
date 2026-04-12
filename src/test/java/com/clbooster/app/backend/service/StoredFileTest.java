@@ -8,7 +8,7 @@ class StoredFileTest {
 
     @Test
     void constructor_setsAllFieldsCorrectly() {
-        byte[] data = new byte[]{1, 2, 3};
+        byte[] data = new byte[] { 1, 2, 3 };
 
         StoredFile file = new StoredFile("test.txt", "text/plain", data);
 
@@ -28,7 +28,7 @@ class StoredFileTest {
 
     @Test
     void dataArray_isNotCopied_referenceIsShared() {
-        byte[] data = new byte[]{1, 2, 3};
+        byte[] data = new byte[] { 1, 2, 3 };
 
         StoredFile file = new StoredFile("file", "type", data);
 
@@ -41,7 +41,7 @@ class StoredFileTest {
 
     @Test
     void modifyingReturnedArray_affectsInternalState() {
-        byte[] data = new byte[]{1, 2, 3};
+        byte[] data = new byte[] { 1, 2, 3 };
 
         StoredFile file = new StoredFile("file", "type", data);
 

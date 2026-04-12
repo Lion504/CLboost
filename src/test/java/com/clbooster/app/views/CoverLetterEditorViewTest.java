@@ -85,8 +85,8 @@ class CoverLetterEditorViewTest extends BaseVaadinViewTest {
 
             invoke(view, "loadFileContent");
 
-            notificationMock.verify(() -> Notification.show(Mockito.contains("File not found"), Mockito.anyInt(),
-                    Mockito.any()));
+            notificationMock.verify(
+                    () -> Notification.show(Mockito.contains("File not found"), Mockito.anyInt(), Mockito.any()));
         }
     }
 
@@ -118,8 +118,8 @@ class CoverLetterEditorViewTest extends BaseVaadinViewTest {
 
             // Guard: currentFile == null
             invoke(view, "saveFile");
-            notificationMock.verify(() -> Notification.show(Mockito.contains("No file to save"), Mockito.anyInt(),
-                    Mockito.any()));
+            notificationMock.verify(
+                    () -> Notification.show(Mockito.contains("No file to save"), Mockito.anyInt(), Mockito.any()));
 
             // Guard: editor is read-only
             Path file = tempDir.resolve("readonly.txt");
@@ -128,8 +128,8 @@ class CoverLetterEditorViewTest extends BaseVaadinViewTest {
             editor.setReadOnly(true);
 
             invoke(view, "saveFile");
-            notificationMock.verify(() -> Notification.show(Mockito.contains("cannot be edited"), Mockito.anyInt(),
-                    Mockito.any()));
+            notificationMock.verify(
+                    () -> Notification.show(Mockito.contains("cannot be edited"), Mockito.anyInt(), Mockito.any()));
         }
     }
 
@@ -170,8 +170,7 @@ class CoverLetterEditorViewTest extends BaseVaadinViewTest {
     @Test
     void extractTextFromDocx_handlesEmptyTextContent(@TempDir Path tempDir) throws Exception {
         Path docx = tempDir.resolve("empty.docx");
-        createDocxWithDocumentXml(docx,
-                "<w:document><w:body><w:p><w:r><w:t></w:t></w:r></w:p></w:body></w:document>");
+        createDocxWithDocumentXml(docx, "<w:document><w:body><w:p><w:r><w:t></w:t></w:r></w:p></w:body></w:document>");
 
         CoverLetterEditorView view = new CoverLetterEditorView();
         Method method = CoverLetterEditorView.class.getDeclaredMethod("extractTextFromDocx", File.class);

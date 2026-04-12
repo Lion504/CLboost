@@ -202,7 +202,6 @@ class AuthenticationServiceTest {
 
     // ---------------- CHANGE PASSWORD ----------------
 
-
     @Test
     void changePassword_wrongCurrentPassword() {
         User user = new User("test@mail.com", "user", "StrongPass1!", "John", "Doe");

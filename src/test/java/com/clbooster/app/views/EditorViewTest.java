@@ -120,8 +120,8 @@ class EditorViewTest extends BaseVaadinViewTest {
         invokeVoid(view, "wrapContent", new Class<?>[] { String.class, String.class }, new Object[] { "**", "**" });
         assertEquals("content", editor.getValue());
 
-        String sanitized = invoke(view, "sanitizeForFilename", String.class,
-                new Class<?>[] { String.class }, new Object[] { "  ACME / Senior Dev!!!  " });
+        String sanitized = invoke(view, "sanitizeForFilename", String.class, new Class<?>[] { String.class },
+                new Object[] { "  ACME / Senior Dev!!!  " });
         assertEquals("ACME_Senior_Dev", sanitized);
     }
 
@@ -148,11 +148,11 @@ class EditorViewTest extends BaseVaadinViewTest {
 
         try (MockedConstruction<AuthenticationService> authMock = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> when(mock.getCurrentUser()).thenReturn(user));
-             MockedConstruction<Exporter> exporterMock = Mockito.mockConstruction(Exporter.class,
-                     (mock, context) -> Mockito.doNothing().when(mock).saveAsDoc(anyString(), anyString()))) {
+                MockedConstruction<Exporter> exporterMock = Mockito.mockConstruction(Exporter.class,
+                        (mock, context) -> Mockito.doNothing().when(mock).saveAsDoc(anyString(), anyString()))) {
 
-            String path = invoke(view, "saveGeneratedCoverLetter", String.class,
-                    new Class<?>[] { String.class }, new Object[] { "Generated text" });
+            String path = invoke(view, "saveGeneratedCoverLetter", String.class, new Class<?>[] { String.class },
+                    new Object[] { "Generated text" });
 
             assertNotNull(path);
             assertTrue(path.contains("uploads"));
@@ -162,8 +162,8 @@ class EditorViewTest extends BaseVaadinViewTest {
 
         try (MockedConstruction<AuthenticationService> authMock = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> when(mock.getCurrentUser()).thenReturn(null))) {
-            String path = invoke(view, "saveGeneratedCoverLetter", String.class,
-                    new Class<?>[] { String.class }, new Object[] { "Generated text" });
+            String path = invoke(view, "saveGeneratedCoverLetter", String.class, new Class<?>[] { String.class },
+                    new Object[] { "Generated text" });
             assertNull(path);
             assertEquals(1, authMock.constructed().size());
         }
@@ -173,8 +173,8 @@ class EditorViewTest extends BaseVaadinViewTest {
     void generateSimplePdf_returnsValidHeader() throws Exception {
         EditorView view = createViewWithDefaults();
 
-        byte[] pdf = invoke(view, "generateSimplePdf", byte[].class,
-                new Class<?>[] { String.class }, new Object[] { "Line 1\nLine 2" });
+        byte[] pdf = invoke(view, "generateSimplePdf", byte[].class, new Class<?>[] { String.class },
+                new Object[] { "Line 1\nLine 2" });
 
         assertNotNull(pdf);
         assertTrue(pdf.length > 20);
@@ -195,7 +195,8 @@ class EditorViewTest extends BaseVaadinViewTest {
             invokeNoArgs(view, "downloadAsDocx");
             invokeNoArgs(view, "downloadAsPdf");
 
-            notificationMock.verify(() -> Notification.show(Mockito.contains("Nothing to export"), Mockito.anyInt(), any()),
+            notificationMock.verify(
+                    () -> Notification.show(Mockito.contains("Nothing to export"), Mockito.anyInt(), any()),
                     Mockito.atLeastOnce());
         }
     }
@@ -392,7 +393,8 @@ class EditorViewTest extends BaseVaadinViewTest {
         method.invoke(target);
     }
 
-    private void invokeVoid(Object target, String methodName, Class<?>[] parameterTypes, Object[] args) throws Exception {
+    private void invokeVoid(Object target, String methodName, Class<?>[] parameterTypes, Object[] args)
+            throws Exception {
         Method method = target.getClass().getDeclaredMethod(methodName, parameterTypes);
         method.setAccessible(true);
         method.invoke(target, args);

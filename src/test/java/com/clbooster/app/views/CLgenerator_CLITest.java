@@ -163,7 +163,8 @@ class CLgenerator_CLITest {
         when(profileService.getProfile(12)).thenReturn(profile);
         setScannerInput("\n\n\n\n\nn\n");
         invokeStaticVoid("handleEditProfile");
-        verify(profileService, never()).updateProfile(anyInt(), anyString(), anyString(), anyString(), anyString(), anyString());
+        verify(profileService, never()).updateProfile(anyInt(), anyString(), anyString(), anyString(), anyString(),
+                anyString());
     }
 
     @Test

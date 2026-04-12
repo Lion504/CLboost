@@ -62,10 +62,12 @@ class HistoryViewTest extends BaseVaadinViewTest {
         try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> when(mock.getCurrentUser()).thenReturn(null))) {
             HistoryView view = new HistoryView();
-            Method method = HistoryView.class.getDeclaredMethod("parseFilename", String.class, String.class, long.class);
+            Method method = HistoryView.class.getDeclaredMethod("parseFilename", String.class, String.class,
+                    long.class);
             method.setAccessible(true);
 
-            Object item = method.invoke(view, "12345_20260412_113000_Acme_Senior_Engineer.docx", "path", System.currentTimeMillis());
+            Object item = method.invoke(view, "12345_20260412_113000_Acme_Senior_Engineer.docx", "path",
+                    System.currentTimeMillis());
 
             assertNotNull(item);
             assertEquals(12345, readField(item, "pin", Integer.class));
@@ -79,7 +81,8 @@ class HistoryViewTest extends BaseVaadinViewTest {
         try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> when(mock.getCurrentUser()).thenReturn(null))) {
             HistoryView view = new HistoryView();
-            Method method = HistoryView.class.getDeclaredMethod("parseFilename", String.class, String.class, long.class);
+            Method method = HistoryView.class.getDeclaredMethod("parseFilename", String.class, String.class,
+                    long.class);
             method.setAccessible(true);
 
             Object item = method.invoke(view, "invalidname.docx", "path", System.currentTimeMillis());
@@ -92,7 +95,8 @@ class HistoryViewTest extends BaseVaadinViewTest {
         try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> when(mock.getCurrentUser()).thenReturn(null))) {
             HistoryView view = new HistoryView();
-            Method method = HistoryView.class.getDeclaredMethod("parseFilename", String.class, String.class, long.class);
+            Method method = HistoryView.class.getDeclaredMethod("parseFilename", String.class, String.class,
+                    long.class);
             method.setAccessible(true);
 
             Object epochItem = method.invoke(view, "12345_1700000000000_Acme_Engineer.docx", "path", 1700000000000L);
@@ -103,7 +107,8 @@ class HistoryViewTest extends BaseVaadinViewTest {
             Object fallbackItem = method.invoke(view, "12345_bad_Acme_Engineer.docx", "path", lastModified);
             assertNotNull(fallbackItem);
 
-            LocalDateTime expected = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault());
+            LocalDateTime expected = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified),
+                    ZoneId.systemDefault());
             LocalDateTime actual = readField(fallbackItem, "timestamp", LocalDateTime.class);
             assertEquals(expected, actual);
         }
@@ -147,7 +152,7 @@ class HistoryViewTest extends BaseVaadinViewTest {
             assertTrue(pdfResult.contains("PDF preview not supported"));
 
             Path binary = Files.createTempFile("history-view-", ".bin");
-            Files.write(binary, new byte[] {0, 1, 2, 3, 4});
+            Files.write(binary, new byte[] { 0, 1, 2, 3, 4 });
             String binaryResult = (String) method.invoke(view, binary.toFile());
             assertTrue(binaryResult.contains("Binary file"));
 
@@ -282,7 +287,8 @@ class HistoryViewTest extends BaseVaadinViewTest {
         try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> when(mock.getCurrentUser()).thenReturn(null))) {
             HistoryView view = new HistoryView();
-            Method method = HistoryView.class.getDeclaredMethod("parseFilename", String.class, String.class, long.class);
+            Method method = HistoryView.class.getDeclaredMethod("parseFilename", String.class, String.class,
+                    long.class);
             method.setAccessible(true);
 
             long old = Instant.now().minus(90, java.time.temporal.ChronoUnit.DAYS).toEpochMilli();
@@ -315,7 +321,7 @@ class HistoryViewTest extends BaseVaadinViewTest {
     void exportAllFiles_whenEmpty_showsNoFilesNotification() throws Exception {
         try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-             MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
             notificationMock.when(() -> Notification.show(anyString(), anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
@@ -331,98 +337,96 @@ class HistoryViewTest extends BaseVaadinViewTest {
         }
     }
 
-            @Test
-            void extractTextFromFile_unknownPrintableExtension_returnsText() throws Exception {
-            try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
+    @Test
+    void extractTextFromFile_unknownPrintableExtension_returnsText() throws Exception {
+        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> when(mock.getCurrentUser()).thenReturn(null))) {
-                HistoryView view = new HistoryView();
-                Method method = HistoryView.class.getDeclaredMethod("extractTextFromFile", File.class);
-                method.setAccessible(true);
+            HistoryView view = new HistoryView();
+            Method method = HistoryView.class.getDeclaredMethod("extractTextFromFile", File.class);
+            method.setAccessible(true);
 
-                Path data = Files.createTempFile("history-printable-", ".dat");
-                Files.writeString(data, "readable printable text", StandardCharsets.UTF_8);
+            Path data = Files.createTempFile("history-printable-", ".dat");
+            Files.writeString(data, "readable printable text", StandardCharsets.UTF_8);
 
-                String result = (String) method.invoke(view, data.toFile());
-                assertEquals("readable printable text", result);
+            String result = (String) method.invoke(view, data.toFile());
+            assertEquals("readable printable text", result);
 
-                Files.deleteIfExists(data);
-            }
-            }
+            Files.deleteIfExists(data);
+        }
+    }
 
-            @Test
-            void extractTextFromDocx_emptyText_returnsEmptyDocumentMessage() throws Exception {
-            try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
+    @Test
+    void extractTextFromDocx_emptyText_returnsEmptyDocumentMessage() throws Exception {
+        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> when(mock.getCurrentUser()).thenReturn(null))) {
-                Path tmp = Files.createTempFile("history-empty-docx-", ".docx");
-                createDocxWithDocumentXml(tmp,
+            Path tmp = Files.createTempFile("history-empty-docx-", ".docx");
+            createDocxWithDocumentXml(tmp,
                     "<w:document><w:body><w:p><w:r><w:t></w:t></w:r></w:p></w:body></w:document>");
 
-                HistoryView view = new HistoryView();
-                Method method = HistoryView.class.getDeclaredMethod("extractTextFromDocx", File.class);
-                method.setAccessible(true);
+            HistoryView view = new HistoryView();
+            Method method = HistoryView.class.getDeclaredMethod("extractTextFromDocx", File.class);
+            method.setAccessible(true);
 
-                String result = (String) method.invoke(view, tmp.toFile());
-                assertTrue(result.contains("Document appears to be empty"));
+            String result = (String) method.invoke(view, tmp.toFile());
+            assertTrue(result.contains("Document appears to be empty"));
 
-                Files.deleteIfExists(tmp);
-            }
-            }
+            Files.deleteIfExists(tmp);
+        }
+    }
 
-            @Test
-            void downloadCoverLetter_missingAndReadErrorPaths_showNotification() throws Exception {
-            try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
+    @Test
+    void downloadCoverLetter_missingAndReadErrorPaths_showNotification() throws Exception {
+        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-                 MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
-                notificationMock.when(() -> Notification.show(anyString(), anyInt(), any()))
+            notificationMock.when(() -> Notification.show(anyString(), anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
 
-                HistoryView view = new HistoryView();
-                Method method = HistoryView.class.getDeclaredMethod("downloadCoverLetter",
+            HistoryView view = new HistoryView();
+            Method method = HistoryView.class.getDeclaredMethod("downloadCoverLetter",
                     Class.forName("com.clbooster.app.views.HistoryView$HistoryItem"));
-                method.setAccessible(true);
+            method.setAccessible(true);
 
-                Object missing = newHistoryItem("T", "C", "D", "FINALIZED", 1, LocalDateTime.now(),
+            Object missing = newHistoryItem("T", "C", "D", "FINALIZED", 1, LocalDateTime.now(),
                     "/tmp/not-there-history-download.docx");
-                method.invoke(view, missing);
+            method.invoke(view, missing);
 
-                Path dir = Files.createTempDirectory("history-download-dir-");
-                Object unreadable = newHistoryItem("T2", "C2", "D2", "FINALIZED", 1, LocalDateTime.now(),
-                    dir.toString());
-                method.invoke(view, unreadable);
+            Path dir = Files.createTempDirectory("history-download-dir-");
+            Object unreadable = newHistoryItem("T2", "C2", "D2", "FINALIZED", 1, LocalDateTime.now(), dir.toString());
+            method.invoke(view, unreadable);
 
-                notificationMock.verify(() -> Notification.show(anyString(), anyInt(), any()), Mockito.atLeast(2));
-                Files.deleteIfExists(dir);
-            }
-            }
+            notificationMock.verify(() -> Notification.show(anyString(), anyInt(), any()), Mockito.atLeast(2));
+            Files.deleteIfExists(dir);
+        }
+    }
 
-            @Test
-            void exportAllFiles_successWithExistingFiles() throws Exception {
-            try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
+    @Test
+    void exportAllFiles_successWithExistingFiles() throws Exception {
+        try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> when(mock.getCurrentUser()).thenReturn(null));
-                 MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
+                MockedStatic<Notification> notificationMock = Mockito.mockStatic(Notification.class)) {
 
-                notificationMock.when(() -> Notification.show(anyString(), anyInt(), any()))
+            notificationMock.when(() -> Notification.show(anyString(), anyInt(), any()))
                     .thenReturn(Mockito.mock(Notification.class));
 
-                HistoryView view = new HistoryView();
+            HistoryView view = new HistoryView();
 
-                Path file = Files.createTempFile("history-export-", ".txt");
-                Files.writeString(file, "export", StandardCharsets.UTF_8);
+            Path file = Files.createTempFile("history-export-", ".txt");
+            Files.writeString(file, "export", StandardCharsets.UTF_8);
 
-                List<Object> items = new ArrayList<>();
-                items.add(newHistoryItem("Title", "Comp", "Date", "FINALIZED", 1, LocalDateTime.now(),
-                    file.toString()));
-                setField(view, "allItems", items);
+            List<Object> items = new ArrayList<>();
+            items.add(newHistoryItem("Title", "Comp", "Date", "FINALIZED", 1, LocalDateTime.now(), file.toString()));
+            setField(view, "allItems", items);
 
-                Method export = HistoryView.class.getDeclaredMethod("exportAllFiles");
-                export.setAccessible(true);
-                export.invoke(view);
+            Method export = HistoryView.class.getDeclaredMethod("exportAllFiles");
+            export.setAccessible(true);
+            export.invoke(view);
 
-                notificationMock.verify(() -> Notification.show(anyString(), anyInt(), any()), Mockito.atLeastOnce());
-                Files.deleteIfExists(file);
-            }
-            }
+            notificationMock.verify(() -> Notification.show(anyString(), anyInt(), any()), Mockito.atLeastOnce());
+            Files.deleteIfExists(file);
+        }
+    }
 
     private void createDocxWithDocumentXml(Path target, String xmlContent) throws Exception {
         try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(target))) {

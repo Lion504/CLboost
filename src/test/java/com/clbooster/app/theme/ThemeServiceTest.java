@@ -48,7 +48,7 @@ class ThemeServiceTest {
         when(ui.getPage()).thenReturn(page);
 
         try (MockedStatic<UI> uiMock = Mockito.mockStatic(UI.class);
-             MockedStatic<VaadinSession> sessionMock = Mockito.mockStatic(VaadinSession.class)) {
+                MockedStatic<VaadinSession> sessionMock = Mockito.mockStatic(VaadinSession.class)) {
             uiMock.when(UI::getCurrent).thenReturn(ui);
             sessionMock.when(VaadinSession::getCurrent).thenReturn(session);
 
