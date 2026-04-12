@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import java.sql.*;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 class UserDAOTest {
@@ -68,6 +70,63 @@ class UserDAOTest {
 
         try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
             assertFalse(dao.registerUser(new User("a", "b")));
+        }
+    }
+
+    @Test
+    void registerUser_generatedKeyMissing_returnsTrueWithoutPin() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        PreparedStatement insertUser = mock(PreparedStatement.class);
+        PreparedStatement insertProfile = mock(PreparedStatement.class);
+        ResultSet keys = mock(ResultSet.class);
+
+        when(conn.prepareStatement(anyString(), eq(Statement.RETURN_GENERATED_KEYS))).thenReturn(insertUser);
+        when(conn.prepareStatement(anyString())).thenReturn(insertProfile);
+        when(insertUser.executeUpdate()).thenReturn(1);
+        when(insertUser.getGeneratedKeys()).thenReturn(keys);
+        when(keys.next()).thenReturn(false);
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            User user = new User("john", "password");
+            user.setIdentityEmail("john@test.com");
+            user.setFirstName("John");
+            user.setLastName("Doe");
+
+            boolean result = dao.registerUser(user);
+
+            assertTrue(result);
+            assertEquals(0, user.getPin());
+            verify(insertProfile, never()).executeUpdate();
+        }
+    }
+
+    @Test
+    void registerUser_profileInsertFails_stillReturnsTrue() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        PreparedStatement insertUser = mock(PreparedStatement.class);
+        ResultSet keys = mock(ResultSet.class);
+
+        when(conn.prepareStatement(anyString(), eq(Statement.RETURN_GENERATED_KEYS))).thenReturn(insertUser);
+        when(conn.prepareStatement(anyString())).thenThrow(new SQLException("profile insert failed"));
+        when(insertUser.executeUpdate()).thenReturn(1);
+        when(insertUser.getGeneratedKeys()).thenReturn(keys);
+        when(keys.next()).thenReturn(true);
+        when(keys.getInt(1)).thenReturn(77);
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            User user = new User("john", "password");
+            user.setIdentityEmail("john@test.com");
+            user.setFirstName("John");
+            user.setLastName("Doe");
+
+            boolean result = dao.registerUser(user);
+
+            assertTrue(result);
+            assertEquals(77, user.getPin());
         }
     }
 
@@ -138,6 +197,18 @@ class UserDAOTest {
         }
     }
 
+    @Test
+    void loginUser_sqlException_returnsNull() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        when(conn.prepareStatement(anyString())).thenThrow(new SQLException("db fail"));
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertNull(dao.loginUser("john", "password"));
+        }
+    }
+
     // ---------------- usernameExists ----------------
 
     @Test
@@ -174,6 +245,18 @@ class UserDAOTest {
         }
     }
 
+    @Test
+    void usernameExists_sqlException_returnsFalse() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        when(conn.prepareStatement(anyString())).thenThrow(new SQLException("db fail"));
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertFalse(dao.usernameExists("john"));
+        }
+    }
+
     // ---------------- emailExists ----------------
 
     @Test
@@ -190,6 +273,35 @@ class UserDAOTest {
 
         try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
             assertTrue(dao.emailExists("a@b.com"));
+        }
+    }
+
+    @Test
+    void emailExists_false() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        PreparedStatement stmt = mock(PreparedStatement.class);
+        ResultSet rs = mock(ResultSet.class);
+
+        when(conn.prepareStatement(anyString())).thenReturn(stmt);
+        when(stmt.executeQuery()).thenReturn(rs);
+        when(rs.next()).thenReturn(false);
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertFalse(dao.emailExists("a@b.com"));
+        }
+    }
+
+    @Test
+    void emailExists_sqlException_returnsFalse() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        when(conn.prepareStatement(anyString())).thenThrow(new SQLException("db fail"));
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertFalse(dao.emailExists("a@b.com"));
         }
     }
 
@@ -220,6 +332,35 @@ class UserDAOTest {
         }
     }
 
+    @Test
+    void getUserByPin_notFound_returnsNull() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        PreparedStatement stmt = mock(PreparedStatement.class);
+        ResultSet rs = mock(ResultSet.class);
+
+        when(conn.prepareStatement(anyString())).thenReturn(stmt);
+        when(stmt.executeQuery()).thenReturn(rs);
+        when(rs.next()).thenReturn(false);
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertNull(dao.getUserByPin(999));
+        }
+    }
+
+    @Test
+    void getUserByPin_sqlException_returnsNull() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        when(conn.prepareStatement(anyString())).thenThrow(new SQLException("db fail"));
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertNull(dao.getUserByPin(1));
+        }
+    }
+
     // ---------------- deleteUser ----------------
 
     @Test
@@ -240,6 +381,39 @@ class UserDAOTest {
         }
     }
 
+    @Test
+    void deleteUser_noRowsAffected_returnsFalse() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        PreparedStatement stmt = mock(PreparedStatement.class);
+
+        when(conn.prepareStatement(anyString())).thenReturn(stmt);
+        when(stmt.executeUpdate()).thenReturn(0);
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            User u = new User("x", "y");
+            u.setPin(1);
+
+            assertFalse(dao.deleteUser(u));
+        }
+    }
+
+    @Test
+    void deleteUser_sqlException_returnsFalse() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        when(conn.prepareStatement(anyString())).thenThrow(new SQLException("db fail"));
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            User u = new User("x", "y");
+            u.setPin(1);
+
+            assertFalse(dao.deleteUser(u));
+        }
+    }
+
     // ---------------- updatePassword ----------------
 
     @Test
@@ -254,6 +428,78 @@ class UserDAOTest {
 
         try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
             assertTrue(dao.updatePassword(1, "newpass"));
+            verify(stmt).setString(eq(1), argThat(v -> !Objects.equals(v, "newpass")));
+        }
+    }
+
+    @Test
+    void updatePassword_noRowsAffected_returnsFalse() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        PreparedStatement stmt = mock(PreparedStatement.class);
+
+        when(conn.prepareStatement(anyString())).thenReturn(stmt);
+        when(stmt.executeUpdate()).thenReturn(0);
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertFalse(dao.updatePassword(1, "newpass"));
+        }
+    }
+
+    @Test
+    void updatePassword_sqlException_returnsFalse() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        when(conn.prepareStatement(anyString())).thenThrow(new SQLException("db fail"));
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertFalse(dao.updatePassword(1, "newpass"));
+        }
+    }
+
+    // ---------------- updateUser ----------------
+
+    @Test
+    void updateUser_success() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        PreparedStatement stmt = mock(PreparedStatement.class);
+
+        when(conn.prepareStatement(anyString())).thenReturn(stmt);
+        when(stmt.executeUpdate()).thenReturn(1);
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertTrue(dao.updateUser(1, "John", "Doe", "john@test.com"));
+        }
+    }
+
+    @Test
+    void updateUser_noRowsAffected_returnsFalse() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        PreparedStatement stmt = mock(PreparedStatement.class);
+
+        when(conn.prepareStatement(anyString())).thenReturn(stmt);
+        when(stmt.executeUpdate()).thenReturn(0);
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertFalse(dao.updateUser(1, "John", "Doe", "john@test.com"));
+        }
+    }
+
+    @Test
+    void updateUser_sqlException_returnsFalse() throws Exception {
+        UserDAO dao = new UserDAO();
+
+        Connection conn = mock(Connection.class);
+        when(conn.prepareStatement(anyString())).thenThrow(new SQLException("db fail"));
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertFalse(dao.updateUser(1, "John", "Doe", "john@test.com"));
         }
     }
 }

@@ -4,6 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
@@ -12,9 +14,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // DEV MODE: Completely open configuration
-        http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .formLogin(form -> form.disable()).httpBasic(basic -> basic.disable());
+        http.authorizeHttpRequests(auth -> auth
+            .requestMatchers("/", "/login", "/signup", "/error", "/favicon.ico",
+                "/manifest.webmanifest", "/sw.js", "/offline.html",
+                "/images/**", "/icons/**", "/line-awesome/**",
+                "/VAADIN/**", "/frontend/**", "/webjars/**")
+            .permitAll()
+            .anyRequest()
+            .authenticated())
+            .formLogin(Customizer.withDefaults())
+            .httpBasic(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
