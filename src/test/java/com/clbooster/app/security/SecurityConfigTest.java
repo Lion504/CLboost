@@ -19,9 +19,7 @@ class SecurityConfigTest {
     @LocalServerPort
     private int port;
 
-    private final HttpClient client = HttpClient.newBuilder()
-            .followRedirects(HttpClient.Redirect.NEVER)
-            .build();
+    private final HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build();
 
     @Test
     void publicLoginRoute_isAccessibleWithoutAuth() throws IOException, InterruptedException {
@@ -41,10 +39,7 @@ class SecurityConfigTest {
     }
 
     private HttpResponse<Void> get(String path) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + port + path))
-                .GET()
-                .build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:" + port + path)).GET().build();
 
         return client.send(request, HttpResponse.BodyHandlers.discarding());
     }
