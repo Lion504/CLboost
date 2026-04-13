@@ -120,6 +120,8 @@ public class ProfileView extends VerticalLayout {
 
         String userFullName = currentUser != null ? currentUser.getFirstName() + " " + currentUser.getLastName()
                 : "Guest User";
+        String username = currentUser != null && currentUser.getUsername() != null
+                && !currentUser.getUsername().isBlank() ? "@" + currentUser.getUsername() : "@guest";
         String userEmail = currentUser != null ? currentUser.getIdentityEmail() : "guest@example.com";
 
         Avatar avatar = new Avatar(userFullName);
@@ -141,10 +143,16 @@ public class ProfileView extends VerticalLayout {
         name.getStyle().set("margin", "0");
         name.getStyle().set("letter-spacing", "-0.025em");
 
-        Paragraph role = new Paragraph(userEmail);
-        role.getStyle().set("font-size", "15px");
-        role.getStyle().set("color", TEXT_SECONDARY);
-        role.getStyle().set("margin", "0");
+        Paragraph usernameLine = new Paragraph(username);
+        usernameLine.getStyle().set("font-size", "15px");
+        usernameLine.getStyle().set("color", TEXT_SECONDARY);
+        usernameLine.getStyle().set("margin", "0");
+
+        Paragraph emailLine = new Paragraph(userEmail);
+        emailLine.getStyle().set("font-size", "13px");
+        emailLine.getStyle().set("color", TEXT_SECONDARY);
+        emailLine.getStyle().set("opacity", "0.85");
+        emailLine.getStyle().set("margin", "0");
 
         // Plan badge
         HorizontalLayout badgeRow = new HorizontalLayout();
@@ -170,7 +178,7 @@ public class ProfileView extends VerticalLayout {
         versionBadge.getStyle().set("letter-spacing", "0.05em");
 
         badgeRow.add(planBadge, versionBadge);
-        nameGroup.add(name, role, badgeRow);
+        nameGroup.add(name, usernameLine, emailLine, badgeRow);
 
         userInfo.add(avatar, nameGroup);
 
