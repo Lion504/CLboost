@@ -39,7 +39,7 @@
 
 ## Next Sprint Focus
 
-- Update the documentation with the new necessary reports and diagrams and prepare for presentation.
+-  Test the functional and nonfunctional features of the product, and elaborate the respective reports.
 
 ---
 **Total Sprint Hours Spend by Team: 43 hours**
