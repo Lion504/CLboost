@@ -1,7 +1,6 @@
 package com.clbooster.app;
 
 import com.vaadin.flow.component.page.AppShellConfigurator;
-import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import org.springframework.boot.SpringApplication;
@@ -16,7 +15,6 @@ import org.springframework.context.annotation.ComponentScan;
  *
  */
 @SpringBootApplication
-@Push
 @PWA(name = "CL Booster", shortName = "CLBooster")
 @Theme("my-theme")
 @ComponentScan(basePackages = { "com.clbooster.app", "com.clbooster.aiservice" })

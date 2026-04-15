@@ -9,7 +9,7 @@ public class DatabaseConnection {
             "jdbc:mariadb://" + System.getenv().getOrDefault("DB_HOST", "localhost") + ":"
                     + System.getenv().getOrDefault("DB_PORT", "3306") + "/"
                     + System.getenv().getOrDefault("DB_NAME", "CL_generator"))
-            + "?useGssApi=false";
+            + "?useGssApi=false&useUnicode=true&characterEncoding=utf8mb4&connectionCollation=utf8mb4_unicode_ci";
     private static final String USER = System.getenv().getOrDefault("DB_USERNAME", "root");
     private static final String PASSWORD = System.getenv().getOrDefault("DB_PASSWORD", "password");
 

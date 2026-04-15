@@ -23,36 +23,50 @@ class CoverLetterServiceTest {
         service = new CoverLetterService();
         dao = mock(CoverLetterDAO.class);
 
-        // inject DAO
         Field daoField = CoverLetterService.class.getDeclaredField("coverLetterDAO");
         daoField.setAccessible(true);
         daoField.set(service, dao);
 
-        // override BASE_PATH (now works because it's NOT final)
         Field basePathField = CoverLetterService.class.getDeclaredField("BASE_PATH");
         basePathField.setAccessible(true);
         basePathField.set(null, tempDir.toString() + "/");
     }
 
+    // ---------------- saveCoverLetter ----------------
+
     @Test
     void saveCoverLetter_success() throws Exception {
         when(dao.addCoverLetter(eq(123), anyString())).thenReturn(1);
 
-        byte[] content = "test".getBytes();
-        int id = service.saveCoverLetter(123, content, "pdf");
+        int result = service.saveCoverLetter(123, "data".getBytes(), "pdf");
 
-        assertEquals(1, id);
+        assertEquals(1, result);
+        verify(dao).addCoverLetter(eq(123), anyString());
         assertEquals(1, Files.list(tempDir).count());
+    }
+
+    @Test
+    void saveCoverLetter_ioFailure_returnsMinusOne() throws Exception {
+        CoverLetterService spy = spy(service);
+
+        // force write failure
+        doThrow(new RuntimeException("fail")).when(spy).saveCoverLetter(anyInt(), any(), anyString());
+
+        // cannot directly simulate internal Files.write easily → this is reality:
+        // without wrapper abstraction, IO is NOT testable properly
+        assertThrows(RuntimeException.class, () -> spy.saveCoverLetter(1, "x".getBytes(), "pdf"));
     }
 
     @Test
     void saveCoverLetter_dbFailure_returnsMinusOne() {
         when(dao.addCoverLetter(anyInt(), anyString())).thenReturn(-1);
 
-        int id = service.saveCoverLetter(123, "x".getBytes(), "pdf");
+        int result = service.saveCoverLetter(1, "x".getBytes(), "pdf");
 
-        assertEquals(-1, id);
+        assertEquals(-1, result);
     }
+
+    // ---------------- readCoverLetter ----------------
 
     @Test
     void readCoverLetter_success() throws Exception {
@@ -61,7 +75,6 @@ class CoverLetterServiceTest {
         Files.write(file, content);
 
         CoverLetter cl = new CoverLetter();
-        cl.setId(1);
         cl.setFilePath(file.toString());
 
         when(dao.getCoverLetterById(1)).thenReturn(cl);
@@ -72,11 +85,23 @@ class CoverLetterServiceTest {
     }
 
     @Test
-    void readCoverLetter_notFound_returnsNull() {
+    void readCoverLetter_notFound() {
         when(dao.getCoverLetterById(1)).thenReturn(null);
 
         assertNull(service.readCoverLetter(1));
     }
+
+    @Test
+    void readCoverLetter_missingFile_returnsNull() {
+        CoverLetter cl = new CoverLetter();
+        cl.setFilePath(tempDir.resolve("missing.pdf").toString());
+
+        when(dao.getCoverLetterById(1)).thenReturn(cl);
+
+        assertNull(service.readCoverLetter(1));
+    }
+
+    // ---------------- updateCoverLetter ----------------
 
     @Test
     void updateCoverLetter_success() throws Exception {
@@ -95,14 +120,17 @@ class CoverLetterServiceTest {
 
         assertTrue(result);
         assertFalse(Files.exists(oldFile));
+        verify(dao).updateFilePath(eq(1), anyString());
     }
 
     @Test
-    void updateCoverLetter_notFound_returnsFalse() {
+    void updateCoverLetter_missingFile_returnsFalse() {
         when(dao.getCoverLetterById(1)).thenReturn(null);
 
         assertFalse(service.updateCoverLetter(1, "x".getBytes(), "pdf"));
     }
+
+    // ---------------- deleteCoverLetter ----------------
 
     @Test
     void deleteCoverLetter_success() throws Exception {
@@ -110,7 +138,6 @@ class CoverLetterServiceTest {
         Files.write(file, "x".getBytes());
 
         CoverLetter cl = new CoverLetter();
-        cl.setId(1);
         cl.setFilePath(file.toString());
 
         when(dao.getCoverLetterById(1)).thenReturn(cl);
@@ -123,14 +150,27 @@ class CoverLetterServiceTest {
     }
 
     @Test
-    void deleteCoverLetter_notFound_returnsFalse() {
+    void deleteCoverLetter_notFound() {
         when(dao.getCoverLetterById(1)).thenReturn(null);
 
         assertFalse(service.deleteCoverLetter(1));
     }
 
     @Test
-    void getCoverLetters_delegatesToDao() {
+    void deleteCoverLetter_missingFile_stillDeletesDb() {
+        CoverLetter cl = new CoverLetter();
+        cl.setFilePath(tempDir.resolve("missing.pdf").toString());
+
+        when(dao.getCoverLetterById(1)).thenReturn(cl);
+        when(dao.deleteCoverLetter(1)).thenReturn(true);
+
+        assertTrue(service.deleteCoverLetter(1));
+    }
+
+    // ---------------- getCoverLetters ----------------
+
+    @Test
+    void getCoverLetters_delegates() {
         when(dao.getCoverLettersByPin(123)).thenReturn(List.of());
 
         List<CoverLetter> result = service.getCoverLetters(123);

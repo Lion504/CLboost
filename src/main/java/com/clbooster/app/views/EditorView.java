@@ -1,5 +1,6 @@
 package com.clbooster.app.views;
 
+import jakarta.annotation.security.PermitAll;
 import com.clbooster.aiservice.AIService;
 import com.clbooster.aiservice.Exporter;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
@@ -46,6 +47,7 @@ import java.util.logging.Logger;
  */
 @Route(value = "editor", layout = MainLayout.class)
 @PageTitle("Editor | CL Booster")
+@PermitAll
 public class EditorView extends HorizontalLayout {
 
     // Figma Design System Colors

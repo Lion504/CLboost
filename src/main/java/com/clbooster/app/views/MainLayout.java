@@ -1,5 +1,6 @@
 package com.clbooster.app.views;
 
+import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.User;
 import com.clbooster.app.backend.service.settings.Settings;
@@ -21,6 +22,7 @@ import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.component.textfield.TextField;
 
+@PermitAll
 public class MainLayout extends AppLayout {
 
     // Figma Design System Colors
@@ -90,9 +92,16 @@ public class MainLayout extends AppLayout {
         // Get current user from auth service
         User currentUser = authService.getCurrentUser();
         String userName = currentUser != null ? currentUser.getFirstName() + " " + currentUser.getLastName() : "Guest";
-        String userInitials = currentUser != null
-                ? (currentUser.getFirstName().substring(0, 1) + currentUser.getLastName().substring(0, 1)).toUpperCase()
-                : "G";
+        String userInitials = "G";
+        if (currentUser != null) {
+            String first = currentUser.getFirstName() != null && !currentUser.getFirstName().isBlank()
+                    ? currentUser.getFirstName().substring(0, 1)
+                    : "U";
+            String last = currentUser.getLastName() != null && !currentUser.getLastName().isBlank()
+                    ? currentUser.getLastName().substring(0, 1)
+                    : "";
+            userInitials = (first + last).toUpperCase();
+        }
 
         Avatar avatar = new Avatar(userName);
         avatar.setColorIndex(2);

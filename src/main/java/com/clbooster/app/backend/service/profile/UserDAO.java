@@ -1,12 +1,15 @@
 package com.clbooster.app.backend.service.profile;
 
 import com.clbooster.app.backend.service.database.DatabaseConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class UserDAO {
+    private static final Logger log = LoggerFactory.getLogger(UserDAO.class);
 
     // Hash password (SHA-256)
     private String hashPassword(String password) {
@@ -55,7 +58,7 @@ public class UserDAO {
             return false;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to register user {}", user != null ? user.getIdentityEmail() : null, e);
             return false;
         }
     }
@@ -73,7 +76,7 @@ public class UserDAO {
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to create empty profile for email {}", identityEmail, e);
         }
     }
 
@@ -102,7 +105,7 @@ public class UserDAO {
             return null;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to login user {}", username, e);
             return null;
         }
     }
@@ -118,7 +121,7 @@ public class UserDAO {
             return rs.next();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to check if username exists {}", username, e);
             return false;
         }
     }
@@ -134,7 +137,7 @@ public class UserDAO {
             return rs.next();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to check if email exists {}", email, e);
             return false;
         }
     }
@@ -159,7 +162,7 @@ public class UserDAO {
             return null;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to fetch user by pin {}", pin, e);
             return null;
         }
     }
@@ -175,7 +178,7 @@ public class UserDAO {
             return pstmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to delete user id {}", user != null ? user.getPin() : null, e);
             return false;
         }
     }
@@ -192,7 +195,26 @@ public class UserDAO {
             return pstmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to update password for user id {}", pin, e);
+            return false;
+        }
+    }
+
+    public boolean updateUser(int pin, String firstName, String lastName, String email) {
+        String sql = "UPDATE identification SET First_Name = ?, Last_Name = ?, Identity_email = ? WHERE Pin = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, firstName);
+            pstmt.setString(2, lastName);
+            pstmt.setString(3, email);
+            pstmt.setInt(4, pin);
+
+            return pstmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            log.error("Failed to update user id {}", pin, e);
             return false;
         }
     }

@@ -12,45 +12,57 @@ import static org.mockito.Mockito.*;
 
 class CoverLetterDAOTest {
 
+    // ---------------- helpers ----------------
+
+    private MockedStatic<DatabaseConnection> mockDB(Connection conn) {
+        MockedStatic<DatabaseConnection> db = mockStatic(DatabaseConnection.class);
+        db.when(DatabaseConnection::getConnection).thenReturn(conn);
+        return db;
+    }
+
+    // ---------------- addCoverLetter ----------------
+
     @Test
-    void addCoverLetter_success_returnsGeneratedId() throws Exception {
+    void addCoverLetter_success() throws Exception {
         CoverLetterDAO dao = new CoverLetterDAO();
 
         Connection conn = mock(Connection.class);
         PreparedStatement stmt = mock(PreparedStatement.class);
         ResultSet rs = mock(ResultSet.class);
 
-        try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
+        when(conn.prepareStatement(anyString(), eq(Statement.RETURN_GENERATED_KEYS))).thenReturn(stmt);
 
-            dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
-            when(conn.prepareStatement(anyString(), eq(Statement.RETURN_GENERATED_KEYS))).thenReturn(stmt);
-            when(stmt.executeUpdate()).thenReturn(1);
-            when(stmt.getGeneratedKeys()).thenReturn(rs);
-            when(rs.next()).thenReturn(true);
-            when(rs.getInt(1)).thenReturn(42);
+        when(stmt.getGeneratedKeys()).thenReturn(rs);
+        when(stmt.executeUpdate()).thenReturn(1);
+        when(rs.next()).thenReturn(true);
+        when(rs.getInt(1)).thenReturn(42);
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
 
             int id = dao.addCoverLetter(123, "/file.pdf");
 
             assertEquals(42, id);
+
+            verify(stmt).setInt(1, 123);
+            verify(stmt).setString(2, "/file.pdf");
         }
     }
 
     @Test
-    void addCoverLetter_failure_returnsMinusOne() throws Exception {
+    void addCoverLetter_sqlException_returnsMinusOne() throws Exception {
         CoverLetterDAO dao = new CoverLetterDAO();
 
         Connection conn = mock(Connection.class);
+        PreparedStatement stmt = mock(PreparedStatement.class);
 
-        try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
+        when(conn.prepareStatement(anyString(), anyInt())).thenThrow(new SQLException());
 
-            dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
-            when(conn.prepareStatement(anyString(), anyInt())).thenThrow(new SQLException());
-
-            int id = dao.addCoverLetter(123, "/file.pdf");
-
-            assertEquals(-1, id);
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertEquals(-1, dao.addCoverLetter(1, "/x.pdf"));
         }
     }
+
+    // ---------------- getCoverLetterById ----------------
 
     @Test
     void getCoverLetterById_found() throws Exception {
@@ -62,17 +74,16 @@ class CoverLetterDAOTest {
 
         Timestamp ts = new Timestamp(System.currentTimeMillis());
 
-        try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
+        when(conn.prepareStatement(anyString())).thenReturn(stmt);
+        when(stmt.executeQuery()).thenReturn(rs);
+        when(rs.next()).thenReturn(true);
 
-            dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
-            when(conn.prepareStatement(anyString())).thenReturn(stmt);
-            when(stmt.executeQuery()).thenReturn(rs);
-            when(rs.next()).thenReturn(true);
+        when(rs.getInt("id")).thenReturn(1);
+        when(rs.getInt("Pin")).thenReturn(123);
+        when(rs.getTimestamp("Timestamp_edited")).thenReturn(ts);
+        when(rs.getString("FilePath")).thenReturn("/file.pdf");
 
-            when(rs.getInt("id")).thenReturn(1);
-            when(rs.getInt("Pin")).thenReturn(123);
-            when(rs.getTimestamp("Timestamp_edited")).thenReturn(ts);
-            when(rs.getString("FilePath")).thenReturn("/file.pdf");
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
 
             CoverLetter cl = dao.getCoverLetterById(1);
 
@@ -81,121 +92,113 @@ class CoverLetterDAOTest {
             assertEquals(123, cl.getPin());
             assertEquals("/file.pdf", cl.getFilePath());
             assertEquals(ts, cl.getTimestampEdited());
+
+            verify(stmt).setInt(1, 1);
         }
     }
 
     @Test
-    void getCoverLetterById_notFound() throws Exception {
+    void getCoverLetterById_sqlException_returnsNull() throws Exception {
+        CoverLetterDAO dao = new CoverLetterDAO();
+
+        Connection conn = mock(Connection.class);
+        PreparedStatement stmt = mock(PreparedStatement.class);
+
+        when(conn.prepareStatement(anyString())).thenThrow(new SQLException());
+
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertNull(dao.getCoverLetterById(1));
+        }
+    }
+
+    // ---------------- getCoverLettersByPin ----------------
+
+    @Test
+    void getCoverLettersByPin_success() throws Exception {
         CoverLetterDAO dao = new CoverLetterDAO();
 
         Connection conn = mock(Connection.class);
         PreparedStatement stmt = mock(PreparedStatement.class);
         ResultSet rs = mock(ResultSet.class);
 
-        try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
+        when(conn.prepareStatement(anyString())).thenReturn(stmt);
+        when(stmt.executeQuery()).thenReturn(rs);
 
-            dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
-            when(conn.prepareStatement(anyString())).thenReturn(stmt);
-            when(stmt.executeQuery()).thenReturn(rs);
-            when(rs.next()).thenReturn(false);
+        when(rs.next()).thenReturn(true, true, false);
+        when(rs.getInt("id")).thenReturn(1, 2);
+        when(rs.getInt("Pin")).thenReturn(123, 123);
+        when(rs.getTimestamp("Timestamp_edited")).thenReturn(new Timestamp(System.currentTimeMillis()));
+        when(rs.getString("FilePath")).thenReturn("/a.pdf", "/b.pdf");
 
-            CoverLetter cl = dao.getCoverLetterById(999);
-
-            assertNull(cl);
-        }
-    }
-
-    @Test
-    void getCoverLettersByPin_returnsList() throws Exception {
-        CoverLetterDAO dao = new CoverLetterDAO();
-
-        Connection conn = mock(Connection.class);
-        PreparedStatement stmt = mock(PreparedStatement.class);
-        ResultSet rs = mock(ResultSet.class);
-
-        try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
-
-            dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
-            when(conn.prepareStatement(anyString())).thenReturn(stmt);
-            when(stmt.executeQuery()).thenReturn(rs);
-
-            when(rs.next()).thenReturn(true, true, false);
-            when(rs.getInt("id")).thenReturn(1, 2);
-            when(rs.getInt("Pin")).thenReturn(123, 123);
-            when(rs.getTimestamp("Timestamp_edited")).thenReturn(new Timestamp(System.currentTimeMillis()));
-            when(rs.getString("FilePath")).thenReturn("/a.pdf", "/b.pdf");
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
 
             List<CoverLetter> list = dao.getCoverLettersByPin(123);
 
             assertEquals(2, list.size());
+            verify(stmt).setInt(1, 123);
         }
     }
 
     @Test
-    void updateFilePath_success() throws Exception {
+    void getCoverLettersByPin_sqlException_returnsEmptyList() throws Exception {
         CoverLetterDAO dao = new CoverLetterDAO();
 
         Connection conn = mock(Connection.class);
         PreparedStatement stmt = mock(PreparedStatement.class);
 
-        try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
+        when(conn.prepareStatement(anyString())).thenThrow(new SQLException());
 
-            dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
-            when(conn.prepareStatement(anyString())).thenReturn(stmt);
-            when(stmt.executeUpdate()).thenReturn(1);
-
-            assertTrue(dao.updateFilePath(1, "/new.pdf"));
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            List<CoverLetter> list = dao.getCoverLettersByPin(1);
+            assertTrue(list.isEmpty());
         }
     }
 
+    // ---------------- updateFilePath ----------------
+
     @Test
-    void updateFilePath_failure() throws Exception {
+    void updateFilePath_sqlException_returnsFalse() throws Exception {
         CoverLetterDAO dao = new CoverLetterDAO();
 
         Connection conn = mock(Connection.class);
         PreparedStatement stmt = mock(PreparedStatement.class);
 
-        try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
+        when(conn.prepareStatement(anyString())).thenThrow(new SQLException());
 
-            dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
-            when(conn.prepareStatement(anyString())).thenReturn(stmt);
-            when(stmt.executeUpdate()).thenReturn(0);
-
-            assertFalse(dao.updateFilePath(1, "/new.pdf"));
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertFalse(dao.updateFilePath(1, "/x.pdf"));
         }
     }
 
+    // ---------------- deleteCoverLetter ----------------
+
     @Test
-    void deleteCoverLetter_success() throws Exception {
+    void deleteCoverLetter_sqlException_returnsFalse() throws Exception {
         CoverLetterDAO dao = new CoverLetterDAO();
 
         Connection conn = mock(Connection.class);
         PreparedStatement stmt = mock(PreparedStatement.class);
 
-        try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
+        when(conn.prepareStatement(anyString())).thenThrow(new SQLException());
 
-            dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
-            when(conn.prepareStatement(anyString())).thenReturn(stmt);
-            when(stmt.executeUpdate()).thenReturn(1);
-
-            assertTrue(dao.deleteCoverLetter(1));
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertFalse(dao.deleteCoverLetter(1));
         }
     }
 
+    // ---------------- deleteAllByPin ----------------
+
     @Test
-    void deleteAllByPin_success() throws Exception {
+    void deleteAllByPin_sqlException_returnsFalse() throws Exception {
         CoverLetterDAO dao = new CoverLetterDAO();
 
         Connection conn = mock(Connection.class);
         PreparedStatement stmt = mock(PreparedStatement.class);
 
-        try (MockedStatic<DatabaseConnection> dbMock = mockStatic(DatabaseConnection.class)) {
+        when(conn.prepareStatement(anyString())).thenThrow(new SQLException());
 
-            dbMock.when(DatabaseConnection::getConnection).thenReturn(conn);
-            when(conn.prepareStatement(anyString())).thenReturn(stmt);
-            when(stmt.executeUpdate()).thenReturn(2);
-
-            assertTrue(dao.deleteAllByPin(123));
+        try (MockedStatic<DatabaseConnection> db = mockDB(conn)) {
+            assertFalse(dao.deleteAllByPin(1));
         }
     }
 }

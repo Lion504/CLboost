@@ -1,5 +1,6 @@
 package com.clbooster.app.views;
 
+import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.User;
 import com.clbooster.app.i18n.TranslationService;
@@ -32,6 +33,7 @@ import java.util.stream.Stream;
 
 @Route(value = "dashboard", layout = MainLayout.class)
 @PageTitle("Dashboard | CL Booster")
+@PermitAll
 public class DashboardView extends VerticalLayout {
 
     private static final String PRIMARY = "#007AFF";
@@ -296,7 +298,7 @@ public class DashboardView extends VerticalLayout {
         fileIc.getStyle().set("color", PRIMARY).set("width", "22px").set("height", "22px");
         iconBox.add(fileIc);
 
-        Span badge = new Span(status);
+        Span badge = new Span(translationService.translate("dashboard.status." + status.toLowerCase()));
         badge.getStyle().set("font-size", "10px").set("font-weight", "700").set("padding", "3px 8px")
                 .set("border-radius", "9999px")
                 .set("background", "FINALIZED".equals(status) ? "rgba(52,199,89,0.12)" : "rgba(142,142,147,0.12)")

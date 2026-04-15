@@ -5,8 +5,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -62,5 +67,65 @@ class AIServiceTest {
 
         assertEquals("Result", result);
         verify(mockModel, times(2)).generate(anyString());
+    }
+
+    @Test
+    void testGenerateCoverLetter_StripsMarkdownJsonFence() {
+        when(mockModel.generate(anyString())).thenReturn("```json\n{\"key\":\"value\"}\n```")
+                .thenReturn("Final cover letter");
+
+        String result = aiService.generateCoverLetter("resume", "job", "Creative");
+
+        assertEquals("Final cover letter", result);
+        verify(mockModel, times(2)).generate(anyString());
+    }
+
+    @Test
+    void testToneInstruction_allBranches() throws Exception {
+        Method toneInstruction = AIService.class.getDeclaredMethod("toneInstruction", String.class);
+        toneInstruction.setAccessible(true);
+
+        String creative = (String) toneInstruction.invoke(aiService, "Creative");
+        String storyteller = (String) toneInstruction.invoke(aiService, "Storyteller");
+        String professional = (String) toneInstruction.invoke(aiService, "Professional");
+        String blank = (String) toneInstruction.invoke(aiService, " ");
+
+        assertTrue(creative.contains("creative"));
+        assertTrue(storyteller.contains("storytelling"));
+        assertTrue(professional.contains("formal"));
+        assertEquals("", blank);
+    }
+
+    @Test
+    void testGetLanguageModel_throwsWhenApiKeyMissing() throws Exception {
+        AIService noKeyService = new AIService(" ");
+        Method getLanguageModel = AIService.class.getDeclaredMethod("getLanguageModel");
+        getLanguageModel.setAccessible(true);
+
+        InvocationTargetException ex = assertThrows(InvocationTargetException.class,
+                () -> getLanguageModel.invoke(noKeyService));
+        assertTrue(ex.getCause() instanceof IllegalStateException);
+        assertTrue(ex.getCause().getMessage().contains("GEMINI_API_KEY"));
+    }
+
+    @Test
+    void testGetLanguageModel_lazyInitAndCache_whenApiKeyPresent() throws Exception {
+        AIService service = new AIService("fake-key");
+
+        // Clear pre-injected mock from setup for this test to exercise lazy init.
+        Field field = AIService.class.getDeclaredField("languageModel");
+        field.setAccessible(true);
+        field.set(service, null);
+
+        Method getLanguageModel = AIService.class.getDeclaredMethod("getLanguageModel");
+        getLanguageModel.setAccessible(true);
+
+        Object first = getLanguageModel.invoke(service);
+        Object second = getLanguageModel.invoke(service);
+
+        assertTrue(first != null);
+        assertTrue(second != null);
+        assertEquals(first, second);
+        assertTrue(!Modifier.isAbstract(first.getClass().getModifiers()));
     }
 }

@@ -1,5 +1,6 @@
 package com.clbooster.app.views;
 
+import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.Profile;
 import com.clbooster.app.backend.service.profile.ProfileService;
@@ -27,6 +28,7 @@ import com.vaadin.flow.router.Route;
 
 @Route(value = "profile", layout = MainLayout.class)
 @PageTitle("Profile | CL Booster")
+@PermitAll
 public class ProfileView extends VerticalLayout {
 
     // Figma Design System Colors
@@ -68,7 +70,9 @@ public class ProfileView extends VerticalLayout {
         this.profileService = new ProfileService();
         this.translationService = new TranslationService();
         this.currentUser = authService.getCurrentUser();
-        this.userProfile = currentUser != null ? profileService.getProfile(currentUser.getPin()) : null;
+        this.userProfile = currentUser != null
+                ? profileService.getProfile(currentUser.getPin(), translationService.getCurrentLocale())
+                : null;
 
         setPadding(true);
         setSpacing(true);
@@ -116,6 +120,8 @@ public class ProfileView extends VerticalLayout {
 
         String userFullName = currentUser != null ? currentUser.getFirstName() + " " + currentUser.getLastName()
                 : "Guest User";
+        String username = currentUser != null && currentUser.getUsername() != null
+                && !currentUser.getUsername().isBlank() ? "@" + currentUser.getUsername() : "@guest";
         String userEmail = currentUser != null ? currentUser.getIdentityEmail() : "guest@example.com";
 
         Avatar avatar = new Avatar(userFullName);
@@ -137,10 +143,16 @@ public class ProfileView extends VerticalLayout {
         name.getStyle().set("margin", "0");
         name.getStyle().set("letter-spacing", "-0.025em");
 
-        Paragraph role = new Paragraph(userEmail);
-        role.getStyle().set("font-size", "15px");
-        role.getStyle().set("color", TEXT_SECONDARY);
-        role.getStyle().set("margin", "0");
+        Paragraph usernameLine = new Paragraph(username);
+        usernameLine.getStyle().set("font-size", "15px");
+        usernameLine.getStyle().set("color", TEXT_SECONDARY);
+        usernameLine.getStyle().set("margin", "0");
+
+        Paragraph emailLine = new Paragraph(userEmail);
+        emailLine.getStyle().set("font-size", "13px");
+        emailLine.getStyle().set("color", TEXT_SECONDARY);
+        emailLine.getStyle().set("opacity", "0.85");
+        emailLine.getStyle().set("margin", "0");
 
         // Plan badge
         HorizontalLayout badgeRow = new HorizontalLayout();
@@ -166,7 +178,7 @@ public class ProfileView extends VerticalLayout {
         versionBadge.getStyle().set("letter-spacing", "0.05em");
 
         badgeRow.add(planBadge, versionBadge);
-        nameGroup.add(name, role, badgeRow);
+        nameGroup.add(name, usernameLine, emailLine, badgeRow);
 
         userInfo.add(avatar, nameGroup);
 
@@ -406,7 +418,7 @@ public class ProfileView extends VerticalLayout {
         divider.getStyle().set("margin", "32px 0");
 
         // Account Security Section
-        H3 securityTitle = new H3("Account Security");
+        H3 securityTitle = new H3(getTranslation("profile.securityTitle"));
         securityTitle.getStyle().set("font-size", "18px");
         securityTitle.getStyle().set("font-weight", "700");
         securityTitle.getStyle().set("color", TEXT_PRIMARY);
@@ -636,15 +648,28 @@ public class ProfileView extends VerticalLayout {
         }
 
         // Update profile using ProfileService
-        boolean success = profileService.updateProfile(currentUser.getPin(), experienceField.getValue(),
-                toolsArea.getValue(), skillsArea.getValue(), linkField.getValue(), email);
+        boolean success = profileService.updateProfile(currentUser.getPin(), firstNameField.getValue(),
+                lastNameField.getValue(), experienceField.getValue(), toolsArea.getValue(), skillsArea.getValue(),
+                linkField.getValue(), email, translationService.getCurrentLocale());
 
         if (success) {
             Notification.show(translationService.translate("profile.profileSaved"), 3000,
                     Notification.Position.BOTTOM_END);
-            // Reload profile data
-            this.userProfile = profileService.getProfile(currentUser.getPin());
-            // Exit edit mode
+
+            // Update user in session
+            User updatedUser = profileService.getUpdatedUser(currentUser.getPin());
+            if (updatedUser != null) {
+                authService.setCurrentUser(updatedUser);
+                this.currentUser = updatedUser;
+            }
+
+            // Reload profile data using the active locale
+            this.userProfile = profileService.getProfile(currentUser.getPin(), translationService.getCurrentLocale());
+
+            // Reload all field values in UI to reflect database state
+            reloadFieldValues();
+
+            // Exit edit mode (also reloads values but we do it twice to be safe)
             toggleEditMode();
         } else {
             Notification.show(translationService.translate("profile.saveFailed"), 3000,

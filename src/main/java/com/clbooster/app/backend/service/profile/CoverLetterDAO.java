@@ -1,12 +1,15 @@
 package com.clbooster.app.backend.service.profile;
 
 import com.clbooster.app.backend.service.database.DatabaseConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CoverLetterDAO {
+    private static final Logger log = LoggerFactory.getLogger(CoverLetterDAO.class);
 
     // Returns generated id, or -1 on failure
     public int addCoverLetter(int pin, String filePath) {
@@ -25,7 +28,7 @@ public class CoverLetterDAO {
             return -1;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to add cover letter", e);
             return -1;
         }
     }
@@ -43,7 +46,7 @@ public class CoverLetterDAO {
             return null;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to fetch cover letter by id", e);
             return null;
         }
     }
@@ -61,7 +64,7 @@ public class CoverLetterDAO {
                 list.add(mapRow(rs));
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to fetch cover letters by pin", e);
         }
         return list;
     }
@@ -78,7 +81,7 @@ public class CoverLetterDAO {
             return pstmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to update cover letter file path", e);
             return false;
         }
     }
@@ -93,7 +96,7 @@ public class CoverLetterDAO {
             return pstmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to delete cover letter", e);
             return false;
         }
     }
@@ -108,7 +111,7 @@ public class CoverLetterDAO {
             return pstmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to delete all cover letters for pin", e);
             return false;
         }
     }

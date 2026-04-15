@@ -1,5 +1,6 @@
 package com.clbooster.app.views;
 
+import jakarta.annotation.security.PermitAll;
 import com.clbooster.aiservice.AIService;
 import com.clbooster.aiservice.Exporter;
 import com.clbooster.aiservice.Parser;
@@ -53,6 +54,7 @@ import java.util.stream.Collectors;
  */
 @Route(value = "generator-wizard", layout = MainLayout.class)
 @PageTitle("Generate Cover Letter | CL Booster")
+@PermitAll
 public class GeneratorWizardView extends VerticalLayout {
 
     // Figma Design System Colors

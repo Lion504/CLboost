@@ -1,5 +1,6 @@
 package com.clbooster.app.views;
 
+import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.i18n.TranslationService;
 import com.vaadin.flow.server.VaadinSession;
@@ -50,6 +51,7 @@ import java.util.zip.ZipOutputStream;
 
 @Route(value = "history", layout = MainLayout.class)
 @PageTitle("History | CL Booster")
+@PermitAll
 public class HistoryView extends VerticalLayout {
 
     private static final String PRIMARY = "#007AFF";

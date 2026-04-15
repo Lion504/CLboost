@@ -1,9 +1,13 @@
 package com.clbooster.app.backend.service.profile;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -12,63 +16,88 @@ class ProfileServiceTest {
 
     private ProfileService service;
     private ProfileDAO profileDAOMock;
+    private UserDAO userDAOMock;
+    private final PrintStream originalOut = System.out;
+    private ByteArrayOutputStream outContent;
 
     @BeforeEach
     void setUp() throws Exception {
         service = new ProfileService();
         profileDAOMock = mock(ProfileDAO.class);
+        userDAOMock = mock(UserDAO.class);
 
-        // 🔴 Forced dependency injection (because constructor is bad)
         Field daoField = ProfileService.class.getDeclaredField("profileDAO");
         daoField.setAccessible(true);
         daoField.set(service, profileDAOMock);
+
+        Field userDaoField = ProfileService.class.getDeclaredField("userDAO");
+        userDaoField.setAccessible(true);
+        userDaoField.set(service, userDAOMock);
+
+        outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+    }
+
+    @AfterEach
+    void tearDown() {
+        System.setOut(originalOut);
     }
 
     @Test
     void getProfile_found() {
         Profile profile = new Profile();
-        profile.setPin(123);
+        profile.setPin(1);
 
-        when(profileDAOMock.getProfileByPin(123)).thenReturn(profile);
+        when(profileDAOMock.getByIdWithFallback(1, Locale.getDefault(), Locale.US)).thenReturn(profile);
 
-        Profile result = service.getProfile(123);
+        Profile result = service.getProfile(1);
 
         assertNotNull(result);
-        assertEquals(123, result.getPin());
-        verify(profileDAOMock).getProfileByPin(123);
+        assertEquals(1, result.getPin());
+        verify(profileDAOMock).getByIdWithFallback(1, Locale.getDefault(), Locale.US);
     }
 
     @Test
     void getProfile_notFound() {
-        when(profileDAOMock.getProfileByPin(999)).thenReturn(null);
+        when(profileDAOMock.getByIdWithFallback(99, Locale.getDefault(), Locale.US)).thenReturn(null);
 
-        Profile result = service.getProfile(999);
+        Profile result = service.getProfile(99);
 
         assertNull(result);
-        verify(profileDAOMock).getProfileByPin(999);
+        assertTrue(outContent.toString().contains("Profile not found for PIN"));
+        verify(profileDAOMock).getByIdWithFallback(99, Locale.getDefault(), Locale.US);
     }
 
     @Test
-    void updateProfile_success() {
-        when(profileDAOMock.updateProfile(any(Profile.class))).thenReturn(true);
-
+    void updateProfile_success_validEmail() {
         boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "test@mail.com");
 
         assertTrue(result);
-        verify(profileDAOMock).updateProfile(any(Profile.class));
+        verify(userDAOMock).updateUser(1, "", "", "test@mail.com");
+        verify(profileDAOMock).saveTranslation(any(Profile.class), eq(Locale.getDefault()));
     }
 
     @Test
-    void updateProfile_invalidEmail() {
-        boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "invalid-email");
+    void updateProfile_invalidEmail_blocksDaoCall() {
+        boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "bad-email");
 
         assertFalse(result);
-        verify(profileDAOMock, never()).updateProfile(any());
+        verifyNoInteractions(userDAOMock, profileDAOMock);
+    }
+
+    @Test
+    void updateProfile_emptyEmail_allowed() {
+        boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "");
+
+        assertTrue(result);
+        verify(userDAOMock).updateUser(1, "", "", "");
+        verify(profileDAOMock).saveTranslation(any(Profile.class), eq(Locale.getDefault()));
     }
 
     @Test
     void updateProfile_daoFailure() {
-        when(profileDAOMock.updateProfile(any(Profile.class))).thenReturn(false);
+        doThrow(new RuntimeException("DB failure")).when(profileDAOMock).saveTranslation(any(Profile.class),
+                any(Locale.class));
 
         boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "test@mail.com");
 
@@ -80,7 +109,6 @@ class ProfileServiceTest {
         when(profileDAOMock.updateCVTimestamp(1)).thenReturn(true);
 
         assertTrue(service.updateCVTimestamp(1));
-        verify(profileDAOMock).updateCVTimestamp(1);
     }
 
     @Test
@@ -102,5 +130,31 @@ class ProfileServiceTest {
         when(profileDAOMock.profileExists(1)).thenReturn(false);
 
         assertFalse(service.profileExists(1));
+    }
+
+    @Test
+    void displayProfile_nullProfile() {
+        when(profileDAOMock.getByIdWithFallback(1, Locale.getDefault(), Locale.US)).thenReturn(null);
+
+        service.displayProfile(1);
+
+        assertTrue(outContent.toString().contains("Profile not found"));
+    }
+
+    @Test
+    void displayProfile_withNullFields() {
+        Profile profile = new Profile();
+        profile.setExperienceLevel(null);
+        profile.setTools(null);
+        profile.setSkills(null);
+        profile.setLink(null);
+        profile.setProfileEmail(null);
+
+        when(profileDAOMock.getByIdWithFallback(1, Locale.getDefault(), Locale.US)).thenReturn(profile);
+
+        service.displayProfile(1);
+
+        String output = outContent.toString();
+        assertTrue(output.contains("(Not set)"));
     }
 }

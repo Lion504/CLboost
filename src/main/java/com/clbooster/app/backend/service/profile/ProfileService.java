@@ -1,48 +1,92 @@
 package com.clbooster.app.backend.service.profile;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Locale;
+
 public class ProfileService {
+    private static final Logger log = LoggerFactory.getLogger(ProfileService.class);
+
     private ProfileDAO profileDAO;
+    private UserDAO userDAO;
 
     public ProfileService() {
         this.profileDAO = new ProfileDAO();
+        this.userDAO = new UserDAO();
     }
 
-    public Profile getProfile(int pin) {
-        Profile profile = profileDAO.getProfileByPin(pin);
-        if (profile == null) {
-            System.out.println("Error: Profile not found for PIN: " + pin);
-        }
-        return profile;
-    }
-
-    public boolean updateProfile(int pin, String experienceLevel, String tools, String skills, String link,
-            String profileEmail) {
+    public boolean updateProfile(int pin, String firstName, String lastName, String experienceLevel, String tools,
+            String skills, String link, String profileEmail, Locale locale) {
         if (profileEmail != null && !profileEmail.trim().isEmpty()) {
             if (!isValidEmail(profileEmail)) {
                 System.out.println("Error: Invalid email format");
                 return false;
             }
         }
+
+        // Update identity info (First Name, Last Name, Identity Email)
+        userDAO.updateUser(pin, firstName, lastName, profileEmail);
+
         // Create profile object
         Profile profile = new Profile(pin, experienceLevel, tools, skills, link, profileEmail);
 
-        if (profileDAO.updateProfile(profile)) {
+        // Save translation and base profile in one go via ProfileDAO
+        try {
+            profileDAO.saveTranslation(profile, locale);
             System.out.println("✓ Profile updated successfully!");
             return true;
-        } else {
-            System.out.println("Error: Failed to update profile");
+        } catch (Exception e) {
+            System.out.println("Error: Failed to update profile - " + e.getMessage());
+            log.error("Failed to update profile for PIN {}", pin, e);
             return false;
         }
     }
 
+    public User getUpdatedUser(int pin) {
+        return userDAO.getUserByPin(pin);
+    }
+
+    public Profile getProfile(int pin, Locale locale) {
+        Profile profile = profileDAO.getByIdWithFallback(pin, locale, Locale.US);
+        if (profile == null) {
+            System.out.println("Error: Profile not found for PIN: " + pin);
+        }
+        return profile;
+    }
+
     /**
-     * @deprecated ProfileView already renders all profile fields via
-     *             {@link #getProfile(int)}. This CLI-era method is no longer needed
-     *             and will be removed in a future version.
+     * @deprecated Use {@link #getProfile(int, Locale)} instead.
      */
     @Deprecated
+    public Profile getProfile(int pin) {
+        return getProfile(pin, Locale.getDefault());
+    }
+
+    /**
+     * @deprecated Use
+     *             {@link #updateProfile(int, String, String, String, String, String, String, String, Locale)}
+     *             instead.
+     */
+    @Deprecated
+    public boolean updateProfile(int pin, String experienceLevel, String tools, String skills, String link,
+            String profileEmail, Locale locale) {
+        return updateProfile(pin, "", "", experienceLevel, tools, skills, link, profileEmail, locale);
+    }
+
+    /**
+     * @deprecated Use
+     *             {@link #updateProfile(int, String, String, String, String, String, String, String, Locale)}
+     *             instead.
+     */
+    @Deprecated
+    public boolean updateProfile(int pin, String experienceLevel, String tools, String skills, String link,
+            String profileEmail) {
+        return updateProfile(pin, "", "", experienceLevel, tools, skills, link, profileEmail, Locale.getDefault());
+    }
+
     public void displayProfile(int pin) {
-        Profile profile = profileDAO.getProfileByPin(pin);
+        Profile profile = getProfile(pin);
 
         if (profile == null) {
             System.out.println("Error: Profile not found");
