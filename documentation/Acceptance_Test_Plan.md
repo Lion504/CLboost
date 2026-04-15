@@ -42,7 +42,7 @@ Based on the product vision and sprint requirements, CL Booster must achieve:
 | **Efficiency** | Users can generate a cover letter in < 2 minutes | Time to completion ≤ 120 seconds |
 | **Quality** | Generated cover letters are contextually relevant and ATS-compliant | 100% compliance with ATS standards |
 | **Localization** | Application supports 5 languages with proper encoding and RTL/LTR support | Portuguese, Chinese, Urdu, Farsi, English fully functional |
-| **Data Privacy** | All user data stored locally, no cloud transmission of personal data | Zero external data transmission (except Gemini API for generation) |
+| **Data Privacy** | All user data stored locally, no cloud transmission of personal data | Zero external data transmission (except Gemini API for generation + Linkedin for profile connection) |
 | **Cover Letter Download** | Users can download cover letters in PDF/image format | PDF and image export functionality verified |
 | **Reliability** | System uptime and error handling for API failures | 99.5% uptime; graceful error handling for AI API failures |
 
