@@ -50,7 +50,7 @@
 
 | Team Member Name | Assigned Tasks                                                                                         | Time Spent (hrs) | In-class Tasks |
 |------------------|--------------------------------------------------------------------------------------------------------|--------------| ------------- |
-| Taysa Abinader   | Statistical Code Review Report | 8            | Submitted |
+| Taysa Abinader   | Scrum Master and Statistical Code Review Report | 8            | Submitted |
 | Wang Yongzhi     | GUI localization support, Frontend simplification, update the dao functionaliy, quality assurance check | 16           | Submitted |
 | Tamseela Mahmood | Scrum master, Improving cover letter quality, language quality assurance check                         | 9            | Submitted |
 | Kiavash Montazeri| Linked in API, and PDF scanned library                                                                 | 12           | Not Submitted |
