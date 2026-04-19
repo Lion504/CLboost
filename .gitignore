@@ -31,5 +31,5 @@ uploads/resumes/*
 test-jobads.md
 *.docx
 *.pdf
-
 bin/
+documentation/*
