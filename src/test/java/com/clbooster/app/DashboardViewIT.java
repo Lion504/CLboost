@@ -7,7 +7,7 @@ import com.vaadin.testbench.BrowserTestBase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
-public class DashboardViewIT extends BrowserTestBase {
+class DashboardViewIT extends BrowserTestBase {
 
     /**
      * If running on CI, get the host name from environment variable HOSTNAME
@@ -23,7 +23,7 @@ public class DashboardViewIT extends BrowserTestBase {
     }
 
     @BeforeEach
-    public void open() {
+    void open() {
         getDriver().get("http://" + getDeploymentHostname() + ":8080/");
     }
 
