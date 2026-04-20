@@ -33,3 +33,5 @@ test-jobads.md
 *.pdf
 bin/
 documentation/*
+.github/instructions/sonarqube_mcp.instructions.md
+.sonarlint/connectedMode.json

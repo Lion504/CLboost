@@ -25,6 +25,7 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import java.util.regex.Pattern;
 
 @Route(value = "profile", layout = MainLayout.class)
 @PageTitle("Profile | CL Booster")
@@ -37,6 +38,11 @@ public class ProfileView extends VerticalLayout {
     private static final String TEXT_SECONDARY = "#86868b";
     private static final String BG_WHITE = "#ffffff";
     private static final String BG_GRAY = "#f5f5f7";
+
+    private static final Pattern UPPERCASE_PATTERN = Pattern.compile("[A-Z]");
+    private static final Pattern LOWERCASE_PATTERN = Pattern.compile("[a-z]");
+    private static final Pattern DIGIT_PATTERN = Pattern.compile("\\d");
+    private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile("[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]");
 
     private final AuthenticationService authService;
     private final ProfileService profileService;
@@ -520,8 +526,8 @@ public class ProfileView extends VerticalLayout {
         }
 
         // Check password requirements
-        if (newPwd.length() < 10 || !newPwd.matches(".*[A-Z].*") || !newPwd.matches(".*[a-z].*")
-                || !newPwd.matches(".*\\d.*") || !newPwd.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*")) {
+        if (newPwd.length() < 10 || !UPPERCASE_PATTERN.matcher(newPwd).find() || !LOWERCASE_PATTERN.matcher(newPwd).find()
+                || !DIGIT_PATTERN.matcher(newPwd).find() || !SPECIAL_CHAR_PATTERN.matcher(newPwd).find()) {
             Notification.show(translationService.translate("profile.passwordRequirementsError"), 5000,
                     Notification.Position.TOP_CENTER);
             return;

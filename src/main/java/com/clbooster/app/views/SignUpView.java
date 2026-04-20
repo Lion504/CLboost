@@ -13,6 +13,7 @@ import com.vaadin.flow.component.orderedlayout.*;
 import com.vaadin.flow.component.textfield.*;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import java.util.regex.Pattern;
 
 @Route("signup")
 @PageTitle("Create Account | CL Booster")
@@ -30,6 +31,11 @@ public class SignUpView extends VerticalLayout {
     private static final String WEAK = "#FF3B30";
     private static final String MEDIUM = "#FF9500";
     private static final String GRAY = "rgba(0, 0, 0, 0.1)";
+
+    private static final Pattern UPPERCASE_PATTERN = Pattern.compile("[A-Z]");
+    private static final Pattern LOWERCASE_PATTERN = Pattern.compile("[a-z]");
+    private static final Pattern DIGIT_PATTERN = Pattern.compile("\\d");
+    private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile("[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]");
 
     private final AuthenticationService authService;
     private final TranslationService translationService;
@@ -510,10 +516,10 @@ public class SignUpView extends VerticalLayout {
             strength++;
 
         // Character variety checks
-        boolean hasUpper = password.matches(".*[A-Z].*");
-        boolean hasLower = password.matches(".*[a-z].*");
-        boolean hasNumber = password.matches(".*\\d.*");
-        boolean hasSpecial = password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*");
+        boolean hasUpper = UPPERCASE_PATTERN.matcher(password).find();
+        boolean hasLower = LOWERCASE_PATTERN.matcher(password).find();
+        boolean hasNumber = DIGIT_PATTERN.matcher(password).find();
+        boolean hasSpecial = SPECIAL_CHAR_PATTERN.matcher(password).find();
 
         int varietyCount = 0;
         if (hasUpper)
