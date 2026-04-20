@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Locale;
 
 public class ProfileService {
+    private static final String NOT_SET = "(Not set)";
+
     private static final Logger log = LoggerFactory.getLogger(ProfileService.class);
 
     private ProfileDAO profileDAO;
@@ -20,7 +22,7 @@ public class ProfileService {
             String skills, String link, String profileEmail, Locale locale) {
         if (profileEmail != null && !profileEmail.trim().isEmpty()) {
             if (!isValidEmail(profileEmail)) {
-                System.out.println("Error: Invalid email format");
+                log.error("Invalid email format");
                 return false;
             }
         }
@@ -34,10 +36,9 @@ public class ProfileService {
         // Save translation and base profile in one go via ProfileDAO
         try {
             profileDAO.saveTranslation(profile, locale);
-            System.out.println("✓ Profile updated successfully!");
+            log.info("Profile updated successfully!");
             return true;
         } catch (Exception e) {
-            System.out.println("Error: Failed to update profile - " + e.getMessage());
             log.error("Failed to update profile for PIN {}", pin, e);
             return false;
         }
@@ -50,7 +51,7 @@ public class ProfileService {
     public Profile getProfile(int pin, Locale locale) {
         Profile profile = profileDAO.getByIdWithFallback(pin, locale, Locale.US);
         if (profile == null) {
-            System.out.println("Error: Profile not found for PIN: " + pin);
+            log.error("Profile not found for PIN: {}", pin);
         }
         return profile;
     }
@@ -89,30 +90,27 @@ public class ProfileService {
         Profile profile = getProfile(pin);
 
         if (profile == null) {
-            System.out.println("Error: Profile not found");
+            log.error("Profile not found");
             return;
         }
 
-        System.out.println("\n_____________________________________");
-        System.out.println("           YOUR PROFILE");
-        System.out.println("______________________________________");
-        // System.out.println("PIN: " + profile.getPin());
-        System.out.println("Experience Level: "
-                + (profile.getExperienceLevel() != null ? profile.getExperienceLevel() : "(Not set)"));
-        System.out.println("Tools:            " + (profile.getTools() != null ? profile.getTools() : "(Not set)"));
-        System.out.println("Skills:           " + (profile.getSkills() != null ? profile.getSkills() : "(Not set)"));
-        System.out.println("Link:             " + (profile.getLink() != null ? profile.getLink() : "(Not set)"));
-        System.out.println(
-                "Profile Email:    " + (profile.getProfileEmail() != null ? profile.getProfileEmail() : "(Not set)"));
-        System.out.println("_____________________________________\n");
+        log.info("\n_____________________________________");
+        log.info("           YOUR PROFILE");
+        log.info("______________________________________");
+        log.info("Experience Level: {}", (profile.getExperienceLevel() != null ? profile.getExperienceLevel() : NOT_SET));
+        log.info("Tools:            {}", (profile.getTools() != null ? profile.getTools() : NOT_SET));
+        log.info("Skills:           {}", (profile.getSkills() != null ? profile.getSkills() : NOT_SET));
+        log.info("Link:             {}", (profile.getLink() != null ? profile.getLink() : NOT_SET));
+        log.info("Profile Email:    {}", (profile.getProfileEmail() != null ? profile.getProfileEmail() : NOT_SET));
+        log.info("_____________________________________\n");
     }
 
     public boolean updateCVTimestamp(int pin) {
         if (profileDAO.updateCVTimestamp(pin)) {
-            System.out.println("✓ CV timestamp updated");
+            log.info("CV timestamp updated");
             return true;
         } else {
-            System.out.println("Error: Failed to update CV timestamp");
+            log.error("Failed to update CV timestamp");
             return false;
         }
     }

@@ -27,6 +27,6 @@ public final class Utf8Validator {
     public static String sanitize(String input) {
         if (input == null)
             return null;
-        return input.replaceAll("\\p{Cntrl}", "").replaceAll("\u0000", "").trim();
+        return input.replaceAll("\\p{Cntrl}", "").replace("\u0000", "").trim();
     }
 }
