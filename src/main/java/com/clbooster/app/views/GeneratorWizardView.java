@@ -24,8 +24,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.FileBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
@@ -385,55 +383,84 @@ public class GeneratorWizardView extends VerticalLayout {
         layout.setSpacing(false);
         layout.getStyle().set("gap", "24px");
 
-        // Title
+        buildStep2Header(layout);
+        buildStep2SkillsGrid(layout);
+        buildSavedResumeSection(layout);
+        buildImportResumeSection(layout);
+
+        return layout;
+    }
+
+    private void buildStep2Header(VerticalLayout layout) {
         H1 title = new H1(translationService.translate("generator.step2.title"));
-        title.getStyle().set("font-size", "36px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("text-align", "center");
-        title.getStyle().set("margin", "0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "36px")
+             .set(StyleConstants.CSS_FONT_WEIGHT, "700")
+             .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
+             .set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER)
+             .set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph subtitle = new Paragraph(translationService.translate("generator.step2.description"));
-        subtitle.getStyle().set("font-size", "18px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("text-align", "center");
-        subtitle.getStyle().set("margin", "0 0 16px 0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px")
+                .set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+                .set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER)
+                .set(StyleConstants.CSS_MARGIN, StyleConstants.VAL_0_0_16PX);
+        
+        layout.add(title, subtitle);
+    }
 
-        // Skills grid
+    private void buildStep2SkillsGrid(VerticalLayout layout) {
         skillsGrid = new Div();
-        skillsGrid.getStyle().set("display", "grid");
-        skillsGrid.getStyle().set("grid-template-columns", "repeat(auto-fill, minmax(140px, 1fr))");
-        skillsGrid.getStyle().set("gap", "16px");
-        skillsGrid.getStyle().set("width", "100%");
-        skillsGrid.getStyle().set("max-width", "640px");
+        skillsGrid.getStyle().set(StyleConstants.CSS_DISPLAY, "grid")
+                .set("grid-template-columns", "repeat(auto-fill, minmax(140px, 1fr))")
+                .set("gap", "16px")
+                .set(StyleConstants.CSS_WIDTH, "100%")
+                .set(StyleConstants.CSS_MAX_WIDTH, "640px");
 
-        // Clear previous buttons list
         skillButtons.clear();
-
         for (String skill : AVAILABLE_SKILLS) {
             Button skillBtn = createSkillButton(skill);
             skillButtons.add(skillBtn);
             skillsGrid.add(skillBtn);
         }
+        layout.add(skillsGrid);
+    }
 
-        // ── Use saved resume ───────────────────────────────────────────────
-        // Collect all resume files for this user, newest first
-        java.util.Map<String, File> resumeFileMap = new java.util.LinkedHashMap<>();
+    private void buildSavedResumeSection(VerticalLayout layout) {
+        java.util.Map<String, java.io.File> resumeFileMap = fetchUserResumes();
+        
+        Div savedResumeCard = new Div();
+        savedResumeCard.getStyle().set(StyleConstants.CSS_BACKGROUND, GREEN_LIGHT).set(StyleConstants.CSS_BORDER, "1.5px solid " + GREEN)
+                .set(StyleConstants.CSS_BORDER_RADIUS, "16px").set(StyleConstants.CSS_PADDING, "16px 24px").set(StyleConstants.CSS_WIDTH, "100%").set(StyleConstants.CSS_MAX_WIDTH, "600px")
+                .set(StyleConstants.CSS_MARGIN_TOP, "16px");
+
+        if (!resumeFileMap.isEmpty()) {
+            HorizontalLayout savedRow = new HorizontalLayout();
+            savedRow.setWidthFull();
+            savedRow.setAlignItems(FlexComponent.Alignment.CENTER);
+            savedRow.getStyle().set("gap", "12px");
+            populateSavedRow(savedRow, resumeFileMap);
+            savedResumeCard.add(savedRow);
+        } else {
+            savedResumeCard.setVisible(false);
+        }
+        layout.add(savedResumeCard);
+    }
+
+    private java.util.Map<String, java.io.File> fetchUserResumes() {
+        java.util.Map<String, java.io.File> resumeFileMap = new java.util.LinkedHashMap<>();
         try {
             AuthenticationService _authForResume = new AuthenticationService();
             com.clbooster.app.backend.service.profile.User _resumeUser = _authForResume.getCurrentUser();
             if (_resumeUser != null) {
-                Path resumeDir = Paths.get("uploads", "resumes");
-                if (Files.exists(resumeDir)) {
+                java.nio.file.Path resumeDir = java.nio.file.Paths.get("uploads", "resumes");
+                if (java.nio.file.Files.exists(resumeDir)) {
                     int _pin = _resumeUser.getPin();
-                    File[] existing = resumeDir.toFile().listFiles((d, n) -> n.startsWith(_pin + "_"));
+                    java.io.File[] existing = resumeDir.toFile().listFiles((d, n) -> n.startsWith(_pin + "_"));
                     if (existing != null) {
-                        java.util.Arrays.stream(existing).filter(File::isFile)
-                                .sorted(java.util.Comparator.comparingLong(File::lastModified).reversed())
+                        java.util.Arrays.stream(existing).filter(java.io.File::isFile)
+                                .sorted(java.util.Comparator.comparingLong(java.io.File::lastModified).reversed())
                                 .forEach(f -> {
-                                    // Strip pin_timestamp_ prefix for display
                                     String display = f.getName().replaceFirst("^\\d+_\\d+_", "");
-                                    // Deduplicate display names by appending index if needed
                                     String key = display;
                                     int idx = 2;
                                     while (resumeFileMap.containsKey(key))
@@ -443,260 +470,171 @@ public class GeneratorWizardView extends VerticalLayout {
                     }
                 }
             }
-        } catch (Exception ignored) {
-            // If we can't list resumes, skip the saved-resume section
-        }
+        } catch (Exception ignored) { /* Ignored */ }
+        return resumeFileMap;
+    }
 
-        Div savedResumeCard = new Div();
-        savedResumeCard.getStyle().set("background", GREEN_LIGHT).set("border", "1.5px solid " + GREEN)
-                .set("border-radius", "16px").set("padding", "16px 24px").set("width", "100%").set("max-width", "600px")
-                .set("margin-top", "16px");
-
-        if (!resumeFileMap.isEmpty()) {
-            HorizontalLayout savedRow = new HorizontalLayout();
-            savedRow.setWidthFull();
-            savedRow.setAlignItems(FlexComponent.Alignment.CENTER);
-            savedRow.getStyle().set("gap", "12px");
-
-            if (resumeFileMap.size() == 1) {
-                // Single resume — show label + button
-                File singleFile = resumeFileMap.values().iterator().next();
-                String singleName = resumeFileMap.keySet().iterator().next();
-
-                Span singleLabel = new Span("\uD83D\uDCCE " + singleName);
-                singleLabel.getStyle().set("flex", "1").set("font-size", "14px").set("font-weight", "600")
-                        .set("color", TEXT_PRIMARY).set("overflow", "hidden").set("text-overflow", "ellipsis")
-                        .set("white-space", "nowrap");
-
-                Button useBtn = new Button(translationService.translate("generator.step2.useResume"),
-                        VaadinIcon.CHECK_CIRCLE.create());
-                useBtn.getStyle().set("background", GREEN).set("color", "white").set("font-weight", "600")
-                        .set("border-radius", "9999px").set("border", "none").set("white-space", "nowrap");
-                useBtn.addClickListener(e -> loadResumeSkills(singleFile));
-
-                savedRow.add(singleLabel, useBtn);
-                savedRow.expand(singleLabel);
-            } else {
-                // Multiple resumes — show dropdown + button
-                Select<String> resumeSelect = new Select<>();
-                resumeSelect.setItems(resumeFileMap.keySet());
-                resumeSelect.setValue(resumeFileMap.keySet().iterator().next()); // preselect newest
-                resumeSelect.setLabel(null);
-                resumeSelect.getStyle().set("flex", "1").set("min-width", "0");
-                resumeSelect.getElement().setAttribute("title",
-                        translationService.translate("generator.step2.selectSavedResume"));
-
-                Span selectHint = new Span(
-                        "\uD83D\uDCCE " + translationService.translate("generator.step2.savedResumes"));
-                selectHint.getStyle().set("font-size", "13px").set("font-weight", "600").set("color", TEXT_PRIMARY)
-                        .set("white-space", "nowrap");
-
-                Button useBtn = new Button(translationService.translate("generator.step2.useSelected"),
-                        VaadinIcon.CHECK_CIRCLE.create());
-                useBtn.getStyle().set("background", GREEN).set("color", "white").set("font-weight", "600")
-                        .set("border-radius", "9999px").set("border", "none").set("white-space", "nowrap");
-                useBtn.addClickListener(e -> {
-                    String selected = resumeSelect.getValue();
-                    if (selected != null) {
-                        File selectedFile = resumeFileMap.get(selected);
-                        if (selectedFile != null)
-                            loadResumeSkills(selectedFile);
-                    }
-                });
-
-                savedRow.add(selectHint, resumeSelect, useBtn);
-                savedRow.expand(resumeSelect);
-            }
-
-            savedResumeCard.add(savedRow);
+    private void populateSavedRow(HorizontalLayout savedRow, java.util.Map<String, java.io.File> resumeFileMap) {
+        if (resumeFileMap.size() == 1) {
+            java.io.File singleFile = resumeFileMap.values().iterator().next();
+            String singleName = resumeFileMap.keySet().iterator().next();
+            Span singleLabel = new Span("\uD83D\uDCCE " + singleName);
+            singleLabel.getStyle().set("flex", "1").set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                    .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_OVERFLOW, "hidden").set("text-overflow", "ellipsis")
+                    .set(StyleConstants.CSS_WHITE_SPACE, "nowrap");
+            Button useBtn = createUseResumeButton();
+            useBtn.setText(translationService.translate("generator.step2.useResume"));
+            useBtn.addClickListener(e -> loadResumeSkills(singleFile));
+            savedRow.add(singleLabel, useBtn);
+            savedRow.expand(singleLabel);
         } else {
-            savedResumeCard.setVisible(false);
+            Select<String> resumeSelect = new Select<>();
+            resumeSelect.setItems(resumeFileMap.keySet());
+            resumeSelect.setValue(resumeFileMap.keySet().iterator().next());
+            resumeSelect.setLabel(null);
+            resumeSelect.getStyle().set("flex", "1").set(StyleConstants.CSS_MIN_WIDTH, "0");
+            resumeSelect.getElement().setAttribute("title", translationService.translate("generator.step2.selectSavedResume"));
+            Span selectHint = new Span("\uD83D\uDCCE " + translationService.translate("generator.step2.savedResumes"));
+            selectHint.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_FONT_WEIGHT, "600").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
+                    .set(StyleConstants.CSS_WHITE_SPACE, "nowrap");
+            Button useBtn = createUseResumeButton();
+            useBtn.setText(translationService.translate("generator.step2.useSelected"));
+            useBtn.addClickListener(e -> {
+                String selected = resumeSelect.getValue();
+                if (selected != null && resumeFileMap.get(selected) != null) loadResumeSkills(resumeFileMap.get(selected));
+            });
+            savedRow.add(selectHint, resumeSelect, useBtn);
+            savedRow.expand(resumeSelect);
         }
+    }
 
-        // Import from Resume card
+    private Button createUseResumeButton() {
+        Button useBtn = new Button(VaadinIcon.CHECK_CIRCLE.create());
+        useBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, GREEN).set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_BORDER, "none").set(StyleConstants.CSS_WHITE_SPACE, "nowrap");
+        return useBtn;
+    }
+
+    private void buildImportResumeSection(VerticalLayout layout) {
         Div importCard = new Div();
-        importCard.getStyle().set("background", BG_GRAY);
-        importCard.getStyle().set("border", "2px dashed rgba(0,0,0,0.1)");
-        importCard.getStyle().set("border-radius", "24px");
-        importCard.getStyle().set("padding", "32px");
-        importCard.getStyle().set("width", "100%");
-        importCard.getStyle().set("max-width", "600px");
-        importCard.getStyle().set("text-align", "center");
-        importCard.getStyle().set("margin-top", "16px");
+        importCard.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY)
+                .set(StyleConstants.CSS_BORDER, "2px dashed rgba(0,0,0,0.1)")
+                .set(StyleConstants.CSS_BORDER_RADIUS, "24px").set(StyleConstants.CSS_PADDING, "32px")
+                .set(StyleConstants.CSS_WIDTH, "100%").set(StyleConstants.CSS_MAX_WIDTH, "600px")
+                .set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER).set(StyleConstants.CSS_MARGIN_TOP, "16px");
 
         Icon fileIcon = VaadinIcon.FILE_SEARCH.create();
-        fileIcon.getStyle().set("color", TEXT_SECONDARY);
-        fileIcon.getStyle().set("width", "32px");
-        fileIcon.getStyle().set("height", "32px");
-        fileIcon.getStyle().set("margin-bottom", "12px");
+        fileIcon.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_WIDTH, "32px")
+                .set(StyleConstants.CSS_HEIGHT, "32px").set(StyleConstants.CSS_MARGIN_BOTTOM, "12px");
 
         H3 importTitle = new H3(translationService.translate("generator.step2.importFromResume"));
-        importTitle.getStyle().set("font-size", "16px");
-        importTitle.getStyle().set("font-weight", "700");
-        importTitle.getStyle().set("color", TEXT_PRIMARY);
-        importTitle.getStyle().set("margin", "0 0 4px 0");
+        importTitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "16px").set(StyleConstants.CSS_FONT_WEIGHT, "700")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "0 0 4px 0");
 
         Paragraph importDesc = new Paragraph(translationService.translate("generator.step2.uploadResume"));
-        importDesc.getStyle().set("font-size", "13px");
-        importDesc.getStyle().set("color", TEXT_SECONDARY);
-        importDesc.getStyle().set("margin", "0 0 16px 0");
+        importDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+                .set(StyleConstants.CSS_MARGIN, StyleConstants.VAL_0_0_16PX);
 
-        // Create Upload component with FileBuffer
-        // FileBuffer writes directly to a file instead of memory, avoiding stream
-        // issues
-        FileBuffer buffer = new FileBuffer();
-        Upload upload = new Upload();
+        com.vaadin.flow.component.upload.receivers.MemoryBuffer buffer = new com.vaadin.flow.component.upload.receivers.MemoryBuffer();
+        com.vaadin.flow.component.upload.Upload upload = new com.vaadin.flow.component.upload.Upload();
         upload.setReceiver(buffer);
-
         upload.setDropAllowed(false);
         upload.setAcceptedFileTypes("application/pdf", ".pdf",
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx",
                 "application/msword", ".doc");
         upload.setMaxFiles(1);
-        upload.setMaxFileSize(10 * 1024 * 1024); // 10MB max file size
-
-        // Set up the upload button properly
+        upload.setMaxFileSize(10 * 1024 * 1024);
         upload.setUploadButton(new Button(translationService.translate("generator.step2.uploadFile")));
         upload.setDropLabel(new Span(""));
-        upload.setDropAllowed(false);
 
-        // File name tag — hidden until a file is uploaded
         Div fileTag = new Div();
-        fileTag.getStyle().set("display", "inline-flex").set("align-items", "center").set("gap", "6px")
-                .set("background", "#e8f5e9").set("color", "#2e7d32").set("font-size", "13px").set("font-weight", "600")
-                .set("padding", "6px 14px").set("border-radius", "9999px").set("margin-top", "12px")
-                .set("max-width", "100%").set("overflow", "hidden").set("text-overflow", "ellipsis")
-                .set("white-space", "nowrap");
+        fileTag.getStyle().set(StyleConstants.CSS_DISPLAY, "inline-flex").set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER).set("gap", "6px")
+                .set(StyleConstants.CSS_BACKGROUND, "#e8f5e9").set(StyleConstants.CSS_COLOR, "#2e7d32").set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_PADDING, "6px 14px").set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_MARGIN_TOP, "12px")
+                .set(StyleConstants.CSS_MAX_WIDTH, "100%").set(StyleConstants.CSS_OVERFLOW, "hidden").set("text-overflow", "ellipsis")
+                .set(StyleConstants.CSS_WHITE_SPACE, "nowrap");
         fileTag.setVisible(false);
 
-        // Handle successful upload - FileBuffer provides direct file access
-        upload.addSucceededListener(event -> {
-            String fileName = event.getFileName();
-            LOGGER.info("[UPLOAD] File upload succeeded: " + fileName);
-
-            try {
-                // Validate filename
-                if (fileName == null || fileName.trim().isEmpty()) {
-                    throw new IllegalArgumentException("Filename is empty or null");
-                }
-
-                // Extract and validate file extension
-                String originalFileName = fileName.trim();
-                String fileExtension = "";
-                int lastDotIndex = originalFileName.lastIndexOf('.');
-                if (lastDotIndex > 0 && lastDotIndex < originalFileName.length() - 1) {
-                    fileExtension = originalFileName.substring(lastDotIndex).toLowerCase();
-                }
-                LOGGER.info("[UPLOAD] File extension detected: " + fileExtension);
-
-                // Validate supported extensions
-                Set<String> supportedExtensions = new HashSet<>(Arrays.asList(".pdf", ".docx", ".doc"));
-                if (!supportedExtensions.contains(fileExtension)) {
-                    throw new IllegalArgumentException(
-                            "Unsupported file type: " + fileExtension + ". Only PDF and DOCX files are supported.");
-                }
-
-                // Get the temp file that FileBuffer already wrote to disk
-                File tempFile = buffer.getFileData().getFile();
-                LOGGER.info("[UPLOAD] FileBuffer temp file path: " + tempFile.getAbsolutePath());
-
-                if (!tempFile.exists()) {
-                    throw new IOException("Temp file does not exist: " + tempFile.getAbsolutePath());
-                }
-                if (tempFile.length() == 0) {
-                    throw new IOException("Temp file is empty: " + tempFile.getAbsolutePath());
-                }
-                LOGGER.info("[UPLOAD] Temp file size: " + tempFile.length() + " bytes");
-
-                // Parse the file using the Parser class directly using the temp file path
-                Parser parser = new Parser();
-                LOGGER.info("[UPLOAD] Starting file parsing...");
-                String resumeText = parser.parseFileToJson(tempFile.getAbsolutePath());
-                LOGGER.info("[UPLOAD] File parsing completed. Extracted "
-                        + (resumeText != null ? resumeText.length() : 0) + " characters");
-
-                // Extract skills from the resume text
-                Set<String> extractedSkills = extractSkillsFromText(resumeText);
-                LOGGER.info("[UPLOAD] Skills extracted: " + extractedSkills.size() + " skills found");
-
-                // Persist the file to uploads/resumes/ so it appears in Resume Manager
-                // and is picked up by loadUserResumeText during cover letter generation
-                try {
-                    AuthenticationService _authSvc2 = new AuthenticationService();
-                    com.clbooster.app.backend.service.profile.User _u2 = _authSvc2.getCurrentUser();
-                    if (_u2 != null) {
-                        Path resumeDir = Paths.get("uploads", "resumes");
-                        if (!Files.exists(resumeDir))
-                            Files.createDirectories(resumeDir);
-                        String safeOriginal = originalFileName.replaceAll("[^a-zA-Z0-9.\\-]", "_");
-                        String persistedName = _u2.getPin() + "_" + System.currentTimeMillis() + "_" + safeOriginal;
-                        Files.copy(tempFile.toPath(), resumeDir.resolve(persistedName),
-                                java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-                        LOGGER.info("[UPLOAD] Resume persisted to uploads/resumes/" + persistedName);
-                    }
-                } catch (Exception persistEx) {
-                    LOGGER.warning("[UPLOAD] Could not persist resume: " + persistEx.getMessage());
-                }
-
-                // Show the uploaded filename in the card
-                fileTag.setText("\uD83D\uDCCE " + originalFileName);
-                fileTag.setVisible(true);
-
-                if (!extractedSkills.isEmpty()) {
-                    selectedSkills.addAll(extractedSkills);
-                    updateSkillButtonsUI();
-
-                    String skillsText = String.join(", ", extractedSkills);
-                    Notification.show(translationService.translate("generator.notif.skillsExtracted", skillsText), 5000,
-                            Notification.Position.TOP_CENTER);
-                } else {
-                    Notification.show(translationService.translate("generator.notif.noSkillsFound"), 3000,
-                            Notification.Position.TOP_CENTER);
-                }
-
-                upload.getElement().executeJs("this.files = []");
-
-            } catch (IllegalArgumentException e) {
-                LOGGER.warning("[UPLOAD] Validation error: " + e.getMessage());
-                Notification.show(translationService.translate("generator.notif.uploadError", e.getMessage()), 5000,
-                        Notification.Position.TOP_CENTER);
-                upload.getElement().executeJs("this.files = []");
-            } catch (IOException e) {
-                LOGGER.severe("[UPLOAD] File I/O error: " + e.getMessage());
-                Notification.show(translationService.translate("generator.notif.fileError", e.getMessage()), 5000,
-                        Notification.Position.TOP_CENTER);
-                upload.getElement().executeJs("this.files = []");
-            } catch (Exception e) {
-                LOGGER.log(Level.SEVERE,
-                        "[UPLOAD] Unexpected error processing file '" + fileName + "': " + e.getMessage(), e);
-                Notification.show(translationService.translate("generator.notif.fileProcessError", e.getMessage()),
-                        5000, Notification.Position.TOP_CENTER);
-                upload.getElement().executeJs("this.files = []");
-            }
-        });
-
-        // Handle failed upload
-        upload.addFailedListener(event -> {
-            LOGGER.severe("[UPLOAD] Upload failed event: "
-                    + (event.getReason() != null ? event.getReason().getMessage() : "Unknown reason"));
-            Notification.show(
-                    "File upload failed: "
-                            + (event.getReason() != null ? event.getReason().getMessage() : "Unknown error"),
-                    5000, Notification.Position.TOP_CENTER);
-        });
-
-        // Handle file rejection (wrong type, too large, etc.)
+        upload.addSucceededListener(event -> handleUploadSucceeded(event, buffer, fileTag, importTitle, importDesc));
+        upload.addFailedListener(event -> handleUploadFailed());
         upload.addFileRejectedListener(event -> {
-            LOGGER.warning("[UPLOAD] File rejected: " + event.getErrorMessage());
-            Notification.show(translationService.translate("generator.notif.fileRejected", event.getErrorMessage()),
-                    5000, Notification.Position.TOP_CENTER);
+            LOGGER.warning("[UPLOAD REJECTED] Cannot upload file");
+            showUploadFailedNotification();
         });
 
         importCard.add(fileIcon, importTitle, importDesc, upload, fileTag);
+        layout.add(importCard);
+    }
+    
+    private void handleUploadSucceeded(com.vaadin.flow.component.upload.SucceededEvent event,
+                                       com.vaadin.flow.component.upload.receivers.MemoryBuffer buffer,
+                                       Div fileTag, H3 importTitle, Paragraph importDesc,
+                                       com.vaadin.flow.component.upload.Upload upload) {
+        String fileName = event.getFileName();
+        LOGGER.info("[UPLOAD] File upload succeeded: " + fileName);
 
-        layout.add(title, subtitle, skillsGrid, savedResumeCard, importCard);
+        try {
+            if (fileName == null || fileName.trim().isEmpty()) {
+                throw new IllegalArgumentException("Filename is empty or null");
+            }
+            String originalFileName = fileName.trim();
+            String fileExtension = "";
+            int lastDotIndex = originalFileName.lastIndexOf('.');
+            if (lastDotIndex > 0 && lastDotIndex < originalFileName.length() - 1) {
+                fileExtension = originalFileName.substring(lastDotIndex).toLowerCase();
+            }
+            if (!java.util.Arrays.asList(".pdf", ".docx", ".doc").contains(fileExtension)) {
+                throw new IllegalArgumentException("Unsupported file type: " + fileExtension);
+            }
+            java.io.File tempFile = buffer.getFileData().getFile();
+            if (!tempFile.exists() || tempFile.length() == 0) {
+                throw new java.io.IOException("Temp file does not exist or empty.");
+            }
+            Parser parser = new Parser();
+            String resumeText = parser.parseFileToJson(tempFile.getAbsolutePath());
+            java.util.Set<String> extractedSkills = extractSkillsFromText(resumeText);
+            
+            try {
+                AuthenticationService authServiceLoc = new AuthenticationService();
+                com.clbooster.app.backend.service.profile.User u = authServiceLoc.getCurrentUser();
+                if (u != null) {
+                    java.nio.file.Path resumeDir = java.nio.file.Paths.get("uploads", "resumes");
+                    if (!java.nio.file.Files.exists(resumeDir)) java.nio.file.Files.createDirectories(resumeDir);
+                    String safeFileName = originalFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
+                    java.nio.file.Path destFile = resumeDir.resolve(u.getPin() + "_" + System.currentTimeMillis() + "_" + safeFileName);
+                    java.nio.file.Files.copy(tempFile.toPath(), destFile, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                }
+            } catch (Exception persistenceEx) {
+                LOGGER.warning("[UPLOAD] Failed to persist file, continuing: " + persistenceEx.getMessage());
+            }
 
-        return layout;
+            fileTag.removeAll();
+            Icon checkIcon = VaadinIcon.CHECK_CIRCLE.create();
+            checkIcon.getStyle().set(StyleConstants.CSS_WIDTH, "14px").set(StyleConstants.CSS_HEIGHT, "14px");
+            fileTag.add(checkIcon, new Span(originalFileName));
+            fileTag.setVisible(true);
+
+            importTitle.setText(translationService.translate("generator.step2.importSuccess"));
+            importTitle.getStyle().set(StyleConstants.CSS_COLOR, "#2e7d32");
+            importDesc.setVisible(false);
+
+            Notification.show(translationService.translate("generator.step2.parsing"), 1500, Notification.Position.TOP_CENTER);
+            
+            getUI().ifPresent(ui -> ui.access(() -> loadResumeSkills(tempFile)));
+
+        } catch (Exception ex) {
+            showUploadFailedNotification();
+        }
+    }
+
+    
+    private void showUploadFailedNotification() {
+        Notification.show(translationService.translate("generator.step2.uploadFailed"), 3000, Notification.Position.TOP_CENTER);
+    }
+
+    private void handleUploadFailed() {
+        LOGGER.severe("[UPLOAD FAILED] Upload failed entirely");
+        showUploadFailedNotification();
     }
 
     private Button createSkillButton(String skill) {
@@ -1335,9 +1273,9 @@ public class GeneratorWizardView extends VerticalLayout {
         try {
             AuthenticationService _authSvc = new AuthenticationService();
             com.clbooster.app.backend.service.profile.User _u = _authSvc.getCurrentUser();
-            if (_u != null) {
+            if (u != null) {
                 capturedUserName = _u.getFirstName() + " " + _u.getLastName();
-                capturedUserPin = _u.getPin();
+                capturedUserPin = u.getPin();
             }
         } catch (Exception ignored) {
             LOGGER.warning("Could not capture user from session before generation");

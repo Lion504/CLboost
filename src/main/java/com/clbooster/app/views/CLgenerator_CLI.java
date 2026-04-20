@@ -9,6 +9,11 @@ import com.clbooster.aiservice.Parser;
 import java.util.Scanner;
 
 public class CLgenerator_CLI {
+    private static final String MSG_CHOOSE_OPTION = "Choose an option: ";
+    private static final String MSG_INVALID_OPTION = "Invalid option. Please try again.";
+    private static final String MSG_NOT_LOGGED_IN = "Error: Not logged in";
+    private static final String MSG_NOT_SET = "Not set";
+
     private static AuthenticationService authService;
     private static ProfileService profileService;
     private static UserDAO userDAO;
@@ -63,7 +68,7 @@ public class CLgenerator_CLI {
         System.out.println("1. Login");
         System.out.println("2. Register");
         System.out.println("3. Exit");
-        System.out.print("Choose an option: ");
+        System.out.print(MSG_CHOOSE_OPTION);
 
         String choice = scanner.nextLine().trim();
 
@@ -77,7 +82,7 @@ public class CLgenerator_CLI {
         case "3":
             return false;
         default:
-            System.out.println("Invalid option. Please try again.");
+            System.out.println(MSG_INVALID_OPTION);
         }
         return true;
     }
@@ -89,7 +94,7 @@ public class CLgenerator_CLI {
         System.out.println("2. Generate Cover Letter");
         System.out.println("3. Logout");
         System.out.println("4. Exit");
-        System.out.print("Choose an option: ");
+        System.out.print(MSG_CHOOSE_OPTION);
 
         String choice = scanner.nextLine().trim();
 
@@ -112,7 +117,7 @@ public class CLgenerator_CLI {
             authService.logout();
             return false;
         default:
-            System.out.println("Invalid option. Please try again.");
+            System.out.println(MSG_INVALID_OPTION);
         }
         return true;
     }
@@ -120,7 +125,7 @@ public class CLgenerator_CLI {
     private static void handleCoverLetterGeneration() {
         int pin = authService.getCurrentUserPin();
         if (pin == -1) {
-            System.out.println("Error: Not logged in");
+            System.out.println(MSG_NOT_LOGGED_IN);
             return;
         }
 
@@ -183,7 +188,7 @@ public class CLgenerator_CLI {
     private static boolean handleProfileMenu() {
         int pin = authService.getCurrentUserPin();
         if (pin == -1) {
-            System.out.println("Error: Not logged in");
+            System.out.println(MSG_NOT_LOGGED_IN);
             return true;
         }
 
@@ -197,7 +202,7 @@ public class CLgenerator_CLI {
             System.out.println("2. View Profile Details");
             System.out.println("3. Delete Account");
             System.out.println("4. Back to Main Menu");
-            System.out.print("Choose an option: ");
+            System.out.print(MSG_CHOOSE_OPTION);
 
             String choice = scanner.nextLine().trim();
 
@@ -220,7 +225,7 @@ public class CLgenerator_CLI {
                 inProfileMenu = false;
                 break;
             default:
-                System.out.println("Invalid option. Please try again.");
+                System.out.println(MSG_INVALID_OPTION);
             }
         }
         return true; // Continue in user menu
@@ -299,7 +304,7 @@ public class CLgenerator_CLI {
     private static void handleEditProfile() {
         int pin = authService.getCurrentUserPin();
         if (pin == -1) {
-            System.out.println("Error: Not logged in");
+            System.out.println(MSG_NOT_LOGGED_IN);
             return;
         }
 
@@ -314,7 +319,7 @@ public class CLgenerator_CLI {
 
         // Experience Level
         System.out.print("Experience Level (current: "
-                + (currentProfile.getExperienceLevel() != null ? currentProfile.getExperienceLevel() : "Not set")
+                + (currentProfile.getExperienceLevel() != null ? currentProfile.getExperienceLevel() : MSG_NOT_SET)
                 + "): ");
         String experienceLevel = scanner.nextLine().trim();
         if (experienceLevel.isEmpty()) {
@@ -323,7 +328,7 @@ public class CLgenerator_CLI {
 
         // Tools
         System.out.print("Tools/Technologies (current: "
-                + (currentProfile.getTools() != null ? currentProfile.getTools() : "Not set") + "): ");
+                + (currentProfile.getTools() != null ? currentProfile.getTools() : MSG_NOT_SET) + "): ");
         String tools = scanner.nextLine().trim();
         if (tools.isEmpty()) {
             tools = currentProfile.getTools();
@@ -331,7 +336,7 @@ public class CLgenerator_CLI {
 
         // Skills
         System.out.print("Skills (current: "
-                + (currentProfile.getSkills() != null ? currentProfile.getSkills() : "Not set") + "): ");
+                + (currentProfile.getSkills() != null ? currentProfile.getSkills() : MSG_NOT_SET) + "): ");
         String skills = scanner.nextLine().trim();
         if (skills.isEmpty()) {
             skills = currentProfile.getSkills();
@@ -339,7 +344,7 @@ public class CLgenerator_CLI {
 
         // Link
         System.out.print("Link/Portfolio URL (current: "
-                + (currentProfile.getLink() != null ? currentProfile.getLink() : "Not set") + "): ");
+                + (currentProfile.getLink() != null ? currentProfile.getLink() : MSG_NOT_SET) + "): ");
         String link = scanner.nextLine().trim();
         if (link.isEmpty()) {
             link = currentProfile.getLink();
@@ -347,7 +352,7 @@ public class CLgenerator_CLI {
 
         // Profile Email
         System.out.print("Profile Email (current: "
-                + (currentProfile.getProfileEmail() != null ? currentProfile.getProfileEmail() : "Not set") + "): ");
+                + (currentProfile.getProfileEmail() != null ? currentProfile.getProfileEmail() : MSG_NOT_SET) + "): ");
         String profileEmail = scanner.nextLine().trim();
         if (profileEmail.isEmpty()) {
             profileEmail = currentProfile.getProfileEmail();
@@ -368,7 +373,7 @@ public class CLgenerator_CLI {
     private static boolean handleDeleteAccount() {
         int pin = authService.getCurrentUserPin();
         if (pin == -1) {
-            System.out.println("Error: Not logged in");
+            System.out.println(MSG_NOT_LOGGED_IN);
             return false;
         }
 

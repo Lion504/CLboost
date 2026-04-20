@@ -1,5 +1,7 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.views.util.StyleConstants;
+
 import com.clbooster.app.i18n.TranslationService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.select.Select;
@@ -38,47 +40,47 @@ public class LandingView extends VerticalLayout {
     private static final String BG_GRAY = "#f5f5f7";
     private static final String BG_LIGHT = "#fbfbfb";
 
-    private static final String COLOR_PROP = "color";
-    private static final String FONT_SIZE_PROP = "font-size";
-    private static final String FONT_WEIGHT_PROP = "font-weight";
-    private static final String BACKGROUND_PROP = "background";
-    private static final String MARGIN_PROP = "margin";
-    private static final String PADDING_PROP = "padding";
-    private static final String BORDER_RADIUS_PROP = "border-radius";
+    private static final String COLOR_PROP = StyleConstants.CSS_COLOR;
+    private static final String FONT_SIZE_PROP = StyleConstants.CSS_FONT_SIZE;
+    private static final String FONT_WEIGHT_PROP = StyleConstants.CSS_FONT_WEIGHT;
+    private static final String BACKGROUND_PROP = StyleConstants.CSS_BACKGROUND;
+    private static final String MARGIN_PROP = StyleConstants.CSS_MARGIN;
+    private static final String PADDING_PROP = StyleConstants.CSS_PADDING;
+    private static final String BORDER_RADIUS_PROP = StyleConstants.CSS_BORDER_RADIUS;
     private static final String GAP_PROP = "gap";
-    private static final String WIDTH_PROP = "width";
-    private static final String HEIGHT_PROP = "height";
-    private static final String DISPLAY_PROP = "display";
-    private static final String ALIGN_ITEMS_PROP = "align-items";
-    private static final String JUSTIFY_CONTENT_PROP = "justify-content";
-    private static final String CURSOR_PROP = "cursor";
-    private static final String TRANSITION_PROP = "transition";
+    private static final String WIDTH_PROP = StyleConstants.CSS_WIDTH;
+    private static final String HEIGHT_PROP = StyleConstants.CSS_HEIGHT;
+    private static final String DISPLAY_PROP = StyleConstants.CSS_DISPLAY;
+    private static final String ALIGN_ITEMS_PROP = StyleConstants.CSS_ALIGN_ITEMS;
+    private static final String JUSTIFY_CONTENT_PROP = StyleConstants.CSS_JUSTIFY_CONTENT;
+    private static final String CURSOR_PROP = StyleConstants.CSS_CURSOR;
+    private static final String TRANSITION_PROP = StyleConstants.CSS_TRANSITION;
 
-    private static final String POINTER_CURSOR = "pointer";
-    private static final String CENTER_ALIGN = "center";
-    private static final String WHITE_COLOR = "white";
-    private static final String FULLY_ROUNDED = "9999px";
-    private static final String TRANSITION_ALL_FAST = "all 0.2s";
-    private static final String EVENT_MOUSELEAVE = "mouseleave";
+    private static final String POINTER_CURSOR = StyleConstants.VAL_POINTER;
+    private static final String CENTER_ALIGN = StyleConstants.VAL_CENTER;
+    private static final String WHITE_COLOR = StyleConstants.VAL_WHITE;
+    private static final String FULLY_ROUNDED = StyleConstants.VAL_9999PX;
+    private static final String TRANSITION_ALL_FAST = StyleConstants.VAL_ALL_0_2S;
+    private static final String EVENT_MOUSELEAVE = StyleConstants.VAL_MOUSELEAVE;
     private static final String BG_PRIMARY_ALPHA_10 = "rgba(0,122,255,0.1)";
     private static final String BG_BLACK_ALPHA_05 = "rgba(0,0,0,0.05)";
     private static final String MARGIN_TOP_SMALL = "4px 0 0";
 
-    private static final String BORDER_PROP = "border";
+    private static final String BORDER_PROP = StyleConstants.CSS_BORDER;
     private static final String BORDER_TOP_PROP = "border-top";
     private static final String BORDER_BOTTOM_PROP = "border-bottom";
-    private static final String BORDER_COLOR_PROP = "border-color";
-    private static final String BOX_SHADOW_PROP = "box-shadow";
-    private static final String TRANSFORM_PROP = "transform";
+    private static final String BORDER_COLOR_PROP = StyleConstants.CSS_BORDER_COLOR;
+    private static final String BOX_SHADOW_PROP = StyleConstants.CSS_BOX_SHADOW;
+    private static final String TRANSFORM_PROP = StyleConstants.CSS_TRANSFORM;
     private static final String LINE_HEIGHT_PROP = "line-height";
-    private static final String TEXT_ALIGN_PROP = "text-align";
+    private static final String TEXT_ALIGN_PROP = StyleConstants.CSS_TEXT_ALIGN;
     private static final String ZERO_VALUE = "0";
     private static final String BORDER_SUBTLE = "1px solid rgba(0,0,0,0.05)";
     private static final String FONT_WEIGHT_BOLD = "700";
     private static final String FONT_WEIGHT_SEMIBOLD = "600";
     private static final String DISPLAY_FLEX = "flex";
-    private static final String TRANSPARENT_COLOR = "transparent";
-    private static final String EVENT_MOUSEENTER = "mouseenter";
+    private static final String TRANSPARENT_COLOR = StyleConstants.VAL_TRANSPARENT;
+    private static final String EVENT_MOUSEENTER = StyleConstants.VAL_MOUSEENTER;
 
     private static final String LANG_ENGLISH = "English";
     private static final String LANG_SUOMI = "Suomi";
@@ -87,7 +89,7 @@ public class LandingView extends VerticalLayout {
     private static final String LANG_CHINESE = "中文";
     private static final String LANG_URDU = "اردو";
     private static final String POSITION_PROP = "position";
-    private static final String MAX_WIDTH_PROP = "max-width";
+    private static final String MAX_WIDTH_PROP = StyleConstants.CSS_MAX_WIDTH;
     private static final String FILTER_PROP = "filter";
     private static final String YOUR_NAME_PLACEHOLDER = "[Your Name]";
 
@@ -161,7 +163,7 @@ public class LandingView extends VerticalLayout {
         Span logoText = new Span(translationService.translate("landing.clBooster"));
         logoText.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_BOLD);
         logoText.getStyle().set(FONT_SIZE_PROP, "20px");
-        logoText.getStyle().set("letter-spacing", "-0.025em");
+        logoText.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "-0.025em");
         logoText.getStyle().set(COLOR_PROP, TEXT_PRIMARY);
 
         logo.add(logoIcon, logoText);
@@ -312,7 +314,7 @@ public class LandingView extends VerticalLayout {
         Div headline = new Div();
         headline.getStyle().set(FONT_SIZE_PROP, "clamp(40px, 5vw, 72px)");
         headline.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_BOLD);
-        headline.getStyle().set("letter-spacing", "-0.025em");
+        headline.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "-0.025em");
         headline.getStyle().set(LINE_HEIGHT_PROP, "1.1");
         headline.getStyle().set(MARGIN_PROP, ZERO_VALUE);
         headline.getStyle().set(MAX_WIDTH_PROP, "600px");
@@ -436,7 +438,7 @@ public class LandingView extends VerticalLayout {
         cards.setWidthFull();
         cards.getStyle().set(GAP_PROP, "32px");
         cards.getStyle().set(JUSTIFY_CONTENT_PROP, CENTER_ALIGN);
-        cards.getStyle().set("flex-wrap", "wrap");
+        cards.getStyle().set(StyleConstants.CSS_FLEX_WRAP, "wrap");
 
         cards.add(
                 createFeatureCard(VaadinIcon.BOLT, "#FF9500", translationService.translate("landing.instantGeneration"),
@@ -669,7 +671,7 @@ public class LandingView extends VerticalLayout {
             sampleCard.getStyle().set(BORDER_RADIUS_PROP, "16px");
             sampleCard.getStyle().set(BACKGROUND_PROP, BG_WHITE);
             sampleCard.getStyle().set(CURSOR_PROP, POINTER_CURSOR);
-            sampleCard.getStyle().set(TRANSITION_PROP, "all 0.3s");
+            sampleCard.getStyle().set(TRANSITION_PROP, StyleConstants.VAL_ALL_0_3S);
 
             HorizontalLayout cardContent = new HorizontalLayout();
             cardContent.setAlignItems(FlexComponent.Alignment.START);
@@ -702,7 +704,7 @@ public class LandingView extends VerticalLayout {
             matchBadge.getStyle().set(FONT_SIZE_PROP, "11px");
             matchBadge.getStyle().set(FONT_WEIGHT_PROP, "900");
             matchBadge.getStyle().set(COLOR_PROP, PRIMARY);
-            matchBadge.getStyle().set("white-space", "nowrap");
+            matchBadge.getStyle().set(StyleConstants.CSS_WHITE_SPACE, "nowrap");
 
             cardContent.add(fileIcon, textGroup, matchBadge);
             cardContent.setWidthFull();
@@ -732,7 +734,7 @@ public class LandingView extends VerticalLayout {
         // Wrap in scrollable container
         Div scrollContainer = new Div();
         scrollContainer.getStyle().set("overflow-y", "auto");
-        scrollContainer.getStyle().set("max-height", "50vh");
+        scrollContainer.getStyle().set(StyleConstants.CSS_MAX_HEIGHT, "50vh");
         scrollContainer.add(samplesGrid);
 
         // Footer
@@ -861,7 +863,7 @@ public class LandingView extends VerticalLayout {
         letterContainer.getStyle().set(PADDING_PROP, "32px");
         letterContainer.getStyle().set(BACKGROUND_PROP, BG_WHITE);
         letterContainer.getStyle().set("overflow-y", "auto");
-        letterContainer.getStyle().set("max-height", "60vh");
+        letterContainer.getStyle().set(StyleConstants.CSS_MAX_HEIGHT, "60vh");
 
         // Format letter with proper styling
         Div letterText = new Div();
@@ -869,7 +871,7 @@ public class LandingView extends VerticalLayout {
         letterText.getStyle().set(FONT_SIZE_PROP, "15px");
         letterText.getStyle().set(LINE_HEIGHT_PROP, "1.8");
         letterText.getStyle().set(COLOR_PROP, TEXT_PRIMARY);
-        letterText.getStyle().set("white-space", "pre-wrap");
+        letterText.getStyle().set(StyleConstants.CSS_WHITE_SPACE, "pre-wrap");
         letterText.setText(letterContent);
 
         letterContainer.add(letterText);

@@ -24,9 +24,9 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 @PageTitle("Login | CL Booster")
 @AnonymousAllowed
 public class LoginView extends VerticalLayout {
-    private static final String FONT_SIZE_PROP = "font-size";
-    private static final String FONT_WEIGHT_PROP = "font-weight";
-    private static final String COLOR_PROP = "color";
+    private static final String FONT_SIZE_PROP = StyleConstants.CSS_FONT_SIZE;
+    private static final String FONT_WEIGHT_PROP = StyleConstants.CSS_FONT_WEIGHT;
+    private static final String COLOR_PROP = StyleConstants.CSS_COLOR;
 
         private final transient AuthenticationService authService;
     private final TranslationService translationService;
@@ -39,7 +39,7 @@ public class LoginView extends VerticalLayout {
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
-        getStyle().set("background", StyleConstants.BG_GRAY);
+        getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.BG_GRAY);
         getStyle().set("font-family",
                 "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
 
@@ -94,7 +94,7 @@ public class LoginView extends VerticalLayout {
         forgot.getStyle().set(FONT_WEIGHT_PROP, "500");
         forgot.getStyle().set(COLOR_PROP, StyleConstants.PRIMARY);
         forgot.getStyle().set("text-decoration", "none");
-        forgot.getStyle().set("cursor", "pointer");
+        forgot.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
         AuthComponents.applyLinkHoverEffect(forgot);
         forgot.addClickListener(e -> {
             AuthComponents.showInfo("Please contact admin@clbooster.com for password reset assistance");
@@ -105,7 +105,7 @@ public class LoginView extends VerticalLayout {
         // Sign In button
         Button signIn = AuthComponents.createPrimaryButton(translationService.translate("action.login"), this::handleLogin);
         signIn.setWidthFull();
-        signIn.getStyle().set("margin-top", "8px");
+        signIn.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "8px");
 
         // Divider
         HorizontalLayout divider = AuthComponents.createDivider(translationService.translate("login.orContinueWith"));
@@ -117,7 +117,7 @@ public class LoginView extends VerticalLayout {
         HorizontalLayout signupRow = new HorizontalLayout();
         signupRow.setWidthFull();
         signupRow.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-        signupRow.getStyle().set("margin-top", "24px");
+        signupRow.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "24px");
         signupRow.getStyle().set("gap", "4px");
 
         Span noAccount = new Span(translationService.translate("login.noAccount"));

@@ -1,5 +1,7 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.views.util.StyleConstants;
+
 import jakarta.annotation.security.PermitAll;
 import com.clbooster.aiservice.AIService;
 import com.clbooster.aiservice.Exporter;
@@ -75,8 +77,8 @@ public class EditorView extends HorizontalLayout {
         setSizeFull();
         setPadding(true);
         getStyle().set("gap", "24px");
-        getStyle().set("background", BG_WHITE);
-        getStyle().set("padding", "24px");
+        getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        getStyle().set(StyleConstants.CSS_PADDING, "24px");
 
         // Read wizard data from VaadinSession
         VaadinSession session = VaadinSession.getCurrent();
@@ -165,13 +167,13 @@ public class EditorView extends HorizontalLayout {
         editorArea = new TextArea();
         editorArea.setWidthFull();
         editorArea.setHeightFull();
-        editorArea.getStyle().set("background", BG_WHITE);
-        editorArea.getStyle().set("border", "1px solid rgba(0,0,0,0.1)");
-        editorArea.getStyle().set("border-radius", "16px");
-        editorArea.getStyle().set("padding", "32px");
-        editorArea.getStyle().set("font-size", "15px");
+        editorArea.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        editorArea.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.1)");
+        editorArea.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "16px");
+        editorArea.getStyle().set(StyleConstants.CSS_PADDING, "32px");
+        editorArea.getStyle().set(StyleConstants.CSS_FONT_SIZE, "15px");
         editorArea.getStyle().set("line-height", "1.8");
-        editorArea.getStyle().set("color", TEXT_PRIMARY);
+        editorArea.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
         editorArea.getStyle().set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif");
         editorArea.getStyle().set("resize", "none");
 
@@ -185,7 +187,7 @@ public class EditorView extends HorizontalLayout {
         HorizontalLayout header = new HorizontalLayout();
         header.setWidthFull();
         header.setAlignItems(FlexComponent.Alignment.CENTER);
-        header.getStyle().set("padding", "0 0 8px 0");
+        header.getStyle().set(StyleConstants.CSS_PADDING, "0 0 8px 0");
 
         // Back button and title
         HorizontalLayout leftGroup = new HorizontalLayout();
@@ -193,10 +195,10 @@ public class EditorView extends HorizontalLayout {
         leftGroup.getStyle().set("gap", "16px");
 
         Button backBtn = new Button(VaadinIcon.ARROW_LEFT.create());
-        backBtn.getStyle().set("background", "transparent");
-        backBtn.getStyle().set("color", TEXT_SECONDARY);
-        backBtn.getStyle().set("border", "none");
-        backBtn.getStyle().set("cursor", "pointer");
+        backBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
+        backBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        backBtn.getStyle().set(StyleConstants.CSS_BORDER, "none");
+        backBtn.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
         backBtn.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(DashboardView.class)));
 
         VerticalLayout titleGroup = new VerticalLayout();
@@ -204,11 +206,11 @@ public class EditorView extends HorizontalLayout {
         titleGroup.setSpacing(false);
 
         H2 title = new H2(jobTitle);
-        title.getStyle().set("font-size", "20px").set("font-weight", "700").set("color", TEXT_PRIMARY).set("margin",
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "700").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN,
                 "0");
 
         Paragraph subtitle = new Paragraph(companyName + " • " + selectedTone + " tone");
-        subtitle.getStyle().set("font-size", "13px").set("color", TEXT_SECONDARY).set("margin", "0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_MARGIN, "0");
 
         titleGroup.add(title, subtitle);
         leftGroup.add(backBtn, titleGroup);
@@ -220,8 +222,8 @@ public class EditorView extends HorizontalLayout {
 
         // Save as DOCX button
         Button saveDocxBtn = new Button("Save DOCX", VaadinIcon.DOWNLOAD.create());
-        saveDocxBtn.getStyle().set("background", "rgba(0,0,0,0.05)").set("color", TEXT_PRIMARY)
-                .set("font-weight", "600").set("border-radius", "9999px").set("padding", "10px 20px");
+        saveDocxBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
+                .set(StyleConstants.CSS_FONT_WEIGHT, "600").set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "10px 20px");
         saveDocxBtn.addClickListener(e -> downloadAsDocx());
 
         // Export PDF button
@@ -239,8 +241,8 @@ public class EditorView extends HorizontalLayout {
         HorizontalLayout toolbar = new HorizontalLayout();
         toolbar.setWidthFull();
         toolbar.setAlignItems(FlexComponent.Alignment.CENTER);
-        toolbar.getStyle().set("gap", "8px").set("padding", "12px 16px").set("background", BG_GRAY)
-                .set("border-radius", "12px").set("margin-bottom", "8px");
+        toolbar.getStyle().set("gap", "8px").set(StyleConstants.CSS_PADDING, "12px 16px").set(StyleConstants.CSS_BACKGROUND, BG_GRAY)
+                .set(StyleConstants.CSS_BORDER_RADIUS, "12px").set(StyleConstants.CSS_MARGIN_BOTTOM, "8px");
 
         // Wrap selected text in markers (plain-text simulation)
         Button boldBtn = createToolbarButton(VaadinIcon.BOLD, "Bold");
@@ -277,11 +279,11 @@ public class EditorView extends HorizontalLayout {
         });
 
         Div divider = new Div();
-        divider.getStyle().set("width", "1px").set("height", "24px").set("background", "rgba(0,0,0,0.1)");
+        divider.getStyle().set(StyleConstants.CSS_WIDTH, "1px").set(StyleConstants.CSS_HEIGHT, "24px").set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.1)");
 
         Button regenBtn = new Button("Regenerate", VaadinIcon.MAGIC.create());
-        regenBtn.getStyle().set("background", PRIMARY + "15").set("color", PRIMARY).set("font-weight", "600")
-                .set("border-radius", "9999px").set("padding", "8px 16px").set("border", "none");
+        regenBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY + "15").set(StyleConstants.CSS_COLOR, PRIMARY).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "8px 16px").set(StyleConstants.CSS_BORDER, "none");
         regenBtn.addClickListener(e -> regenerateLetter());
 
         toolbar.add(boldBtn, italicBtn, underlineBtn, listBtn, copyBtn, clearBtn, divider, regenBtn);
@@ -305,10 +307,10 @@ public class EditorView extends HorizontalLayout {
     private Button createToolbarButton(VaadinIcon icon, String tooltip) {
         Button btn = new Button(icon.create());
         btn.getElement().setAttribute("title", tooltip);
-        btn.getStyle().set("background", "transparent").set("color", TEXT_SECONDARY).set("border", "none")
-                .set("padding", "8px").set("border-radius", "8px");
-        btn.getElement().addEventListener("mouseenter", e -> btn.getStyle().set("background", "rgba(0,0,0,0.05)"));
-        btn.getElement().addEventListener("mouseleave", e -> btn.getStyle().set("background", "transparent"));
+        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT).set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_BORDER, "none")
+                .set(StyleConstants.CSS_PADDING, "8px").set(StyleConstants.CSS_BORDER_RADIUS, "8px");
+        btn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)"));
+        btn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT));
         return btn;
     }
 
@@ -508,9 +510,9 @@ public class EditorView extends HorizontalLayout {
 
     private Button createPrimaryButton(String text, VaadinIcon icon) {
         Button btn = new Button(text, icon.create());
-        btn.getStyle().set("background", PRIMARY).set("color", "white").set("font-weight", "600")
-                .set("border-radius", "9999px").set("padding", "10px 24px").set("border", "none")
-                .set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
+        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY).set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "10px 24px").set(StyleConstants.CSS_BORDER, "none")
+                .set(StyleConstants.CSS_BOX_SHADOW, "0 10px 15px -3px rgba(0,122,255,0.3)");
         return btn;
     }
 

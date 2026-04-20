@@ -32,19 +32,19 @@ import java.util.regex.Pattern;
 @PageTitle("Create Account | CL Booster")
 @AnonymousAllowed
 public class SignUpView extends VerticalLayout {
-    private static final String FONT_SIZE_PROP = "font-size";
-    private static final String FONT_WEIGHT_PROP = "font-weight";
-    private static final String COLOR_PROP = "color";
-    private static final String BACKGROUND_PROP = "background";
-    private static final String HEIGHT_PROP = "height";
+    private static final String FONT_SIZE_PROP = StyleConstants.CSS_FONT_SIZE;
+    private static final String FONT_WEIGHT_PROP = StyleConstants.CSS_FONT_WEIGHT;
+    private static final String COLOR_PROP = StyleConstants.CSS_COLOR;
+    private static final String BACKGROUND_PROP = StyleConstants.CSS_BACKGROUND;
+    private static final String HEIGHT_PROP = StyleConstants.CSS_HEIGHT;
     private static final String VAADIN_INPUT_FIELD_BACKGROUND_PROP = "--vaadin-input-field-background";
     private static final String GAP_PROP = "gap";
-    private static final String MARGIN_PROP = "margin";
-    private static final String WIDTH_PROP = "width";
-    private static final String MARGIN_TOP_PROP = "margin-top";
+    private static final String MARGIN_PROP = StyleConstants.CSS_MARGIN;
+    private static final String WIDTH_PROP = StyleConstants.CSS_WIDTH;
+    private static final String MARGIN_TOP_PROP = StyleConstants.CSS_MARGIN_TOP;
     private static final String FLEX_PROP = "flex";
-    private static final String BORDER_RADIUS_PROP = "border-radius";
-    private static final String WHITE_VAL = "white";
+    private static final String BORDER_RADIUS_PROP = StyleConstants.CSS_BORDER_RADIUS;
+    private static final String WHITE_VAL = StyleConstants.VAL_WHITE;
     private static final String TEXT_DECORATION_PROP = "text-decoration";
     private static final String VAADIN_INPUT_FIELD_BORDER_RADIUS_PROP = "--vaadin-input-field-border-radius";
 
@@ -155,7 +155,7 @@ public class SignUpView extends VerticalLayout {
             bar.getStyle().set(HEIGHT_PROP, "4px");
             bar.getStyle().set(BACKGROUND_PROP, StyleConstants.GRAY);
             bar.getStyle().set(BORDER_RADIUS_PROP, "2px");
-            bar.getStyle().set("transition", "background 0.3s");
+            bar.getStyle().set(StyleConstants.CSS_TRANSITION, "background 0.3s");
             strengthBars[i] = bar;
             strengthBarsLayout.add(bar);
         }
@@ -181,9 +181,9 @@ public class SignUpView extends VerticalLayout {
         checkIcon.getStyle().set(HEIGHT_PROP, "20px");
         checkIcon.getStyle().set(BACKGROUND_PROP, StyleConstants.SUCCESS);
         checkIcon.getStyle().set(BORDER_RADIUS_PROP, "6px");
-        checkIcon.getStyle().set("display", FLEX_PROP);
-        checkIcon.getStyle().set("align-items", "center");
-        checkIcon.getStyle().set("justify-content", "center");
+        checkIcon.getStyle().set(StyleConstants.CSS_DISPLAY, FLEX_PROP);
+        checkIcon.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
+        checkIcon.getStyle().set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER);
         checkIcon.getStyle().set("flex-shrink", "0");
         checkIcon.getStyle().set(MARGIN_TOP_PROP, "2px");
 
@@ -203,7 +203,7 @@ public class SignUpView extends VerticalLayout {
         HorizontalLayout termsLine1 = new HorizontalLayout();
         termsLine1.setAlignItems(FlexComponent.Alignment.CENTER);
         termsLine1.getStyle().set(GAP_PROP, "4px");
-        termsLine1.getStyle().set("flex-wrap", "nowrap");
+        termsLine1.getStyle().set(StyleConstants.CSS_FLEX_WRAP, "nowrap");
 
         Span agreeText = new Span(translationService.translate("signup.bySigningUp"));
         agreeText.getStyle().set(FONT_SIZE_PROP, "13px");
@@ -213,7 +213,7 @@ public class SignUpView extends VerticalLayout {
         termsLink.getStyle().set(FONT_SIZE_PROP, "13px");
         termsLink.getStyle().set(FONT_WEIGHT_PROP, "500");
         termsLink.getStyle().set(COLOR_PROP, StyleConstants.PRIMARY);
-        termsLink.getStyle().set("cursor", "pointer");
+        termsLink.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
         termsLink.getStyle().set(TEXT_DECORATION_PROP, "underline");
         termsLink.addClickListener(e -> showTermsOfServiceDialog());
 
@@ -223,7 +223,7 @@ public class SignUpView extends VerticalLayout {
         HorizontalLayout termsLine2 = new HorizontalLayout();
         termsLine2.setAlignItems(FlexComponent.Alignment.CENTER);
         termsLine2.getStyle().set(GAP_PROP, "4px");
-        termsLine2.getStyle().set("flex-wrap", "nowrap");
+        termsLine2.getStyle().set(StyleConstants.CSS_FLEX_WRAP, "nowrap");
 
         Span andText = new Span(translationService.translate("signup.and"));
         andText.getStyle().set(FONT_SIZE_PROP, "13px");
@@ -233,7 +233,7 @@ public class SignUpView extends VerticalLayout {
         privacyLink.getStyle().set(FONT_SIZE_PROP, "13px");
         privacyLink.getStyle().set(FONT_WEIGHT_PROP, "500");
         privacyLink.getStyle().set(COLOR_PROP, StyleConstants.PRIMARY);
-        privacyLink.getStyle().set("cursor", "pointer");
+        privacyLink.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
         privacyLink.getStyle().set(TEXT_DECORATION_PROP, "underline");
         privacyLink.addClickListener(e -> showPrivacyPolicyDialog());
 
@@ -278,13 +278,13 @@ public class SignUpView extends VerticalLayout {
         card.add(backLink, logoIcon, title, subtitle, form, divider, socialButtons, loginRow);
 
         // Hover effect for card
-        card.getElement().addEventListener("mouseenter", e -> {
-            card.getStyle().set("box-shadow", "0 24px 48px rgba(0, 0, 0, 0.06)");
-            card.getStyle().set("transform", "translateY(-2px)");
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
+            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 24px 48px rgba(0, 0, 0, 0.06)");
+            card.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(-2px)");
         });
-        card.getElement().addEventListener("mouseleave", e -> {
-            card.getStyle().set("box-shadow", "0 2px 12px rgba(0, 0, 0, 0.04)");
-            card.getStyle().set("transform", "translateY(0)");
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
+            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
+            card.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(0)");
         });
 
         add(card);
@@ -510,7 +510,7 @@ public class SignUpView extends VerticalLayout {
         content.add(title, intro);
         content.add(sections);
         
-        content.getStyle().set("overflow", "auto");
+        content.getStyle().set(StyleConstants.CSS_OVERFLOW, "auto");
         content.setHeight("400px");
 
         Button closeButton = new Button(translationService.translate("landing.iUnderstand"), e -> dialog.close());

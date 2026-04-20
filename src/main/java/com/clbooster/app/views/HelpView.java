@@ -1,5 +1,7 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.views.util.StyleConstants;
+
 import jakarta.annotation.security.PermitAll;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -45,10 +47,10 @@ public class HelpView extends VerticalLayout {
         setSizeFull();
         setPadding(true);
         getStyle().set("gap", "40px");
-        getStyle().set("background", BG_WHITE);
-        getStyle().set("padding", "32px");
-        getStyle().set("max-width", "900px");
-        getStyle().set("margin", "0 auto");
+        getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        getStyle().set(StyleConstants.CSS_PADDING, "32px");
+        getStyle().set(StyleConstants.CSS_MAX_WIDTH, "900px");
+        getStyle().set(StyleConstants.CSS_MARGIN, "0 auto");
 
         // Hero section with search
         VerticalLayout heroSection = createHeroSection();
@@ -71,39 +73,39 @@ public class HelpView extends VerticalLayout {
         hero.setSpacing(false);
         hero.getStyle().set("gap", "24px");
         hero.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-        hero.getStyle().set("text-align", "center");
-        hero.getStyle().set("padding", "40px 0");
+        hero.getStyle().set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER);
+        hero.getStyle().set(StyleConstants.CSS_PADDING, "40px 0");
 
         // Icon
         Div iconContainer = new Div();
-        iconContainer.getStyle().set("width", "64px");
-        iconContainer.getStyle().set("height", "64px");
-        iconContainer.getStyle().set("background", BG_GRAY);
-        iconContainer.getStyle().set("border-radius", "20px");
-        iconContainer.getStyle().set("display", "flex");
-        iconContainer.getStyle().set("align-items", "center");
-        iconContainer.getStyle().set("justify-content", "center");
-        iconContainer.getStyle().set("margin", "0 auto");
+        iconContainer.getStyle().set(StyleConstants.CSS_WIDTH, "64px");
+        iconContainer.getStyle().set(StyleConstants.CSS_HEIGHT, "64px");
+        iconContainer.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
+        iconContainer.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "20px");
+        iconContainer.getStyle().set(StyleConstants.CSS_DISPLAY, "flex");
+        iconContainer.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
+        iconContainer.getStyle().set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER);
+        iconContainer.getStyle().set(StyleConstants.CSS_MARGIN, "0 auto");
 
         Icon helpIcon = VaadinIcon.QUESTION_CIRCLE.create();
-        helpIcon.getStyle().set("color", PRIMARY);
-        helpIcon.getStyle().set("width", "32px");
-        helpIcon.getStyle().set("height", "32px");
+        helpIcon.getStyle().set(StyleConstants.CSS_COLOR, PRIMARY);
+        helpIcon.getStyle().set(StyleConstants.CSS_WIDTH, "32px");
+        helpIcon.getStyle().set(StyleConstants.CSS_HEIGHT, "32px");
         iconContainer.add(helpIcon);
 
         // Title
         H1 title = new H1(translationService.translate("help.howCanWeHelp"));
-        title.getStyle().set("font-size", "40px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0");
-        title.getStyle().set("letter-spacing", "-0.025em");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "40px");
+        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        title.getStyle().set(StyleConstants.CSS_MARGIN, "0");
+        title.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "-0.025em");
 
         // Subtitle
         Paragraph subtitle = new Paragraph(translationService.translate("help.searchKnowledgeBase"));
-        subtitle.getStyle().set("font-size", "17px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "17px");
+        subtitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        subtitle.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         // Search bar
         TextField searchField = new TextField();
@@ -112,11 +114,11 @@ public class HelpView extends VerticalLayout {
         searchField.setClearButtonVisible(true);
         searchField.setWidthFull();
         searchField.setMaxWidth("500px");
-        searchField.getStyle().set("background", BG_GRAY);
-        searchField.getStyle().set("border", "none");
-        searchField.getStyle().set("border-radius", "9999px");
-        searchField.getStyle().set("padding", "16px 24px");
-        searchField.getStyle().set("font-size", "16px");
+        searchField.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
+        searchField.getStyle().set(StyleConstants.CSS_BORDER, "none");
+        searchField.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+        searchField.getStyle().set(StyleConstants.CSS_PADDING, "16px 24px");
+        searchField.getStyle().set(StyleConstants.CSS_FONT_SIZE, "16px");
 
         searchField.addValueChangeListener(e -> filterFAQs(e.getValue()));
 
@@ -129,8 +131,8 @@ public class HelpView extends VerticalLayout {
         HorizontalLayout links = new HorizontalLayout();
         links.setWidthFull();
         links.getStyle().set("gap", "16px");
-        links.getStyle().set("justify-content", "center");
-        links.getStyle().set("flex-wrap", "wrap");
+        links.getStyle().set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER);
+        links.getStyle().set(StyleConstants.CSS_FLEX_WRAP, "wrap");
 
         String[][] linkData = { { translationService.translate("help.gettingStarted"), VaadinIcon.ROCKET.name() },
                 { translationService.translate("help.accountBilling"), VaadinIcon.USER_CARD.name() },
@@ -147,23 +149,23 @@ public class HelpView extends VerticalLayout {
 
     private Button createQuickLinkButton(String text, VaadinIcon icon) {
         Button btn = new Button(text, icon.create());
-        btn.getStyle().set("background", BG_WHITE);
-        btn.getStyle().set("color", TEXT_PRIMARY);
-        btn.getStyle().set("font-weight", "600");
-        btn.getStyle().set("border-radius", "9999px");
-        btn.getStyle().set("border", "1px solid rgba(0,0,0,0.1)");
-        btn.getStyle().set("padding", "12px 24px");
-        btn.getStyle().set("cursor", "pointer");
-        btn.getStyle().set("transition", "all 0.2s");
+        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        btn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        btn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        btn.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+        btn.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.1)");
+        btn.getStyle().set(StyleConstants.CSS_PADDING, "12px 24px");
+        btn.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+        btn.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_2S);
 
-        btn.getElement().addEventListener("mouseenter", e -> {
-            btn.getStyle().set("background", BG_GRAY);
-            btn.getStyle().set("border-color", "rgba(0,0,0,0.15)");
+        btn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
+            btn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
+            btn.getStyle().set(StyleConstants.CSS_BORDER_COLOR, "rgba(0,0,0,0.15)");
         });
 
-        btn.getElement().addEventListener("mouseleave", e -> {
-            btn.getStyle().set("background", BG_WHITE);
-            btn.getStyle().set("border-color", "rgba(0,0,0,0.1)");
+        btn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
+            btn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+            btn.getStyle().set(StyleConstants.CSS_BORDER_COLOR, "rgba(0,0,0,0.1)");
         });
 
         btn.addClickListener(e -> Notification.show(translationService.translate("help.opening", text), 3000,
@@ -180,10 +182,10 @@ public class HelpView extends VerticalLayout {
         section.setWidthFull();
 
         H2 title = new H2(translationService.translate("help.faqTitle"));
-        title.getStyle().set("font-size", "24px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 8px 0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "24px");
+        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        title.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 8px 0");
 
         faqContainer = new VerticalLayout();
         faqContainer.setPadding(false);
@@ -216,38 +218,38 @@ public class HelpView extends VerticalLayout {
 
     private Div createFAQItem(String question, String answer) {
         Div item = new Div();
-        item.getStyle().set("background", BG_GRAY);
-        item.getStyle().set("border-radius", "16px");
-        item.getStyle().set("padding", "24px");
-        item.getStyle().set("cursor", "pointer");
-        item.getStyle().set("transition", "all 0.3s");
+        item.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
+        item.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "16px");
+        item.getStyle().set(StyleConstants.CSS_PADDING, "24px");
+        item.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+        item.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_3S);
 
         HorizontalLayout header = new HorizontalLayout();
         header.setWidthFull();
         header.setAlignItems(FlexComponent.Alignment.CENTER);
 
         H3 questionText = new H3(question);
-        questionText.getStyle().set("font-size", "16px");
-        questionText.getStyle().set("font-weight", "600");
-        questionText.getStyle().set("color", TEXT_PRIMARY);
-        questionText.getStyle().set("margin", "0");
+        questionText.getStyle().set(StyleConstants.CSS_FONT_SIZE, "16px");
+        questionText.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        questionText.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        questionText.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         Icon chevron = VaadinIcon.CHEVRON_DOWN.create();
-        chevron.getStyle().set("color", TEXT_SECONDARY);
-        chevron.getStyle().set("transition", "transform 0.3s");
+        chevron.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        chevron.getStyle().set(StyleConstants.CSS_TRANSITION, "transform 0.3s");
 
         header.add(questionText, chevron);
         header.expand(questionText);
 
         Paragraph answerText = new Paragraph(answer);
-        answerText.getStyle().set("font-size", "14px");
-        answerText.getStyle().set("color", TEXT_SECONDARY);
+        answerText.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
+        answerText.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
         answerText.getStyle().set("line-height", "1.6");
-        answerText.getStyle().set("margin", "16px 0 0 0");
-        answerText.getStyle().set("max-height", "0");
-        answerText.getStyle().set("overflow", "hidden");
-        answerText.getStyle().set("opacity", "0");
-        answerText.getStyle().set("transition", "all 0.3s");
+        answerText.getStyle().set(StyleConstants.CSS_MARGIN, "16px 0 0 0");
+        answerText.getStyle().set(StyleConstants.CSS_MAX_HEIGHT, "0");
+        answerText.getStyle().set(StyleConstants.CSS_OVERFLOW, "hidden");
+        answerText.getStyle().set(StyleConstants.CSS_OPACITY, "0");
+        answerText.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_3S);
 
         item.add(header, answerText);
 
@@ -256,30 +258,30 @@ public class HelpView extends VerticalLayout {
         item.addClickListener(e -> {
             isExpanded[0] = !isExpanded[0];
             if (isExpanded[0]) {
-                answerText.getStyle().set("max-height", "500px");
-                answerText.getStyle().set("opacity", "1");
-                chevron.getStyle().set("transform", "rotate(180deg)");
-                item.getStyle().set("background", BG_WHITE);
-                item.getStyle().set("box-shadow", "0 4px 20px rgba(0,0,0,0.08)");
+                answerText.getStyle().set(StyleConstants.CSS_MAX_HEIGHT, "500px");
+                answerText.getStyle().set(StyleConstants.CSS_OPACITY, "1");
+                chevron.getStyle().set(StyleConstants.CSS_TRANSFORM, "rotate(180deg)");
+                item.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+                item.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 4px 20px rgba(0,0,0,0.08)");
             } else {
-                answerText.getStyle().set("max-height", "0");
-                answerText.getStyle().set("opacity", "0");
-                chevron.getStyle().set("transform", "rotate(0deg)");
-                item.getStyle().set("background", BG_GRAY);
-                item.getStyle().set("box-shadow", "none");
+                answerText.getStyle().set(StyleConstants.CSS_MAX_HEIGHT, "0");
+                answerText.getStyle().set(StyleConstants.CSS_OPACITY, "0");
+                chevron.getStyle().set(StyleConstants.CSS_TRANSFORM, "rotate(0deg)");
+                item.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
+                item.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "none");
             }
         });
 
         // Hover effect
-        item.getElement().addEventListener("mouseenter", e -> {
+        item.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
             if (!isExpanded[0]) {
-                item.getStyle().set("background", "rgba(0,0,0,0.04)");
+                item.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.04)");
             }
         });
 
-        item.getElement().addEventListener("mouseleave", e -> {
+        item.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
             if (!isExpanded[0]) {
-                item.getStyle().set("background", BG_GRAY);
+                item.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
             }
         });
 
@@ -290,7 +292,7 @@ public class HelpView extends VerticalLayout {
         HorizontalLayout cards = new HorizontalLayout();
         cards.setWidthFull();
         cards.getStyle().set("gap", "20px");
-        cards.getStyle().set("margin-top", "20px");
+        cards.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "20px");
 
         // Contact support card
         Div contactCard = createSupportCard(translationService.translate("help.contactSupport"),
@@ -315,13 +317,13 @@ public class HelpView extends VerticalLayout {
     private Div createSupportCard(String title, String description, VaadinIcon iconType, String iconColor,
             String actionText) {
         Div card = new Div();
-        card.getStyle().set("background", BG_WHITE);
-        card.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
-        card.getStyle().set("border-radius", "24px");
-        card.getStyle().set("padding", "24px");
+        card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
+        card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
+        card.getStyle().set(StyleConstants.CSS_PADDING, "24px");
         card.getStyle().set("flex", "1");
-        card.getStyle().set("cursor", "pointer");
-        card.getStyle().set("transition", "all 0.3s");
+        card.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+        card.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_3S);
 
         VerticalLayout content = new VerticalLayout();
         content.setPadding(false);
@@ -331,18 +333,18 @@ public class HelpView extends VerticalLayout {
 
         // Icon
         Div iconContainer = new Div();
-        iconContainer.getStyle().set("width", "48px");
-        iconContainer.getStyle().set("height", "48px");
-        iconContainer.getStyle().set("border-radius", "14px");
-        iconContainer.getStyle().set("background", iconColor + "15");
-        iconContainer.getStyle().set("display", "flex");
-        iconContainer.getStyle().set("align-items", "center");
-        iconContainer.getStyle().set("justify-content", "center");
+        iconContainer.getStyle().set(StyleConstants.CSS_WIDTH, "48px");
+        iconContainer.getStyle().set(StyleConstants.CSS_HEIGHT, "48px");
+        iconContainer.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "14px");
+        iconContainer.getStyle().set(StyleConstants.CSS_BACKGROUND, iconColor + "15");
+        iconContainer.getStyle().set(StyleConstants.CSS_DISPLAY, "flex");
+        iconContainer.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
+        iconContainer.getStyle().set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER);
 
         Icon icon = iconType.create();
-        icon.getStyle().set("color", iconColor);
-        icon.getStyle().set("width", "24px");
-        icon.getStyle().set("height", "24px");
+        icon.getStyle().set(StyleConstants.CSS_COLOR, iconColor);
+        icon.getStyle().set(StyleConstants.CSS_WIDTH, "24px");
+        icon.getStyle().set(StyleConstants.CSS_HEIGHT, "24px");
         iconContainer.add(icon);
 
         // Text
@@ -352,39 +354,39 @@ public class HelpView extends VerticalLayout {
         textGroup.getStyle().set("gap", "4px");
 
         H3 cardTitle = new H3(title);
-        cardTitle.getStyle().set("font-size", "16px");
-        cardTitle.getStyle().set("font-weight", "700");
-        cardTitle.getStyle().set("color", TEXT_PRIMARY);
-        cardTitle.getStyle().set("margin", "0");
+        cardTitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "16px");
+        cardTitle.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        cardTitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        cardTitle.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph cardDesc = new Paragraph(description);
-        cardDesc.getStyle().set("font-size", "13px");
-        cardDesc.getStyle().set("color", TEXT_SECONDARY);
-        cardDesc.getStyle().set("margin", "0");
+        cardDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px");
+        cardDesc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        cardDesc.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         textGroup.add(cardTitle, cardDesc);
 
         // Action link
         Span actionLink = new Span(actionText);
-        actionLink.getStyle().set("font-size", "14px");
-        actionLink.getStyle().set("font-weight", "600");
-        actionLink.getStyle().set("color", iconColor);
-        actionLink.getStyle().set("margin-top", "8px");
+        actionLink.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
+        actionLink.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        actionLink.getStyle().set(StyleConstants.CSS_COLOR, iconColor);
+        actionLink.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "8px");
 
         content.add(iconContainer, textGroup, actionLink);
         card.add(content);
 
         // Hover effects
-        card.getElement().addEventListener("mouseenter", e -> {
-            card.getStyle().set("transform", "translateY(-4px)");
-            card.getStyle().set("box-shadow", "0 20px 40px rgba(0,0,0,0.1)");
-            iconContainer.getStyle().set("transform", "scale(1.1)");
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
+            card.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(-4px)");
+            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 20px 40px rgba(0,0,0,0.1)");
+            iconContainer.getStyle().set(StyleConstants.CSS_TRANSFORM, "scale(1.1)");
         });
 
-        card.getElement().addEventListener("mouseleave", e -> {
-            card.getStyle().set("transform", "translateY(0)");
-            card.getStyle().set("box-shadow", "none");
-            iconContainer.getStyle().set("transform", "scale(1)");
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
+            card.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(0)");
+            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "none");
+            iconContainer.getStyle().set(StyleConstants.CSS_TRANSFORM, "scale(1)");
         });
 
         card.addClickListener(e -> Notification.show(translationService.translate("help.opening", title), 3000,

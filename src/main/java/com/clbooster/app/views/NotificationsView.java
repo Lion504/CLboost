@@ -1,5 +1,7 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.views.util.StyleConstants;
+
 import jakarta.annotation.security.PermitAll;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -45,10 +47,10 @@ public class NotificationsView extends VerticalLayout {
         setSizeFull();
         setPadding(true);
         getStyle().set("gap", "24px");
-        getStyle().set("background", BG_WHITE);
-        getStyle().set("padding", "32px");
-        getStyle().set("max-width", "800px");
-        getStyle().set("margin", "0 auto");
+        getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        getStyle().set(StyleConstants.CSS_PADDING, "32px");
+        getStyle().set(StyleConstants.CSS_MAX_WIDTH, "800px");
+        getStyle().set(StyleConstants.CSS_MARGIN, "0 auto");
 
         // Header
         HorizontalLayout header = createHeader();
@@ -81,15 +83,15 @@ public class NotificationsView extends VerticalLayout {
         titleGroup.getStyle().set("gap", "4px");
 
         H1 title = new H1(translationService.translate("notifications.title"));
-        title.getStyle().set("font-size", "30px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "30px");
+        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        title.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph subtitle = new Paragraph(translationService.translate("notifications.stayUpdated"));
-        subtitle.getStyle().set("font-size", "14px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
+        subtitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        subtitle.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         titleGroup.add(title, subtitle);
 
@@ -100,12 +102,12 @@ public class NotificationsView extends VerticalLayout {
 
         Button markAllBtn = new Button(translationService.translate("notifications.markAllRead"),
                 VaadinIcon.CHECK_CIRCLE.create());
-        markAllBtn.getStyle().set("background", "transparent");
-        markAllBtn.getStyle().set("color", TEXT_SECONDARY);
-        markAllBtn.getStyle().set("font-weight", "500");
-        markAllBtn.getStyle().set("border-radius", "9999px");
-        markAllBtn.getStyle().set("border", "none");
-        markAllBtn.getStyle().set("cursor", "pointer");
+        markAllBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
+        markAllBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        markAllBtn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "500");
+        markAllBtn.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+        markAllBtn.getStyle().set(StyleConstants.CSS_BORDER, "none");
+        markAllBtn.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
         markAllBtn.addClickListener(e -> {
             Notification.show(translationService.translate("notifications.allRead"), 3000,
                     Notification.Position.TOP_CENTER);
@@ -113,10 +115,10 @@ public class NotificationsView extends VerticalLayout {
         });
 
         Button settingsBtn = new Button(VaadinIcon.COG.create());
-        settingsBtn.getStyle().set("background", "transparent");
-        settingsBtn.getStyle().set("color", TEXT_SECONDARY);
-        settingsBtn.getStyle().set("border", "none");
-        settingsBtn.getStyle().set("cursor", "pointer");
+        settingsBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
+        settingsBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        settingsBtn.getStyle().set(StyleConstants.CSS_BORDER, "none");
+        settingsBtn.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
         settingsBtn.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(SettingsView.class)));
 
         actions.add(markAllBtn, settingsBtn);
@@ -129,7 +131,7 @@ public class NotificationsView extends VerticalLayout {
 
     private Tabs createFilterTabs() {
         Tabs tabs = new Tabs();
-        tabs.getStyle().set("background", "transparent");
+        tabs.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
 
         Tab allTab = new Tab(translationService.translate("notifications.all"));
         Tab unreadTab = new Tab(translationService.translate("notifications.unread"));
@@ -150,12 +152,12 @@ public class NotificationsView extends VerticalLayout {
 
         // Today section
         Span todayLabel = new Span(translationService.translate("notifications.today"));
-        todayLabel.getStyle().set("font-size", "12px");
-        todayLabel.getStyle().set("font-weight", "700");
-        todayLabel.getStyle().set("color", TEXT_SECONDARY);
-        todayLabel.getStyle().set("text-transform", "uppercase");
-        todayLabel.getStyle().set("letter-spacing", "0.1em");
-        todayLabel.getStyle().set("margin", "8px 0");
+        todayLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
+        todayLabel.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        todayLabel.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        todayLabel.getStyle().set(StyleConstants.CSS_TEXT_TRANSFORM, "uppercase");
+        todayLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "0.1em");
+        todayLabel.getStyle().set(StyleConstants.CSS_MARGIN, "8px 0");
 
         notificationsList.add(todayLabel);
 
@@ -170,12 +172,12 @@ public class NotificationsView extends VerticalLayout {
 
         // Yesterday section
         Span yesterdayLabel = new Span(translationService.translate("notifications.yesterday"));
-        yesterdayLabel.getStyle().set("font-size", "12px");
-        yesterdayLabel.getStyle().set("font-weight", "700");
-        yesterdayLabel.getStyle().set("color", TEXT_SECONDARY);
-        yesterdayLabel.getStyle().set("text-transform", "uppercase");
-        yesterdayLabel.getStyle().set("letter-spacing", "0.1em");
-        yesterdayLabel.getStyle().set("margin", "24px 0 8px 0");
+        yesterdayLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
+        yesterdayLabel.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        yesterdayLabel.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        yesterdayLabel.getStyle().set(StyleConstants.CSS_TEXT_TRANSFORM, "uppercase");
+        yesterdayLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "0.1em");
+        yesterdayLabel.getStyle().set(StyleConstants.CSS_MARGIN, "24px 0 8px 0");
 
         notificationsList.add(yesterdayLabel);
 
@@ -189,12 +191,12 @@ public class NotificationsView extends VerticalLayout {
 
         // Earlier section
         Span earlierLabel = new Span(translationService.translate("notifications.earlier"));
-        earlierLabel.getStyle().set("font-size", "12px");
-        earlierLabel.getStyle().set("font-weight", "700");
-        earlierLabel.getStyle().set("color", TEXT_SECONDARY);
-        earlierLabel.getStyle().set("text-transform", "uppercase");
-        earlierLabel.getStyle().set("letter-spacing", "0.1em");
-        earlierLabel.getStyle().set("margin", "24px 0 8px 0");
+        earlierLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
+        earlierLabel.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        earlierLabel.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        earlierLabel.getStyle().set(StyleConstants.CSS_TEXT_TRANSFORM, "uppercase");
+        earlierLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "0.1em");
+        earlierLabel.getStyle().set(StyleConstants.CSS_MARGIN, "24px 0 8px 0");
 
         notificationsList.add(earlierLabel);
 
@@ -206,14 +208,14 @@ public class NotificationsView extends VerticalLayout {
     private Div createNotificationCard(String title, String message, String time, VaadinIcon iconType, String iconColor,
             boolean isUnread, boolean isNew) {
         Div card = new Div();
-        card.getStyle().set("background", isUnread ? BG_WHITE : BG_GRAY);
-        card.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
-        card.getStyle().set("border-radius", "16px");
-        card.getStyle().set("padding", "20px");
-        card.getStyle().set("cursor", "pointer");
-        card.getStyle().set("transition", "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)");
+        card.getStyle().set(StyleConstants.CSS_BACKGROUND, isUnread ? BG_WHITE : BG_GRAY);
+        card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
+        card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "16px");
+        card.getStyle().set(StyleConstants.CSS_PADDING, "20px");
+        card.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+        card.getStyle().set(StyleConstants.CSS_TRANSITION, "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)");
         card.getStyle().set("position", "relative");
-        card.getStyle().set("overflow", "hidden");
+        card.getStyle().set(StyleConstants.CSS_OVERFLOW, "hidden");
 
         // Animation for new items
         if (isNew) {
@@ -226,10 +228,10 @@ public class NotificationsView extends VerticalLayout {
             unreadDot.getStyle().set("position", "absolute");
             unreadDot.getStyle().set("top", "20px");
             unreadDot.getStyle().set("right", "20px");
-            unreadDot.getStyle().set("width", "8px");
-            unreadDot.getStyle().set("height", "8px");
-            unreadDot.getStyle().set("background", PRIMARY);
-            unreadDot.getStyle().set("border-radius", "50%");
+            unreadDot.getStyle().set(StyleConstants.CSS_WIDTH, "8px");
+            unreadDot.getStyle().set(StyleConstants.CSS_HEIGHT, "8px");
+            unreadDot.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY);
+            unreadDot.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "50%");
             card.add(unreadDot);
         }
 
@@ -239,20 +241,20 @@ public class NotificationsView extends VerticalLayout {
 
         // Icon
         Div iconContainer = new Div();
-        iconContainer.getStyle().set("width", "44px");
-        iconContainer.getStyle().set("height", "44px");
-        iconContainer.getStyle().set("border-radius", "12px");
-        iconContainer.getStyle().set("background", iconColor + "15");
-        iconContainer.getStyle().set("display", "flex");
-        iconContainer.getStyle().set("align-items", "center");
-        iconContainer.getStyle().set("justify-content", "center");
+        iconContainer.getStyle().set(StyleConstants.CSS_WIDTH, "44px");
+        iconContainer.getStyle().set(StyleConstants.CSS_HEIGHT, "44px");
+        iconContainer.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "12px");
+        iconContainer.getStyle().set(StyleConstants.CSS_BACKGROUND, iconColor + "15");
+        iconContainer.getStyle().set(StyleConstants.CSS_DISPLAY, "flex");
+        iconContainer.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
+        iconContainer.getStyle().set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER);
         iconContainer.getStyle().set("flex-shrink", "0");
-        iconContainer.getStyle().set("transition", "transform 0.3s");
+        iconContainer.getStyle().set(StyleConstants.CSS_TRANSITION, "transform 0.3s");
 
         Icon icon = iconType.create();
-        icon.getStyle().set("color", iconColor);
-        icon.getStyle().set("width", "22px");
-        icon.getStyle().set("height", "22px");
+        icon.getStyle().set(StyleConstants.CSS_COLOR, iconColor);
+        icon.getStyle().set(StyleConstants.CSS_WIDTH, "22px");
+        icon.getStyle().set(StyleConstants.CSS_HEIGHT, "22px");
         iconContainer.add(icon);
 
         // Text content
@@ -262,37 +264,37 @@ public class NotificationsView extends VerticalLayout {
         textGroup.getStyle().set("gap", "4px");
 
         H2 cardTitle = new H2(title);
-        cardTitle.getStyle().set("font-size", "15px");
-        cardTitle.getStyle().set("font-weight", isUnread ? "700" : "600");
-        cardTitle.getStyle().set("color", TEXT_PRIMARY);
-        cardTitle.getStyle().set("margin", "0");
+        cardTitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "15px");
+        cardTitle.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, isUnread ? "700" : "600");
+        cardTitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        cardTitle.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph cardMessage = new Paragraph(message);
-        cardMessage.getStyle().set("font-size", "14px");
-        cardMessage.getStyle().set("color", TEXT_SECONDARY);
+        cardMessage.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
+        cardMessage.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
         cardMessage.getStyle().set("line-height", "1.5");
-        cardMessage.getStyle().set("margin", "0");
+        cardMessage.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         Span timeSpan = new Span(time);
-        timeSpan.getStyle().set("font-size", "12px");
-        timeSpan.getStyle().set("color", TEXT_SECONDARY);
-        timeSpan.getStyle().set("margin-top", "4px");
+        timeSpan.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
+        timeSpan.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        timeSpan.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "4px");
 
         textGroup.add(cardTitle, cardMessage, timeSpan);
         content.add(iconContainer, textGroup);
         card.add(content);
 
         // Hover effects
-        card.getElement().addEventListener("mouseenter", e -> {
-            card.getStyle().set("transform", "translateX(4px)");
-            card.getStyle().set("box-shadow", "0 4px 20px rgba(0,0,0,0.08)");
-            iconContainer.getStyle().set("transform", "scale(1.1) rotate(-5deg)");
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
+            card.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateX(4px)");
+            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 4px 20px rgba(0,0,0,0.08)");
+            iconContainer.getStyle().set(StyleConstants.CSS_TRANSFORM, "scale(1.1) rotate(-5deg)");
         });
 
-        card.getElement().addEventListener("mouseleave", e -> {
-            card.getStyle().set("transform", "translateX(0)");
-            card.getStyle().set("box-shadow", "none");
-            iconContainer.getStyle().set("transform", "scale(1) rotate(0deg)");
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
+            card.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateX(0)");
+            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "none");
+            iconContainer.getStyle().set(StyleConstants.CSS_TRANSFORM, "scale(1) rotate(0deg)");
         });
 
         card.addClickListener(e -> {

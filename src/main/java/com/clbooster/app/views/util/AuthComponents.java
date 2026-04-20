@@ -15,24 +15,24 @@ import com.vaadin.flow.component.textfield.TextField;
 import java.util.Optional;
 
 public final class AuthComponents {
-    private static final String BACKGROUND = "background";
-    private static final String BORDER_RADIUS = "border-radius";
-    private static final String PADDING = "padding";
-    private static final String WIDTH = "width";
-    private static final String BOX_SHADOW = "box-shadow";
-    private static final String BORDER = "border";
-    private static final String TRANSITION = "transition";
-    private static final String MOUSEENTER = "mouseenter";
-    private static final String TRANSFORM = "transform";
-    private static final String MOUSELEAVE = "mouseleave";
-    private static final String POINTER = "pointer";
-    private static final String CURSOR = "cursor";
-    private static final String HEIGHT = "height";
-    private static final String COLOR = "color";
-    private static final String FONT_SIZE = "font-size";
-    private static final String FONT_WEIGHT = "font-weight";
-    private static final String OPACITY = "opacity";
-    private static final String MARGIN = "margin";
+    private static final String BACKGROUND = StyleConstants.CSS_BACKGROUND;
+    private static final String BORDER_RADIUS = StyleConstants.CSS_BORDER_RADIUS;
+    private static final String PADDING = StyleConstants.CSS_PADDING;
+    private static final String WIDTH = StyleConstants.CSS_WIDTH;
+    private static final String BOX_SHADOW = StyleConstants.CSS_BOX_SHADOW;
+    private static final String BORDER = StyleConstants.CSS_BORDER;
+    private static final String TRANSITION = StyleConstants.CSS_TRANSITION;
+    private static final String MOUSEENTER = StyleConstants.VAL_MOUSEENTER;
+    private static final String TRANSFORM = StyleConstants.CSS_TRANSFORM;
+    private static final String MOUSELEAVE = StyleConstants.VAL_MOUSELEAVE;
+    private static final String POINTER = StyleConstants.VAL_POINTER;
+    private static final String CURSOR = StyleConstants.CSS_CURSOR;
+    private static final String HEIGHT = StyleConstants.CSS_HEIGHT;
+    private static final String COLOR = StyleConstants.CSS_COLOR;
+    private static final String FONT_SIZE = StyleConstants.CSS_FONT_SIZE;
+    private static final String FONT_WEIGHT = StyleConstants.CSS_FONT_WEIGHT;
+    private static final String OPACITY = StyleConstants.CSS_OPACITY;
+    private static final String MARGIN = StyleConstants.CSS_MARGIN;
     private static final String RGBA_BLACK_10 = "rgba(0, 0, 0, 0.1)";
 
     private AuthComponents() { }
@@ -43,8 +43,8 @@ public final class AuthComponents {
         card.getStyle().set(BORDER_RADIUS, "24px");
         card.getStyle().set(PADDING, "48px");
         card.getStyle().set(WIDTH, "100%");
-        card.getStyle().set("max-width", "420px");
-        card.getStyle().set(BOX_SHADOW, "0 2px 12px rgba(0, 0, 0, 0.04)");
+        card.getStyle().set(StyleConstants.CSS_MAX_WIDTH, "420px");
+        card.getStyle().set(BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
         card.getStyle().set(BORDER, "1px solid rgba(0, 0, 0, 0.05)");
         card.getStyle().set(TRANSITION, "all 0.5s ease");
 
@@ -54,7 +54,7 @@ public final class AuthComponents {
             card.getStyle().set(TRANSFORM, "translateY(-2px)");
         });
         card.getElement().addEventListener(MOUSELEAVE, e -> {
-            card.getStyle().set(BOX_SHADOW, "0 2px 12px rgba(0, 0, 0, 0.04)");
+            card.getStyle().set(BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
             card.getStyle().set(TRANSFORM, "translateY(0)");
         });
 
@@ -66,7 +66,7 @@ public final class AuthComponents {
         backLink.setAlignItems(FlexComponent.Alignment.CENTER);
         backLink.getStyle().set("gap", "6px");
         backLink.getStyle().set(CURSOR, POINTER);
-        backLink.getStyle().set("margin-bottom", "24px");
+        backLink.getStyle().set(StyleConstants.CSS_MARGIN_BOTTOM, "24px");
         backLink.getStyle().set(WIDTH, "fit-content");
         backLink.getStyle().set(TRANSITION, "opacity 0.2s");
 
@@ -94,10 +94,10 @@ public final class AuthComponents {
         logoIcon.getStyle().set(HEIGHT, "48px");
         logoIcon.getStyle().set(BACKGROUND, StyleConstants.PRIMARY);
         logoIcon.getStyle().set(BORDER_RADIUS, "12px");
-        logoIcon.getStyle().set("display", "flex");
-        logoIcon.getStyle().set("align-items", "center");
-        logoIcon.getStyle().set("justify-content", "center");
-        logoIcon.getStyle().set("margin-bottom", "24px");
+        logoIcon.getStyle().set(StyleConstants.CSS_DISPLAY, "flex");
+        logoIcon.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
+        logoIcon.getStyle().set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER);
+        logoIcon.getStyle().set(StyleConstants.CSS_MARGIN_BOTTOM, "24px");
         logoIcon.getStyle().set(BOX_SHADOW, "0 10px 15px -3px rgba(0, 122, 255, 0.3)");
         logoIcon.add(VaadinIcon.SPARK_LINE.create());
         return logoIcon;
@@ -123,10 +123,10 @@ public final class AuthComponents {
     public static Button createPrimaryButton(String text, Runnable action) {
         Button btn = new Button(text, e -> action.run());
         btn.getStyle().set(BACKGROUND, "linear-gradient(135deg, " + StyleConstants.PRIMARY + " 0%, #5AC8FA 100%)");
-        btn.getStyle().set(COLOR, "white");
+        btn.getStyle().set(COLOR, StyleConstants.VAL_WHITE);
         btn.getStyle().set(FONT_WEIGHT, "600");
         btn.getStyle().set(FONT_SIZE, "15px");
-        btn.getStyle().set(BORDER_RADIUS, "9999px");
+        btn.getStyle().set(BORDER_RADIUS, StyleConstants.VAL_9999PX);
         btn.getStyle().set(BORDER, "none");
         btn.getStyle().set(PADDING, "14px 24px");
         btn.getStyle().set(BOX_SHADOW, "0 10px 15px -3px rgba(0, 122, 255, 0.3)");
@@ -159,11 +159,11 @@ public final class AuthComponents {
 
         btn.getElement().addEventListener(MOUSEENTER, e -> {
             btn.getStyle().set(BACKGROUND, "rgba(0, 0, 0, 0.08)");
-            btn.getStyle().set("border-color", RGBA_BLACK_10);
+            btn.getStyle().set(StyleConstants.CSS_BORDER_COLOR, RGBA_BLACK_10);
         });
         btn.getElement().addEventListener(MOUSELEAVE, e -> {
             btn.getStyle().set(BACKGROUND, StyleConstants.BG_GRAY);
-            btn.getStyle().set("border-color", "rgba(0, 0, 0, 0.05)");
+            btn.getStyle().set(StyleConstants.CSS_BORDER_COLOR, "rgba(0, 0, 0, 0.05)");
         });
 
         return btn;
@@ -184,7 +184,7 @@ public final class AuthComponents {
         Span textSpan = new Span(text);
         textSpan.getStyle().set(FONT_SIZE, "13px");
         textSpan.getStyle().set(COLOR, StyleConstants.TEXT_SECONDARY);
-        textSpan.getStyle().set("white-space", "nowrap");
+        textSpan.getStyle().set(StyleConstants.CSS_WHITE_SPACE, "nowrap");
 
         Div line2 = new Div();
         line2.getStyle().set("flex", "1");
@@ -202,7 +202,7 @@ public final class AuthComponents {
         title.getStyle().set(FONT_WEIGHT, "700");
         title.getStyle().set(COLOR, StyleConstants.TEXT_PRIMARY);
         title.getStyle().set(MARGIN, "0 0 8px 0");
-        title.getStyle().set("letter-spacing", "-0.025em");
+        title.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "-0.025em");
         return title;
     }
 
