@@ -178,6 +178,52 @@ RTL languages use Arabic-script fonts with cascading fallbacks: `Noto Sans Arabi
 4. Verify: sidebar moves right, all text aligns right, toggle switches flip, no overlapping or clipped content
 5. Switch back to English — verify everything flips back to LTR
 
+## 🧪 Testing & Code Quality
+
+### SonarQube (Static Code Analysis)
+
+SonarQube provides continuous inspection of code quality, security, and maintainability.
+
+#### Quick Start with Docker
+
+```bash
+# Start SonarQube container (runs on http://localhost:9000)
+docker run -d --name sonarqube \
+  -p 9000:9000 \
+  sonarqube:lts-community
+
+# Wait ~2 minutes for startup, then access:
+# http://localhost:9000 | admin / admin
+```
+
+#### Linux Installation (Manual / Systemd)
+
+# 1. Start SonarQube
+
+sudo -u sonar /opt/sonarqube/bin/linux-x86-64/sonar.sh start
+
+# Check logs on first run
+
+sudo -u sonar /opt/sonarqube/bin/linux-x86-64/sonar.sh status
+tail -f /opt/sonarqube/logs/sonar.log
+
+# 2. Access at http://localhost:9000
+
+# Default credentials: admin / admin (change on first login)
+
+#### Run Analysis
+
+```bash
+# Full build with tests + coverage + Sonar analysis
+mvn clean verify sonar:sonar
+
+# Or run analysis only (skip tests)
+mvn compile sonar:sonar
+
+# Or
+mvn clean jacoco:prepare-agent test jacoco:report sonar:sonar -Dmaven.test.failure.ignore=true
+```
+
 ## 🔧 Development
 
 See [dev_instructions.md](dev_instructions.md) for full setup, CLI usage, Docker, and deployment details.
