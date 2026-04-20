@@ -197,18 +197,12 @@ class SignUpViewTest extends BaseVaadinViewTest {
     }
 
     @Test
-    void showSuccessAndError_createNotifications() throws Exception {
+    void showSuccessAndError_createNotifications() {
         try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class);
                 MockedConstruction<Notification> notificationMock = Mockito.mockConstruction(Notification.class)) {
-            SignUpView view = new SignUpView();
 
-            Method success = SignUpView.class.getDeclaredMethod("showSuccess", String.class);
-            Method error = SignUpView.class.getDeclaredMethod("showError", String.class);
-            success.setAccessible(true);
-            error.setAccessible(true);
-
-            success.invoke(view, "ok");
-            error.invoke(view, "bad");
+            com.clbooster.app.views.util.AuthComponents.showSuccess("ok");
+            com.clbooster.app.views.util.AuthComponents.showError("bad");
 
             assertTrue(notificationMock.constructed().size() >= 2);
         }

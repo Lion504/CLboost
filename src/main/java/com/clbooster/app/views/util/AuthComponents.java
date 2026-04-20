@@ -32,6 +32,7 @@ public final class AuthComponents {
     private static final String FONT_SIZE = "font-size";
     private static final String FONT_WEIGHT = "font-weight";
     private static final String OPACITY = "opacity";
+    private static final String MARGIN = "margin";
     private static final String RGBA_BLACK_10 = "rgba(0, 0, 0, 0.1)";
 
     private AuthComponents() { }
@@ -173,7 +174,7 @@ public final class AuthComponents {
         divider.setWidthFull();
         divider.setAlignItems(FlexComponent.Alignment.CENTER);
         divider.getStyle().set("gap", "16px");
-        divider.getStyle().set("margin", "24px 0");
+        divider.getStyle().set(MARGIN, "24px 0");
 
         Div line1 = new Div();
         line1.getStyle().set("flex", "1");
@@ -200,7 +201,7 @@ public final class AuthComponents {
         title.getStyle().set(FONT_SIZE, "28px");
         title.getStyle().set(FONT_WEIGHT, "700");
         title.getStyle().set(COLOR, StyleConstants.TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 8px 0");
+        title.getStyle().set(MARGIN, "0 0 8px 0");
         title.getStyle().set("letter-spacing", "-0.025em");
         return title;
     }
@@ -209,7 +210,7 @@ public final class AuthComponents {
         Paragraph subtitle = new Paragraph(text);
         subtitle.getStyle().set(FONT_SIZE, "15px");
         subtitle.getStyle().set(COLOR, StyleConstants.TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "0 0 32px 0");
+        subtitle.getStyle().set(MARGIN, "0 0 32px 0");
         return subtitle;
     }
 
