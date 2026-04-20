@@ -6,7 +6,6 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H4;
@@ -21,9 +20,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.component.tabs.TabsVariant;
 
 import java.util.List;
 import java.util.Locale;
@@ -41,6 +37,60 @@ public class LandingView extends VerticalLayout {
     private static final String BG_WHITE = "#ffffff";
     private static final String BG_GRAY = "#f5f5f7";
     private static final String BG_LIGHT = "#fbfbfb";
+
+    private static final String COLOR_PROP = "color";
+    private static final String FONT_SIZE_PROP = "font-size";
+    private static final String FONT_WEIGHT_PROP = "font-weight";
+    private static final String BACKGROUND_PROP = "background";
+    private static final String MARGIN_PROP = "margin";
+    private static final String PADDING_PROP = "padding";
+    private static final String BORDER_RADIUS_PROP = "border-radius";
+    private static final String GAP_PROP = "gap";
+    private static final String WIDTH_PROP = "width";
+    private static final String HEIGHT_PROP = "height";
+    private static final String DISPLAY_PROP = "display";
+    private static final String ALIGN_ITEMS_PROP = "align-items";
+    private static final String JUSTIFY_CONTENT_PROP = "justify-content";
+    private static final String CURSOR_PROP = "cursor";
+    private static final String TRANSITION_PROP = "transition";
+
+    private static final String POINTER_CURSOR = "pointer";
+    private static final String CENTER_ALIGN = "center";
+    private static final String WHITE_COLOR = "white";
+    private static final String FULLY_ROUNDED = "9999px";
+    private static final String TRANSITION_ALL_FAST = "all 0.2s";
+    private static final String EVENT_MOUSELEAVE = "mouseleave";
+    private static final String BG_PRIMARY_ALPHA_10 = "rgba(0,122,255,0.1)";
+    private static final String BG_BLACK_ALPHA_05 = "rgba(0,0,0,0.05)";
+    private static final String MARGIN_TOP_SMALL = "4px 0 0";
+
+    private static final String BORDER_PROP = "border";
+    private static final String BORDER_TOP_PROP = "border-top";
+    private static final String BORDER_BOTTOM_PROP = "border-bottom";
+    private static final String BORDER_COLOR_PROP = "border-color";
+    private static final String BOX_SHADOW_PROP = "box-shadow";
+    private static final String TRANSFORM_PROP = "transform";
+    private static final String LINE_HEIGHT_PROP = "line-height";
+    private static final String TEXT_ALIGN_PROP = "text-align";
+    private static final String ZERO_VALUE = "0";
+    private static final String BORDER_SUBTLE = "1px solid rgba(0,0,0,0.05)";
+    private static final String FONT_WEIGHT_BOLD = "700";
+    private static final String FONT_WEIGHT_SEMIBOLD = "600";
+    private static final String DISPLAY_FLEX = "flex";
+    private static final String TRANSPARENT_COLOR = "transparent";
+    private static final String EVENT_MOUSEENTER = "mouseenter";
+
+    private static final String LANG_ENGLISH = "English";
+    private static final String LANG_SUOMI = "Suomi";
+    private static final String LANG_PORTUGUESE = "Português";
+    private static final String LANG_PERSIAN = "فارسی";
+    private static final String LANG_CHINESE = "中文";
+    private static final String LANG_URDU = "اردو";
+    private static final String POSITION_PROP = "position";
+    private static final String MAX_WIDTH_PROP = "max-width";
+    private static final String FILTER_PROP = "filter";
+    private static final String YOUR_NAME_PLACEHOLDER = "[Your Name]";
+
 
     private Dialog activeModal = null;
     private final TranslationService translationService;
@@ -62,7 +112,7 @@ public class LandingView extends VerticalLayout {
         setSpacing(false);
         setSizeFull();
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-        getStyle().set("background", BG_WHITE);
+        getStyle().set(BACKGROUND_PROP, BG_WHITE);
         getStyle().set("font-family",
                 "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
 
@@ -94,25 +144,25 @@ public class LandingView extends VerticalLayout {
         HorizontalLayout logo = new HorizontalLayout();
         logo.setAlignItems(FlexComponent.Alignment.CENTER);
         logo.setSpacing(false);
-        logo.getStyle().set("gap", "8px");
-        logo.getStyle().set("cursor", "pointer");
+        logo.getStyle().set(GAP_PROP, "8px");
+        logo.getStyle().set(CURSOR_PROP, POINTER_CURSOR);
 
         Div logoIcon = new Div();
-        logoIcon.getStyle().set("width", "32px");
-        logoIcon.getStyle().set("height", "32px");
-        logoIcon.getStyle().set("background", PRIMARY);
-        logoIcon.getStyle().set("border-radius", "8px");
-        logoIcon.getStyle().set("display", "flex");
-        logoIcon.getStyle().set("align-items", "center");
-        logoIcon.getStyle().set("justify-content", "center");
-        logoIcon.getStyle().set("color", "white");
+        logoIcon.getStyle().set(WIDTH_PROP, "32px");
+        logoIcon.getStyle().set(HEIGHT_PROP, "32px");
+        logoIcon.getStyle().set(BACKGROUND_PROP, PRIMARY);
+        logoIcon.getStyle().set(BORDER_RADIUS_PROP, "8px");
+        logoIcon.getStyle().set(DISPLAY_PROP, DISPLAY_FLEX);
+        logoIcon.getStyle().set(ALIGN_ITEMS_PROP, CENTER_ALIGN);
+        logoIcon.getStyle().set(JUSTIFY_CONTENT_PROP, CENTER_ALIGN);
+        logoIcon.getStyle().set(COLOR_PROP, WHITE_COLOR);
         logoIcon.add(VaadinIcon.SPARK_LINE.create());
 
         Span logoText = new Span(translationService.translate("landing.clBooster"));
-        logoText.getStyle().set("font-weight", "700");
-        logoText.getStyle().set("font-size", "20px");
+        logoText.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_BOLD);
+        logoText.getStyle().set(FONT_SIZE_PROP, "20px");
         logoText.getStyle().set("letter-spacing", "-0.025em");
-        logoText.getStyle().set("color", TEXT_PRIMARY);
+        logoText.getStyle().set(COLOR_PROP, TEXT_PRIMARY);
 
         logo.add(logoIcon, logoText);
         logo.addClickListener(e -> scrollToTop());
@@ -123,11 +173,11 @@ public class LandingView extends VerticalLayout {
         centerSection.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         centerSection.setAlignItems(FlexComponent.Alignment.CENTER);
         centerSection.setSpacing(false);
-        centerSection.getStyle().set("gap", "32px");
+        centerSection.getStyle().set(GAP_PROP, "32px");
 
         Button howItWorks = createNavButton(translationService.translate("landing.howItWorks"),
-                () -> openHowItWorksModal());
-        Button faq = createNavButton(translationService.translate("landing.faq"), () -> openFaqModal());
+                this::openHowItWorksModal);
+        Button faq = createNavButton(translationService.translate("landing.faq"), this::openFaqModal);
 
         centerSection.add(howItWorks, faq);
 
@@ -136,59 +186,58 @@ public class LandingView extends VerticalLayout {
         rightSection.setWidth("280px");
         rightSection.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
         rightSection.setAlignItems(FlexComponent.Alignment.CENTER);
-        rightSection.getStyle().set("gap", "12px");
+        rightSection.getStyle().set(GAP_PROP, "12px");
 
         // Language switcher - set current language based on saved locale
-        String currentLang = "English";
+        String currentLang = LANG_ENGLISH;
         try {
             Locale currentLocale = translationService.getCurrentLocale();
             if (currentLocale != null) {
                 String lang = currentLocale.getLanguage();
-                String country = currentLocale.getCountry();
                 if ("fi".equals(lang))
-                    currentLang = "Suomi";
+                    currentLang = LANG_SUOMI;
                 else if ("pt".equals(lang))
-                    currentLang = "Português";
+                    currentLang = LANG_PORTUGUESE;
                 else if ("fa".equals(lang))
-                    currentLang = "فارسی";
+                    currentLang = LANG_PERSIAN;
                 else if ("zh".equals(lang))
-                    currentLang = "中文";
+                    currentLang = LANG_CHINESE;
                 else if ("ur".equals(lang))
-                    currentLang = "اردو";
+                    currentLang = LANG_URDU;
             }
         } catch (Exception e) {
             // VaadinSession not available, use default
         }
 
         Select<String> langSelect = new Select<>();
-        langSelect.setItems("English", "Suomi", "Português", "فارسی", "中文", "اردو");
+        langSelect.setItems(LANG_ENGLISH, LANG_SUOMI, LANG_PORTUGUESE, LANG_PERSIAN, LANG_CHINESE, LANG_URDU);
         langSelect.setValue(currentLang);
         langSelect.setWidth("100px");
-        langSelect.getStyle().set("--vaadin-input-field-background", "transparent");
-        langSelect.getStyle().set("font-size", "13px");
-        langSelect.getStyle().set("font-weight", "600");
+        langSelect.getStyle().set("--vaadin-input-field-background", TRANSPARENT_COLOR);
+        langSelect.getStyle().set(FONT_SIZE_PROP, "13px");
+        langSelect.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_SEMIBOLD);
         langSelect.addValueChangeListener(e -> {
             String lang = e.getValue();
             if (lang != null) {
                 String langCode;
                 switch (lang) {
-                case "Suomi":
+                case LANG_SUOMI:
                     langCode = "Finnish (Suomi)";
                     break;
-                case "Português":
+                case LANG_PORTUGUESE:
                     langCode = "Portuguese (Português)";
                     break;
-                case "فارسی":
+                case LANG_PERSIAN:
                     langCode = "Persian (فارسی)";
                     break;
-                case "中文":
+                case LANG_CHINESE:
                     langCode = "Chinese (中文)";
                     break;
-                case "اردو":
+                case LANG_URDU:
                     langCode = "Urdu (اردو)";
                     break;
                 default:
-                    langCode = "English";
+                    langCode = LANG_ENGLISH;
                 }
                 translationService.setLanguage(langCode);
                 getUI().ifPresent(ui -> ui.getPage().reload());
@@ -197,21 +246,21 @@ public class LandingView extends VerticalLayout {
 
         Button loginBtn = new Button(translationService.translate("landing.logIn"),
                 e -> getUI().ifPresent(ui -> ui.navigate(LoginView.class)));
-        loginBtn.getStyle().set("font-size", "13px");
-        loginBtn.getStyle().set("font-weight", "700");
-        loginBtn.getStyle().set("color", TEXT_PRIMARY);
-        loginBtn.getStyle().set("background", "transparent");
-        loginBtn.getStyle().set("border-radius", "9999px");
-        loginBtn.getStyle().set("padding", "8px 16px");
-        loginBtn.getStyle().set("transition", "all 0.2s");
-        loginBtn.getElement().addEventListener("mouseenter",
-                e -> loginBtn.getStyle().set("background", "rgba(0, 0, 0, 0.08)"));
-        loginBtn.getElement().addEventListener("mouseleave", e -> loginBtn.getStyle().set("background", "transparent"));
+        loginBtn.getStyle().set(FONT_SIZE_PROP, "13px");
+        loginBtn.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_BOLD);
+        loginBtn.getStyle().set(COLOR_PROP, TEXT_PRIMARY);
+        loginBtn.getStyle().set(BACKGROUND_PROP, TRANSPARENT_COLOR);
+        loginBtn.getStyle().set(BORDER_RADIUS_PROP, FULLY_ROUNDED);
+        loginBtn.getStyle().set(PADDING_PROP, "8px 16px");
+        loginBtn.getStyle().set(TRANSITION_PROP, TRANSITION_ALL_FAST);
+        loginBtn.getElement().addEventListener(EVENT_MOUSEENTER,
+                e -> loginBtn.getStyle().set(BACKGROUND_PROP, "rgba(0, 0, 0, 0.08)"));
+        loginBtn.getElement().addEventListener(EVENT_MOUSELEAVE, e -> loginBtn.getStyle().set(BACKGROUND_PROP, TRANSPARENT_COLOR));
 
         Button signupBtn = createPrimaryButton(translationService.translate("signup.signup"),
                 () -> getUI().ifPresent(ui -> ui.navigate(SignUpView.class)));
-        signupBtn.getStyle().set("font-size", "13px");
-        signupBtn.getStyle().set("padding", "8px 20px");
+        signupBtn.getStyle().set(FONT_SIZE_PROP, "13px");
+        signupBtn.getStyle().set(PADDING_PROP, "8px 20px");
 
         rightSection.add(langSelect, loginBtn, signupBtn);
 
@@ -220,14 +269,14 @@ public class LandingView extends VerticalLayout {
         navbar.setWidthFull();
         navbar.setAlignItems(FlexComponent.Alignment.CENTER);
         navbar.setPadding(true);
-        navbar.getStyle().set("padding", "0 48px");
-        navbar.getStyle().set("height", "80px");
-        navbar.getStyle().set("background", BG_WHITE + "cc");
+        navbar.getStyle().set(PADDING_PROP, "0 48px");
+        navbar.getStyle().set(HEIGHT_PROP, "80px");
+        navbar.getStyle().set(BACKGROUND_PROP, BG_WHITE + "cc");
         navbar.getStyle().set("backdrop-filter", "blur(12px)");
-        navbar.getStyle().set("position", "sticky");
-        navbar.getStyle().set("top", "0");
+        navbar.getStyle().set(POSITION_PROP, "sticky");
+        navbar.getStyle().set("top", ZERO_VALUE);
         navbar.getStyle().set("z-index", "40");
-        navbar.getStyle().set("border-bottom", "1px solid rgba(0,0,0,0.05)");
+        navbar.getStyle().set(BORDER_BOTTOM_PROP, BORDER_SUBTLE);
         navbar.getStyle().set("box-sizing", "border-box");
         navbar.expand(centerSection);
 
@@ -236,14 +285,14 @@ public class LandingView extends VerticalLayout {
 
     private Button createNavButton(String text, Runnable action) {
         Button btn = new Button(text, e -> action.run());
-        btn.getStyle().set("font-size", "13px");
-        btn.getStyle().set("font-weight", "600");
-        btn.getStyle().set("color", TEXT_SECONDARY);
-        btn.getStyle().set("background", "transparent");
-        btn.getStyle().set("padding", "8px 0");
-        btn.getStyle().set("transition", "color 0.2s");
-        btn.getElement().addEventListener("mouseenter", e -> btn.getStyle().set("color", TEXT_PRIMARY));
-        btn.getElement().addEventListener("mouseleave", e -> btn.getStyle().set("color", TEXT_SECONDARY));
+        btn.getStyle().set(FONT_SIZE_PROP, "13px");
+        btn.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_SEMIBOLD);
+        btn.getStyle().set(COLOR_PROP, TEXT_SECONDARY);
+        btn.getStyle().set(BACKGROUND_PROP, TRANSPARENT_COLOR);
+        btn.getStyle().set(PADDING_PROP, "8px 0");
+        btn.getStyle().set(TRANSITION_PROP, "color 0.2s");
+        btn.getElement().addEventListener(EVENT_MOUSEENTER, e -> btn.getStyle().set(COLOR_PROP, TEXT_PRIMARY));
+        btn.getElement().addEventListener(EVENT_MOUSELEAVE, e -> btn.getStyle().set(COLOR_PROP, TEXT_SECONDARY));
         return btn;
     }
 
@@ -253,7 +302,7 @@ public class LandingView extends VerticalLayout {
         VerticalLayout heroText = new VerticalLayout();
         heroText.setPadding(false);
         heroText.setSpacing(false);
-        heroText.getStyle().set("gap", "32px");
+        heroText.getStyle().set(GAP_PROP, "32px");
         heroText.setWidth("50%");
         heroText.setDefaultHorizontalComponentAlignment(Alignment.START);
 
@@ -261,12 +310,12 @@ public class LandingView extends VerticalLayout {
 
         // Headline with gradient text - using HTML for proper gradient rendering
         Div headline = new Div();
-        headline.getStyle().set("font-size", "clamp(40px, 5vw, 72px)");
-        headline.getStyle().set("font-weight", "700");
+        headline.getStyle().set(FONT_SIZE_PROP, "clamp(40px, 5vw, 72px)");
+        headline.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_BOLD);
         headline.getStyle().set("letter-spacing", "-0.025em");
-        headline.getStyle().set("line-height", "1.1");
-        headline.getStyle().set("margin", "0");
-        headline.getStyle().set("max-width", "600px");
+        headline.getStyle().set(LINE_HEIGHT_PROP, "1.1");
+        headline.getStyle().set(MARGIN_PROP, ZERO_VALUE);
+        headline.getStyle().set(MAX_WIDTH_PROP, "600px");
 
         // Set HTML content directly for gradient text support
         String elevateYour = translationService.translate("landing.elevateYour");
@@ -279,63 +328,63 @@ public class LandingView extends VerticalLayout {
 
         // Description
         Paragraph description = new Paragraph(translationService.translate("landing.heroDescription"));
-        description.getStyle().set("font-size", "20px");
-        description.getStyle().set("color", TEXT_SECONDARY);
-        description.getStyle().set("line-height", "1.6");
-        description.getStyle().set("max-width", "520px");
-        description.getStyle().set("margin", "0");
+        description.getStyle().set(FONT_SIZE_PROP, "20px");
+        description.getStyle().set(COLOR_PROP, TEXT_SECONDARY);
+        description.getStyle().set(LINE_HEIGHT_PROP, "1.6");
+        description.getStyle().set(MAX_WIDTH_PROP, "520px");
+        description.getStyle().set(MARGIN_PROP, ZERO_VALUE);
 
         // CTA Buttons
         HorizontalLayout ctaRow = new HorizontalLayout();
         ctaRow.setSpacing(false);
-        ctaRow.getStyle().set("gap", "16px");
+        ctaRow.getStyle().set(GAP_PROP, "16px");
         ctaRow.getStyle().set("padding-top", "16px");
 
         Button generateBtn = createPrimaryButton(translationService.translate("landing.generateNow"),
                 () -> getUI().ifPresent(ui -> ui.navigate(LoginView.class)));
-        generateBtn.getStyle().set("font-size", "16px");
-        generateBtn.getStyle().set("padding", "16px 40px");
+        generateBtn.getStyle().set(FONT_SIZE_PROP, "16px");
+        generateBtn.getStyle().set(PADDING_PROP, "16px 40px");
 
         Button samplesBtn = createSecondaryButton(translationService.translate("landing.seeSamples"),
                 this::openSamplesModal);
-        samplesBtn.getStyle().set("font-size", "16px");
-        samplesBtn.getStyle().set("padding", "16px 40px");
+        samplesBtn.getStyle().set(FONT_SIZE_PROP, "16px");
+        samplesBtn.getStyle().set(PADDING_PROP, "16px 40px");
 
         ctaRow.add(generateBtn, samplesBtn);
         heroText.add(headline, description, ctaRow);
 
-        heroText.getStyle().set("padding", "80px 0");
+        heroText.getStyle().set(PADDING_PROP, "80px 0");
 
         // Right side - Hero Image
         Div imageContainer = new Div();
         imageContainer.setWidth("50%");
-        imageContainer.getStyle().set("position", "relative");
-        imageContainer.getStyle().set("display", "flex");
-        imageContainer.getStyle().set("justify-content", "center");
-        imageContainer.getStyle().set("align-items", "center");
+        imageContainer.getStyle().set(POSITION_PROP, "relative");
+        imageContainer.getStyle().set(DISPLAY_PROP, DISPLAY_FLEX);
+        imageContainer.getStyle().set(JUSTIFY_CONTENT_PROP, CENTER_ALIGN);
+        imageContainer.getStyle().set(ALIGN_ITEMS_PROP, CENTER_ALIGN);
 
         // Glow effect behind image
         Div glow = new Div();
-        glow.getStyle().set("position", "absolute");
+        glow.getStyle().set(POSITION_PROP, "absolute");
         glow.getStyle().set("inset", "-40px");
-        glow.getStyle().set("background", "rgba(0,122,255,0.1)");
-        glow.getStyle().set("filter", "blur(100px)");
-        glow.getStyle().set("border-radius", "50%");
+        glow.getStyle().set(BACKGROUND_PROP, BG_PRIMARY_ALPHA_10);
+        glow.getStyle().set(FILTER_PROP, "blur(100px)");
+        glow.getStyle().set(BORDER_RADIUS_PROP, "50%");
         glow.getStyle().set("z-index", "-1");
         glow.getStyle().set("animation", "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite");
 
         Image heroImage = new Image("images/hero.jpg", translationService.translate("landing.heroImage"));
-        heroImage.getStyle().set("width", "100%");
-        heroImage.getStyle().set("max-width", "560px");
-        heroImage.getStyle().set("border-radius", "48px");
-        heroImage.getStyle().set("box-shadow", "0 25px 50px -12px rgba(0,0,0,0.25)");
-        heroImage.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
-        heroImage.getStyle().set("transform", "rotate(2deg)");
-        heroImage.getStyle().set("transition", "transform 0.7s");
-        heroImage.getElement().addEventListener("mouseenter",
-                e -> heroImage.getStyle().set("transform", "rotate(0deg)"));
-        heroImage.getElement().addEventListener("mouseleave",
-                e -> heroImage.getStyle().set("transform", "rotate(2deg)"));
+        heroImage.getStyle().set(WIDTH_PROP, "100%");
+        heroImage.getStyle().set(MAX_WIDTH_PROP, "560px");
+        heroImage.getStyle().set(BORDER_RADIUS_PROP, "48px");
+        heroImage.getStyle().set(BOX_SHADOW_PROP, "0 25px 50px -12px rgba(0,0,0,0.25)");
+        heroImage.getStyle().set(BORDER_PROP, BORDER_SUBTLE);
+        heroImage.getStyle().set(TRANSFORM_PROP, "rotate(2deg)");
+        heroImage.getStyle().set(TRANSITION_PROP, "transform 0.7s");
+        heroImage.getElement().addEventListener(EVENT_MOUSEENTER,
+                e -> heroImage.getStyle().set(TRANSFORM_PROP, "rotate(0deg)"));
+        heroImage.getElement().addEventListener(EVENT_MOUSELEAVE,
+                e -> heroImage.getStyle().set(TRANSFORM_PROP, "rotate(2deg)"));
 
         imageContainer.add(glow, heroImage);
 
@@ -343,8 +392,8 @@ public class LandingView extends VerticalLayout {
         HorizontalLayout hero = new HorizontalLayout(heroText, imageContainer);
         hero.setWidthFull();
         hero.setAlignItems(FlexComponent.Alignment.CENTER);
-        hero.getStyle().set("padding", "80px 48px 128px"); // pt-20 (80px), pb-32 (128px) like Figma
-        hero.getStyle().set("gap", "48px");
+        hero.getStyle().set(PADDING_PROP, "80px 48px 128px"); // pt-20 (80px), pb-32 (128px) like Figma
+        hero.getStyle().set(GAP_PROP, "48px");
 
         return hero;
     }
@@ -354,9 +403,9 @@ public class LandingView extends VerticalLayout {
         VerticalLayout section = new VerticalLayout();
         section.setPadding(false);
         section.setSpacing(false);
-        section.getStyle().set("gap", "32px");
-        section.getStyle().set("padding", "96px 48px");
-        section.getStyle().set("background", BG_GRAY);
+        section.getStyle().set(GAP_PROP, "32px");
+        section.getStyle().set(PADDING_PROP, "96px 48px");
+        section.getStyle().set(BACKGROUND_PROP, BG_GRAY);
         section.setWidthFull();
         section.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
@@ -364,36 +413,36 @@ public class LandingView extends VerticalLayout {
         VerticalLayout header = new VerticalLayout();
         header.setPadding(false);
         header.setSpacing(false);
-        header.getStyle().set("gap", "16px");
+        header.getStyle().set(GAP_PROP, "16px");
         header.setDefaultHorizontalComponentAlignment(Alignment.CENTER);
 
         H2 title = new H2(translationService.translate("landing.builtForPerformance"));
-        title.getStyle().set("font-size", "36px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0");
-        title.getStyle().set("text-align", "center");
+        title.getStyle().set(FONT_SIZE_PROP, "36px");
+        title.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_BOLD);
+        title.getStyle().set(COLOR_PROP, TEXT_PRIMARY);
+        title.getStyle().set(MARGIN_PROP, ZERO_VALUE);
+        title.getStyle().set(TEXT_ALIGN_PROP, CENTER_ALIGN);
 
         Paragraph subtitle = new Paragraph(translationService.translate("landing.stopWastingHours"));
-        subtitle.getStyle().set("font-size", "15px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("text-align", "center");
-        subtitle.getStyle().set("margin", "0");
+        subtitle.getStyle().set(FONT_SIZE_PROP, "15px");
+        subtitle.getStyle().set(COLOR_PROP, TEXT_SECONDARY);
+        subtitle.getStyle().set(TEXT_ALIGN_PROP, CENTER_ALIGN);
+        subtitle.getStyle().set(MARGIN_PROP, ZERO_VALUE);
 
         header.add(title, subtitle);
 
         // Feature cards grid
         HorizontalLayout cards = new HorizontalLayout();
         cards.setWidthFull();
-        cards.getStyle().set("gap", "32px");
-        cards.getStyle().set("justify-content", "center");
+        cards.getStyle().set(GAP_PROP, "32px");
+        cards.getStyle().set(JUSTIFY_CONTENT_PROP, CENTER_ALIGN);
         cards.getStyle().set("flex-wrap", "wrap");
 
         cards.add(
                 createFeatureCard(VaadinIcon.BOLT, "#FF9500", translationService.translate("landing.instantGeneration"),
                         translationService.translate("landing.instantGenerationDesc")));
 
-        cards.add(createFeatureCard(VaadinIcon.GLOBE, "#007AFF", translationService.translate("landing.companyIntel"),
+        cards.add(createFeatureCard(VaadinIcon.GLOBE, PRIMARY, translationService.translate("landing.companyIntel"),
                 translationService.translate("landing.companyIntelDesc")));
 
         cards.add(createFeatureCard(VaadinIcon.CHECK, "#34C759", translationService.translate("landing.atsOptimized"),
@@ -407,61 +456,61 @@ public class LandingView extends VerticalLayout {
     private VerticalLayout createFeatureCard(VaadinIcon iconType, String iconColor, String title, String description) {
         VerticalLayout card = new VerticalLayout();
         card.setPadding(true);
-        card.getStyle().set("padding", "32px");
-        card.getStyle().set("background", BG_WHITE);
-        card.getStyle().set("border-radius", "24px");
-        card.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
-        card.getStyle().set("box-shadow", "0 2px 12px rgba(0,0,0,0.01)");
-        card.getStyle().set("gap", "24px");
-        card.getStyle().set("width", "320px");
-        card.getStyle().set("transition", "all 0.5s");
-        card.getStyle().set("cursor", "pointer");
+        card.getStyle().set(PADDING_PROP, "32px");
+        card.getStyle().set(BACKGROUND_PROP, BG_WHITE);
+        card.getStyle().set(BORDER_RADIUS_PROP, "24px");
+        card.getStyle().set(BORDER_PROP, BORDER_SUBTLE);
+        card.getStyle().set(BOX_SHADOW_PROP, "0 2px 12px rgba(0,0,0,0.01)");
+        card.getStyle().set(GAP_PROP, "24px");
+        card.getStyle().set(WIDTH_PROP, "320px");
+        card.getStyle().set(TRANSITION_PROP, "all 0.5s");
+        card.getStyle().set(CURSOR_PROP, POINTER_CURSOR);
         card.setDefaultHorizontalComponentAlignment(Alignment.START);
 
         // Icon container
         Div iconContainer = new Div();
-        iconContainer.getStyle().set("width", "48px");
-        iconContainer.getStyle().set("height", "48px");
-        iconContainer.getStyle().set("border-radius", "16px");
-        iconContainer.getStyle().set("background", "rgba(0,0,0,0.05)");
-        iconContainer.getStyle().set("display", "flex");
-        iconContainer.getStyle().set("align-items", "center");
-        iconContainer.getStyle().set("justify-content", "center");
-        iconContainer.getStyle().set("transition", "transform 0.3s");
+        iconContainer.getStyle().set(WIDTH_PROP, "48px");
+        iconContainer.getStyle().set(HEIGHT_PROP, "48px");
+        iconContainer.getStyle().set(BORDER_RADIUS_PROP, "16px");
+        iconContainer.getStyle().set(BACKGROUND_PROP, BG_BLACK_ALPHA_05);
+        iconContainer.getStyle().set(DISPLAY_PROP, DISPLAY_FLEX);
+        iconContainer.getStyle().set(ALIGN_ITEMS_PROP, CENTER_ALIGN);
+        iconContainer.getStyle().set(JUSTIFY_CONTENT_PROP, CENTER_ALIGN);
+        iconContainer.getStyle().set(TRANSITION_PROP, "transform 0.3s");
 
         Icon icon = iconType.create();
-        icon.getStyle().set("color", iconColor);
-        icon.getStyle().set("width", "24px");
-        icon.getStyle().set("height", "24px");
+        icon.getStyle().set(COLOR_PROP, iconColor);
+        icon.getStyle().set(WIDTH_PROP, "24px");
+        icon.getStyle().set(HEIGHT_PROP, "24px");
         iconContainer.add(icon);
 
         // Title
         H3 cardTitle = new H3(title);
-        cardTitle.getStyle().set("font-size", "18px");
-        cardTitle.getStyle().set("font-weight", "700");
-        cardTitle.getStyle().set("color", TEXT_PRIMARY);
-        cardTitle.getStyle().set("margin", "0");
+        cardTitle.getStyle().set(FONT_SIZE_PROP, "18px");
+        cardTitle.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_BOLD);
+        cardTitle.getStyle().set(COLOR_PROP, TEXT_PRIMARY);
+        cardTitle.getStyle().set(MARGIN_PROP, ZERO_VALUE);
 
         // Description
         Paragraph cardDesc = new Paragraph(description);
-        cardDesc.getStyle().set("font-size", "14px");
-        cardDesc.getStyle().set("color", TEXT_SECONDARY);
-        cardDesc.getStyle().set("line-height", "1.6");
-        cardDesc.getStyle().set("margin", "0");
+        cardDesc.getStyle().set(FONT_SIZE_PROP, "14px");
+        cardDesc.getStyle().set(COLOR_PROP, TEXT_SECONDARY);
+        cardDesc.getStyle().set(LINE_HEIGHT_PROP, "1.6");
+        cardDesc.getStyle().set(MARGIN_PROP, ZERO_VALUE);
 
         card.add(iconContainer, cardTitle, cardDesc);
 
         // Hover effects
-        card.getElement().addEventListener("mouseenter", e -> {
-            card.getStyle().set("box-shadow", "0 20px 25px -5px rgba(0,0,0,0.1)");
-            card.getStyle().set("border-color", "rgba(0,0,0,0.1)");
-            iconContainer.getStyle().set("transform", "scale(1.1)");
+        card.getElement().addEventListener(EVENT_MOUSEENTER, e -> {
+            card.getStyle().set(BOX_SHADOW_PROP, "0 20px 25px -5px rgba(0,0,0,0.1)");
+            card.getStyle().set(BORDER_COLOR_PROP, "rgba(0,0,0,0.1)");
+            iconContainer.getStyle().set(TRANSFORM_PROP, "scale(1.1)");
         });
 
-        card.getElement().addEventListener("mouseleave", e -> {
-            card.getStyle().set("box-shadow", "0 2px 12px rgba(0,0,0,0.01)");
-            card.getStyle().set("border-color", "rgba(0,0,0,0.05)");
-            iconContainer.getStyle().set("transform", "scale(1)");
+        card.getElement().addEventListener(EVENT_MOUSELEAVE, e -> {
+            card.getStyle().set(BOX_SHADOW_PROP, "0 2px 12px rgba(0,0,0,0.01)");
+            card.getStyle().set(BORDER_COLOR_PROP, BG_BLACK_ALPHA_05);
+            iconContainer.getStyle().set(TRANSFORM_PROP, "scale(1)");
         });
 
         return card;
@@ -473,59 +522,20 @@ public class LandingView extends VerticalLayout {
             activeModal.close();
         }
 
-        Dialog dialog = new Dialog();
-        dialog.setModal(true);
-        dialog.setWidth("640px");
-        dialog.setMaxHeight("80vh");
-
+        Dialog dialog = setupDialog("640px", "80vh");
         VerticalLayout content = new VerticalLayout();
         content.setPadding(false);
         content.setSpacing(false);
 
-        // Header
-        HorizontalLayout header = new HorizontalLayout();
-        header.setWidthFull();
-        header.setAlignItems(FlexComponent.Alignment.CENTER);
-        header.setPadding(true);
-        header.getStyle().set("padding", "24px");
-        header.getStyle().set("border-bottom", "1px solid rgba(0,0,0,0.05)");
-        header.getStyle().set("background", BG_LIGHT);
-
-        Div iconContainer = new Div();
-        iconContainer.getStyle().set("width", "40px");
-        iconContainer.getStyle().set("height", "40px");
-        iconContainer.getStyle().set("border-radius", "12px");
-        iconContainer.getStyle().set("background", "rgba(0,122,255,0.1)");
-        iconContainer.getStyle().set("display", "flex");
-        iconContainer.getStyle().set("align-items", "center");
-        iconContainer.getStyle().set("justify-content", "center");
-        iconContainer.add(VaadinIcon.QUESTION.create());
-
-        VerticalLayout titleGroup = new VerticalLayout();
-        titleGroup.setPadding(false);
-        titleGroup.setSpacing(false);
-        H3 title = new H3(translationService.translate("help.faqTitle"));
-        title.getStyle().set("font-size", "20px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("margin", "0");
-        Paragraph subtitle = new Paragraph(translationService.translate("landing.everythingYouNeed"));
-        subtitle.getStyle().set("font-size", "13px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "4px 0 0");
-        titleGroup.add(title, subtitle);
-
-        Button closeBtn = new Button(VaadinIcon.CLOSE.create(), e -> dialog.close());
-        closeBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON);
-        closeBtn.getStyle().set("color", TEXT_SECONDARY);
-
-        header.add(iconContainer, titleGroup, closeBtn);
-        header.expand(titleGroup);
+        HorizontalLayout header = createModalHeader(dialog, VaadinIcon.QUESTION, 
+            translationService.translate("help.faqTitle"), 
+            translationService.translate("landing.everythingYouNeed"), STANDARD_HEADER_STYLE);
 
         // FAQ Content
         VerticalLayout faqContent = new VerticalLayout();
         faqContent.setPadding(true);
-        faqContent.getStyle().set("padding", "32px");
-        faqContent.getStyle().set("gap", "32px");
+        faqContent.getStyle().set(PADDING_PROP, "32px");
+        faqContent.getStyle().set(GAP_PROP, "32px");
 
         List<String[]> faqItems = List.of(
                 new String[] { translationService.translate("landing.faqIsFree"),
@@ -541,50 +551,38 @@ public class LandingView extends VerticalLayout {
             VerticalLayout faqItem = new VerticalLayout();
             faqItem.setPadding(false);
             faqItem.setSpacing(false);
-            faqItem.getStyle().set("gap", "8px");
+            faqItem.getStyle().set(GAP_PROP, "8px");
 
             HorizontalLayout questionRow = new HorizontalLayout();
             questionRow.setAlignItems(FlexComponent.Alignment.CENTER);
             questionRow.setSpacing(false);
-            questionRow.getStyle().set("gap", "8px");
+            questionRow.getStyle().set(GAP_PROP, "8px");
 
             Icon check = VaadinIcon.CHECK.create();
-            check.getStyle().set("color", PRIMARY);
-            check.getStyle().set("width", "16px");
-            check.getStyle().set("height", "16px");
+            check.getStyle().set(COLOR_PROP, PRIMARY);
+            check.getStyle().set(WIDTH_PROP, "16px");
+            check.getStyle().set(HEIGHT_PROP, "16px");
 
             H4 question = new H4(item[0]);
-            question.getStyle().set("font-size", "16px");
-            question.getStyle().set("font-weight", "700");
-            question.getStyle().set("color", TEXT_PRIMARY);
-            question.getStyle().set("margin", "0");
+            question.getStyle().set(FONT_SIZE_PROP, "16px");
+            question.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_BOLD);
+            question.getStyle().set(COLOR_PROP, TEXT_PRIMARY);
+            question.getStyle().set(MARGIN_PROP, ZERO_VALUE);
 
             questionRow.add(check, question);
 
             Paragraph answer = new Paragraph(item[1]);
-            answer.getStyle().set("font-size", "14px");
-            answer.getStyle().set("color", TEXT_SECONDARY);
-            answer.getStyle().set("line-height", "1.6");
-            answer.getStyle().set("margin", "0 0 0 24px");
+            answer.getStyle().set(FONT_SIZE_PROP, "14px");
+            answer.getStyle().set(COLOR_PROP, TEXT_SECONDARY);
+            answer.getStyle().set(LINE_HEIGHT_PROP, "1.6");
+            answer.getStyle().set(MARGIN_PROP, "0 0 0 24px");
 
             faqItem.add(questionRow, answer);
             faqContent.add(faqItem);
         }
 
         // Footer
-        HorizontalLayout footer = new HorizontalLayout();
-        footer.setWidthFull();
-        footer.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
-        footer.setPadding(true);
-        footer.getStyle().set("padding", "24px");
-        footer.getStyle().set("border-top", "1px solid rgba(0,0,0,0.05)");
-        footer.getStyle().set("background", BG_LIGHT);
-
-        Button ctaBtn = createPrimaryButton(translationService.translate("landing.tryItForFree"), () -> {
-            dialog.close();
-            getUI().ifPresent(ui -> ui.navigate(LoginView.class));
-        });
-        footer.add(ctaBtn);
+        HorizontalLayout footer = createStandardModalFooter(dialog);
 
         content.add(header, faqContent, footer);
         dialog.add(content);
@@ -598,60 +596,21 @@ public class LandingView extends VerticalLayout {
             activeModal.close();
         }
 
-        Dialog dialog = new Dialog();
-        dialog.setModal(true);
-        dialog.setWidth("640px");
-        dialog.setMaxHeight("80vh");
-
+        Dialog dialog = setupDialog("640px", "80vh");
         VerticalLayout content = new VerticalLayout();
         content.setPadding(false);
         content.setSpacing(false);
 
-        // Header
-        HorizontalLayout header = new HorizontalLayout();
-        header.setWidthFull();
-        header.setAlignItems(FlexComponent.Alignment.CENTER);
-        header.setPadding(true);
-        header.getStyle().set("padding", "24px");
-        header.getStyle().set("border-bottom", "1px solid rgba(0,0,0,0.05)");
-        header.getStyle().set("background", BG_LIGHT);
-
-        Div iconContainer = new Div();
-        iconContainer.getStyle().set("width", "40px");
-        iconContainer.getStyle().set("height", "40px");
-        iconContainer.getStyle().set("border-radius", "12px");
-        iconContainer.getStyle().set("background", "rgba(0,122,255,0.1)");
-        iconContainer.getStyle().set("display", "flex");
-        iconContainer.getStyle().set("align-items", "center");
-        iconContainer.getStyle().set("justify-content", "center");
-        iconContainer.add(VaadinIcon.FILE_TEXT.create());
-
-        VerticalLayout titleGroup = new VerticalLayout();
-        titleGroup.setPadding(false);
-        titleGroup.setSpacing(false);
-        H3 title = new H3(translationService.translate("generator.title"));
-        title.getStyle().set("font-size", "20px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("margin", "0");
-        Paragraph subtitle = new Paragraph(translationService.translate("landing.seeWhatAiCanGenerate"));
-        subtitle.getStyle().set("font-size", "13px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "4px 0 0");
-        titleGroup.add(title, subtitle);
-
-        Button closeBtn = new Button(VaadinIcon.CLOSE.create(), e -> dialog.close());
-        closeBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON);
-        closeBtn.getStyle().set("color", TEXT_SECONDARY);
-
-        header.add(iconContainer, titleGroup, closeBtn);
-        header.expand(titleGroup);
+        HorizontalLayout header = createModalHeader(dialog, VaadinIcon.FILE_TEXT, 
+            translationService.translate("generator.title"), 
+            translationService.translate("landing.seeWhatAiCanGenerate"), STANDARD_HEADER_STYLE);
 
         // Samples Grid - 2 columns like Figma
         Div samplesGrid = new Div();
-        samplesGrid.getStyle().set("display", "grid");
+        samplesGrid.getStyle().set(DISPLAY_PROP, "grid");
         samplesGrid.getStyle().set("grid-template-columns", "repeat(2, 1fr)");
-        samplesGrid.getStyle().set("gap", "16px");
-        samplesGrid.getStyle().set("padding", "32px");
+        samplesGrid.getStyle().set(GAP_PROP, "16px");
+        samplesGrid.getStyle().set(PADDING_PROP, "32px");
 
         // Sample data with cover letter content
         record Sample(String title, String company, String match, String letter) {
@@ -666,7 +625,7 @@ public class LandingView extends VerticalLayout {
                 + "I am particularly drawn to Tech Giant's commitment to innovation and user-centric design. I would welcome the opportunity to discuss how my background in product management and passion for technology can contribute to your team's continued success."
                 + System.lineSeparator() + System.lineSeparator() + "Thank you for your time and consideration."
                 + System.lineSeparator() + System.lineSeparator() + "Sincerely," + System.lineSeparator()
-                + "[Your Name]"),
+                + YOUR_NAME_PLACEHOLDER),
 
                 new Sample("Junior React Developer", "Modern Startup", "95%", "Dear Hiring Team,"
                         + System.lineSeparator() + System.lineSeparator()
@@ -678,7 +637,7 @@ public class LandingView extends VerticalLayout {
                         + System.lineSeparator() + System.lineSeparator()
                         + "I would love to discuss how my technical skills and enthusiasm can add value to your development team."
                         + System.lineSeparator() + System.lineSeparator() + "Best regards," + System.lineSeparator()
-                        + "[Your Name]"),
+                        + YOUR_NAME_PLACEHOLDER),
 
                 new Sample("Creative Director", "Design Agency", "92%", "Dear Creative Team," + System.lineSeparator()
                         + System.lineSeparator()
@@ -689,7 +648,7 @@ public class LandingView extends VerticalLayout {
                         + "Design Agency's reputation for pushing creative boundaries and delivering exceptional work aligns perfectly with my professional values. I am eager to bring my leadership experience and creative expertise to elevate your client portfolio."
                         + System.lineSeparator() + System.lineSeparator() + "Thank you for considering my application."
                         + System.lineSeparator() + System.lineSeparator() + "Warm regards," + System.lineSeparator()
-                        + "[Your Name]"),
+                        + YOUR_NAME_PLACEHOLDER),
 
                 new Sample("Customer Success Lead", "SaaS Corp", "96%", "Dear Hiring Manager," + System.lineSeparator()
                         + System.lineSeparator()
@@ -701,53 +660,53 @@ public class LandingView extends VerticalLayout {
                         + System.lineSeparator() + System.lineSeparator()
                         + "I look forward to discussing how my experience aligns with your team's goals."
                         + System.lineSeparator() + System.lineSeparator() + "Best regards," + System.lineSeparator()
-                        + "[Your Name]"));
+                        + YOUR_NAME_PLACEHOLDER));
 
         for (Sample sample : samples) {
             Div sampleCard = new Div();
-            sampleCard.getStyle().set("padding", "16px");
-            sampleCard.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
-            sampleCard.getStyle().set("border-radius", "16px");
-            sampleCard.getStyle().set("background", BG_WHITE);
-            sampleCard.getStyle().set("cursor", "pointer");
-            sampleCard.getStyle().set("transition", "all 0.3s");
+            sampleCard.getStyle().set(PADDING_PROP, "16px");
+            sampleCard.getStyle().set(BORDER_PROP, BORDER_SUBTLE);
+            sampleCard.getStyle().set(BORDER_RADIUS_PROP, "16px");
+            sampleCard.getStyle().set(BACKGROUND_PROP, BG_WHITE);
+            sampleCard.getStyle().set(CURSOR_PROP, POINTER_CURSOR);
+            sampleCard.getStyle().set(TRANSITION_PROP, "all 0.3s");
 
             HorizontalLayout cardContent = new HorizontalLayout();
             cardContent.setAlignItems(FlexComponent.Alignment.START);
 
             Div fileIcon = new Div();
-            fileIcon.getStyle().set("color", TEXT_SECONDARY);
-            fileIcon.getStyle().set("transition", "color 0.3s");
+            fileIcon.getStyle().set(COLOR_PROP, TEXT_SECONDARY);
+            fileIcon.getStyle().set(TRANSITION_PROP, "color 0.3s");
             fileIcon.add(VaadinIcon.FILE_TEXT.create());
 
             VerticalLayout textGroup = new VerticalLayout();
             textGroup.setPadding(false);
             textGroup.setSpacing(false);
-            textGroup.getStyle().set("gap", "4px");
+            textGroup.getStyle().set(GAP_PROP, "4px");
             textGroup.setWidthFull();
 
             H4 jobTitle = new H4(sample.title());
-            jobTitle.getStyle().set("font-size", "14px");
-            jobTitle.getStyle().set("font-weight", "700");
-            jobTitle.getStyle().set("color", TEXT_PRIMARY);
-            jobTitle.getStyle().set("margin", "0");
+            jobTitle.getStyle().set(FONT_SIZE_PROP, "14px");
+            jobTitle.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_BOLD);
+            jobTitle.getStyle().set(COLOR_PROP, TEXT_PRIMARY);
+            jobTitle.getStyle().set(MARGIN_PROP, ZERO_VALUE);
 
             Paragraph company = new Paragraph(sample.company());
-            company.getStyle().set("font-size", "12px");
-            company.getStyle().set("color", TEXT_SECONDARY);
-            company.getStyle().set("margin", "0");
+            company.getStyle().set(FONT_SIZE_PROP, "12px");
+            company.getStyle().set(COLOR_PROP, TEXT_SECONDARY);
+            company.getStyle().set(MARGIN_PROP, ZERO_VALUE);
 
             textGroup.add(jobTitle, company);
 
             Span matchBadge = new Span(sample.match() + " " + translationService.translate("landing.match"));
-            matchBadge.getStyle().set("font-size", "11px");
-            matchBadge.getStyle().set("font-weight", "900");
-            matchBadge.getStyle().set("color", PRIMARY);
+            matchBadge.getStyle().set(FONT_SIZE_PROP, "11px");
+            matchBadge.getStyle().set(FONT_WEIGHT_PROP, "900");
+            matchBadge.getStyle().set(COLOR_PROP, PRIMARY);
             matchBadge.getStyle().set("white-space", "nowrap");
 
             cardContent.add(fileIcon, textGroup, matchBadge);
             cardContent.setWidthFull();
-            cardContent.getStyle().set("gap", "12px");
+            cardContent.getStyle().set(GAP_PROP, "12px");
 
             sampleCard.add(cardContent);
 
@@ -755,16 +714,16 @@ public class LandingView extends VerticalLayout {
             sampleCard.addClickListener(e -> openCoverLetterModal(sample.title(), sample.company(), sample.letter()));
 
             // Hover effects
-            sampleCard.getElement().addEventListener("mouseenter", e -> {
-                sampleCard.getStyle().set("background", "rgba(0,122,255,0.05)");
-                sampleCard.getStyle().set("border-color", "rgba(0,122,255,0.2)");
-                fileIcon.getStyle().set("color", PRIMARY);
+            sampleCard.getElement().addEventListener(EVENT_MOUSEENTER, e -> {
+                sampleCard.getStyle().set(BACKGROUND_PROP, "rgba(0,122,255,0.05)");
+                sampleCard.getStyle().set(BORDER_COLOR_PROP, "rgba(0,122,255,0.2)");
+                fileIcon.getStyle().set(COLOR_PROP, PRIMARY);
             });
 
-            sampleCard.getElement().addEventListener("mouseleave", e -> {
-                sampleCard.getStyle().set("background", BG_WHITE);
-                sampleCard.getStyle().set("border-color", "rgba(0,0,0,0.05)");
-                fileIcon.getStyle().set("color", TEXT_SECONDARY);
+            sampleCard.getElement().addEventListener(EVENT_MOUSELEAVE, e -> {
+                sampleCard.getStyle().set(BACKGROUND_PROP, BG_WHITE);
+                sampleCard.getStyle().set(BORDER_COLOR_PROP, BG_BLACK_ALPHA_05);
+                fileIcon.getStyle().set(COLOR_PROP, TEXT_SECONDARY);
             });
 
             samplesGrid.add(sampleCard);
@@ -777,19 +736,7 @@ public class LandingView extends VerticalLayout {
         scrollContainer.add(samplesGrid);
 
         // Footer
-        HorizontalLayout footer = new HorizontalLayout();
-        footer.setWidthFull();
-        footer.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
-        footer.setPadding(true);
-        footer.getStyle().set("padding", "24px");
-        footer.getStyle().set("border-top", "1px solid rgba(0,0,0,0.05)");
-        footer.getStyle().set("background", BG_LIGHT);
-
-        Button ctaBtn = createPrimaryButton(translationService.translate("landing.tryItForFree"), () -> {
-            dialog.close();
-            getUI().ifPresent(ui -> ui.navigate(LoginView.class));
-        });
-        footer.add(ctaBtn);
+        HorizontalLayout footer = createStandardModalFooter(dialog);
 
         content.add(header, scrollContainer, footer);
         dialog.add(content);
@@ -803,59 +750,20 @@ public class LandingView extends VerticalLayout {
             activeModal.close();
         }
 
-        Dialog dialog = new Dialog();
-        dialog.setModal(true);
-        dialog.setWidth("560px");
-        dialog.setMaxHeight("80vh");
-
+        Dialog dialog = setupDialog("560px", "80vh");
         VerticalLayout content = new VerticalLayout();
         content.setPadding(false);
         content.setSpacing(false);
 
-        // Header
-        HorizontalLayout header = new HorizontalLayout();
-        header.setWidthFull();
-        header.setAlignItems(FlexComponent.Alignment.CENTER);
-        header.setPadding(true);
-        header.getStyle().set("padding", "24px");
-        header.getStyle().set("border-bottom", "1px solid rgba(0,0,0,0.05)");
-        header.getStyle().set("background", BG_LIGHT);
-
-        Div iconContainer = new Div();
-        iconContainer.getStyle().set("width", "40px");
-        iconContainer.getStyle().set("height", "40px");
-        iconContainer.getStyle().set("border-radius", "12px");
-        iconContainer.getStyle().set("background", "rgba(0,122,255,0.1)");
-        iconContainer.getStyle().set("display", "flex");
-        iconContainer.getStyle().set("align-items", "center");
-        iconContainer.getStyle().set("justify-content", "center");
-        iconContainer.add(VaadinIcon.LIGHTBULB.create());
-
-        VerticalLayout titleGroup = new VerticalLayout();
-        titleGroup.setPadding(false);
-        titleGroup.setSpacing(false);
-        H3 title = new H3(translationService.translate("help.howItWorks"));
-        title.getStyle().set("font-size", "20px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("margin", "0");
-        Paragraph subtitle = new Paragraph(translationService.translate("landing.simpleSteps"));
-        subtitle.getStyle().set("font-size", "13px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "4px 0 0");
-        titleGroup.add(title, subtitle);
-
-        Button closeBtn = new Button(VaadinIcon.CLOSE.create(), e -> dialog.close());
-        closeBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON);
-        closeBtn.getStyle().set("color", TEXT_SECONDARY);
-
-        header.add(iconContainer, titleGroup, closeBtn);
-        header.expand(titleGroup);
+        HorizontalLayout header = createModalHeader(dialog, VaadinIcon.LIGHTBULB, 
+            translationService.translate("help.howItWorks"), 
+            translationService.translate("landing.simpleSteps"), STANDARD_HEADER_STYLE);
 
         // Steps Content
         VerticalLayout stepsContent = new VerticalLayout();
         stepsContent.setPadding(true);
-        stepsContent.getStyle().set("padding", "32px");
-        stepsContent.getStyle().set("gap", "24px");
+        stepsContent.getStyle().set(PADDING_PROP, "32px");
+        stepsContent.getStyle().set(GAP_PROP, "24px");
 
         // Step 1
         HorizontalLayout step1 = createStepItem("1", translationService.translate("landing.uploadYourResume"),
@@ -876,9 +784,9 @@ public class LandingView extends VerticalLayout {
         footer.setWidthFull();
         footer.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         footer.setPadding(true);
-        footer.getStyle().set("padding", "24px");
-        footer.getStyle().set("border-top", "1px solid rgba(0,0,0,0.05)");
-        footer.getStyle().set("background", BG_LIGHT);
+        footer.getStyle().set(PADDING_PROP, "24px");
+        footer.getStyle().set(BORDER_TOP_PROP, BORDER_SUBTLE);
+        footer.getStyle().set(BACKGROUND_PROP, BG_LIGHT);
 
         Button ctaBtn = createPrimaryButton(translationService.translate("landing.getStarted"), () -> {
             dialog.close();
@@ -896,41 +804,41 @@ public class LandingView extends VerticalLayout {
     private HorizontalLayout createStepItem(String number, String title, String description) {
         HorizontalLayout stepRow = new HorizontalLayout();
         stepRow.setWidthFull();
-        stepRow.getStyle().set("gap", "16px");
+        stepRow.getStyle().set(GAP_PROP, "16px");
         stepRow.setAlignItems(FlexComponent.Alignment.START);
 
         // Step number circle
         Div numberCircle = new Div();
-        numberCircle.getStyle().set("width", "32px");
-        numberCircle.getStyle().set("height", "32px");
-        numberCircle.getStyle().set("border-radius", "50%");
-        numberCircle.getStyle().set("background", PRIMARY);
-        numberCircle.getStyle().set("color", "white");
-        numberCircle.getStyle().set("display", "flex");
-        numberCircle.getStyle().set("align-items", "center");
-        numberCircle.getStyle().set("justify-content", "center");
-        numberCircle.getStyle().set("font-weight", "700");
-        numberCircle.getStyle().set("font-size", "14px");
-        numberCircle.getStyle().set("flex-shrink", "0");
+        numberCircle.getStyle().set(WIDTH_PROP, "32px");
+        numberCircle.getStyle().set(HEIGHT_PROP, "32px");
+        numberCircle.getStyle().set(BORDER_RADIUS_PROP, "50%");
+        numberCircle.getStyle().set(BACKGROUND_PROP, PRIMARY);
+        numberCircle.getStyle().set(COLOR_PROP, WHITE_COLOR);
+        numberCircle.getStyle().set(DISPLAY_PROP, DISPLAY_FLEX);
+        numberCircle.getStyle().set(ALIGN_ITEMS_PROP, CENTER_ALIGN);
+        numberCircle.getStyle().set(JUSTIFY_CONTENT_PROP, CENTER_ALIGN);
+        numberCircle.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_BOLD);
+        numberCircle.getStyle().set(FONT_SIZE_PROP, "14px");
+        numberCircle.getStyle().set("flex-shrink", ZERO_VALUE);
         numberCircle.add(new Span(number));
 
         // Content
         VerticalLayout content = new VerticalLayout();
         content.setPadding(false);
         content.setSpacing(false);
-        content.getStyle().set("gap", "4px");
+        content.getStyle().set(GAP_PROP, "4px");
 
         H4 stepTitle = new H4(title);
-        stepTitle.getStyle().set("font-size", "16px");
-        stepTitle.getStyle().set("font-weight", "700");
-        stepTitle.getStyle().set("color", TEXT_PRIMARY);
-        stepTitle.getStyle().set("margin", "0");
+        stepTitle.getStyle().set(FONT_SIZE_PROP, "16px");
+        stepTitle.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_BOLD);
+        stepTitle.getStyle().set(COLOR_PROP, TEXT_PRIMARY);
+        stepTitle.getStyle().set(MARGIN_PROP, ZERO_VALUE);
 
         Paragraph stepDesc = new Paragraph(description);
-        stepDesc.getStyle().set("font-size", "14px");
-        stepDesc.getStyle().set("color", TEXT_SECONDARY);
-        stepDesc.getStyle().set("line-height", "1.5");
-        stepDesc.getStyle().set("margin", "0");
+        stepDesc.getStyle().set(FONT_SIZE_PROP, "14px");
+        stepDesc.getStyle().set(COLOR_PROP, TEXT_SECONDARY);
+        stepDesc.getStyle().set(LINE_HEIGHT_PROP, "1.5");
+        stepDesc.getStyle().set(MARGIN_PROP, ZERO_VALUE);
 
         content.add(stepTitle, stepDesc);
         stepRow.add(numberCircle, content);
@@ -940,67 +848,27 @@ public class LandingView extends VerticalLayout {
     }
 
     private void openCoverLetterModal(String jobTitle, String company, String letterContent) {
-        Dialog dialog = new Dialog();
-        dialog.setModal(true);
-        dialog.setWidth("720px");
-        dialog.setMaxHeight("90vh");
-
+        Dialog dialog = setupDialog("720px", "90vh");
         VerticalLayout content = new VerticalLayout();
         content.setPadding(false);
         content.setSpacing(false);
 
-        // Header
-        HorizontalLayout header = new HorizontalLayout();
-        header.setWidthFull();
-        header.setAlignItems(FlexComponent.Alignment.CENTER);
-        header.setPadding(true);
-        header.getStyle().set("padding", "20px 24px");
-        header.getStyle().set("border-bottom", "1px solid rgba(0,0,0,0.05)");
-        header.getStyle().set("background", BG_LIGHT);
-
-        Div iconContainer = new Div();
-        iconContainer.getStyle().set("width", "36px");
-        iconContainer.getStyle().set("height", "36px");
-        iconContainer.getStyle().set("border-radius", "10px");
-        iconContainer.getStyle().set("background", "rgba(0,122,255,0.1)");
-        iconContainer.getStyle().set("display", "flex");
-        iconContainer.getStyle().set("align-items", "center");
-        iconContainer.getStyle().set("justify-content", "center");
-        iconContainer.add(VaadinIcon.FILE_TEXT_O.create());
-
-        VerticalLayout titleGroup = new VerticalLayout();
-        titleGroup.setPadding(false);
-        titleGroup.setSpacing(false);
-        H3 title = new H3(jobTitle);
-        title.getStyle().set("font-size", "16px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("margin", "0");
-        Paragraph subtitle = new Paragraph(company);
-        subtitle.getStyle().set("font-size", "12px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "2px 0 0");
-        titleGroup.add(title, subtitle);
-
-        Button closeBtn = new Button(VaadinIcon.CLOSE.create(), e -> dialog.close());
-        closeBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON);
-        closeBtn.getStyle().set("color", TEXT_SECONDARY);
-
-        header.add(iconContainer, titleGroup, closeBtn);
-        header.expand(titleGroup);
+        HorizontalLayout header = createModalHeader(dialog, VaadinIcon.FILE_TEXT_O, 
+            jobTitle, company, CV_HEADER_STYLE);
 
         // Letter Content
         Div letterContainer = new Div();
-        letterContainer.getStyle().set("padding", "32px");
-        letterContainer.getStyle().set("background", BG_WHITE);
+        letterContainer.getStyle().set(PADDING_PROP, "32px");
+        letterContainer.getStyle().set(BACKGROUND_PROP, BG_WHITE);
         letterContainer.getStyle().set("overflow-y", "auto");
         letterContainer.getStyle().set("max-height", "60vh");
 
         // Format letter with proper styling
         Div letterText = new Div();
         letterText.getStyle().set("font-family", "Georgia, 'Times New Roman', serif");
-        letterText.getStyle().set("font-size", "15px");
-        letterText.getStyle().set("line-height", "1.8");
-        letterText.getStyle().set("color", TEXT_PRIMARY);
+        letterText.getStyle().set(FONT_SIZE_PROP, "15px");
+        letterText.getStyle().set(LINE_HEIGHT_PROP, "1.8");
+        letterText.getStyle().set(COLOR_PROP, TEXT_PRIMARY);
         letterText.getStyle().set("white-space", "pre-wrap");
         letterText.setText(letterContent);
 
@@ -1011,18 +879,18 @@ public class LandingView extends VerticalLayout {
         footer.setWidthFull();
         footer.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         footer.setPadding(true);
-        footer.getStyle().set("padding", "16px 24px");
-        footer.getStyle().set("border-top", "1px solid rgba(0,0,0,0.05)");
-        footer.getStyle().set("background", BG_LIGHT);
-        footer.getStyle().set("gap", "12px");
+        footer.getStyle().set(PADDING_PROP, "16px 24px");
+        footer.getStyle().set(BORDER_TOP_PROP, BORDER_SUBTLE);
+        footer.getStyle().set(BACKGROUND_PROP, BG_LIGHT);
+        footer.getStyle().set(GAP_PROP, "12px");
 
         Button copyBtn = new Button(translationService.translate("landing.copyToClipboard"), VaadinIcon.COPY.create());
-        copyBtn.getStyle().set("background", "rgba(0,0,0,0.05)");
-        copyBtn.getStyle().set("color", TEXT_PRIMARY);
-        copyBtn.getStyle().set("font-weight", "600");
-        copyBtn.getStyle().set("border-radius", "9999px");
-        copyBtn.getStyle().set("padding", "10px 20px");
-        copyBtn.getStyle().set("cursor", "pointer");
+        copyBtn.getStyle().set(BACKGROUND_PROP, BG_BLACK_ALPHA_05);
+        copyBtn.getStyle().set(COLOR_PROP, TEXT_PRIMARY);
+        copyBtn.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_SEMIBOLD);
+        copyBtn.getStyle().set(BORDER_RADIUS_PROP, FULLY_ROUNDED);
+        copyBtn.getStyle().set(PADDING_PROP, "10px 20px");
+        copyBtn.getStyle().set(CURSOR_PROP, POINTER_CURSOR);
         copyBtn.addClickListener(e -> {
             copyBtn.getElement().executeJs("navigator.clipboard.writeText($0)", letterContent);
             copyBtn.setText(translationService.translate("landing.copied"));
@@ -1047,13 +915,13 @@ public class LandingView extends VerticalLayout {
         footer.setWidthFull();
         footer.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         footer.setPadding(true);
-        footer.getStyle().set("padding", "32px");
-        footer.getStyle().set("border-top", "1px solid rgba(0,0,0,0.05)");
+        footer.getStyle().set(PADDING_PROP, "32px");
+        footer.getStyle().set(BORDER_TOP_PROP, BORDER_SUBTLE);
 
         Paragraph copyright = new Paragraph(translationService.translate("landing.copyright"));
-        copyright.getStyle().set("font-size", "13px");
-        copyright.getStyle().set("color", TEXT_SECONDARY);
-        copyright.getStyle().set("text-align", "center");
+        copyright.getStyle().set(FONT_SIZE_PROP, "13px");
+        copyright.getStyle().set(COLOR_PROP, TEXT_SECONDARY);
+        copyright.getStyle().set(TEXT_ALIGN_PROP, CENTER_ALIGN);
 
         footer.add(copyright);
         return footer;
@@ -1062,23 +930,23 @@ public class LandingView extends VerticalLayout {
     // ============ HELPER METHODS ============
     private Button createPrimaryButton(String text, Runnable action) {
         Button btn = new Button(text, e -> action.run());
-        btn.getStyle().set("background", "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)");
-        btn.getStyle().set("color", "white");
-        btn.getStyle().set("font-weight", "600");
-        btn.getStyle().set("border-radius", "9999px");
-        btn.getStyle().set("border", "none");
-        btn.getStyle().set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
-        btn.getStyle().set("transition", "all 0.2s");
-        btn.getStyle().set("cursor", "pointer");
+        btn.getStyle().set(BACKGROUND_PROP, "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)");
+        btn.getStyle().set(COLOR_PROP, WHITE_COLOR);
+        btn.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_SEMIBOLD);
+        btn.getStyle().set(BORDER_RADIUS_PROP, FULLY_ROUNDED);
+        btn.getStyle().set(BORDER_PROP, "none");
+        btn.getStyle().set(BOX_SHADOW_PROP, "0 10px 15px -3px rgba(0,122,255,0.3)");
+        btn.getStyle().set(TRANSITION_PROP, TRANSITION_ALL_FAST);
+        btn.getStyle().set(CURSOR_PROP, POINTER_CURSOR);
 
-        btn.getElement().addEventListener("mouseenter", e -> {
-            btn.getStyle().set("filter", "brightness(1.1)");
-            btn.getStyle().set("transform", "translateY(-1px)");
+        btn.getElement().addEventListener(EVENT_MOUSEENTER, e -> {
+            btn.getStyle().set(FILTER_PROP, "brightness(1.1)");
+            btn.getStyle().set(TRANSFORM_PROP, "translateY(-1px)");
         });
 
-        btn.getElement().addEventListener("mouseleave", e -> {
-            btn.getStyle().set("filter", "brightness(1)");
-            btn.getStyle().set("transform", "translateY(0)");
+        btn.getElement().addEventListener(EVENT_MOUSELEAVE, e -> {
+            btn.getStyle().set(FILTER_PROP, "brightness(1)");
+            btn.getStyle().set(TRANSFORM_PROP, "translateY(0)");
         });
 
         return btn;
@@ -1086,30 +954,92 @@ public class LandingView extends VerticalLayout {
 
     private Button createSecondaryButton(String text, Runnable action) {
         Button btn = new Button(text, e -> action.run());
-        btn.getStyle().set("background", "rgba(0,0,0,0.05)");
-        btn.getStyle().set("color", TEXT_PRIMARY);
-        btn.getStyle().set("font-weight", "600");
-        btn.getStyle().set("border-radius", "9999px");
-        btn.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
-        btn.getStyle().set("transition", "all 0.2s");
-        btn.getStyle().set("cursor", "pointer");
+        btn.getStyle().set(BACKGROUND_PROP, BG_BLACK_ALPHA_05);
+        btn.getStyle().set(COLOR_PROP, TEXT_PRIMARY);
+        btn.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_SEMIBOLD);
+        btn.getStyle().set(BORDER_RADIUS_PROP, FULLY_ROUNDED);
+        btn.getStyle().set(BORDER_PROP, BORDER_SUBTLE);
+        btn.getStyle().set(TRANSITION_PROP, TRANSITION_ALL_FAST);
+        btn.getStyle().set(CURSOR_PROP, POINTER_CURSOR);
 
-        btn.getElement().addEventListener("mouseenter", e -> {
-            btn.getStyle().set("background", "rgba(0,0,0,0.1)");
-        });
+        btn.getElement().addEventListener(EVENT_MOUSEENTER, e -> btn.getStyle().set(BACKGROUND_PROP, "rgba(0,0,0,0.1)"));
 
-        btn.getElement().addEventListener("mouseleave", e -> {
-            btn.getStyle().set("background", "rgba(0,0,0,0.05)");
-        });
+        btn.getElement().addEventListener(EVENT_MOUSELEAVE, e -> btn.getStyle().set(BACKGROUND_PROP, BG_BLACK_ALPHA_05));
 
         return btn;
     }
 
-    private void scrollToTop() {
-        getElement().executeJs("window.scrollTo({top: 0, behavior: 'smooth'})");
+
+    private record HeaderStyle(String padding, String iconSize, String iconRadius, String titleSize, String subtitleSize, String subtitleMargin) {}
+    private static final HeaderStyle STANDARD_HEADER_STYLE = new HeaderStyle("24px", "40px", "12px", "20px", "13px", MARGIN_TOP_SMALL);
+    private static final HeaderStyle CV_HEADER_STYLE = new HeaderStyle("20px 24px", "36px", "10px", "16px", "12px", "2px 0 0");
+
+private Dialog setupDialog(String width, String maxHeight) {
+        Dialog dialog = new Dialog();
+        dialog.setModal(true);
+        dialog.setWidth(width);
+        dialog.setMaxHeight(maxHeight);
+        return dialog;
     }
 
-    private void scrollToSection(String sectionId) {
-        getElement().executeJs("document.getElementById('" + sectionId + "').scrollIntoView({behavior: 'smooth'})");
+    private HorizontalLayout createModalHeader(Dialog dialog, VaadinIcon iconType, String titleText, String subtitleText, HeaderStyle style) {
+        HorizontalLayout header = new HorizontalLayout();
+        header.setWidthFull();
+        header.setAlignItems(FlexComponent.Alignment.CENTER);
+        header.setPadding(true);
+        header.getStyle().set(PADDING_PROP, style.padding());
+        header.getStyle().set(BORDER_BOTTOM_PROP, BORDER_SUBTLE);
+        header.getStyle().set(BACKGROUND_PROP, BG_LIGHT);
+
+        Div iconContainer = new Div();
+        iconContainer.getStyle().set(WIDTH_PROP, style.iconSize());
+        iconContainer.getStyle().set(HEIGHT_PROP, style.iconSize());
+        iconContainer.getStyle().set(BORDER_RADIUS_PROP, style.iconRadius());
+        iconContainer.getStyle().set(BACKGROUND_PROP, BG_PRIMARY_ALPHA_10);
+        iconContainer.getStyle().set(DISPLAY_PROP, DISPLAY_FLEX);
+        iconContainer.getStyle().set(ALIGN_ITEMS_PROP, CENTER_ALIGN);
+        iconContainer.getStyle().set(JUSTIFY_CONTENT_PROP, CENTER_ALIGN);
+        iconContainer.add(iconType.create());
+
+        VerticalLayout titleGroup = new VerticalLayout();
+        titleGroup.setPadding(false);
+        titleGroup.setSpacing(false);
+        H3 title = new H3(titleText);
+        title.getStyle().set(FONT_SIZE_PROP, style.titleSize());
+        title.getStyle().set(FONT_WEIGHT_PROP, FONT_WEIGHT_BOLD);
+        title.getStyle().set(MARGIN_PROP, ZERO_VALUE);
+        Paragraph subtitle = new Paragraph(subtitleText);
+        subtitle.getStyle().set(FONT_SIZE_PROP, style.subtitleSize());
+        subtitle.getStyle().set(COLOR_PROP, TEXT_SECONDARY);
+        subtitle.getStyle().set(MARGIN_PROP, style.subtitleMargin());
+        titleGroup.add(title, subtitle);
+
+        Button closeBtn = new Button(VaadinIcon.CLOSE.create(), e -> dialog.close());
+        closeBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON);
+        closeBtn.getStyle().set(COLOR_PROP, TEXT_SECONDARY);
+
+        header.add(iconContainer, titleGroup, closeBtn);
+        header.expand(titleGroup);
+
+        return header;
+    }
+
+    private HorizontalLayout createStandardModalFooter(Dialog dialog) {
+        HorizontalLayout footer = new HorizontalLayout();
+        footer.setWidthFull();
+        footer.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+        footer.setPadding(true);
+        footer.getStyle().set(PADDING_PROP, "24px");
+        footer.getStyle().set(BORDER_TOP_PROP, BORDER_SUBTLE);
+        footer.getStyle().set(BACKGROUND_PROP, BG_LIGHT);
+
+        Button ctaBtn = createPrimaryButton(translationService.translate("landing.tryItForFree"), () -> {
+            dialog.close();
+            getUI().ifPresent(ui -> ui.navigate(LoginView.class));
+        });
+        footer.add(ctaBtn);
+        return footer;
+    }    private void scrollToTop() {
+        getElement().executeJs("window.scrollTo({top: 0, behavior: 'smooth'})");
     }
 }

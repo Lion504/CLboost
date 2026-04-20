@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 @Route(value = "dashboard", layout = MainLayout.class)
 @PageTitle("Dashboard | CL Booster")
 @PermitAll
-public class DashboardView extends VerticalLayout {
+class DashboardView extends VerticalLayout {
 
     private static final String PRIMARY = "#007AFF";
     private static final String TEXT_PRIMARY = "#1d1d1f";

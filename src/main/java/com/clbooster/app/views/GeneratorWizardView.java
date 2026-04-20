@@ -6,7 +6,6 @@ import com.clbooster.aiservice.Exporter;
 import com.clbooster.aiservice.Parser;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.i18n.TranslationService;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.server.StreamResource;
@@ -46,7 +45,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * 4-Step Wizard Generator View matching Figma Generator.tsx Step 1: Job Details

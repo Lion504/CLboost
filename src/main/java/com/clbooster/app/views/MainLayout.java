@@ -6,7 +6,6 @@ import com.clbooster.app.backend.service.profile.User;
 import com.clbooster.app.backend.service.settings.Settings;
 import com.clbooster.app.backend.service.settings.SettingsService;
 import com.clbooster.app.i18n.TranslationService;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
@@ -20,7 +19,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
-import com.vaadin.flow.component.textfield.TextField;
 
 @PermitAll
 public class MainLayout extends AppLayout {

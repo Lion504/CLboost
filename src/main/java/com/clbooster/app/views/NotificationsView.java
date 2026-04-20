@@ -19,10 +19,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.clbooster.app.i18n.TranslationService;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
 /**
  * Notifications View - Notification center with animated cards Following Apple
  * Design System with modern animations

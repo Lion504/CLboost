@@ -45,14 +45,16 @@ public class SignUpView extends VerticalLayout {
     private static final String FLEX_PROP = "flex";
     private static final String BORDER_RADIUS_PROP = "border-radius";
     private static final String WHITE_VAL = "white";
+    private static final String TEXT_DECORATION_PROP = "text-decoration";
+    private static final String VAADIN_INPUT_FIELD_BORDER_RADIUS_PROP = "--vaadin-input-field-border-radius";
 
     private static final Pattern UPPERCASE_PATTERN = Pattern.compile("[A-Z]");
     private static final Pattern LOWERCASE_PATTERN = Pattern.compile("[a-z]");
     private static final Pattern DIGIT_PATTERN = Pattern.compile("\\d");
     private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile("[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]");
 
-    private final AuthenticationService authService;
-    private final TranslationService translationService;
+    private final transient AuthenticationService authService;
+    private final transient TranslationService translationService;
     private TextField firstNameField;
     private TextField lastNameField;
     private TextField usernameField;
@@ -104,13 +106,13 @@ public class SignUpView extends VerticalLayout {
         firstNameField.setPlaceholder("Alex");
         firstNameField.setWidthFull();
         firstNameField.getStyle().set(VAADIN_INPUT_FIELD_BACKGROUND_PROP, StyleConstants.BG_GRAY);
-        firstNameField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        firstNameField.getStyle().set(VAADIN_INPUT_FIELD_BORDER_RADIUS_PROP, "12px");
 
         lastNameField = new TextField(translationService.translate("label.lastName"));
         lastNameField.setPlaceholder("Riviera");
         lastNameField.setWidthFull();
         lastNameField.getStyle().set(VAADIN_INPUT_FIELD_BACKGROUND_PROP, StyleConstants.BG_GRAY);
-        lastNameField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        lastNameField.getStyle().set(VAADIN_INPUT_FIELD_BORDER_RADIUS_PROP, "12px");
 
         nameRow.add(firstNameField, lastNameField);
         nameRow.expand(firstNameField, lastNameField);
@@ -120,20 +122,20 @@ public class SignUpView extends VerticalLayout {
         usernameField.setPlaceholder("alexriviera");
         usernameField.setWidthFull();
         usernameField.getStyle().set(VAADIN_INPUT_FIELD_BACKGROUND_PROP, StyleConstants.BG_GRAY);
-        usernameField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        usernameField.getStyle().set(VAADIN_INPUT_FIELD_BORDER_RADIUS_PROP, "12px");
 
         // Email field
         emailField = new EmailField(translationService.translate("label.email"));
         emailField.setPlaceholder("alex@example.com");
         emailField.setWidthFull();
         emailField.getStyle().set(VAADIN_INPUT_FIELD_BACKGROUND_PROP, StyleConstants.BG_GRAY);
-        emailField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        emailField.getStyle().set(VAADIN_INPUT_FIELD_BORDER_RADIUS_PROP, "12px");
 
         // Password field
         passwordField = new PasswordField(translationService.translate("label.password"));
         passwordField.setWidthFull();
         passwordField.getStyle().set(VAADIN_INPUT_FIELD_BACKGROUND_PROP, StyleConstants.BG_GRAY);
-        passwordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        passwordField.getStyle().set(VAADIN_INPUT_FIELD_BORDER_RADIUS_PROP, "12px");
 
         // Password strength indicator
         VerticalLayout strengthIndicator = new VerticalLayout();
@@ -212,7 +214,7 @@ public class SignUpView extends VerticalLayout {
         termsLink.getStyle().set(FONT_WEIGHT_PROP, "500");
         termsLink.getStyle().set(COLOR_PROP, StyleConstants.PRIMARY);
         termsLink.getStyle().set("cursor", "pointer");
-        termsLink.getStyle().set("text-decoration", "underline");
+        termsLink.getStyle().set(TEXT_DECORATION_PROP, "underline");
         termsLink.addClickListener(e -> showTermsOfServiceDialog());
 
         termsLine1.add(agreeText, termsLink);
@@ -232,7 +234,7 @@ public class SignUpView extends VerticalLayout {
         privacyLink.getStyle().set(FONT_WEIGHT_PROP, "500");
         privacyLink.getStyle().set(COLOR_PROP, StyleConstants.PRIMARY);
         privacyLink.getStyle().set("cursor", "pointer");
-        privacyLink.getStyle().set("text-decoration", "underline");
+        privacyLink.getStyle().set(TEXT_DECORATION_PROP, "underline");
         privacyLink.addClickListener(e -> showPrivacyPolicyDialog());
 
         termsLine2.add(andText, privacyLink);
@@ -267,7 +269,7 @@ public class SignUpView extends VerticalLayout {
         loginLink.getStyle().set(FONT_SIZE_PROP, "14px");
         loginLink.getStyle().set(FONT_WEIGHT_PROP, "600");
         loginLink.getStyle().set(COLOR_PROP, StyleConstants.PRIMARY);
-        loginLink.getStyle().set("text-decoration", "none");
+        loginLink.getStyle().set(TEXT_DECORATION_PROP, "none");
         AuthComponents.applyLinkHoverEffect(loginLink);
 
         loginRow.add(haveAccount, loginLink);
@@ -426,21 +428,9 @@ public class SignUpView extends VerticalLayout {
         return Math.min(strength, 4);
     }
 
+
+
     private void showTermsOfServiceDialog() {
-        Dialog dialog = new Dialog();
-        dialog.setHeaderTitle(translationService.translate("terms.title"));
-        dialog.setWidth("500px");
-        dialog.setHeight("600px");
-
-        VerticalLayout content = new VerticalLayout();
-        content.setPadding(true);
-        content.setSpacing(true);
-
-        H3 title = new H3(translationService.translate("terms.title"));
-        title.getStyle().set(MARGIN_TOP_PROP, "0");
-
-        Paragraph intro = new Paragraph(translationService.translate("terms.intro"));
-
         H4 section1 = new H4(translationService.translate("terms.section1.title"));
         Paragraph text1 = new Paragraph(translationService.translate("terms.section1.text"));
 
@@ -460,35 +450,11 @@ public class SignUpView extends VerticalLayout {
         H4 section5 = new H4(translationService.translate("terms.section5.title"));
         Paragraph text5 = new Paragraph(translationService.translate("terms.section5.text"));
 
-        content.add(title, intro, section1, text1, section2, text2, list2, section3, text3, section4, text4, section5,
-                text5);
-        content.getStyle().set("overflow", "auto");
-        content.setHeight("400px");
-
-        Button closeButton = new Button(translationService.translate("landing.iUnderstand"), e -> dialog.close());
-        closeButton.getStyle().set(BACKGROUND_PROP, StyleConstants.PRIMARY);
-        closeButton.getStyle().set(COLOR_PROP, WHITE_VAL);
-
-        dialog.add(content);
-        dialog.getFooter().add(closeButton);
-        dialog.open();
+        createInfoDialog("terms.title", "terms.intro", 
+                section1, text1, section2, text2, list2, section3, text3, section4, text4, section5, text5).open();
     }
 
     private void showPrivacyPolicyDialog() {
-        Dialog dialog = new Dialog();
-        dialog.setHeaderTitle(translationService.translate("privacy.title"));
-        dialog.setWidth("500px");
-        dialog.setHeight("600px");
-
-        VerticalLayout content = new VerticalLayout();
-        content.setPadding(true);
-        content.setSpacing(true);
-
-        H3 title = new H3(translationService.translate("privacy.title"));
-        title.getStyle().set(MARGIN_TOP_PROP, "0");
-
-        Paragraph intro = new Paragraph(translationService.translate("privacy.intro"));
-
         H4 section1 = new H4(translationService.translate("privacy.section1.title"));
         Paragraph text1 = new Paragraph(translationService.translate("privacy.section1.text"));
         UnorderedList list1 = new UnorderedList(
@@ -521,8 +487,29 @@ public class SignUpView extends VerticalLayout {
         H4 section7 = new H4(translationService.translate("privacy.section7.title"));
         Paragraph text7 = new Paragraph(translationService.translate("privacy.section7.text"));
 
-        content.add(title, intro, section1, text1, list1, section2, text2, list2, section3, text3, section4, text4,
-                section5, text5, section6, text6, section7, text7);
+        createInfoDialog("privacy.title", "privacy.intro", 
+                section1, text1, list1, section2, text2, list2, section3, text3, section4, text4,
+                section5, text5, section6, text6, section7, text7).open();
+    }
+
+    private Dialog createInfoDialog(String titleKey, String introKey, com.vaadin.flow.component.Component... sections) {
+        Dialog dialog = new Dialog();
+        dialog.setHeaderTitle(translationService.translate(titleKey));
+        dialog.setWidth("500px");
+        dialog.setHeight("600px");
+
+        VerticalLayout content = new VerticalLayout();
+        content.setPadding(true);
+        content.setSpacing(true);
+
+        H3 title = new H3(translationService.translate(titleKey));
+        title.getStyle().set(MARGIN_TOP_PROP, "0");
+
+        Paragraph intro = new Paragraph(translationService.translate(introKey));
+
+        content.add(title, intro);
+        content.add(sections);
+        
         content.getStyle().set("overflow", "auto");
         content.setHeight("400px");
 
@@ -532,6 +519,7 @@ public class SignUpView extends VerticalLayout {
 
         dialog.add(content);
         dialog.getFooter().add(closeButton);
-        dialog.open();
+        
+        return dialog;
     }
 }
