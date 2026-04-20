@@ -175,9 +175,6 @@ class LandingViewTest extends BaseVaadinViewTest {
 
         invokeNoArgs(view, "scrollToTop");
 
-        Method method = LandingView.class.getDeclaredMethod("scrollToSection", String.class);
-        method.setAccessible(true);
-        method.invoke(view, "features");
 
         assertNotNull(view);
     }

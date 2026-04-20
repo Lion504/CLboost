@@ -248,83 +248,68 @@ public class DocumentService {
      */
     private String formatResumeContent(ResumeData resumeData) {
         StringBuilder content = new StringBuilder();
+        formatHeader(resumeData, content);
+        formatSummaryAndSkills(resumeData, content);
+        formatWorkExperience(resumeData, content);
+        formatEducationAndCertifications(resumeData, content);
+        return content.toString();
+    }
 
-        // Header
+    private void formatHeader(ResumeData resumeData, StringBuilder content) {
         if (resumeData.getFullName() != null) {
             content.append(resumeData.getFullName()).append("\n");
         }
         if (resumeData.getEmail() != null || resumeData.getPhone() != null) {
-            if (resumeData.getEmail() != null) {
-                content.append(resumeData.getEmail()).append(" ");
-            }
-            if (resumeData.getPhone() != null) {
-                content.append(resumeData.getPhone());
-            }
+            if (resumeData.getEmail() != null) content.append(resumeData.getEmail()).append(" ");
+            if (resumeData.getPhone() != null) content.append(resumeData.getPhone());
             content.append("\n\n");
         }
+    }
 
-        // Summary
+    private void formatSummaryAndSkills(ResumeData resumeData, StringBuilder content) {
         if (resumeData.getSummary() != null && !resumeData.getSummary().isEmpty()) {
-            content.append("PROFESSIONAL SUMMARY\n");
-            content.append(resumeData.getSummary()).append("\n\n");
+            content.append("PROFESSIONAL SUMMARY\n").append(resumeData.getSummary()).append("\n\n");
         }
-
-        // Skills
         if (!resumeData.getSkills().isEmpty()) {
             content.append("SKILLS\n");
-            for (String skill : resumeData.getSkills()) {
-                content.append("• ").append(skill).append("\n");
-            }
+            for (String skill : resumeData.getSkills()) content.append("• ").append(skill).append("\n");
             content.append("\n");
         }
+    }
 
-        // Work Experience
+    private void formatWorkExperience(ResumeData resumeData, StringBuilder content) {
         if (!resumeData.getWorkExperience().isEmpty()) {
             content.append("WORK EXPERIENCE\n");
             for (ResumeData.WorkExperience exp : resumeData.getWorkExperience()) {
-                if (exp.getJobTitle() != null) {
-                    content.append(exp.getJobTitle());
-                }
-                if (exp.getCompany() != null) {
-                    content.append(" at ").append(exp.getCompany());
-                }
-                content.append("\n");
-
-                if (exp.getStartDate() != null || exp.getEndDate() != null) {
-                    if (exp.getStartDate() != null) {
-                        content.append(exp.getStartDate());
-                    }
-                    content.append(" - ");
-                    if (exp.getEndDate() != null) {
-                        content.append(exp.getEndDate());
-                    }
-                    content.append("\n");
-                }
-
-                for (String resp : exp.getResponsibilities()) {
-                    content.append("• ").append(resp).append("\n");
-                }
-                content.append("\n");
+                formatSingleWorkExperience(exp, content);
             }
         }
+    }
 
-        // Education
-        if (!resumeData.getEducation().isEmpty()) {
-            content.append("EDUCATION\n");
-            for (String edu : resumeData.getEducation()) {
-                content.append("• ").append(edu).append("\n");
-            }
+    private void formatSingleWorkExperience(ResumeData.WorkExperience exp, StringBuilder content) {
+        if (exp.getJobTitle() != null) content.append(exp.getJobTitle());
+        if (exp.getCompany() != null) content.append(" at ").append(exp.getCompany());
+        content.append("\n");
+        if (exp.getStartDate() != null || exp.getEndDate() != null) {
+            if (exp.getStartDate() != null) content.append(exp.getStartDate());
+            content.append(" - ");
+            if (exp.getEndDate() != null) content.append(exp.getEndDate());
             content.append("\n");
         }
+        for (String resp : exp.getResponsibilities()) content.append("• ").append(resp).append("\n");
+        content.append("\n");
+    }
 
-        // Certifications
+    private void formatEducationAndCertifications(ResumeData resumeData, StringBuilder content) {
+        if (!resumeData.getEducation().isEmpty()) {
+            content.append("EDUCATION\n");
+            for (String edu : resumeData.getEducation()) content.append("• ").append(edu).append("\n");
+            content.append("\n");
+        }
         if (!resumeData.getCertifications().isEmpty()) {
             content.append("CERTIFICATIONS\n");
-            for (String cert : resumeData.getCertifications()) {
-                content.append("• ").append(cert).append("\n");
-            }
+            for (String cert : resumeData.getCertifications()) content.append("• ").append(cert).append("\n");
+            content.append("\n");
         }
-
-        return content.toString();
     }
 }
