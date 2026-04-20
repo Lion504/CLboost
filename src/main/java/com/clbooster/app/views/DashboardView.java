@@ -49,11 +49,11 @@ class DashboardView extends VerticalLayout {
 
     // Class-level field — must be assigned, not shadowed by a local variable
     private HorizontalLayout lettersGrid;
-    private List<LetterCardData> allLetters;
+        private transient List<LetterCardData> allLetters;
 
-    private final AuthenticationService authService;
+        private final transient AuthenticationService authService;
     private final TranslationService translationService;
-    private final User currentUser;
+        private final transient User currentUser;
 
     public DashboardView() {
         this.authService = new AuthenticationService();

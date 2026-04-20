@@ -44,11 +44,11 @@ public class ProfileView extends VerticalLayout {
     private static final Pattern DIGIT_PATTERN = Pattern.compile("\\d");
     private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile("[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]");
 
-    private final AuthenticationService authService;
-    private final ProfileService profileService;
+        private final transient AuthenticationService authService;
+        private final transient ProfileService profileService;
     private final TranslationService translationService;
-    private User currentUser;
-    private Profile userProfile;
+        private transient User currentUser;
+        private transient Profile userProfile;
 
     // Form fields - stored as instance variables for save functionality
     private TextField firstNameField;

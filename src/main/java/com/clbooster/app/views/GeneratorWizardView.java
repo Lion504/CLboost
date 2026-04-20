@@ -110,7 +110,7 @@ public class GeneratorWizardView extends VerticalLayout {
     private static final String[] AVAILABLE_SKILLS = { "React", "TypeScript", "Node.js", "UI Design", "GraphQL", "AWS",
             "Agile", "Leadership" };
 
-    private final AIService aiService;
+        private final transient AIService aiService;
 
     public GeneratorWizardView(AIService aiService) {
         this.aiService = aiService;
@@ -271,6 +271,9 @@ public class GeneratorWizardView extends VerticalLayout {
             break;
         case 5:
             stepContentContainer.add(createStep5Editor());
+            break;
+        default:
+            // no action needed
             break;
         }
 

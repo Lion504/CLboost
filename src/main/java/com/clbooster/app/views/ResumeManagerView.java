@@ -61,7 +61,7 @@ public class ResumeManagerView extends VerticalLayout {
 
     private static final Logger LOGGER = Logger.getLogger(ResumeManagerView.class.getName());
 
-    private final DocumentService documentService;
+        private final transient DocumentService documentService;
     private final TranslationService translationService;
     private List<ResumeData> resumes = new ArrayList<>();
     private VerticalLayout resumeListContainer;

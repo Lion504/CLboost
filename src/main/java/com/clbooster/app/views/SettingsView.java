@@ -39,12 +39,12 @@ public class SettingsView extends VerticalLayout {
     private static final String BG_GRAY = "#f5f5f7";
     private static final String SUCCESS = "#34C759";
 
-    private final SettingsService settingsService;
-    private final AuthenticationService authService;
-    private final UserService userService;
+        private final transient SettingsService settingsService;
+        private final transient AuthenticationService authService;
+        private final transient UserService userService;
     private final TranslationService translationService;
-    private Settings userSettings;
-    private User currentUser;
+        private transient Settings userSettings;
+        private transient User currentUser;
 
     // Language select
     private Select<String> langSelect;

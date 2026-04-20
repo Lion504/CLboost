@@ -28,7 +28,7 @@ public class LoginView extends VerticalLayout {
     private static final String FONT_WEIGHT_PROP = "font-weight";
     private static final String COLOR_PROP = "color";
 
-    private final AuthenticationService authService;
+        private final transient AuthenticationService authService;
     private final TranslationService translationService;
     private TextField usernameField;
     private PasswordField passwordField;

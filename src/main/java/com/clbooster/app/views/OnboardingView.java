@@ -369,6 +369,9 @@ public class OnboardingView extends VerticalLayout {
         case 3:
             showPreferencesStep();
             break;
+        default:
+            // no action needed
+            break;
         }
     }
 

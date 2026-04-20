@@ -57,8 +57,8 @@ public class EditorView extends HorizontalLayout {
 
     private static final Logger LOGGER = Logger.getLogger(EditorView.class.getName());
 
-    private final DocumentService documentService;
-    private final AIService aiService;
+        private final transient DocumentService documentService;
+        private final transient AIService aiService;
 
     private TextArea editorArea;
     private String jobTitle;
