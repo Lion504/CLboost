@@ -1685,7 +1685,7 @@ public class GeneratorWizardView extends VerticalLayout {
         if (input == null || input.isBlank())
             return "Unknown";
         return input.trim().replaceAll("\\s+", "_").replaceAll("[^a-zA-Z0-9_\\-]", "").replaceAll("_+", "_")
-                .replaceAll("^_|_$", "");
+                .replaceAll("(^_)|(_$)", "");
     }
 
     /**

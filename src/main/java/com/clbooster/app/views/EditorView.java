@@ -13,10 +13,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -25,8 +22,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.streams.DownloadResponse;
+import com.vaadin.flow.server.streams.InputStreamDownloadHandler;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -69,11 +67,7 @@ public class EditorView extends HorizontalLayout {
     private Set<String> selectedSkills;
     private String jobDescription;
     private String userName;
-    private String savedFilePath; // path of the saved .docx after generation
     private String existingContent; // non-null when opened from history (skip generation)
-
-    // Loading indicator shown while AI generates
-    private Div loadingOverlay;
 
     public EditorView(DocumentService documentService, AIService aiService) {
         this.documentService = documentService;
@@ -147,7 +141,7 @@ public class EditorView extends HorizontalLayout {
                 editorArea.setValue(result);
                 editorArea.setEnabled(true);
                 // Save after generation completes
-                savedFilePath = saveGeneratedCoverLetter(result);
+                saveGeneratedCoverLetter(result);
             });
         });
         generationThread.setDaemon(true);
@@ -374,10 +368,11 @@ public class EditorView extends HorizontalLayout {
     }
 
     private void serveDownload(byte[] bytes, String mimeType, String fileName) {
-        StreamResource resource = new StreamResource(fileName, () -> new ByteArrayInputStream(bytes));
-        resource.setContentType(mimeType);
+        InputStreamDownloadHandler downloadHandler = new InputStreamDownloadHandler(e ->
+                new DownloadResponse(new ByteArrayInputStream(bytes), fileName,
+                        mimeType, bytes.length));
 
-        Anchor anchor = new Anchor(resource, "");
+        Anchor anchor = new Anchor(downloadHandler, "");
         anchor.getElement().setAttribute("download", fileName);
         anchor.getElement().setAttribute("style", "display:none");
         add(anchor);
@@ -502,7 +497,7 @@ public class EditorView extends HorizontalLayout {
             ui.access(() -> {
                 editorArea.setValue(result);
                 editorArea.setEnabled(true);
-                savedFilePath = saveGeneratedCoverLetter(result);
+                saveGeneratedCoverLetter(result);
             });
         });
         t.setDaemon(true);
@@ -586,6 +581,6 @@ public class EditorView extends HorizontalLayout {
         if (input == null || input.isBlank())
             return "Unknown";
         return input.trim().replaceAll("\\s+", "_").replaceAll("[^a-zA-Z0-9_\\-]", "").replaceAll("_+", "_")
-                .replaceAll("^_|_$", "");
+                .replaceAll("(^_)|(_$)", "");
     }
 }
