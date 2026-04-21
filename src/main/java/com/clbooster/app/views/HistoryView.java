@@ -55,6 +55,7 @@ import java.util.zip.ZipOutputStream;
 @PageTitle("History | CL Booster")
 @PermitAll
 public class HistoryView extends VerticalLayout {
+    private static final String BG_HOVER = "rgba(0,0,0,0.05)";
 
     private static final String PRIMARY = "#007AFF";
     private static final String TEXT_PRIMARY = "#1d1d1f";
@@ -109,7 +110,7 @@ public class HistoryView extends VerticalLayout {
         titleGroup.add(title, subtitle);
 
         Button exportBtn = new Button(translationService.translate("history.exportAll"), VaadinIcon.DOWNLOAD.create());
-        exportBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+        exportBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_HOVER).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_FONT_WEIGHT, "600")
                 .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "10px 20px").set(StyleConstants.CSS_BORDER, "none");
         exportBtn.addClickListener(e -> exportAllFiles());
 
@@ -387,7 +388,7 @@ public class HistoryView extends VerticalLayout {
                     "rgba(0,0,0,0.1)");
         });
         card.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
-            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "none").set(StyleConstants.CSS_BORDER_COLOR, "rgba(0,0,0,0.05)");
+            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "none").set(StyleConstants.CSS_BORDER_COLOR, BG_HOVER);
         });
 
         return card;
@@ -736,7 +737,7 @@ public class HistoryView extends VerticalLayout {
             badge.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,122,255,0.1)").set(StyleConstants.CSS_COLOR, PRIMARY);
             break;
         default:
-            badge.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+            badge.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_HOVER).set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
         }
         return badge;
     }
@@ -746,7 +747,7 @@ public class HistoryView extends VerticalLayout {
         btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT).set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_PADDING, "6px")
                 .set(StyleConstants.CSS_BORDER_RADIUS, "8px").set(StyleConstants.CSS_BORDER, "none");
         btn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
-                e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY));
+                e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_HOVER).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY));
         btn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE,
                 e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT).set(StyleConstants.CSS_COLOR, TEXT_SECONDARY));
         return btn;

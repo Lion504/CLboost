@@ -24,6 +24,7 @@ import com.vaadin.flow.component.sidenav.SideNavItem;
 
 @PermitAll
 public class MainLayout extends AppLayout {
+    private static final String VAL_0_1EM = "0.1em";
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
@@ -214,7 +215,7 @@ public class MainLayout extends AppLayout {
         mainLabel.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
         mainLabel.getStyle().set(StyleConstants.CSS_COLOR, SIDEBAR_LABEL);
         mainLabel.getStyle().set(StyleConstants.CSS_PADDING, "0 20px");
-        mainLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "0.1em");
+        mainLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, VAL_0_1EM);
 
         SideNavItem dashboard = createNavItem(translationService.translate("nav.dashboard"), "dashboard",
                 VaadinIcon.DASHBOARD);
@@ -228,7 +229,7 @@ public class MainLayout extends AppLayout {
         toolsLabel.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
         toolsLabel.getStyle().set(StyleConstants.CSS_COLOR, SIDEBAR_LABEL);
         toolsLabel.getStyle().set(StyleConstants.CSS_PADDING, "24px 20px 8px");
-        toolsLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "0.1em");
+        toolsLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, VAL_0_1EM);
 
         SideNavItem resume = createNavItem(translationService.translate("nav.resume"), "resume", VaadinIcon.FILE_TEXT);
 
@@ -238,7 +239,7 @@ public class MainLayout extends AppLayout {
         supportLabel.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
         supportLabel.getStyle().set(StyleConstants.CSS_COLOR, SIDEBAR_LABEL);
         supportLabel.getStyle().set(StyleConstants.CSS_PADDING, "24px 20px 8px");
-        supportLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "0.1em");
+        supportLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, VAL_0_1EM);
 
         SideNavItem help = createNavItem(translationService.translate("nav.help"), "help", VaadinIcon.QUESTION_CIRCLE);
 

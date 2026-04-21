@@ -31,6 +31,9 @@ import com.vaadin.flow.router.Route;
 @PageTitle("Settings | CL Booster")
 @PermitAll
 public class SettingsView extends VerticalLayout {
+    private static final String COLOR_DANGER = "#FF3B30";
+    private static final String MARGIN_24 = "0 0 24px 0";
+    private static final String MARGIN_8 = "0 0 8px 0";
     private static final Logger log = LoggerFactory.getLogger(SettingsView.class);
 
     // Figma Design System Colors
@@ -50,24 +53,6 @@ public class SettingsView extends VerticalLayout {
 
     // Language select
     private Select<String> langSelect;
-
-    // Toggle track elements for updating styles
-    private Div emailTrack;
-    private Div pushTrack;
-    private Div productTrack;
-    private Div marketingTrack;
-    private Div cloudTrack;
-    private Div aiTrack;
-    private Div usageTrack;
-
-    // Toggle thumbs for animation
-    private Div emailThumb;
-    private Div pushThumb;
-    private Div productThumb;
-    private Div marketingThumb;
-    private Div cloudThumb;
-    private Div aiThumb;
-    private Div usageThumb;
 
     // Toggle states
     private boolean emailNotifications;
@@ -160,7 +145,7 @@ public class SettingsView extends VerticalLayout {
         title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
         title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
         title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        title.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 8px 0");
+        title.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_8);
 
         Paragraph desc = new Paragraph(translationService.translate("settings.appearance.desc"));
         desc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
@@ -179,12 +164,12 @@ public class SettingsView extends VerticalLayout {
         title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
         title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
         title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        title.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 8px 0");
+        title.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_8);
 
         Paragraph desc = new Paragraph(translationService.translate("settings.languageSelect"));
         desc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
         desc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        desc.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 24px 0");
+        desc.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_24);
 
         // Language select
         VerticalLayout selectGroup = new VerticalLayout();
@@ -266,12 +251,12 @@ public class SettingsView extends VerticalLayout {
         title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
         title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
         title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        title.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 8px 0");
+        title.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_8);
 
         Paragraph desc = new Paragraph(translationService.translate("settings.notificationsDesc"));
         desc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
         desc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        desc.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 24px 0");
+        desc.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_24);
 
         // Toggle items
         VerticalLayout toggles = new VerticalLayout();
@@ -281,8 +266,8 @@ public class SettingsView extends VerticalLayout {
 
         ToggleResult emailResult = createToggleRow(translationService.translate("settings.emailNotifications"),
                 translationService.translate("settings.emailNotifications.desc"), emailNotifications);
-        emailTrack = emailResult.track;
-        emailThumb = emailResult.thumb;
+        Div emailTrack = emailResult.track;
+        Div emailThumb = emailResult.thumb;
         emailTrack.addClickListener(e -> {
             emailNotifications = !emailNotifications;
             updateToggleVisual(emailTrack, emailThumb, emailNotifications);
@@ -290,8 +275,8 @@ public class SettingsView extends VerticalLayout {
 
         ToggleResult pushResult = createToggleRow(translationService.translate("settings.pushNotifications"),
                 translationService.translate("settings.pushNotifications.desc"), pushNotifications);
-        pushTrack = pushResult.track;
-        pushThumb = pushResult.thumb;
+        Div pushTrack = pushResult.track;
+        Div pushThumb = pushResult.thumb;
         pushTrack.addClickListener(e -> {
             pushNotifications = !pushNotifications;
             updateToggleVisual(pushTrack, pushThumb, pushNotifications);
@@ -299,8 +284,8 @@ public class SettingsView extends VerticalLayout {
 
         ToggleResult productResult = createToggleRow(translationService.translate("settings.productUpdates"),
                 translationService.translate("settings.productUpdates.desc"), productUpdates);
-        productTrack = productResult.track;
-        productThumb = productResult.thumb;
+        Div productTrack = productResult.track;
+        Div productThumb = productResult.thumb;
         productTrack.addClickListener(e -> {
             productUpdates = !productUpdates;
             updateToggleVisual(productTrack, productThumb, productUpdates);
@@ -308,8 +293,8 @@ public class SettingsView extends VerticalLayout {
 
         ToggleResult marketingResult = createToggleRow(translationService.translate("settings.marketing"),
                 translationService.translate("settings.marketing.desc"), marketing);
-        marketingTrack = marketingResult.track;
-        marketingThumb = marketingResult.thumb;
+        Div marketingTrack = marketingResult.track;
+        Div marketingThumb = marketingResult.thumb;
         marketingTrack.addClickListener(e -> {
             marketing = !marketing;
             updateToggleVisual(marketingTrack, marketingThumb, marketing);
@@ -402,12 +387,12 @@ public class SettingsView extends VerticalLayout {
         title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
         title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
         title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        title.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 8px 0");
+        title.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_8);
 
         Paragraph desc = new Paragraph(translationService.translate("settings.privacyDesc"));
         desc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
         desc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        desc.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 24px 0");
+        desc.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_24);
 
         // Privacy options
         VerticalLayout options = new VerticalLayout();
@@ -417,8 +402,8 @@ public class SettingsView extends VerticalLayout {
 
         ToggleResult cloudResult = createToggleRow(translationService.translate("settings.cloudStorage"),
                 translationService.translate("settings.cloudStorage.desc"), storeInCloud);
-        cloudTrack = cloudResult.track;
-        cloudThumb = cloudResult.thumb;
+        Div cloudTrack = cloudResult.track;
+        Div cloudThumb = cloudResult.thumb;
         cloudTrack.addClickListener(e -> {
             storeInCloud = !storeInCloud;
             updateToggleVisual(cloudTrack, cloudThumb, storeInCloud);
@@ -426,8 +411,8 @@ public class SettingsView extends VerticalLayout {
 
         ToggleResult aiResult = createToggleRow(translationService.translate("settings.aiTraining"),
                 translationService.translate("settings.aiTraining.desc"), allowAiTraining);
-        aiTrack = aiResult.track;
-        aiThumb = aiResult.thumb;
+        Div aiTrack = aiResult.track;
+        Div aiThumb = aiResult.thumb;
         aiTrack.addClickListener(e -> {
             allowAiTraining = !allowAiTraining;
             updateToggleVisual(aiTrack, aiThumb, allowAiTraining);
@@ -435,8 +420,8 @@ public class SettingsView extends VerticalLayout {
 
         ToggleResult usageResult = createToggleRow(translationService.translate("settings.usageData"),
                 translationService.translate("settings.usageData.desc"), shareUsageData);
-        usageTrack = usageResult.track;
-        usageThumb = usageResult.thumb;
+        Div usageTrack = usageResult.track;
+        Div usageThumb = usageResult.thumb;
         usageTrack.addClickListener(e -> {
             shareUsageData = !shareUsageData;
             updateToggleVisual(usageTrack, usageThumb, shareUsageData);
@@ -462,7 +447,7 @@ public class SettingsView extends VerticalLayout {
         Span dangerTitle = new Span(translationService.translate("settings.deleteAccountTitle"));
         dangerTitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "15px");
         dangerTitle.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
-        dangerTitle.getStyle().set(StyleConstants.CSS_COLOR, "#FF3B30");
+        dangerTitle.getStyle().set(StyleConstants.CSS_COLOR, COLOR_DANGER);
 
         Span dangerDesc = new Span(translationService.translate("settings.deleteAccountDesc2"));
         dangerDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px");
@@ -472,7 +457,7 @@ public class SettingsView extends VerticalLayout {
 
         Button deleteBtn = new Button(translationService.translate("action.delete"));
         deleteBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(255, 59, 48, 0.1)");
-        deleteBtn.getStyle().set(StyleConstants.CSS_COLOR, "#FF3B30");
+        deleteBtn.getStyle().set(StyleConstants.CSS_COLOR, COLOR_DANGER);
         deleteBtn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
         deleteBtn.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
         deleteBtn.getStyle().set(StyleConstants.CSS_PADDING, "8px 16px");
@@ -549,7 +534,7 @@ public class SettingsView extends VerticalLayout {
                 Notification.show("Incorrect password", 3000, Notification.Position.TOP_CENTER);
             }
         });
-        confirmBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "#FF3B30");
+        confirmBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, COLOR_DANGER);
         confirmBtn.getStyle().set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
 
         dialog.add(content);

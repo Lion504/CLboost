@@ -50,6 +50,7 @@ import java.util.logging.Logger;
 @PageTitle("Resume Manager | CL Booster")
 @PermitAll
 public class ResumeManagerView extends VerticalLayout {
+    private static final String BG_GRADIENT = "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)";
 
     private static final String PRIMARY = "#007AFF";
     private static final String PRIMARY_LIGHT = "#5AC8FA";
@@ -295,7 +296,7 @@ public class ResumeManagerView extends VerticalLayout {
         // Wrapper is position:relative so absolute upload overlays it
         Div uploadContainer = new Div();
         uploadContainer.getStyle().set("position", "relative").set(StyleConstants.CSS_WIDTH, "90%")
-                .set(StyleConstants.CSS_BACKGROUND, "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)")
+                .set(StyleConstants.CSS_BACKGROUND, BG_GRADIENT)
                 .set(StyleConstants.CSS_BORDER, "2px dashed " + PRIMARY + "40").set(StyleConstants.CSS_BORDER_RADIUS, "24px").set(StyleConstants.CSS_PADDING, "48px")
                 .set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_3S).set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER).set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
 
@@ -335,10 +336,10 @@ public class ResumeManagerView extends VerticalLayout {
                         "linear-gradient(135deg, rgba(0,122,255,0.1) 0%, rgba(90,200,250,0.1) 100%)"));
         uploadContainer.getElement().addEventListener("dragleave",
                 e -> uploadContainer.getStyle().set(StyleConstants.CSS_BORDER_COLOR, PRIMARY + "40").set(StyleConstants.CSS_BACKGROUND,
-                        "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)"));
+                        BG_GRADIENT));
         uploadContainer.getElement().addEventListener("drop",
                 e -> uploadContainer.getStyle().set(StyleConstants.CSS_BORDER_COLOR, PRIMARY + "40").set(StyleConstants.CSS_BACKGROUND,
-                        "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)"));
+                        BG_GRADIENT));
 
         // File upload success handler
         upload.addSucceededListener(event -> {

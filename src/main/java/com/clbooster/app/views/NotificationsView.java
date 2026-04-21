@@ -29,6 +29,8 @@ import com.clbooster.app.i18n.TranslationService;
 @PageTitle("Notifications | CL Booster")
 @PermitAll
 public class NotificationsView extends VerticalLayout {
+    private static final String VAL_0_1EM = "0.1em";
+    private static final String UPPERCASE = "uppercase";
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
@@ -155,8 +157,8 @@ public class NotificationsView extends VerticalLayout {
         todayLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
         todayLabel.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
         todayLabel.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        todayLabel.getStyle().set(StyleConstants.CSS_TEXT_TRANSFORM, "uppercase");
-        todayLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "0.1em");
+        todayLabel.getStyle().set(StyleConstants.CSS_TEXT_TRANSFORM, UPPERCASE);
+        todayLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, VAL_0_1EM);
         todayLabel.getStyle().set(StyleConstants.CSS_MARGIN, "8px 0");
 
         notificationsList.add(todayLabel);
@@ -175,8 +177,8 @@ public class NotificationsView extends VerticalLayout {
         yesterdayLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
         yesterdayLabel.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
         yesterdayLabel.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        yesterdayLabel.getStyle().set(StyleConstants.CSS_TEXT_TRANSFORM, "uppercase");
-        yesterdayLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "0.1em");
+        yesterdayLabel.getStyle().set(StyleConstants.CSS_TEXT_TRANSFORM, UPPERCASE);
+        yesterdayLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, VAL_0_1EM);
         yesterdayLabel.getStyle().set(StyleConstants.CSS_MARGIN, "24px 0 8px 0");
 
         notificationsList.add(yesterdayLabel);
@@ -194,8 +196,8 @@ public class NotificationsView extends VerticalLayout {
         earlierLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
         earlierLabel.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
         earlierLabel.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        earlierLabel.getStyle().set(StyleConstants.CSS_TEXT_TRANSFORM, "uppercase");
-        earlierLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "0.1em");
+        earlierLabel.getStyle().set(StyleConstants.CSS_TEXT_TRANSFORM, UPPERCASE);
+        earlierLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, VAL_0_1EM);
         earlierLabel.getStyle().set(StyleConstants.CSS_MARGIN, "24px 0 8px 0");
 
         notificationsList.add(earlierLabel);

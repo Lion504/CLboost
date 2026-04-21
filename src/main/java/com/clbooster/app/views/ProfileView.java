@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
 @PageTitle("Profile | CL Booster")
 @PermitAll
 public class ProfileView extends VerticalLayout {
+    private static final String LETTER_SPACING = "0.05em";
+    private static final String BORDER_BOTTOM = "1px solid rgba(0, 0, 0, 0.05)";
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
@@ -111,7 +113,7 @@ public class ProfileView extends VerticalLayout {
     private Div createProfileHeader() {
         Div card = new Div();
         card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0, 0, 0, 0.05)");
+        card.getStyle().set(StyleConstants.CSS_BORDER, BORDER_BOTTOM);
         card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
         card.getStyle().set(StyleConstants.CSS_PADDING, "32px");
         card.getStyle().set(StyleConstants.CSS_WIDTH, "100%");
@@ -174,7 +176,7 @@ public class ProfileView extends VerticalLayout {
         planBadge.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
         planBadge.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
         planBadge.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
-        planBadge.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "0.05em");
+        planBadge.getStyle().set(StyleConstants.CSS_LETTER_SPACING, LETTER_SPACING);
 
         Span versionBadge = new Span(translationService.translate("profile.v4pro"));
         versionBadge.getStyle().set(StyleConstants.CSS_FONT_SIZE, "11px");
@@ -183,7 +185,7 @@ public class ProfileView extends VerticalLayout {
         versionBadge.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0, 122, 255, 0.1)");
         versionBadge.getStyle().set(StyleConstants.CSS_COLOR, PRIMARY);
         versionBadge.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
-        versionBadge.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "0.05em");
+        versionBadge.getStyle().set(StyleConstants.CSS_LETTER_SPACING, LETTER_SPACING);
 
         badgeRow.add(planBadge, versionBadge);
         nameGroup.add(name, usernameLine, emailLine, badgeRow);
@@ -259,7 +261,7 @@ public class ProfileView extends VerticalLayout {
     private Div createGeneralContent() {
         Div card = new Div();
         card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0, 0, 0, 0.05)");
+        card.getStyle().set(StyleConstants.CSS_BORDER, BORDER_BOTTOM);
         card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
         card.getStyle().set(StyleConstants.CSS_PADDING, "32px");
         card.getStyle().set(StyleConstants.CSS_WIDTH, "100%");
@@ -354,7 +356,7 @@ public class ProfileView extends VerticalLayout {
     private Div createSecurityContent() {
         Div card = new Div();
         card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0, 0, 0, 0.05)");
+        card.getStyle().set(StyleConstants.CSS_BORDER, BORDER_BOTTOM);
         card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
         card.getStyle().set(StyleConstants.CSS_PADDING, "32px");
         card.getStyle().set(StyleConstants.CSS_WIDTH, "100%");
@@ -562,7 +564,7 @@ public class ProfileView extends VerticalLayout {
         labelSpan.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
         labelSpan.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
         labelSpan.getStyle().set(StyleConstants.CSS_TEXT_TRANSFORM, "uppercase");
-        labelSpan.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "0.05em");
+        labelSpan.getStyle().set(StyleConstants.CSS_LETTER_SPACING, LETTER_SPACING);
 
         group.add(labelSpan, field);
         return group;

@@ -6,6 +6,7 @@ import com.clbooster.aiservice.Exporter;
 import com.clbooster.aiservice.Parser;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.i18n.TranslationService;
+import com.clbooster.app.views.util.StyleConstants;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.server.StreamResource;
@@ -52,6 +53,9 @@ import java.util.logging.Logger;
 @PageTitle("Generate Cover Letter | CL Booster")
 @PermitAll
 public class GeneratorWizardView extends VerticalLayout {
+    private static final String VAL_NOWRAP = "nowrap";
+    private static final String RESUMES_DIR = "resumes";
+    private static final String UPLOADS_DIR = "uploads";
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
@@ -452,7 +456,7 @@ public class GeneratorWizardView extends VerticalLayout {
             AuthenticationService _authForResume = new AuthenticationService();
             com.clbooster.app.backend.service.profile.User _resumeUser = _authForResume.getCurrentUser();
             if (_resumeUser != null) {
-                java.nio.file.Path resumeDir = java.nio.file.Paths.get("uploads", "resumes");
+                java.nio.file.Path resumeDir = java.nio.file.Paths.get(UPLOADS_DIR, RESUMES_DIR);
                 if (java.nio.file.Files.exists(resumeDir)) {
                     int _pin = _resumeUser.getPin();
                     java.io.File[] existing = resumeDir.toFile().listFiles((d, n) -> n.startsWith(_pin + "_"));
@@ -481,7 +485,7 @@ public class GeneratorWizardView extends VerticalLayout {
             Span singleLabel = new Span("\uD83D\uDCCE " + singleName);
             singleLabel.getStyle().set("flex", "1").set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_FONT_WEIGHT, "600")
                     .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_OVERFLOW, "hidden").set("text-overflow", "ellipsis")
-                    .set(StyleConstants.CSS_WHITE_SPACE, "nowrap");
+                    .set(StyleConstants.CSS_WHITE_SPACE, VAL_NOWRAP);
             Button useBtn = createUseResumeButton();
             useBtn.setText(translationService.translate("generator.step2.useResume"));
             useBtn.addClickListener(e -> loadResumeSkills(singleFile));
@@ -496,7 +500,7 @@ public class GeneratorWizardView extends VerticalLayout {
             resumeSelect.getElement().setAttribute("title", translationService.translate("generator.step2.selectSavedResume"));
             Span selectHint = new Span("\uD83D\uDCCE " + translationService.translate("generator.step2.savedResumes"));
             selectHint.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_FONT_WEIGHT, "600").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
-                    .set(StyleConstants.CSS_WHITE_SPACE, "nowrap");
+                    .set(StyleConstants.CSS_WHITE_SPACE, VAL_NOWRAP);
             Button useBtn = createUseResumeButton();
             useBtn.setText(translationService.translate("generator.step2.useSelected"));
             useBtn.addClickListener(e -> {
@@ -511,7 +515,7 @@ public class GeneratorWizardView extends VerticalLayout {
     private Button createUseResumeButton() {
         Button useBtn = new Button(VaadinIcon.CHECK_CIRCLE.create());
         useBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, GREEN).set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
-                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_BORDER, "none").set(StyleConstants.CSS_WHITE_SPACE, "nowrap");
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_BORDER, "none").set(StyleConstants.CSS_WHITE_SPACE, VAL_NOWRAP);
         return useBtn;
     }
 
@@ -549,13 +553,13 @@ public class GeneratorWizardView extends VerticalLayout {
 
         Div fileTag = new Div();
         fileTag.getStyle().set(StyleConstants.CSS_DISPLAY, "inline-flex").set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER).set("gap", "6px")
-                .set(StyleConstants.CSS_BACKGROUND, "#e8f5e9").set(StyleConstants.CSS_COLOR, "#2e7d32").set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BACKGROUND, GREEN_LIGHT).set(StyleConstants.CSS_COLOR, "#2e7d32").set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_FONT_WEIGHT, "600")
                 .set(StyleConstants.CSS_PADDING, "6px 14px").set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_MARGIN_TOP, "12px")
                 .set(StyleConstants.CSS_MAX_WIDTH, "100%").set(StyleConstants.CSS_OVERFLOW, "hidden").set("text-overflow", "ellipsis")
-                .set(StyleConstants.CSS_WHITE_SPACE, "nowrap");
+                .set(StyleConstants.CSS_WHITE_SPACE, VAL_NOWRAP);
         fileTag.setVisible(false);
 
-        upload.addSucceededListener(event -> handleUploadSucceeded(event, buffer, fileTag, importTitle, importDesc));
+        upload.addSucceededListener(event -> handleUploadSucceeded(event, buffer, fileTag, importTitle, importDesc, upload));
         upload.addFailedListener(event -> handleUploadFailed());
         upload.addFileRejectedListener(event -> {
             LOGGER.warning("[UPLOAD REJECTED] Cannot upload file");
@@ -598,7 +602,7 @@ public class GeneratorWizardView extends VerticalLayout {
                 AuthenticationService authServiceLoc = new AuthenticationService();
                 com.clbooster.app.backend.service.profile.User u = authServiceLoc.getCurrentUser();
                 if (u != null) {
-                    java.nio.file.Path resumeDir = java.nio.file.Paths.get("uploads", "resumes");
+                    java.nio.file.Path resumeDir = java.nio.file.Paths.get(UPLOADS_DIR, RESUMES_DIR);
                     if (!java.nio.file.Files.exists(resumeDir)) java.nio.file.Files.createDirectories(resumeDir);
                     String safeFileName = originalFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
                     java.nio.file.Path destFile = resumeDir.resolve(u.getPin() + "_" + System.currentTimeMillis() + "_" + safeFileName);
@@ -1273,9 +1277,9 @@ public class GeneratorWizardView extends VerticalLayout {
         try {
             AuthenticationService _authSvc = new AuthenticationService();
             com.clbooster.app.backend.service.profile.User _u = _authSvc.getCurrentUser();
-            if (u != null) {
+            if (_u != null) {
                 capturedUserName = _u.getFirstName() + " " + _u.getLastName();
-                capturedUserPin = u.getPin();
+                capturedUserPin = _u.getPin();
             }
         } catch (Exception ignored) {
             LOGGER.warning("Could not capture user from session before generation");
@@ -1436,7 +1440,7 @@ public class GeneratorWizardView extends VerticalLayout {
      */
     private String loadUserResumeText(int userPin) {
         try {
-            Path resumeDir = Paths.get("uploads", "resumes");
+            Path resumeDir = Paths.get(UPLOADS_DIR, RESUMES_DIR);
             if (!Files.exists(resumeDir))
                 return null;
 
@@ -1477,7 +1481,7 @@ public class GeneratorWizardView extends VerticalLayout {
             if (currentUser == null)
                 return null;
             int userPin = currentUser.getPin();
-            Path dir = Paths.get("uploads", "coverletters");
+            Path dir = Paths.get(UPLOADS_DIR, "coverletters");
             if (!Files.exists(dir))
                 Files.createDirectories(dir);
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
@@ -1503,7 +1507,7 @@ public class GeneratorWizardView extends VerticalLayout {
             return;
         }
         try {
-            Path dir = Paths.get("uploads", "coverletters");
+            Path dir = Paths.get(UPLOADS_DIR, "coverletters");
             if (!Files.exists(dir))
                 Files.createDirectories(dir);
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));

@@ -29,6 +29,10 @@ import java.util.List;
 @PageTitle("Onboarding | CL Booster")
 @PermitAll
 public class OnboardingView extends VerticalLayout {
+    private static final String BORDER_2PX = "2px solid ";
+    private static final String MARGIN_24 = "0 0 24px 0";
+    private static final String LETTER_SPACING = "-0.025em";
+    private static final String BG_HOVER = "rgba(0,0,0,0.05)";
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
@@ -135,7 +139,7 @@ public class OnboardingView extends VerticalLayout {
         progressBar.setValue(0.33);
         progressBar.setWidthFull();
         progressBar.getStyle().set(StyleConstants.CSS_HEIGHT, "4px");
-        progressBar.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)");
+        progressBar.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_HOVER);
         progressBar.getStyle().set(StyleConstants.CSS_MARGIN, "32px 0");
 
         // Content area
@@ -281,7 +285,7 @@ public class OnboardingView extends VerticalLayout {
         Div connector = new Div();
         connector.getStyle().set("flex", "1");
         connector.getStyle().set(StyleConstants.CSS_HEIGHT, "2px");
-        connector.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)");
+        connector.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_HOVER);
         connector.getStyle().set("align-self", StyleConstants.VAL_CENTER);
         connector.getStyle().set(StyleConstants.CSS_MAX_WIDTH, "60px");
         return connector;
@@ -405,7 +409,7 @@ public class OnboardingView extends VerticalLayout {
         title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
         title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
         title.getStyle().set(StyleConstants.CSS_MARGIN, "0");
-        title.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "-0.025em");
+        title.getStyle().set(StyleConstants.CSS_LETTER_SPACING, LETTER_SPACING);
 
         Paragraph subtitle = new Paragraph("Start with the basics. This helps us personalize your experience.");
         subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "16px");
@@ -460,7 +464,7 @@ public class OnboardingView extends VerticalLayout {
         title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
         title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
         title.getStyle().set(StyleConstants.CSS_MARGIN, "0");
-        title.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "-0.025em");
+        title.getStyle().set(StyleConstants.CSS_LETTER_SPACING, LETTER_SPACING);
 
         Paragraph subtitle = new Paragraph("Help us understand your experience and career goals.");
         subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "16px");
@@ -486,7 +490,7 @@ public class OnboardingView extends VerticalLayout {
         Paragraph industriesDesc = new Paragraph("Select all that apply to your experience");
         industriesDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
         industriesDesc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        industriesDesc.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 24px 0");
+        industriesDesc.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_24);
 
         // Industry chips
         HorizontalLayout industryChips = new HorizontalLayout();
@@ -525,7 +529,7 @@ public class OnboardingView extends VerticalLayout {
         Paragraph expDesc = new Paragraph("Select your current career level");
         expDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
         expDesc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        expDesc.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 24px 0");
+        expDesc.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_24);
 
         VerticalLayout expOptions = new VerticalLayout();
         expOptions.setPadding(false);
@@ -560,7 +564,7 @@ public class OnboardingView extends VerticalLayout {
         Paragraph goalsDesc = new Paragraph("What are you looking for in your next role?");
         goalsDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
         goalsDesc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        goalsDesc.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 24px 0");
+        goalsDesc.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_24);
 
         goalsCard.add(goalsTitle, goalsDesc, createFormGroup(null, goalField, null));
 
@@ -580,7 +584,7 @@ public class OnboardingView extends VerticalLayout {
         title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
         title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
         title.getStyle().set(StyleConstants.CSS_MARGIN, "0");
-        title.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "-0.025em");
+        title.getStyle().set(StyleConstants.CSS_LETTER_SPACING, LETTER_SPACING);
 
         Paragraph subtitle = new Paragraph("Customize how CL Booster works for you.");
         subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "16px");
@@ -606,7 +610,7 @@ public class OnboardingView extends VerticalLayout {
         Paragraph toneDesc = new Paragraph("Choose the default tone for your cover letters");
         toneDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
         toneDesc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        toneDesc.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 24px 0");
+        toneDesc.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_24);
 
         // Tone options
         HorizontalLayout toneOptions = new HorizontalLayout();
@@ -641,7 +645,7 @@ public class OnboardingView extends VerticalLayout {
         Paragraph notifDesc = new Paragraph("Stay updated on your application progress");
         notifDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
         notifDesc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        notifDesc.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 24px 0");
+        notifDesc.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_24);
 
         VerticalLayout toggles = new VerticalLayout();
         toggles.setPadding(false);
@@ -772,7 +776,7 @@ public class OnboardingView extends VerticalLayout {
 
         chip.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
             if (!selected) {
-                chip.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)");
+                chip.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_HOVER);
             }
         });
         chip.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
@@ -792,7 +796,7 @@ public class OnboardingView extends VerticalLayout {
         option.getStyle().set(StyleConstants.CSS_PADDING, "16px 20px");
         option.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "12px");
         option.getStyle().set(StyleConstants.CSS_BACKGROUND, selected ? "rgba(0,122,255,0.05)" : BG_GRAY);
-        option.getStyle().set(StyleConstants.CSS_BORDER, selected ? "2px solid " + PRIMARY : "2px solid transparent");
+        option.getStyle().set(StyleConstants.CSS_BORDER, selected ? BORDER_2PX + PRIMARY : "2px solid transparent");
         option.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
         option.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_2S);
 
@@ -801,7 +805,7 @@ public class OnboardingView extends VerticalLayout {
         radio.getStyle().set(StyleConstants.CSS_WIDTH, "20px");
         radio.getStyle().set(StyleConstants.CSS_HEIGHT, "20px");
         radio.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "50%");
-        radio.getStyle().set(StyleConstants.CSS_BORDER, selected ? "6px solid " + PRIMARY : "2px solid " + TEXT_SECONDARY);
+        radio.getStyle().set(StyleConstants.CSS_BORDER, selected ? "6px solid " + PRIMARY : BORDER_2PX + TEXT_SECONDARY);
         radio.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_2S);
 
         Span labelSpan = new Span(label);
@@ -833,7 +837,7 @@ public class OnboardingView extends VerticalLayout {
         Div card = new Div();
         card.getStyle().set("flex", "1");
         card.getStyle().set(StyleConstants.CSS_BACKGROUND, selected ? "rgba(0,122,255,0.05)" : BG_GRAY);
-        card.getStyle().set(StyleConstants.CSS_BORDER, selected ? "2px solid " + color : "2px solid transparent");
+        card.getStyle().set(StyleConstants.CSS_BORDER, selected ? BORDER_2PX + color : "2px solid transparent");
         card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "16px");
         card.getStyle().set(StyleConstants.CSS_PADDING, "24px");
         card.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
