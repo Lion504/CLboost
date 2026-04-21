@@ -670,20 +670,7 @@ public class HistoryView extends VerticalLayout {
             }
 
             // Parse timestamp
-            LocalDateTime timestamp;
-            try {
-                if (parts.length >= 3 && parts[1].length() == 8 && parts[2].length() == 6) {
-                    timestamp = LocalDateTime.parse(parts[1] + "_" + parts[2],
-                            DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-                } else if (parts[1].length() == 13) {
-                    timestamp = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(parts[1])),
-                            ZoneId.systemDefault());
-                } else {
-                    timestamp = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault());
-                }
-            } catch (Exception e) {
-                timestamp = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault());
-            }
+            LocalDateTime timestamp = parseTimestamp(parts, lastModified);
 
             String formattedDate = timestamp.format(DateTimeFormatter.ofPattern("MMM d, yyyy"));
 
@@ -712,6 +699,19 @@ public class HistoryView extends VerticalLayout {
             LOGGER.log(Level.WARNING, "Parse error for: " + filename, e);
             return null;
         }
+    }
+
+    private LocalDateTime parseTimestamp(String[] parts, long lastModified) {
+        try {
+            if (parts.length >= 3 && parts[1].length() == 8 && parts[2].length() == 6) {
+                return LocalDateTime.parse(parts[1] + "_" + parts[2], DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            } else if (parts[1].length() == 13) {
+                return LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(parts[1])), ZoneId.systemDefault());
+            }
+        } catch (Exception ignored) {
+            // Ignored, fallback to lastModified time
+        }
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault());
     }
 
     // ── UI helpers ─────────────────────────────────────────────────────────────

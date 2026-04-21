@@ -604,17 +604,21 @@ public class ProfileView extends VerticalLayout {
         linkField.setReadOnly(!editable);
     }
 
+    private String defaultIfNull(String value) {
+        return value != null ? value : "";
+    }
+
     private void reloadFieldValues() {
         if (currentUser != null) {
-            firstNameField.setValue(currentUser.getFirstName() != null ? currentUser.getFirstName() : "");
-            lastNameField.setValue(currentUser.getLastName() != null ? currentUser.getLastName() : "");
-            emailField.setValue(currentUser.getIdentityEmail() != null ? currentUser.getIdentityEmail() : "");
+            firstNameField.setValue(defaultIfNull(currentUser.getFirstName()));
+            lastNameField.setValue(defaultIfNull(currentUser.getLastName()));
+            emailField.setValue(defaultIfNull(currentUser.getIdentityEmail()));
         }
         if (userProfile != null) {
-            experienceField.setValue(userProfile.getExperienceLevel() != null ? userProfile.getExperienceLevel() : "");
-            skillsArea.setValue(userProfile.getSkills() != null ? userProfile.getSkills() : "");
-            toolsArea.setValue(userProfile.getTools() != null ? userProfile.getTools() : "");
-            linkField.setValue(userProfile.getLink() != null ? userProfile.getLink() : "");
+            experienceField.setValue(defaultIfNull(userProfile.getExperienceLevel()));
+            skillsArea.setValue(defaultIfNull(userProfile.getSkills()));
+            toolsArea.setValue(defaultIfNull(userProfile.getTools()));
+            linkField.setValue(defaultIfNull(userProfile.getLink()));
         }
     }
 
