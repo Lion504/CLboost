@@ -155,34 +155,59 @@ public class CoverLetterEditorView extends VerticalLayout implements HasUrlParam
     private String extractTextFromDocx(File file) throws IOException {
         try (java.util.zip.ZipFile zip = new java.util.zip.ZipFile(file)) {
             java.util.zip.ZipEntry entry = zip.getEntry("word/document.xml");
-            if (entry == null)
+            if (entry == null) {
                 return "[Could not find document content in DOCX file.]";
+            }
             try (java.io.InputStream is = zip.getInputStream(entry)) {
                 String xml = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-                StringBuilder sb = new StringBuilder();
-                int i = 0;
-                while (i < xml.length()) {
-                    if (xml.startsWith("<w:p", i) && i + 4 < xml.length()
-                            && (xml.charAt(i + 4) == ' ' || xml.charAt(i + 4) == '>' || xml.charAt(i + 4) == '/')) {
-                        if (sb.length() > 0 && sb.charAt(sb.length() - 1) != '\n')
-                            sb.append('\n');
-                    }
-                    if (xml.startsWith("<w:t", i)) {
-                        int start = xml.indexOf('>', i);
-                        if (start != -1) {
-                            int end = xml.indexOf("</w:t>", start);
-                            if (end != -1) {
-                                sb.append(xml, start + 1, end);
-                                i = end + 6;
-                                continue;
-                            }
-                        }
-                    }
-                    i++;
-                }
+                StringBuilder sb = extractDocxPlainText(xml);
                 String result = sb.toString().trim();
                 return result.isEmpty() ? "[Document appears to be empty.]" : result;
             }
         }
+    }
+
+    private StringBuilder extractDocxPlainText(String xml) {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        while (i < xml.length()) {
+            appendParagraphBreakIfNeeded(xml, i, sb);
+
+            int nextIndex = appendTextRunIfPresent(xml, i, sb);
+            if (nextIndex >= 0) {
+                i = nextIndex;
+                continue;
+            }
+            i++;
+        }
+        return sb;
+    }
+
+    private void appendParagraphBreakIfNeeded(String xml, int index, StringBuilder sb) {
+        if (isParagraphStart(xml, index) && sb.length() > 0 && sb.charAt(sb.length() - 1) != '\n') {
+            sb.append('\n');
+        }
+    }
+
+    private boolean isParagraphStart(String xml, int index) {
+        return xml.startsWith("<w:p", index)
+                && index + 4 < xml.length()
+                && (xml.charAt(index + 4) == ' ' || xml.charAt(index + 4) == '>' || xml.charAt(index + 4) == '/');
+    }
+
+    private int appendTextRunIfPresent(String xml, int index, StringBuilder sb) {
+        if (!xml.startsWith("<w:t", index)) {
+            return -1;
+        }
+        int start = xml.indexOf('>', index);
+        if (start == -1) {
+            return -1;
+        }
+        int end = xml.indexOf("</w:t>", start);
+        if (end == -1) {
+            return -1;
+        }
+        sb.append(xml, start + 1, end);
+        return end + 6;
     }
 }

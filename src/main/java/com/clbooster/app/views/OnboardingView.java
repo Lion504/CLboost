@@ -33,6 +33,12 @@ public class OnboardingView extends VerticalLayout {
     private static final String MARGIN_24 = "0 0 24px 0";
     private static final String LETTER_SPACING = "-0.025em";
     private static final String BG_HOVER = "rgba(0,0,0,0.05)";
+    private static final String BORDER_LIGHT = "1px solid rgba(0,0,0,0.05)";
+    private static final String GRADIENT_PREFIX = "linear-gradient(135deg, ";
+    private static final String GRADIENT_MIDDLE = " 0%, ";
+    private static final String GRADIENT_SUFFIX = " 100%)";
+    private static final String STEP_PROFILE = "Profile";
+    private static final String STEP_CAREER = "Career";
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
@@ -170,8 +176,7 @@ public class OnboardingView extends VerticalLayout {
         Div logoIcon = new Div();
         logoIcon.getStyle().set(StyleConstants.CSS_WIDTH, "40px");
         logoIcon.getStyle().set(StyleConstants.CSS_HEIGHT, "40px");
-        logoIcon.getStyle().set(StyleConstants.CSS_BACKGROUND,
-                "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)");
+        logoIcon.getStyle().set(StyleConstants.CSS_BACKGROUND, primaryGradient());
         logoIcon.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "12px");
         logoIcon.getStyle().set(StyleConstants.CSS_DISPLAY, "flex");
         logoIcon.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
@@ -212,11 +217,11 @@ public class OnboardingView extends VerticalLayout {
         indicator.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "32px");
 
         // Step 1: Profile
-        indicator.add(createStepBadge(1, "Profile", VaadinIcon.USER));
+        indicator.add(createStepBadge(1, STEP_PROFILE, VaadinIcon.USER));
         indicator.add(createStepConnector());
 
         // Step 2: Career
-        indicator.add(createStepBadge(2, "Career", VaadinIcon.BRIEFCASE));
+        indicator.add(createStepBadge(2, STEP_CAREER, VaadinIcon.BRIEFCASE));
         indicator.add(createStepConnector());
 
         // Step 3: Preferences
@@ -297,7 +302,7 @@ public class OnboardingView extends VerticalLayout {
         nav.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
         nav.setAlignItems(FlexComponent.Alignment.CENTER);
         nav.getStyle().set("padding-top", "32px");
-        nav.getStyle().set("border-top", "1px solid rgba(0,0,0,0.05)");
+        nav.getStyle().set("border-top", BORDER_LIGHT);
         nav.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "auto");
 
         // Back button
@@ -385,11 +390,11 @@ public class OnboardingView extends VerticalLayout {
         stepIndicator.removeAll();
 
         // Step 1: Profile
-        stepIndicator.add(createStepBadge(1, "Profile", VaadinIcon.USER));
+        stepIndicator.add(createStepBadge(1, STEP_PROFILE, VaadinIcon.USER));
         stepIndicator.add(createStepConnector());
 
         // Step 2: Career
-        stepIndicator.add(createStepBadge(2, "Career", VaadinIcon.BRIEFCASE));
+        stepIndicator.add(createStepBadge(2, STEP_CAREER, VaadinIcon.BRIEFCASE));
         stepIndicator.add(createStepConnector());
 
         // Step 3: Preferences
@@ -421,7 +426,7 @@ public class OnboardingView extends VerticalLayout {
         // Form card
         Div formCard = new Div();
         formCard.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        formCard.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
+        formCard.getStyle().set(StyleConstants.CSS_BORDER, BORDER_LIGHT);
         formCard.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
         formCard.getStyle().set(StyleConstants.CSS_PADDING, "32px");
         formCard.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
@@ -476,7 +481,7 @@ public class OnboardingView extends VerticalLayout {
         // Industries card
         Div industriesCard = new Div();
         industriesCard.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        industriesCard.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
+        industriesCard.getStyle().set(StyleConstants.CSS_BORDER, BORDER_LIGHT);
         industriesCard.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
         industriesCard.getStyle().set(StyleConstants.CSS_PADDING, "32px");
         industriesCard.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
@@ -514,7 +519,7 @@ public class OnboardingView extends VerticalLayout {
         // Experience level card
         Div expCard = new Div();
         expCard.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        expCard.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
+        expCard.getStyle().set(StyleConstants.CSS_BORDER, BORDER_LIGHT);
         expCard.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
         expCard.getStyle().set(StyleConstants.CSS_PADDING, "32px");
         expCard.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
@@ -549,7 +554,7 @@ public class OnboardingView extends VerticalLayout {
         // Career goals
         Div goalsCard = new Div();
         goalsCard.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        goalsCard.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
+        goalsCard.getStyle().set(StyleConstants.CSS_BORDER, BORDER_LIGHT);
         goalsCard.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
         goalsCard.getStyle().set(StyleConstants.CSS_PADDING, "32px");
         goalsCard.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
@@ -596,7 +601,7 @@ public class OnboardingView extends VerticalLayout {
         // Writing tone card
         Div toneCard = new Div();
         toneCard.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        toneCard.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
+        toneCard.getStyle().set(StyleConstants.CSS_BORDER, BORDER_LIGHT);
         toneCard.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
         toneCard.getStyle().set(StyleConstants.CSS_PADDING, "32px");
         toneCard.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
@@ -630,7 +635,7 @@ public class OnboardingView extends VerticalLayout {
         // Notifications card
         Div notifCard = new Div();
         notifCard.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        notifCard.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
+        notifCard.getStyle().set(StyleConstants.CSS_BORDER, BORDER_LIGHT);
         notifCard.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
         notifCard.getStyle().set(StyleConstants.CSS_PADDING, "32px");
         notifCard.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
@@ -660,8 +665,7 @@ public class OnboardingView extends VerticalLayout {
 
         // Summary card
         Div summaryCard = new Div();
-        summaryCard.getStyle().set(StyleConstants.CSS_BACKGROUND,
-                "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)");
+        summaryCard.getStyle().set(StyleConstants.CSS_BACKGROUND, primaryGradient());
         summaryCard.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
         summaryCard.getStyle().set(StyleConstants.CSS_PADDING, "32px");
         summaryCard.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "24px");
@@ -713,8 +717,8 @@ public class OnboardingView extends VerticalLayout {
         stats.getStyle().set("padding-top", "16px");
         stats.getStyle().set("border-top", "1px solid rgba(255,255,255,0.2)");
 
-        stats.add(createSummaryStat("Profile", "Completed"));
-        stats.add(createSummaryStat("Career",
+        stats.add(createSummaryStat(STEP_PROFILE, "Completed"));
+        stats.add(createSummaryStat(STEP_CAREER,
                 selectedExperience.isEmpty() ? "Pending" : selectedExperience.get(0).split(" ")[0]));
         stats.add(createSummaryStat("Tone", selectedTone));
 
@@ -985,7 +989,7 @@ public class OnboardingView extends VerticalLayout {
 
     private Button createPrimaryButton(String text, Runnable action) {
         Button btn = new Button(text, e -> action.run());
-        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)");
+        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, primaryGradient());
         btn.getStyle().set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
         btn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
         btn.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
@@ -1006,5 +1010,9 @@ public class OnboardingView extends VerticalLayout {
         });
 
         return btn;
+    }
+
+    private String primaryGradient() {
+        return GRADIENT_PREFIX + PRIMARY + GRADIENT_MIDDLE + PRIMARY_LIGHT + GRADIENT_SUFFIX;
     }
 }

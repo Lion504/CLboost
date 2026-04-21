@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 @PageTitle("Dashboard | CL Booster")
 @PermitAll
 class DashboardView extends VerticalLayout {
+    private static final String FILE_EXTENSION_REGEX = "\\.[^.]+$";
 
     private static final String PRIMARY = "#007AFF";
     private static final String TEXT_PRIMARY = "#1d1d1f";
@@ -377,7 +378,7 @@ class DashboardView extends VerticalLayout {
                     if (parts.length < 1)
                         return false;
                     try {
-                        int filePin = Integer.parseInt(parts[0].replaceAll("\\.[^.]+$", ""));
+                        int filePin = Integer.parseInt(parts[0].replaceAll(FILE_EXTENSION_REGEX, ""));
                         return filePin == userPin;
                     } catch (NumberFormatException e) {
                         return false;
@@ -408,7 +409,7 @@ class DashboardView extends VerticalLayout {
                     if (parts.length < 1)
                         return false;
                     try {
-                        int filePin = Integer.parseInt(parts[0].replaceAll("\\.[^.]+$", ""));
+                        int filePin = Integer.parseInt(parts[0].replaceAll(FILE_EXTENSION_REGEX, ""));
                         if (filePin != userPin)
                             return false;
                     } catch (NumberFormatException e) {
@@ -467,7 +468,7 @@ class DashboardView extends VerticalLayout {
     }
 
     private void processLetterFile(Path file, int userPin, List<LetterCardData> letters) {
-        String name = file.getFileName().toString().replaceAll("\\.[^.]+$", "");
+        String name = file.getFileName().toString().replaceAll(FILE_EXTENSION_REGEX, "");
         String[] parts = name.split("_");
         if (parts.length < 1 || !isUserFile(parts[0], userPin)) return;
 

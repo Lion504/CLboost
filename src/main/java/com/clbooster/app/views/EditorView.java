@@ -49,6 +49,7 @@ import java.util.logging.Logger;
 @PageTitle("Editor | CL Booster")
 @PermitAll
 public class EditorView extends HorizontalLayout {
+    private static final String TIMESTAMP_PATTERN = "yyyyMMdd_HHmmss";
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
@@ -326,7 +327,7 @@ public class EditorView extends HorizontalLayout {
         }
         try {
             String fileName = sanitizeForFilename(companyName) + "_" + sanitizeForFilename(jobTitle) + "_"
-                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".docx";
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern(TIMESTAMP_PATTERN)) + ".docx";
             Path outPath = Paths.get(System.getProperty("java.io.tmpdir"), fileName);
 
             com.clbooster.app.backend.service.ResumeData resumeData = new com.clbooster.app.backend.service.ResumeData();
@@ -355,7 +356,7 @@ public class EditorView extends HorizontalLayout {
         }
         try {
             String fileName = sanitizeForFilename(companyName) + "_" + sanitizeForFilename(jobTitle) + "_"
-                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".pdf";
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern(TIMESTAMP_PATTERN)) + ".pdf";
 
             byte[] pdfBytes = generateSimplePdf(content);
             if (pdfBytes == null || pdfBytes.length == 0) {
@@ -565,7 +566,7 @@ public class EditorView extends HorizontalLayout {
             if (!Files.exists(dir))
                 Files.createDirectories(dir);
 
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern(TIMESTAMP_PATTERN));
             String fileName = userPin + "_" + timestamp + "_" + sanitizeForFilename(companyName) + "_"
                     + sanitizeForFilename(jobTitle) + ".docx";
             Path filePath = dir.resolve(fileName);

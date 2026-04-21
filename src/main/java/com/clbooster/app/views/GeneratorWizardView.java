@@ -56,6 +56,12 @@ public class GeneratorWizardView extends VerticalLayout {
     private static final String VAL_NOWRAP = "nowrap";
     private static final String RESUMES_DIR = "resumes";
     private static final String UPLOADS_DIR = "uploads";
+    private static final String ACTION_SAVE_KEY = "action.save";
+    private static final String DOCX_EXTENSION = ".docx";
+    private static final String MAX_WIDTH_600PX = "600px";
+    private static final String BG_SOFT = "rgba(0,0,0,0.05)";
+    private static final String BORDER_LIGHT = "1px solid rgba(0,0,0,0.1)";
+    private static final String MIME_DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
@@ -120,7 +126,7 @@ public class GeneratorWizardView extends VerticalLayout {
         setSizeFull();
         setPadding(false);
         setSpacing(false);
-        getStyle().set("background", BG_WHITE);
+        getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
         getStyle().set("overflow", "auto");
 
         // Clear any previous session data when starting a new wizard session
@@ -131,8 +137,8 @@ public class GeneratorWizardView extends VerticalLayout {
         container.setWidthFull();
         container.setMaxWidth("900px");
         container.setAlignItems(FlexComponent.Alignment.CENTER);
-        container.getStyle().set("margin", "0 auto");
-        container.getStyle().set("padding", "32px 24px 64px 24px");
+        container.getStyle().set(StyleConstants.CSS_MARGIN, "0 auto");
+        container.getStyle().set(StyleConstants.CSS_PADDING, "32px 24px 64px 24px");
         container.setSpacing(false);
         container.getStyle().set("gap", "24px");
 
@@ -167,10 +173,10 @@ public class GeneratorWizardView extends VerticalLayout {
         // Back button
         Button backBtn = new Button(translationService.translate("generator.wizard.exit"),
                 VaadinIcon.ARROW_LEFT.create());
-        backBtn.getStyle().set("background", "transparent");
-        backBtn.getStyle().set("color", TEXT_SECONDARY);
-        backBtn.getStyle().set("border", "none");
-        backBtn.getStyle().set("font-weight", "500");
+        backBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
+        backBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        backBtn.getStyle().set(StyleConstants.CSS_BORDER, "none");
+        backBtn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "500");
         backBtn.getStyle().set("gap", "8px");
         backBtn.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(DashboardView.class)));
 
@@ -203,31 +209,31 @@ public class GeneratorWizardView extends VerticalLayout {
 
             // Step badge
             Div badge = new Div();
-            badge.getStyle().set("display", "flex");
-            badge.getStyle().set("align-items", "center");
+            badge.getStyle().set(StyleConstants.CSS_DISPLAY, "flex");
+            badge.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
             badge.getStyle().set("gap", "6px");
-            badge.getStyle().set("padding", "6px 12px");
-            badge.getStyle().set("border-radius", "9999px");
-            badge.getStyle().set("font-size", "12px");
-            badge.getStyle().set("font-weight", "700");
-            badge.getStyle().set("transition", "all 0.3s ease");
+            badge.getStyle().set(StyleConstants.CSS_PADDING, "6px 12px");
+            badge.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+            badge.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
+            badge.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+            badge.getStyle().set(StyleConstants.CSS_TRANSITION, "all 0.3s ease");
 
             // Set badge style based on current step
             if (stepNum == currentStep) {
-                badge.getStyle().set("background", PRIMARY);
-                badge.getStyle().set("color", "white");
-                badge.getStyle().set("box-shadow", "0 4px 12px rgba(0,122,255,0.3)");
+                badge.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY);
+                badge.getStyle().set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
+                badge.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 4px 12px rgba(0,122,255,0.3)");
             } else if (stepNum < currentStep) {
-                badge.getStyle().set("background", GREEN_LIGHT);
-                badge.getStyle().set("color", GREEN);
+                badge.getStyle().set(StyleConstants.CSS_BACKGROUND, GREEN_LIGHT);
+                badge.getStyle().set(StyleConstants.CSS_COLOR, GREEN);
             } else {
-                badge.getStyle().set("background", "rgba(0,0,0,0.05)");
-                badge.getStyle().set("color", TEXT_SECONDARY);
+                badge.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_SOFT);
+                badge.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
             }
 
             Icon icon = stepIcons[i].create();
-            icon.getStyle().set("width", "14px");
-            icon.getStyle().set("height", "14px");
+            icon.getStyle().set(StyleConstants.CSS_WIDTH, "14px");
+            icon.getStyle().set(StyleConstants.CSS_HEIGHT, "14px");
 
             Span title = new Span(stepTitles[i]);
             badge.add(icon, title);
@@ -237,13 +243,13 @@ public class GeneratorWizardView extends VerticalLayout {
             // Connector line (except for last step)
             if (i < totalSteps - 1) {
                 Div connector = new Div();
-                connector.getStyle().set("width", "32px");
-                connector.getStyle().set("height", "2px");
-                connector.getStyle().set("margin", "0 4px");
+                connector.getStyle().set(StyleConstants.CSS_WIDTH, "32px");
+                connector.getStyle().set(StyleConstants.CSS_HEIGHT, "2px");
+                connector.getStyle().set(StyleConstants.CSS_MARGIN, "0 4px");
                 if (stepNum < currentStep) {
-                    connector.getStyle().set("background", GREEN);
+                    connector.getStyle().set(StyleConstants.CSS_BACKGROUND, GREEN);
                 } else {
-                    connector.getStyle().set("background", "rgba(0,0,0,0.05)");
+                    connector.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_SOFT);
                 }
                 stepItem.add(connector);
             }
@@ -296,27 +302,27 @@ public class GeneratorWizardView extends VerticalLayout {
 
         // Title
         H1 title = new H1(translationService.translate("generator.step1.title"));
-        title.getStyle().set("font-size", "36px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("text-align", "center");
-        title.getStyle().set("margin", "0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "36px");
+        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        title.getStyle().set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER);
+        title.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph subtitle = new Paragraph(translationService.translate("generator.step1.description"));
-        subtitle.getStyle().set("font-size", "18px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("text-align", "center");
-        subtitle.getStyle().set("margin", "0 0 16px 0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
+        subtitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        subtitle.getStyle().set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER);
+        subtitle.getStyle().set(StyleConstants.CSS_MARGIN, StyleConstants.VAL_0_0_16PX);
 
         // Form card
         Div card = new Div();
-        card.getStyle().set("background", BG_WHITE);
-        card.getStyle().set("border", "1px solid rgba(0,0,0,0.08)");
-        card.getStyle().set("border-radius", "24px");
-        card.getStyle().set("padding", "32px");
-        card.getStyle().set("width", "100%");
-        card.getStyle().set("max-width", "600px");
-        card.getStyle().set("box-shadow", "0 4px 20px rgba(0,0,0,0.04)");
+        card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.08)");
+        card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
+        card.getStyle().set(StyleConstants.CSS_PADDING, "32px");
+        card.getStyle().set(StyleConstants.CSS_WIDTH, "100%");
+        card.getStyle().set(StyleConstants.CSS_MAX_WIDTH, MAX_WIDTH_600PX);
+        card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 4px 20px rgba(0,0,0,0.04)");
 
         VerticalLayout form = new VerticalLayout();
         form.setSpacing(false);
@@ -350,9 +356,9 @@ public class GeneratorWizardView extends VerticalLayout {
         descGroup.getStyle().set("gap", "6px");
 
         Span descLabel = new Span(translationService.translate("generator.form.jobDescription"));
-        descLabel.getStyle().set("font-size", "12px");
-        descLabel.getStyle().set("font-weight", "700");
-        descLabel.getStyle().set("color", TEXT_SECONDARY);
+        descLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
+        descLabel.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        descLabel.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
         descLabel.getStyle().set("text-transform", "uppercase");
         descLabel.getStyle().set("letter-spacing", "0.1em");
 
@@ -360,10 +366,10 @@ public class GeneratorWizardView extends VerticalLayout {
         step1DescField.setPlaceholder(translationService.translate("generator.form.jobDescriptionPlaceholder"));
         step1DescField.setWidthFull();
         step1DescField.setMinHeight("160px");
-        step1DescField.getStyle().set("background", BG_WHITE);
-        step1DescField.getStyle().set("border", "1px solid rgba(0,0,0,0.1)");
-        step1DescField.getStyle().set("border-radius", "12px");
-        step1DescField.getStyle().set("padding", "12px 16px");
+        step1DescField.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        step1DescField.getStyle().set(StyleConstants.CSS_BORDER, BORDER_LIGHT);
+        step1DescField.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "12px");
+        step1DescField.getStyle().set(StyleConstants.CSS_PADDING, "12px 16px");
         step1DescField.setValue(jobDescription);
         step1DescField.addValueChangeListener(e -> {
             jobDescription = e.getValue();
@@ -434,7 +440,7 @@ public class GeneratorWizardView extends VerticalLayout {
         
         Div savedResumeCard = new Div();
         savedResumeCard.getStyle().set(StyleConstants.CSS_BACKGROUND, GREEN_LIGHT).set(StyleConstants.CSS_BORDER, "1.5px solid " + GREEN)
-                .set(StyleConstants.CSS_BORDER_RADIUS, "16px").set(StyleConstants.CSS_PADDING, "16px 24px").set(StyleConstants.CSS_WIDTH, "100%").set(StyleConstants.CSS_MAX_WIDTH, "600px")
+                .set(StyleConstants.CSS_BORDER_RADIUS, "16px").set(StyleConstants.CSS_PADDING, "16px 24px").set(StyleConstants.CSS_WIDTH, "100%").set(StyleConstants.CSS_MAX_WIDTH, MAX_WIDTH_600PX)
                 .set(StyleConstants.CSS_MARGIN_TOP, "16px");
 
         if (!resumeFileMap.isEmpty()) {
@@ -524,7 +530,7 @@ public class GeneratorWizardView extends VerticalLayout {
         importCard.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY)
                 .set(StyleConstants.CSS_BORDER, "2px dashed rgba(0,0,0,0.1)")
                 .set(StyleConstants.CSS_BORDER_RADIUS, "24px").set(StyleConstants.CSS_PADDING, "32px")
-                .set(StyleConstants.CSS_WIDTH, "100%").set(StyleConstants.CSS_MAX_WIDTH, "600px")
+                .set(StyleConstants.CSS_WIDTH, "100%").set(StyleConstants.CSS_MAX_WIDTH, MAX_WIDTH_600PX)
                 .set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER).set(StyleConstants.CSS_MARGIN_TOP, "16px");
 
         Icon fileIcon = VaadinIcon.FILE_SEARCH.create();
@@ -544,7 +550,7 @@ public class GeneratorWizardView extends VerticalLayout {
         upload.setReceiver(buffer);
         upload.setDropAllowed(false);
         upload.setAcceptedFileTypes("application/pdf", ".pdf",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx",
+            MIME_DOCX, DOCX_EXTENSION,
                 "application/msword", ".doc");
         upload.setMaxFiles(1);
         upload.setMaxFileSize(10 * 1024 * 1024);
@@ -587,7 +593,7 @@ public class GeneratorWizardView extends VerticalLayout {
             if (lastDotIndex > 0 && lastDotIndex < originalFileName.length() - 1) {
                 fileExtension = originalFileName.substring(lastDotIndex).toLowerCase();
             }
-            if (!java.util.Arrays.asList(".pdf", ".docx", ".doc").contains(fileExtension)) {
+            if (!java.util.Arrays.asList(".pdf", DOCX_EXTENSION, ".doc").contains(fileExtension)) {
                 throw new IllegalArgumentException("Unsupported file type: " + fileExtension);
             }
             java.io.File tempFile = buffer.getFileData().getFile();
@@ -644,15 +650,15 @@ public class GeneratorWizardView extends VerticalLayout {
     private Button createSkillButton(String skill) {
         Button skillBtn = new Button(skill);
         skillBtn.setWidthFull();
-        skillBtn.getStyle().set("padding", "16px");
-        skillBtn.getStyle().set("border-radius", "16px");
-        skillBtn.getStyle().set("font-weight", "700");
-        skillBtn.getStyle().set("font-size", "14px");
-        skillBtn.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
-        skillBtn.getStyle().set("background", BG_WHITE);
-        skillBtn.getStyle().set("color", TEXT_PRIMARY);
+        skillBtn.getStyle().set(StyleConstants.CSS_PADDING, "16px");
+        skillBtn.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "16px");
+        skillBtn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        skillBtn.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
+        skillBtn.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
+        skillBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        skillBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
         skillBtn.getStyle().set("cursor", "pointer");
-        skillBtn.getStyle().set("transition", "all 0.2s ease");
+        skillBtn.getStyle().set(StyleConstants.CSS_TRANSITION, "all 0.2s ease");
 
         // Check if already selected
         updateSkillButtonStyle(skillBtn, skill);
@@ -672,10 +678,10 @@ public class GeneratorWizardView extends VerticalLayout {
     private void updateSkillButtonStyle(Button skillBtn, String skill) {
         if (selectedSkills.contains(skill)) {
             skillBtn.getStyle().set("border-color", PRIMARY);
-            skillBtn.getStyle().set("box-shadow", "0 4px 12px rgba(0,122,255,0.15)");
+            skillBtn.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 4px 12px rgba(0,122,255,0.15)");
         } else {
-            skillBtn.getStyle().set("border-color", "rgba(0,0,0,0.05)");
-            skillBtn.getStyle().set("box-shadow", "none");
+            skillBtn.getStyle().set("border-color", BG_SOFT);
+            skillBtn.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "none");
         }
     }
 
@@ -720,17 +726,17 @@ public class GeneratorWizardView extends VerticalLayout {
 
         // Title
         H1 title = new H1(translationService.translate("generator.step3.title"));
-        title.getStyle().set("font-size", "36px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("text-align", "center");
-        title.getStyle().set("margin", "0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "36px");
+        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        title.getStyle().set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER);
+        title.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph subtitle = new Paragraph(translationService.translate("generator.step3.description"));
-        subtitle.getStyle().set("font-size", "18px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("text-align", "center");
-        subtitle.getStyle().set("margin", "0 0 16px 0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
+        subtitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        subtitle.getStyle().set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER);
+        subtitle.getStyle().set(StyleConstants.CSS_MARGIN, StyleConstants.VAL_0_0_16PX);
 
         // Tone cards
         HorizontalLayout cards = new HorizontalLayout();
@@ -738,7 +744,7 @@ public class GeneratorWizardView extends VerticalLayout {
         cards.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         cards.getStyle().set("gap", "20px");
         cards.getStyle().set("flex-wrap", "wrap");
-        cards.getStyle().set("max-width", "800px");
+        cards.getStyle().set(StyleConstants.CSS_MAX_WIDTH, "800px");
 
         // Professional card
         cards.add(createToneCard("professional", "generator.tone.professional", "generator.tone.professionalDesc",
@@ -760,50 +766,50 @@ public class GeneratorWizardView extends VerticalLayout {
     private Div createToneCard(String toneId, String titleKey, String descKey, VaadinIcon iconName, String bgColor,
             String iconColor, boolean isSelected) {
         Div card = new Div();
-        card.getStyle().set("background", BG_WHITE);
-        card.getStyle().set("border-radius", "20px");
-        card.getStyle().set("padding", "28px");
-        card.getStyle().set("width", "220px");
-        card.getStyle().set("text-align", "center");
+        card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "20px");
+        card.getStyle().set(StyleConstants.CSS_PADDING, "28px");
+        card.getStyle().set(StyleConstants.CSS_WIDTH, "220px");
+        card.getStyle().set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER);
         card.getStyle().set("cursor", "pointer");
-        card.getStyle().set("transition", "all 0.2s ease");
+        card.getStyle().set(StyleConstants.CSS_TRANSITION, "all 0.2s ease");
 
         if (isSelected) {
-            card.getStyle().set("border", "2px solid " + PRIMARY);
-            card.getStyle().set("box-shadow", "0 8px 24px rgba(0,122,255,0.15)");
+            card.getStyle().set(StyleConstants.CSS_BORDER, "2px solid " + PRIMARY);
+            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 8px 24px rgba(0,122,255,0.15)");
         } else {
-            card.getStyle().set("border", "2px solid transparent");
-            card.getStyle().set("box-shadow", "0 2px 8px rgba(0,0,0,0.04)");
+            card.getStyle().set(StyleConstants.CSS_BORDER, "2px solid transparent");
+            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 2px 8px rgba(0,0,0,0.04)");
         }
 
         // Icon circle
         Div iconCircle = new Div();
-        iconCircle.getStyle().set("width", "48px");
-        iconCircle.getStyle().set("height", "48px");
-        iconCircle.getStyle().set("border-radius", "50%");
-        iconCircle.getStyle().set("background", bgColor);
-        iconCircle.getStyle().set("display", "flex");
-        iconCircle.getStyle().set("align-items", "center");
-        iconCircle.getStyle().set("justify-content", "center");
-        iconCircle.getStyle().set("margin", "0 auto 16px auto");
+        iconCircle.getStyle().set(StyleConstants.CSS_WIDTH, "48px");
+        iconCircle.getStyle().set(StyleConstants.CSS_HEIGHT, "48px");
+        iconCircle.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "50%");
+        iconCircle.getStyle().set(StyleConstants.CSS_BACKGROUND, bgColor);
+        iconCircle.getStyle().set(StyleConstants.CSS_DISPLAY, "flex");
+        iconCircle.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
+        iconCircle.getStyle().set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER);
+        iconCircle.getStyle().set(StyleConstants.CSS_MARGIN, "0 auto 16px auto");
 
         Icon icon = iconName.create();
-        icon.getStyle().set("color", iconColor);
-        icon.getStyle().set("width", "24px");
-        icon.getStyle().set("height", "24px");
+        icon.getStyle().set(StyleConstants.CSS_COLOR, iconColor);
+        icon.getStyle().set(StyleConstants.CSS_WIDTH, "24px");
+        icon.getStyle().set(StyleConstants.CSS_HEIGHT, "24px");
         iconCircle.add(icon);
 
         H3 cardTitle = new H3(translationService.translate(titleKey));
-        cardTitle.getStyle().set("font-size", "17px");
-        cardTitle.getStyle().set("font-weight", "700");
-        cardTitle.getStyle().set("color", TEXT_PRIMARY);
-        cardTitle.getStyle().set("margin", "0 0 8px 0");
+        cardTitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "17px");
+        cardTitle.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        cardTitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        cardTitle.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 8px 0");
 
         Paragraph cardDesc = new Paragraph(translationService.translate(descKey));
-        cardDesc.getStyle().set("font-size", "13px");
-        cardDesc.getStyle().set("color", TEXT_SECONDARY);
+        cardDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px");
+        cardDesc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
         cardDesc.getStyle().set("line-height", "1.5");
-        cardDesc.getStyle().set("margin", "0");
+        cardDesc.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         card.add(iconCircle, cardTitle, cardDesc);
 
@@ -824,44 +830,44 @@ public class GeneratorWizardView extends VerticalLayout {
 
         // Success icon
         Div iconContainer = new Div();
-        iconContainer.getStyle().set("width", "80px");
-        iconContainer.getStyle().set("height", "80px");
-        iconContainer.getStyle().set("border-radius", "50%");
-        iconContainer.getStyle().set("background", GREEN_LIGHT);
-        iconContainer.getStyle().set("display", "flex");
-        iconContainer.getStyle().set("align-items", "center");
-        iconContainer.getStyle().set("justify-content", "center");
+        iconContainer.getStyle().set(StyleConstants.CSS_WIDTH, "80px");
+        iconContainer.getStyle().set(StyleConstants.CSS_HEIGHT, "80px");
+        iconContainer.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "50%");
+        iconContainer.getStyle().set(StyleConstants.CSS_BACKGROUND, GREEN_LIGHT);
+        iconContainer.getStyle().set(StyleConstants.CSS_DISPLAY, "flex");
+        iconContainer.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
+        iconContainer.getStyle().set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER);
         iconContainer.getStyle().set("margin-bottom", "8px");
 
         Icon checkIcon = VaadinIcon.CHECK_CIRCLE.create();
-        checkIcon.getStyle().set("color", GREEN);
-        checkIcon.getStyle().set("width", "40px");
-        checkIcon.getStyle().set("height", "40px");
+        checkIcon.getStyle().set(StyleConstants.CSS_COLOR, GREEN);
+        checkIcon.getStyle().set(StyleConstants.CSS_WIDTH, "40px");
+        checkIcon.getStyle().set(StyleConstants.CSS_HEIGHT, "40px");
         iconContainer.add(checkIcon);
 
         // Title
         H1 title = new H1(translationService.translate("generator.step4.title"));
-        title.getStyle().set("font-size", "36px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("text-align", "center");
-        title.getStyle().set("margin", "0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "36px");
+        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        title.getStyle().set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER);
+        title.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph subtitle = new Paragraph(translationService.translate("generator.step4.description"));
-        subtitle.getStyle().set("font-size", "18px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("text-align", "center");
-        subtitle.getStyle().set("margin", "0 0 16px 0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
+        subtitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        subtitle.getStyle().set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER);
+        subtitle.getStyle().set(StyleConstants.CSS_MARGIN, StyleConstants.VAL_0_0_16PX);
 
         // Summary card
         Div card = new Div();
-        card.getStyle().set("background", BG_WHITE);
-        card.getStyle().set("border", "1px solid rgba(0,0,0,0.08)");
-        card.getStyle().set("border-radius", "20px");
-        card.getStyle().set("padding", "28px 32px");
-        card.getStyle().set("width", "100%");
-        card.getStyle().set("max-width", "420px");
-        card.getStyle().set("box-shadow", "0 4px 20px rgba(0,0,0,0.04)");
+        card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.08)");
+        card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "20px");
+        card.getStyle().set(StyleConstants.CSS_PADDING, "28px 32px");
+        card.getStyle().set(StyleConstants.CSS_WIDTH, "100%");
+        card.getStyle().set(StyleConstants.CSS_MAX_WIDTH, "420px");
+        card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 4px 20px rgba(0,0,0,0.04)");
 
         VerticalLayout summary = new VerticalLayout();
         summary.setPadding(false);
@@ -876,9 +882,9 @@ public class GeneratorWizardView extends VerticalLayout {
 
         // Divider
         Div divider = new Div();
-        divider.getStyle().set("height", "1px");
-        divider.getStyle().set("background", "rgba(0,0,0,0.06)");
-        divider.getStyle().set("margin", "8px 0");
+        divider.getStyle().set(StyleConstants.CSS_HEIGHT, "1px");
+        divider.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.06)");
+        divider.getStyle().set(StyleConstants.CSS_MARGIN, "8px 0");
         summary.add(divider);
 
         summary.add(createSummaryRow("generator.step4.access",
@@ -902,13 +908,13 @@ public class GeneratorWizardView extends VerticalLayout {
         row.setAlignItems(FlexComponent.Alignment.CENTER);
 
         Span labelSpan = new Span(translationService.translate(labelKey));
-        labelSpan.getStyle().set("font-size", "14px");
-        labelSpan.getStyle().set("color", TEXT_SECONDARY);
+        labelSpan.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
+        labelSpan.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
 
         Span valueSpan = new Span(value);
-        valueSpan.getStyle().set("font-size", "14px");
-        valueSpan.getStyle().set("font-weight", "700");
-        valueSpan.getStyle().set("color", valueColor);
+        valueSpan.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
+        valueSpan.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        valueSpan.getStyle().set(StyleConstants.CSS_COLOR, valueColor);
 
         row.add(labelSpan, valueSpan);
 
@@ -926,14 +932,14 @@ public class GeneratorWizardView extends VerticalLayout {
         labelRow.getStyle().set("gap", "6px");
 
         Icon iconComponent = icon.create();
-        iconComponent.getStyle().set("width", "14px");
-        iconComponent.getStyle().set("height", "14px");
-        iconComponent.getStyle().set("color", TEXT_SECONDARY);
+        iconComponent.getStyle().set(StyleConstants.CSS_WIDTH, "14px");
+        iconComponent.getStyle().set(StyleConstants.CSS_HEIGHT, "14px");
+        iconComponent.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
 
         Span labelText = new Span(translationService.translate(labelKey));
-        labelText.getStyle().set("font-size", "12px");
-        labelText.getStyle().set("font-weight", "700");
-        labelText.getStyle().set("color", TEXT_SECONDARY);
+        labelText.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
+        labelText.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        labelText.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
         labelText.getStyle().set("text-transform", "uppercase");
         labelText.getStyle().set("letter-spacing", "0.1em");
 
@@ -943,9 +949,9 @@ public class GeneratorWizardView extends VerticalLayout {
         TextField field = new TextField();
         field.setPlaceholder(translationService.translate(placeholderKey));
         field.setWidthFull();
-        field.getStyle().set("background", BG_WHITE);
-        field.getStyle().set("border", "1px solid rgba(0,0,0,0.1)");
-        field.getStyle().set("border-radius", "12px");
+        field.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        field.getStyle().set(StyleConstants.CSS_BORDER, BORDER_LIGHT);
+        field.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "12px");
         field.getStyle().set("--vaadin-input-field-height", "48px");
 
         group.add(field);
@@ -962,12 +968,12 @@ public class GeneratorWizardView extends VerticalLayout {
 
         // Back button
         backButton = new Button(translationService.translate("generator.back"));
-        backButton.getStyle().set("background", "rgba(0,0,0,0.05)");
-        backButton.getStyle().set("color", TEXT_PRIMARY);
-        backButton.getStyle().set("font-weight", "600");
-        backButton.getStyle().set("border-radius", "9999px");
-        backButton.getStyle().set("padding", "14px 32px");
-        backButton.getStyle().set("font-size", "15px");
+        backButton.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_SOFT);
+        backButton.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        backButton.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        backButton.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+        backButton.getStyle().set(StyleConstants.CSS_PADDING, "14px 32px");
+        backButton.getStyle().set(StyleConstants.CSS_FONT_SIZE, "15px");
         backButton.setVisible(false);
         backButton.addClickListener(e -> {
             if (currentStep > 1) {
@@ -977,26 +983,26 @@ public class GeneratorWizardView extends VerticalLayout {
 
         // Next/Generate button
         nextButton = new Button(translationService.translate("generator.next"), VaadinIcon.ARROW_RIGHT.create());
-        nextButton.getStyle().set("background", PRIMARY);
-        nextButton.getStyle().set("color", "white");
-        nextButton.getStyle().set("font-weight", "600");
-        nextButton.getStyle().set("border-radius", "9999px");
-        nextButton.getStyle().set("padding", "14px 40px");
-        nextButton.getStyle().set("font-size", "15px");
+        nextButton.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY);
+        nextButton.getStyle().set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
+        nextButton.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        nextButton.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+        nextButton.getStyle().set(StyleConstants.CSS_PADDING, "14px 40px");
+        nextButton.getStyle().set(StyleConstants.CSS_FONT_SIZE, "15px");
         nextButton.getStyle().set("min-width", "180px");
-        nextButton.getStyle().set("box-shadow", "0 10px 20px -4px rgba(0,122,255,0.3)");
+        nextButton.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 10px 20px -4px rgba(0,122,255,0.3)");
         nextButton.getStyle().set("gap", "8px");
         nextButton.addClickListener(e -> handleNext());
 
         // Save button — visible only on step 5
-        saveButton = new Button(translationService.translate("action.save"), VaadinIcon.CHECK.create());
-        saveButton.getStyle().set("background", GREEN);
-        saveButton.getStyle().set("color", "white");
-        saveButton.getStyle().set("font-weight", "600");
-        saveButton.getStyle().set("border-radius", "9999px");
-        saveButton.getStyle().set("padding", "14px 32px");
-        saveButton.getStyle().set("font-size", "15px");
-        saveButton.getStyle().set("box-shadow", "0 10px 20px -4px rgba(52,199,89,0.35)");
+        saveButton = new Button(translationService.translate(ACTION_SAVE_KEY), VaadinIcon.CHECK.create());
+        saveButton.getStyle().set(StyleConstants.CSS_BACKGROUND, GREEN);
+        saveButton.getStyle().set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
+        saveButton.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        saveButton.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+        saveButton.getStyle().set(StyleConstants.CSS_PADDING, "14px 32px");
+        saveButton.getStyle().set(StyleConstants.CSS_FONT_SIZE, "15px");
+        saveButton.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 10px 20px -4px rgba(52,199,89,0.35)");
         saveButton.getStyle().set("gap", "8px");
         saveButton.setVisible(false);
         saveButton.addClickListener(e -> {
@@ -1014,7 +1020,7 @@ public class GeneratorWizardView extends VerticalLayout {
                 Notification.show(translationService.translate("generator.notif.coverLetterSaved"), 2500,
                         Notification.Position.TOP_CENTER);
             } else {
-                saveButton.setText(translationService.translate("action.save"));
+                saveButton.setText(translationService.translate(ACTION_SAVE_KEY));
                 Notification.show(translationService.translate("generator.notif.saveFailed"), 3000,
                         Notification.Position.TOP_CENTER);
             }
@@ -1031,7 +1037,7 @@ public class GeneratorWizardView extends VerticalLayout {
             // Editor step: show Save, hide Next, keep Back
             backButton.setVisible(true);
             saveButton.setVisible(true);
-            saveButton.setText(translationService.translate("action.save"));
+            saveButton.setText(translationService.translate(ACTION_SAVE_KEY));
             saveButton.setEnabled(true);
             nextButton.setVisible(false);
         } else if (currentStep == 4) {
@@ -1126,19 +1132,19 @@ public class GeneratorWizardView extends VerticalLayout {
         loadingOverlay = new Div();
         loadingOverlay.getStyle().set("position", "absolute");
         loadingOverlay.getStyle().set("inset", "0");
-        loadingOverlay.getStyle().set("background", "rgba(255,255,255,0.9)");
-        loadingOverlay.getStyle().set("display", "flex");
-        loadingOverlay.getStyle().set("align-items", "center");
-        loadingOverlay.getStyle().set("justify-content", "center");
+        loadingOverlay.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(255,255,255,0.9)");
+        loadingOverlay.getStyle().set(StyleConstants.CSS_DISPLAY, "flex");
+        loadingOverlay.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
+        loadingOverlay.getStyle().set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER);
         loadingOverlay.getStyle().set("z-index", "100");
-        loadingOverlay.getStyle().set("border-radius", "24px");
+        loadingOverlay.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
 
         Div spinner = new Div();
-        spinner.getStyle().set("width", "40px");
-        spinner.getStyle().set("height", "40px");
-        spinner.getStyle().set("border", "3px solid rgba(0,122,255,0.2)");
+        spinner.getStyle().set(StyleConstants.CSS_WIDTH, "40px");
+        spinner.getStyle().set(StyleConstants.CSS_HEIGHT, "40px");
+        spinner.getStyle().set(StyleConstants.CSS_BORDER, "3px solid rgba(0,122,255,0.2)");
         spinner.getStyle().set("border-top-color", PRIMARY);
-        spinner.getStyle().set("border-radius", "50%");
+        spinner.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "50%");
         spinner.getStyle().set("animation", "spin 1s linear infinite");
 
         loadingOverlay.add(spinner);
@@ -1165,17 +1171,17 @@ public class GeneratorWizardView extends VerticalLayout {
         HorizontalLayout header = new HorizontalLayout();
         header.setWidthFull();
         header.setAlignItems(FlexComponent.Alignment.CENTER);
-        header.getStyle().set("padding", "0 0 8px 0");
+        header.getStyle().set(StyleConstants.CSS_PADDING, "0 0 8px 0");
 
         VerticalLayout titleGroup = new VerticalLayout();
         titleGroup.setPadding(false);
         titleGroup.setSpacing(false);
         H1 jobTitleLabel = new H1(jobTitle);
-        jobTitleLabel.getStyle().set("font-size", "20px").set("font-weight", "700").set("color", TEXT_PRIMARY)
-                .set("margin", "0");
+        jobTitleLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "700").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
+                .set(StyleConstants.CSS_MARGIN, "0");
         Paragraph subLabel = new Paragraph(
                 companyName + " \u2022 " + translationService.translate("history.tone") + ": " + selectedTone);
-        subLabel.getStyle().set("font-size", "13px").set("color", TEXT_SECONDARY).set("margin", "0");
+        subLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_MARGIN, "0");
         titleGroup.add(jobTitleLabel, subLabel);
 
         HorizontalLayout actions = new HorizontalLayout();
@@ -1184,15 +1190,15 @@ public class GeneratorWizardView extends VerticalLayout {
 
         Button saveDocxBtn = new Button(translationService.translate("generator.step5.saveDocx"),
                 VaadinIcon.DOWNLOAD.create());
-        saveDocxBtn.getStyle().set("background", "rgba(0,0,0,0.05)").set("color", TEXT_PRIMARY)
-                .set("font-weight", "600").set("border-radius", "9999px").set("padding", "10px 20px");
+        saveDocxBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_SOFT).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
+                .set(StyleConstants.CSS_FONT_WEIGHT, "600").set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "10px 20px");
         saveDocxBtn.addClickListener(e -> downloadEditorAsDocx());
 
         Button exportPdfBtn = new Button(translationService.translate("generator.step5.exportPdf"),
                 VaadinIcon.FILE_TEXT.create());
-        exportPdfBtn.getStyle().set("background", PRIMARY).set("color", "white").set("font-weight", "600")
-                .set("border-radius", "9999px").set("padding", "10px 24px").set("border", "none")
-                .set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
+        exportPdfBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY).set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "10px 24px").set(StyleConstants.CSS_BORDER, "none")
+                .set(StyleConstants.CSS_BOX_SHADOW, "0 10px 15px -3px rgba(0,122,255,0.3)");
         exportPdfBtn.addClickListener(e -> downloadEditorAsPdf());
 
         actions.add(saveDocxBtn, exportPdfBtn);
@@ -1203,7 +1209,7 @@ public class GeneratorWizardView extends VerticalLayout {
         HorizontalLayout toolbar = new HorizontalLayout();
         toolbar.setWidthFull();
         toolbar.setAlignItems(FlexComponent.Alignment.CENTER);
-        toolbar.getStyle().set("gap", "8px").set("padding", "12px 16px").set("background", BG_GRAY).set("border-radius",
+        toolbar.getStyle().set("gap", "8px").set(StyleConstants.CSS_PADDING, "12px 16px").set(StyleConstants.CSS_BACKGROUND, BG_GRAY).set(StyleConstants.CSS_BORDER_RADIUS,
                 "12px");
 
         Button boldBtn = createEditorToolbarButton(VaadinIcon.BOLD,
@@ -1234,12 +1240,12 @@ public class GeneratorWizardView extends VerticalLayout {
         });
 
         Div divider = new Div();
-        divider.getStyle().set("width", "1px").set("height", "24px").set("background", "rgba(0,0,0,0.1)");
+        divider.getStyle().set(StyleConstants.CSS_WIDTH, "1px").set(StyleConstants.CSS_HEIGHT, "24px").set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.1)");
 
         Button regenBtn = new Button(translationService.translate("editor.toolbar.regenerate"),
                 VaadinIcon.MAGIC.create());
-        regenBtn.getStyle().set("background", PRIMARY + "15").set("color", PRIMARY).set("font-weight", "600")
-                .set("border-radius", "9999px").set("padding", "8px 16px").set("border", "none");
+        regenBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY + "15").set(StyleConstants.CSS_COLOR, PRIMARY).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "8px 16px").set(StyleConstants.CSS_BORDER, "none");
         regenBtn.addClickListener(e -> {
             if (editorTextArea == null)
                 return;
@@ -1263,9 +1269,9 @@ public class GeneratorWizardView extends VerticalLayout {
         editorTextArea = new TextArea();
         editorTextArea.setWidthFull();
         editorTextArea.setMinHeight("460px");
-        editorTextArea.getStyle().set("background", BG_WHITE).set("border", "1px solid rgba(0,0,0,0.1)")
-                .set("border-radius", "16px").set("padding", "24px").set("font-size", "15px").set("line-height", "1.8")
-                .set("color", TEXT_PRIMARY)
+        editorTextArea.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE).set(StyleConstants.CSS_BORDER, BORDER_LIGHT)
+                .set(StyleConstants.CSS_BORDER_RADIUS, "16px").set(StyleConstants.CSS_PADDING, "24px").set(StyleConstants.CSS_FONT_SIZE, "15px").set("line-height", "1.8")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
                 .set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif");
         editorTextArea.setValue("\u23f3 " + translationService.translate("generator.notif.generating"));
         editorTextArea.setEnabled(false);
@@ -1303,10 +1309,10 @@ public class GeneratorWizardView extends VerticalLayout {
     private Button createEditorToolbarButton(VaadinIcon icon, String tooltip) {
         Button btn = new Button(icon.create());
         btn.getElement().setAttribute("title", tooltip);
-        btn.getStyle().set("background", "transparent").set("color", TEXT_SECONDARY).set("border", "none")
-                .set("padding", "8px").set("border-radius", "8px");
-        btn.getElement().addEventListener("mouseenter", e -> btn.getStyle().set("background", "rgba(0,0,0,0.05)"));
-        btn.getElement().addEventListener("mouseleave", e -> btn.getStyle().set("background", "transparent"));
+        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT).set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_BORDER, "none")
+                .set(StyleConstants.CSS_PADDING, "8px").set(StyleConstants.CSS_BORDER_RADIUS, "8px");
+        btn.getElement().addEventListener("mouseenter", e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_SOFT));
+        btn.getElement().addEventListener("mouseleave", e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT));
         return btn;
     }
 
@@ -1352,57 +1358,70 @@ public class GeneratorWizardView extends VerticalLayout {
      * This gives the AI full context to write a personalised cover letter.
      */
     private String buildCandidateContext() {
+        if (!hasCapturedUser()) {
+            return fallbackSkillsSummary();
+        }
+
         StringBuilder ctx = new StringBuilder();
+        int pin = capturedUserPin;
 
         try {
-            // Use data captured on the UI thread – do NOT call VaadinSession from here
-            if (capturedUserPin < 0) {
-                LOGGER.warning("buildCandidateContext: no user captured before background thread");
-                return fallbackSkillsSummary();
-            }
-
-            int pin = capturedUserPin;
-
-            // 1 – Basic identity
-            ctx.append("=== CANDIDATE PROFILE ===\n");
-            ctx.append("Name: ").append(capturedUserName).append("\n");
-
-            // 2 – Profile data from DB
-            com.clbooster.app.backend.service.profile.ProfileDAO profileDAO = new com.clbooster.app.backend.service.profile.ProfileDAO();
-            com.clbooster.app.backend.service.profile.Profile profile = profileDAO.getProfileByPin(pin);
-
-            if (profile != null) {
-                if (profile.getExperienceLevel() != null && !profile.getExperienceLevel().isBlank())
-                    ctx.append("Experience Level: ").append(profile.getExperienceLevel()).append("\n");
-                if (profile.getSkills() != null && !profile.getSkills().isBlank())
-                    ctx.append("Profile Skills: ").append(profile.getSkills()).append("\n");
-                if (profile.getTools() != null && !profile.getTools().isBlank())
-                    ctx.append("Tools & Technologies: ").append(profile.getTools()).append("\n");
-                if (profile.getLink() != null && !profile.getLink().isBlank())
-                    ctx.append("Portfolio/LinkedIn: ").append(profile.getLink()).append("\n");
-                if (profile.getProfileEmail() != null && !profile.getProfileEmail().isBlank())
-                    ctx.append("Contact Email: ").append(profile.getProfileEmail()).append("\n");
-            } else {
-                LOGGER.info("buildCandidateContext: no profile row for PIN " + pin);
-            }
-
-            // 3 – Parsed resume text
-            String resumeText = loadUserResumeText(pin);
-            if (resumeText != null && !resumeText.isBlank()) {
-                ctx.append("\n=== RESUME CONTENT ===\n").append(resumeText).append("\n");
-            } else {
-                // Fall back to wizard-selected skills if no resume uploaded yet
-                ctx.append("\nSelected Skills for this application: ").append(String.join(", ", selectedSkills))
-                        .append("\n");
-                LOGGER.info("buildCandidateContext: no resume found, using wizard skills");
-            }
-
+            appendCandidateHeader(ctx);
+            appendProfileContext(ctx, pin);
+            appendResumeOrSkillsContext(ctx, pin);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "buildCandidateContext error: " + e.getMessage(), e);
             return fallbackSkillsSummary();
         }
 
         return ctx.toString();
+    }
+
+    private boolean hasCapturedUser() {
+        if (capturedUserPin < 0) {
+            LOGGER.warning("buildCandidateContext: no user captured before background thread");
+            return false;
+        }
+        return true;
+    }
+
+    private void appendCandidateHeader(StringBuilder ctx) {
+        ctx.append("=== CANDIDATE PROFILE ===\n");
+        ctx.append("Name: ").append(capturedUserName).append("\n");
+    }
+
+    private void appendProfileContext(StringBuilder ctx, int pin) {
+        com.clbooster.app.backend.service.profile.ProfileDAO profileDAO = new com.clbooster.app.backend.service.profile.ProfileDAO();
+        com.clbooster.app.backend.service.profile.Profile profile = profileDAO.getProfileByPin(pin);
+        if (profile == null) {
+            LOGGER.info("buildCandidateContext: no profile row for PIN " + pin);
+            return;
+        }
+
+        appendIfNotBlank(ctx, "Experience Level: ", profile.getExperienceLevel());
+        appendIfNotBlank(ctx, "Profile Skills: ", profile.getSkills());
+        appendIfNotBlank(ctx, "Tools & Technologies: ", profile.getTools());
+        appendIfNotBlank(ctx, "Portfolio/LinkedIn: ", profile.getLink());
+        appendIfNotBlank(ctx, "Contact Email: ", profile.getProfileEmail());
+    }
+
+    private void appendResumeOrSkillsContext(StringBuilder ctx, int pin) {
+        String resumeText = loadUserResumeText(pin);
+        if (resumeText != null && !resumeText.isBlank()) {
+            ctx.append("\n=== RESUME CONTENT ===\n").append(resumeText).append("\n");
+            return;
+        }
+
+        ctx.append("\nSelected Skills for this application: ")
+                .append(String.join(", ", selectedSkills))
+                .append("\n");
+        LOGGER.info("buildCandidateContext: no resume found, using wizard skills");
+    }
+
+    private void appendIfNotBlank(StringBuilder ctx, String label, String value) {
+        if (value != null && !value.isBlank()) {
+            ctx.append(label).append(value).append("\n");
+        }
     }
 
     private String fallbackSkillsSummary() {
@@ -1485,8 +1504,8 @@ public class GeneratorWizardView extends VerticalLayout {
             if (!Files.exists(dir))
                 Files.createDirectories(dir);
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            String fileName = userPin + "_" + timestamp + "_" + sanitizeEditorFilename(companyName) + "_"
-                    + sanitizeEditorFilename(jobTitle) + ".docx";
+                String fileName = userPin + "_" + timestamp + "_" + sanitizeEditorFilename(companyName) + "_"
+                    + sanitizeEditorFilename(jobTitle) + DOCX_EXTENSION;
             Path filePath = dir.resolve(fileName);
             new Exporter().saveAsDoc(content, filePath.toString());
             LOGGER.info("Cover letter saved: " + filePath.toAbsolutePath());
@@ -1511,12 +1530,12 @@ public class GeneratorWizardView extends VerticalLayout {
             if (!Files.exists(dir))
                 Files.createDirectories(dir);
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            String fileName = sanitizeEditorFilename(companyName) + "_" + sanitizeEditorFilename(jobTitle) + "_"
-                    + timestamp + ".docx";
+                String fileName = sanitizeEditorFilename(companyName) + "_" + sanitizeEditorFilename(jobTitle) + "_"
+                    + timestamp + DOCX_EXTENSION;
             Path outPath = dir.resolve(fileName);
             new Exporter().saveAsDoc(content, outPath.toString());
             byte[] bytes = Files.readAllBytes(outPath);
-            serveEditorDownload(bytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            serveEditorDownload(bytes, MIME_DOCX,
                     fileName);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "DOCX export failed: " + ex.getMessage(), ex);
@@ -1559,23 +1578,42 @@ public class GeneratorWizardView extends VerticalLayout {
     }
 
     private byte[] generateSimplePdf(String text) throws IOException {
-        java.util.List<String> lines = new java.util.ArrayList<>();
-        for (String rawLine : text.split("\n", -1)) {
-            if (rawLine.length() <= 90) {
-                lines.add(rawLine);
-            } else {
-                for (int i = 0; i < rawLine.length(); i += 90)
-                    lines.add(rawLine.substring(i, Math.min(i + 90, rawLine.length())));
-            }
-        }
+        java.util.List<String> lines = wrapPdfLines(text, 90);
         final float TOP_MARGIN = 800f, LEFT_MARGIN = 50f, LINE_HEIGHT = 14f, BOTTOM_MARGIN = 50f, PAGE_HEIGHT = 841.89f;
         final int FONT_SIZE = 11;
         final int LINES_PER_PAGE = (int) ((TOP_MARGIN - BOTTOM_MARGIN) / LINE_HEIGHT);
+        java.util.List<java.util.List<String>> pages = paginatePdfLines(lines, LINES_PER_PAGE);
+
+        return renderPdfPages(pages, FONT_SIZE, LEFT_MARGIN, TOP_MARGIN, LINE_HEIGHT, PAGE_HEIGHT);
+    }
+
+    private java.util.List<String> wrapPdfLines(String text, int maxLineLength) {
+        java.util.List<String> lines = new java.util.ArrayList<>();
+        for (String rawLine : text.split("\n", -1)) {
+            if (rawLine.length() <= maxLineLength) {
+                lines.add(rawLine);
+                continue;
+            }
+            for (int i = 0; i < rawLine.length(); i += maxLineLength) {
+                lines.add(rawLine.substring(i, Math.min(i + maxLineLength, rawLine.length())));
+            }
+        }
+        return lines;
+    }
+
+    private java.util.List<java.util.List<String>> paginatePdfLines(java.util.List<String> lines, int linesPerPage) {
         java.util.List<java.util.List<String>> pages = new java.util.ArrayList<>();
-        for (int i = 0; i < lines.size(); i += LINES_PER_PAGE)
-            pages.add(lines.subList(i, Math.min(i + LINES_PER_PAGE, lines.size())));
-        if (pages.isEmpty())
+        for (int i = 0; i < lines.size(); i += linesPerPage) {
+            pages.add(lines.subList(i, Math.min(i + linesPerPage, lines.size())));
+        }
+        if (pages.isEmpty()) {
             pages.add(new java.util.ArrayList<>());
+        }
+        return pages;
+    }
+
+    private byte[] renderPdfPages(java.util.List<java.util.List<String>> pages, int fontSize, float leftMargin,
+            float topMargin, float lineHeight, float pageHeight) {
         java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
         java.util.List<Integer> offsets = new java.util.ArrayList<>();
         java.util.function.Consumer<String> write = s -> {
@@ -1598,8 +1636,8 @@ public class GeneratorWizardView extends VerticalLayout {
                 "3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\nendobj\n");
         for (int p = 0; p < pages.size(); p++) {
             StringBuilder stream = new StringBuilder();
-            stream.append("BT /F1 ").append(FONT_SIZE).append(" Tf ").append(LEFT_MARGIN).append(" ").append(TOP_MARGIN)
-                    .append(" Td ").append(LINE_HEIGHT).append(" TL\n");
+            stream.append("BT /F1 ").append(fontSize).append(" Tf ").append(leftMargin).append(" ").append(topMargin)
+                .append(" Td ").append(lineHeight).append(" TL\n");
             for (String line : pages.get(p)) {
                 String safe = line.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)");
                 stream.append("(").append(safe).append(") Tj T*\n");
@@ -1607,7 +1645,7 @@ public class GeneratorWizardView extends VerticalLayout {
             stream.append("ET");
             String s = stream.toString();
             offsets.add(out.size());
-            write.accept((4 + p * 2) + " 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 " + PAGE_HEIGHT
+            write.accept((4 + p * 2) + " 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 " + pageHeight
                     + "] /Contents " + (5 + p * 2) + " 0 R /Resources << /Font << /F1 3 0 R >> >> >>\nendobj\n");
             offsets.add(out.size());
             write.accept(

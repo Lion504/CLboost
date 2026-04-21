@@ -56,6 +56,8 @@ import java.util.zip.ZipOutputStream;
 @PermitAll
 public class HistoryView extends VerticalLayout {
     private static final String BG_HOVER = "rgba(0,0,0,0.05)";
+    private static final String ATTR_TITLE = "title";
+    private static final String HISTORY_FILE_NOT_FOUND_KEY = "history.fileNotFound";
 
     private static final String PRIMARY = "#007AFF";
     private static final String TEXT_PRIMARY = "#1d1d1f";
@@ -232,23 +234,31 @@ public class HistoryView extends VerticalLayout {
     private void applyFilters() {
         String searchText = searchField.getValue() != null ? searchField.getValue().toLowerCase().trim() : "";
 
-        List<HistoryItem> filtered = allItems.stream().filter(item -> {
-            if (!searchText.isEmpty()) {
-                boolean matches = item.title.toLowerCase().contains(searchText)
-                        || item.company.toLowerCase().contains(searchText);
-                if (!matches)
-                    return false;
-            }
-            if (!"ALL".equals(currentStatusFilter) && !item.status.equals(currentStatusFilter))
-                return false;
-            if (dateFrom != null && item.timestamp.toLocalDate().isBefore(dateFrom))
-                return false;
-            if (dateTo != null && item.timestamp.toLocalDate().isAfter(dateTo))
-                return false;
-            return true;
-        }).collect(Collectors.toList());
+        List<HistoryItem> filtered = allItems.stream()
+                .filter(item -> matchesSearch(item, searchText))
+                .filter(this::matchesStatus)
+                .filter(this::matchesDateRange)
+                .collect(Collectors.toList());
 
         refreshCardsGrid(filtered);
+    }
+
+    private boolean matchesSearch(HistoryItem item, String searchText) {
+        return searchText.isEmpty()
+                || item.title.toLowerCase().contains(searchText)
+                || item.company.toLowerCase().contains(searchText);
+    }
+
+    private boolean matchesStatus(HistoryItem item) {
+        return "ALL".equals(currentStatusFilter) || item.status.equals(currentStatusFilter);
+    }
+
+    private boolean matchesDateRange(HistoryItem item) {
+        LocalDate itemDate = item.timestamp.toLocalDate();
+        if (dateFrom != null && itemDate.isBefore(dateFrom)) {
+            return false;
+        }
+        return dateTo == null || !itemDate.isAfter(dateTo);
     }
 
     // ── Cards grid ─────────────────────────────────────────────────────────────
@@ -343,17 +353,17 @@ public class HistoryView extends VerticalLayout {
 
         // View button
         Button viewBtn = createIconButton(VaadinIcon.EYE);
-        viewBtn.getElement().setAttribute("title", translationService.translate("history.preview"));
+        viewBtn.getElement().setAttribute(ATTR_TITLE, translationService.translate("history.preview"));
         viewBtn.addClickListener(e -> openPreviewDialog(item));
 
         // Download button
         Button downloadBtn = createIconButton(VaadinIcon.DOWNLOAD);
-        downloadBtn.getElement().setAttribute("title", translationService.translate("history.download"));
+        downloadBtn.getElement().setAttribute(ATTR_TITLE, translationService.translate("history.download"));
         downloadBtn.addClickListener(e -> downloadCoverLetter(item));
 
         // Edit button - navigates to editor with item metadata in session
         Button editBtn = createIconButton(VaadinIcon.EDIT);
-        editBtn.getElement().setAttribute("title", translationService.translate("history.edit"));
+        editBtn.getElement().setAttribute(ATTR_TITLE, translationService.translate("history.edit"));
         editBtn.addClickListener(e -> {
             VaadinSession session = VaadinSession.getCurrent();
             session.setAttribute("gen.jobTitle", item.title);
@@ -373,7 +383,7 @@ public class HistoryView extends VerticalLayout {
 
         // Delete button
         Button deleteBtn = createIconButton(VaadinIcon.TRASH);
-        deleteBtn.getElement().setAttribute("title", translationService.translate("history.delete"));
+        deleteBtn.getElement().setAttribute(ATTR_TITLE, translationService.translate("history.delete"));
         deleteBtn.getStyle().set(StyleConstants.CSS_COLOR, "#FF3B30");
         deleteBtn.addClickListener(e -> confirmAndDelete(item, card));
 
@@ -457,7 +467,7 @@ public class HistoryView extends VerticalLayout {
                     .set(StyleConstants.CSS_MARGIN, "0").set(StyleConstants.CSS_WIDTH, "100%");
             content.add(pre);
         } else {
-            content.add(new Paragraph(translationService.translate("history.fileNotFound", item.filePath)));
+            content.add(new Paragraph(translationService.translate(HISTORY_FILE_NOT_FOUND_KEY, item.filePath)));
         }
 
         HorizontalLayout footer = new HorizontalLayout();
@@ -519,35 +529,54 @@ public class HistoryView extends VerticalLayout {
             }
             try (java.io.InputStream is = zip.getInputStream(entry)) {
                 String xml = new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
-                // Extract text between <w:t> tags and preserve paragraph breaks
-                StringBuilder sb = new StringBuilder();
-                int i = 0;
-                while (i < xml.length()) {
-                    // New paragraph: <w:p[ >]
-                    if (xml.startsWith("<w:p", i) && i + 4 < xml.length()
-                            && (xml.charAt(i + 4) == ' ' || xml.charAt(i + 4) == '>' || xml.charAt(i + 4) == '/')) {
-                        if (sb.length() > 0 && sb.charAt(sb.length() - 1) != '\n') {
-                            sb.append('\n');
-                        }
-                    }
-                    // Text run: <w:t ...>text</w:t>
-                    if (xml.startsWith("<w:t", i)) {
-                        int start = xml.indexOf('>', i);
-                        if (start != -1) {
-                            int end = xml.indexOf("</w:t>", start);
-                            if (end != -1) {
-                                sb.append(xml, start + 1, end);
-                                i = end + 6;
-                                continue;
-                            }
-                        }
-                    }
-                    i++;
-                }
+                StringBuilder sb = extractDocxPlainText(xml);
                 String result = sb.toString().trim();
                 return result.isEmpty() ? "[Document appears to be empty.]" : result;
             }
         }
+    }
+
+    private StringBuilder extractDocxPlainText(String xml) {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        while (i < xml.length()) {
+            appendParagraphBreakIfNeeded(xml, i, sb);
+            int nextIndex = appendTextRunIfPresent(xml, i, sb);
+            if (nextIndex >= 0) {
+                i = nextIndex;
+                continue;
+            }
+            i++;
+        }
+        return sb;
+    }
+
+    private void appendParagraphBreakIfNeeded(String xml, int index, StringBuilder sb) {
+        if (isParagraphStart(xml, index) && sb.length() > 0 && sb.charAt(sb.length() - 1) != '\n') {
+            sb.append('\n');
+        }
+    }
+
+    private boolean isParagraphStart(String xml, int index) {
+        return xml.startsWith("<w:p", index)
+                && index + 4 < xml.length()
+                && (xml.charAt(index + 4) == ' ' || xml.charAt(index + 4) == '>' || xml.charAt(index + 4) == '/');
+    }
+
+    private int appendTextRunIfPresent(String xml, int index, StringBuilder sb) {
+        if (!xml.startsWith("<w:t", index)) {
+            return -1;
+        }
+        int start = xml.indexOf('>', index);
+        if (start == -1) {
+            return -1;
+        }
+        int end = xml.indexOf("</w:t>", start);
+        if (end == -1) {
+            return -1;
+        }
+        sb.append(xml, start + 1, end);
+        return end + 6;
     }
 
     private boolean isPrintable(String text) {
@@ -562,7 +591,7 @@ public class HistoryView extends VerticalLayout {
     private void downloadCoverLetter(HistoryItem item) {
         File file = new File(item.filePath);
         if (!file.exists()) {
-            Notification.show(translationService.translate("history.fileNotFound", item.filePath), 3000,
+                Notification.show(translationService.translate(HISTORY_FILE_NOT_FOUND_KEY, item.filePath), 3000,
                     Notification.Position.TOP_CENTER);
             return;
         }
@@ -572,7 +601,7 @@ public class HistoryView extends VerticalLayout {
                     : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             serveDownload(bytes, mimeType, file.getName());
         } catch (IOException ex) {
-            Notification.show(translationService.translate("history.fileNotFound", ex.getMessage()), 3000,
+                Notification.show(translationService.translate(HISTORY_FILE_NOT_FOUND_KEY, ex.getMessage()), 3000,
                     Notification.Position.TOP_CENTER);
             LOGGER.log(Level.SEVERE, "Download error", ex);
         }

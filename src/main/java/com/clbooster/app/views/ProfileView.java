@@ -35,6 +35,8 @@ import java.util.regex.Pattern;
 public class ProfileView extends VerticalLayout {
     private static final String LETTER_SPACING = "0.05em";
     private static final String BORDER_BOTTOM = "1px solid rgba(0, 0, 0, 0.05)";
+    private static final String INPUT_FIELD_BACKGROUND_VAR = "--vaadin-input-field-background";
+    private static final String INPUT_FIELD_BORDER_RADIUS_VAR = "--vaadin-input-field-border-radius";
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
@@ -385,8 +387,8 @@ public class ProfileView extends VerticalLayout {
         currentPasswordField = new com.vaadin.flow.component.textfield.PasswordField();
         currentPasswordField.setPlaceholder(translationService.translate("profile.currentPassword"));
         currentPasswordField.setWidthFull();
-        currentPasswordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        currentPasswordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        currentPasswordField.getStyle().set(INPUT_FIELD_BACKGROUND_VAR, BG_GRAY);
+        currentPasswordField.getStyle().set(INPUT_FIELD_BORDER_RADIUS_VAR, "12px");
         passwordSection
                 .add(createFormGroup(translationService.translate("profile.currentPassword"), currentPasswordField));
 
@@ -394,16 +396,16 @@ public class ProfileView extends VerticalLayout {
         newPasswordField = new com.vaadin.flow.component.textfield.PasswordField();
         newPasswordField.setPlaceholder(translationService.translate("profile.newPassword"));
         newPasswordField.setWidthFull();
-        newPasswordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        newPasswordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        newPasswordField.getStyle().set(INPUT_FIELD_BACKGROUND_VAR, BG_GRAY);
+        newPasswordField.getStyle().set(INPUT_FIELD_BORDER_RADIUS_VAR, "12px");
         passwordSection.add(createFormGroup(translationService.translate("profile.newPassword"), newPasswordField));
 
         // Confirm Password
         confirmPasswordField = new com.vaadin.flow.component.textfield.PasswordField();
         confirmPasswordField.setPlaceholder(translationService.translate("profile.confirmPassword"));
         confirmPasswordField.setWidthFull();
-        confirmPasswordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        confirmPasswordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        confirmPasswordField.getStyle().set(INPUT_FIELD_BACKGROUND_VAR, BG_GRAY);
+        confirmPasswordField.getStyle().set(INPUT_FIELD_BORDER_RADIUS_VAR, "12px");
         passwordSection
                 .add(createFormGroup(translationService.translate("profile.confirmPassword"), confirmPasswordField));
 
@@ -529,9 +531,7 @@ public class ProfileView extends VerticalLayout {
             return;
         }
 
-        // Check password requirements
-        if (newPwd.length() < 10 || !UPPERCASE_PATTERN.matcher(newPwd).find() || !LOWERCASE_PATTERN.matcher(newPwd).find()
-                || !DIGIT_PATTERN.matcher(newPwd).find() || !SPECIAL_CHAR_PATTERN.matcher(newPwd).find()) {
+        if (!isStrongPassword(newPwd)) {
             Notification.show(translationService.translate("profile.passwordRequirementsError"), 5000,
                     Notification.Position.TOP_CENTER);
             return;
@@ -550,6 +550,14 @@ public class ProfileView extends VerticalLayout {
             Notification.show(translationService.translate("profile.incorrectPassword"), 3000,
                     Notification.Position.TOP_CENTER);
         }
+    }
+
+    private boolean isStrongPassword(String password) {
+        return password.length() >= 10
+                && UPPERCASE_PATTERN.matcher(password).find()
+                && LOWERCASE_PATTERN.matcher(password).find()
+                && DIGIT_PATTERN.matcher(password).find()
+                && SPECIAL_CHAR_PATTERN.matcher(password).find();
     }
 
     private VerticalLayout createFormGroup(String label, com.vaadin.flow.component.Component field) {
@@ -574,8 +582,8 @@ public class ProfileView extends VerticalLayout {
         TextField field = new TextField();
         field.setValue(value != null ? value : "");
         field.setWidthFull();
-        field.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        field.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        field.getStyle().set(INPUT_FIELD_BACKGROUND_VAR, BG_GRAY);
+        field.getStyle().set(INPUT_FIELD_BORDER_RADIUS_VAR, "12px");
         return field;
     }
 
@@ -583,8 +591,8 @@ public class ProfileView extends VerticalLayout {
         EmailField field = new EmailField();
         field.setValue(value != null ? value : "");
         field.setWidthFull();
-        field.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        field.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        field.getStyle().set(INPUT_FIELD_BACKGROUND_VAR, BG_GRAY);
+        field.getStyle().set(INPUT_FIELD_BORDER_RADIUS_VAR, "12px");
         return field;
     }
 
@@ -594,8 +602,8 @@ public class ProfileView extends VerticalLayout {
         area.setValue(value != null ? value : "");
         area.setWidthFull();
         area.setMinHeight("80px");
-        area.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        area.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        area.getStyle().set(INPUT_FIELD_BACKGROUND_VAR, BG_GRAY);
+        area.getStyle().set(INPUT_FIELD_BORDER_RADIUS_VAR, "12px");
         return area;
     }
 

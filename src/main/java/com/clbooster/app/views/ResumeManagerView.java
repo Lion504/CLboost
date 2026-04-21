@@ -51,6 +51,9 @@ import java.util.logging.Logger;
 @PermitAll
 public class ResumeManagerView extends VerticalLayout {
     private static final String BG_GRADIENT = "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)";
+    private static final String RESUME_SORT_BY_RECENT_KEY = "resume.sortByRecent";
+    private static final String MIME_APPLICATION_PDF = "application/pdf";
+    private static final String MIME_APPLICATION_DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
     private static final String PRIMARY = "#007AFF";
     private static final String PRIMARY_LIGHT = "#5AC8FA";
@@ -231,7 +234,7 @@ public class ResumeManagerView extends VerticalLayout {
         titleWithBadge.add(listTitle, countBadge);
 
         // Sort dropdown button
-        Button sortBtn = new Button(translationService.translate("resume.sortByRecent"),
+        Button sortBtn = new Button(translationService.translate(RESUME_SORT_BY_RECENT_KEY),
                 VaadinIcon.CHEVRON_DOWN.create());
         sortBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
         sortBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
@@ -243,9 +246,9 @@ public class ResumeManagerView extends VerticalLayout {
         ContextMenu sortMenu = new ContextMenu();
         sortMenu.setTarget(sortBtn);
         sortMenu.setOpenOnClick(true);
-        sortMenu.addItem(translationService.translate("resume.sortByRecent"), e -> {
+        sortMenu.addItem(translationService.translate(RESUME_SORT_BY_RECENT_KEY), e -> {
             sortResumes(ResumeSort.RECENT);
-            sortBtn.setText(translationService.translate("resume.sortByRecent"));
+            sortBtn.setText(translationService.translate(RESUME_SORT_BY_RECENT_KEY));
         });
         sortMenu.addItem(translationService.translate("resume.sortByName"), e -> {
             sortResumes(ResumeSort.NAME_ASC);
@@ -282,8 +285,8 @@ public class ResumeManagerView extends VerticalLayout {
 
         // Accept all three formats - use extensions only for broader browser
         // compatibility
-        upload.setAcceptedFileTypes("application/pdf", ".pdf",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx",
+        upload.setAcceptedFileTypes(MIME_APPLICATION_PDF, ".pdf",
+            MIME_APPLICATION_DOCX, ".docx",
                 "application/msword", ".doc", "text/plain", "text/x-plain", "application/text", ".txt");
         upload.setMaxFileSize(10 * 1024 * 1024);
         upload.setMaxFiles(1);
@@ -631,8 +634,7 @@ public class ResumeManagerView extends VerticalLayout {
     private void downloadResume(ResumeData resume) {
         try {
             byte[] bytes = documentService.retrieveResumeFile(resume.filePath);
-            String mimeType = resume.format.equalsIgnoreCase("PDF") ? "application/pdf"
-                    : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                String mimeType = resume.format.equalsIgnoreCase("PDF") ? MIME_APPLICATION_PDF : MIME_APPLICATION_DOCX;
             serveDownload(bytes, mimeType, resume.name);
             Notification.show(translationService.translate("resume.downloading", resume.name), 2000,
                     Notification.Position.TOP_CENTER);
@@ -647,9 +649,9 @@ public class ResumeManagerView extends VerticalLayout {
         try {
             byte[] bytes = documentService.retrieveResumeFile(resume.filePath);
             String mimeType = switch (resume.format.toUpperCase()) {
-            case "PDF" -> "application/pdf";
+            case "PDF" -> MIME_APPLICATION_PDF;
             case "TXT" -> "text/plain";
-            default -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            default -> MIME_APPLICATION_DOCX;
             };
 
             StreamResource resource = new StreamResource(resume.name, () -> new ByteArrayInputStream(bytes));
