@@ -18,13 +18,12 @@ public class ProfileService {
         this.userDAO = new UserDAO();
     }
 
+    @SuppressWarnings("java:S107")
     public boolean updateProfile(int pin, String firstName, String lastName, String experienceLevel, String tools,
             String skills, String link, String profileEmail, Locale locale) {
-        if (profileEmail != null && !profileEmail.trim().isEmpty()) {
-            if (!isValidEmail(profileEmail)) {
-                log.error("Invalid email format");
-                return false;
-            }
+        if (profileEmail != null && !profileEmail.trim().isEmpty() && !isValidEmail(profileEmail)) {
+            log.error("Invalid email format");
+            return false;
         }
 
         // Update identity info (First Name, Last Name, Identity Email)
@@ -59,7 +58,7 @@ public class ProfileService {
     /**
      * @deprecated Use {@link #getProfile(int, Locale)} instead.
      */
-    @Deprecated
+    @Deprecated(since = "1.0", forRemoval = true)
     public Profile getProfile(int pin) {
         return getProfile(pin, Locale.getDefault());
     }
@@ -69,7 +68,7 @@ public class ProfileService {
      *             {@link #updateProfile(int, String, String, String, String, String, String, String, Locale)}
      *             instead.
      */
-    @Deprecated
+    @Deprecated(since = "1.0", forRemoval = true)
     public boolean updateProfile(int pin, String experienceLevel, String tools, String skills, String link,
             String profileEmail, Locale locale) {
         return updateProfile(pin, "", "", experienceLevel, tools, skills, link, profileEmail, locale);
@@ -80,14 +79,14 @@ public class ProfileService {
      *             {@link #updateProfile(int, String, String, String, String, String, String, String, Locale)}
      *             instead.
      */
-    @Deprecated
+    @Deprecated(since = "1.0", forRemoval = true)
     public boolean updateProfile(int pin, String experienceLevel, String tools, String skills, String link,
             String profileEmail) {
         return updateProfile(pin, "", "", experienceLevel, tools, skills, link, profileEmail, Locale.getDefault());
     }
 
     public void displayProfile(int pin) {
-        Profile profile = getProfile(pin);
+        Profile profile = getProfile(pin, Locale.getDefault());
 
         if (profile == null) {
             log.error("Profile not found");

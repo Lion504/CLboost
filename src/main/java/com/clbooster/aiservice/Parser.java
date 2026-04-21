@@ -15,7 +15,7 @@ public class Parser {
             Document document = FileSystemDocumentLoader.loadDocument(path, documentToParse);
             return document.text();
         } catch (Exception e) {
-            throw new RuntimeException("Unable to parse file" + filePath, e);
+            throw new IllegalStateException("Unable to parse file " + filePath, e);
         }
     }
 }

@@ -136,7 +136,7 @@ public class CLgenerator_CLI {
         LOGGER.info("\n=== COVER LETTER GENERATION ===");
 
         // Check if profile exists
-        Profile profile = profileService.getProfile(pin);
+        Profile profile = profileService.getProfile(pin, java.util.Locale.getDefault());
         if (profile == null) {
             LOGGER.info("⚠️ No profile found. Please create a profile first.");
             return;
@@ -236,7 +236,7 @@ public class CLgenerator_CLI {
     }
 
     private static void viewProfileDetails(int pin) {
-        Profile profile = profileService.getProfile(pin);
+        Profile profile = profileService.getProfile(pin, java.util.Locale.getDefault());
         if (profile != null) {
             LOGGER.info("\n=== PROFILE DETAILS ===");
             LOGGER.info("Experience Level: " + profile.getExperienceLevel());
@@ -315,7 +315,7 @@ public class CLgenerator_CLI {
         LOGGER.info("\n=== EDIT PROFILE ===");
         LOGGER.info("(Press Enter to skip any field you don't want to change)");
 
-        Profile currentProfile = profileService.getProfile(pin);
+        Profile currentProfile = profileService.getProfile(pin, java.util.Locale.getDefault());
         if (currentProfile == null) {
             LOGGER.info("Error: Could not load current profile");
             return;
@@ -366,7 +366,7 @@ public class CLgenerator_CLI {
         String confirm = scanner.nextLine().trim().toLowerCase();
 
         if (confirm.equals("y") || confirm.equals("yes")) {
-            profileService.updateProfile(pin, experienceLevel, tools, skills, link, profileEmail);
+            profileService.updateProfile(pin, "", "", experienceLevel, tools, skills, link, profileEmail, java.util.Locale.getDefault());
             LOGGER.info("✓ Profile updated successfully!");
         } else {
             LOGGER.info("Changes discarded.");

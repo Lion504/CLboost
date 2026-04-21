@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -62,11 +63,10 @@ public class DocumentService {
 
             Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-            logger.info("File stored successfully: " + targetPath);
+            logger.log(Level.INFO, "File stored successfully: {0}", targetPath);
             return targetPath.toString();
 
         } catch (IOException e) {
-            logger.severe("Failed to store resume file: " + e.getMessage());
             throw new IOException("Failed to store resume file", e);
         }
     }
@@ -112,11 +112,10 @@ public class DocumentService {
 
             Files.write(targetPath, resumeText.getBytes());
 
-            logger.info("Resume text stored: " + targetPath);
+            logger.log(Level.INFO, "Resume text stored: {0}", targetPath);
             return targetPath.toString();
 
         } catch (IOException e) {
-            logger.severe("Failed to store resume text: " + e.getMessage());
             throw new IOException("Failed to store resume text", e);
         }
     }
@@ -148,7 +147,7 @@ public class DocumentService {
      */
     public boolean exportResumeAsDocument(ResumeData resumeData, String outputPath) {
         try {
-            logger.info("Exporting resume as document: " + outputPath);
+            logger.log(Level.INFO, "Exporting resume as document: {0}", outputPath);
 
             String formattedContent = formatResumeContent(resumeData);
 
@@ -181,12 +180,11 @@ public class DocumentService {
             }
 
             byte[] content = Files.readAllBytes(path);
-            logger.info("Retrieved resume file: " + storagePath + " (" + content.length + " bytes)");
+            logger.log(Level.INFO, "Retrieved resume file: {0} ({1} bytes)", new Object[]{storagePath, content.length});
             return content;
 
         } catch (IOException e) {
-            logger.severe("Failed to retrieve resume file: " + e.getMessage());
-            throw e;
+            throw new IOException("Failed to retrieve resume file", e);
         }
     }
 
@@ -202,10 +200,10 @@ public class DocumentService {
             Path path = resolveStoragePath(storagePath);
             if (Files.exists(path)) {
                 Files.delete(path);
-                logger.info("Deleted resume file: " + storagePath);
+                logger.log(Level.INFO, "Deleted resume file: {0}", storagePath);
                 return true;
             } else {
-                logger.warning("File not found for deletion: " + storagePath);
+                logger.log(Level.WARNING, "File not found for deletion: {0}", storagePath);
                 return false;
             }
 

@@ -50,7 +50,7 @@ class ProfileServiceTest {
 
         when(profileDAOMock.getByIdWithFallback(1, Locale.getDefault(), Locale.US)).thenReturn(profile);
 
-        Profile result = service.getProfile(1);
+        Profile result = service.getProfile(1, Locale.getDefault());
 
         assertNotNull(result);
         assertEquals(1, result.getPin());
@@ -61,7 +61,7 @@ class ProfileServiceTest {
     void getProfile_notFound() {
         when(profileDAOMock.getByIdWithFallback(99, Locale.getDefault(), Locale.US)).thenReturn(null);
 
-        Profile result = service.getProfile(99);
+        Profile result = service.getProfile(99, Locale.getDefault());
 
         assertNull(result);
         assertTrue(outContent.toString().contains("Profile not found for PIN"));
@@ -70,7 +70,7 @@ class ProfileServiceTest {
 
     @Test
     void updateProfile_success_validEmail() {
-        boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "test@mail.com");
+        boolean result = service.updateProfile(1, "", "", "Senior", "Java", "Backend", "link", "test@mail.com", Locale.getDefault());
 
         assertTrue(result);
         verify(userDAOMock).updateUser(1, "", "", "test@mail.com");
@@ -79,7 +79,7 @@ class ProfileServiceTest {
 
     @Test
     void updateProfile_invalidEmail_blocksDaoCall() {
-        boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "bad-email");
+        boolean result = service.updateProfile(1, "", "", "Senior", "Java", "Backend", "link", "bad-email", Locale.getDefault());
 
         assertFalse(result);
         verifyNoInteractions(userDAOMock, profileDAOMock);
@@ -87,7 +87,7 @@ class ProfileServiceTest {
 
     @Test
     void updateProfile_emptyEmail_allowed() {
-        boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "");
+        boolean result = service.updateProfile(1, "", "", "Senior", "Java", "Backend", "link", "", Locale.getDefault());
 
         assertTrue(result);
         verify(userDAOMock).updateUser(1, "", "", "");
@@ -99,7 +99,7 @@ class ProfileServiceTest {
         doThrow(new RuntimeException("DB failure")).when(profileDAOMock).saveTranslation(any(Profile.class),
                 any(Locale.class));
 
-        boolean result = service.updateProfile(1, "Senior", "Java", "Backend", "link", "test@mail.com");
+        boolean result = service.updateProfile(1, "", "", "Senior", "Java", "Backend", "link", "test@mail.com", Locale.getDefault());
 
         assertFalse(result);
     }
