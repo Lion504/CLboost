@@ -88,17 +88,17 @@ class CoverLetterServiceTest {
     void readCoverLetter_notFound() {
         when(dao.getCoverLetterById(1)).thenReturn(null);
 
-        assertNull(service.readCoverLetter(1));
+        assertArrayEquals(new byte[0], service.readCoverLetter(1));
     }
 
     @Test
-    void readCoverLetter_missingFile_returnsNull() {
+    void readCoverLetter_missingFile_returnsEmptyArray() {
         CoverLetter cl = new CoverLetter();
         cl.setFilePath(tempDir.resolve("missing.pdf").toString());
 
         when(dao.getCoverLetterById(1)).thenReturn(cl);
 
-        assertNull(service.readCoverLetter(1));
+        assertArrayEquals(new byte[0], service.readCoverLetter(1));
     }
 
     // ---------------- updateCoverLetter ----------------

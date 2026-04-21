@@ -36,4 +36,17 @@ class BaseVaadinViewTest {
         org.junit.jupiter.api.Assertions.assertNotNull(VaadinSession.getCurrent());
         org.junit.jupiter.api.Assertions.assertNotNull(VaadinService.getCurrent());
     }
+
+    @org.junit.jupiter.api.AfterAll
+    static void tearDownVaadinMockEnvironment() {
+        if (vaadinServletMock != null) {
+            vaadinServletMock.close();
+        }
+        if (vaadinSessionMock != null) {
+            vaadinSessionMock.close();
+        }
+        if (vaadinServiceMock != null) {
+            vaadinServiceMock.close();
+        }
+    }
 }
