@@ -39,14 +39,20 @@ class BaseVaadinViewTest {
 
     @org.junit.jupiter.api.AfterAll
     static void tearDownVaadinMockEnvironment() {
-        if (vaadinServletMock != null) {
-            vaadinServletMock.close();
-        }
-        if (vaadinSessionMock != null) {
-            vaadinSessionMock.close();
-        }
-        if (vaadinServiceMock != null) {
-            vaadinServiceMock.close();
-        }
+        try {
+            if (vaadinServletMock != null && !vaadinServletMock.isClosed()) {
+                vaadinServletMock.close();
+            }
+        } catch (Throwable ignored) {}
+        try {
+            if (vaadinSessionMock != null && !vaadinSessionMock.isClosed()) {
+                vaadinSessionMock.close();
+            }
+        } catch (Throwable ignored) {}
+        try {
+            if (vaadinServiceMock != null && !vaadinServiceMock.isClosed()) {
+                vaadinServiceMock.close();
+            }
+        } catch (Throwable ignored) {}
     }
 }
