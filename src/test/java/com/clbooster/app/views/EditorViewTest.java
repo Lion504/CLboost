@@ -96,14 +96,10 @@ class EditorViewTest extends BaseVaadinViewTest {
         VerticalLayout panel = invoke(view, "createEditorPanel", VerticalLayout.class);
         HorizontalLayout header = invoke(view, "createEditorHeader", HorizontalLayout.class);
         HorizontalLayout toolbar = invoke(view, "createToolbar", HorizontalLayout.class);
-        Button primary = invoke(view, "createPrimaryButton", Button.class,
-                new Class<?>[] { String.class, com.vaadin.flow.component.icon.VaadinIcon.class },
-                new Object[] { "Export", com.vaadin.flow.component.icon.VaadinIcon.FILE_TEXT });
 
         assertNotNull(panel);
         assertNotNull(header);
         assertNotNull(toolbar);
-        assertNotNull(primary);
         assertTrue(toolbar.getComponentCount() >= 7);
     }
 

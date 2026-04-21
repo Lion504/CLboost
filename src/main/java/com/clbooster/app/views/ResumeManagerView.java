@@ -154,12 +154,12 @@ public class ResumeManagerView extends VerticalLayout {
                     Notification.Position.TOP_CENTER);
         });
 
-        importBtn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
-            importBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.08)");
-        });
-        importBtn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
-            importBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
-        });
+        importBtn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> 
+            importBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.08)")
+        );
+        importBtn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> 
+            importBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY)
+        );
 
         actions.add(importBtn);
 

@@ -1,7 +1,6 @@
 package com.clbooster.app.views.util;
 
 import com.clbooster.app.i18n.TranslationService;
-import com.clbooster.app.views.util.StyleConstants;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
@@ -10,7 +9,6 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -29,6 +27,8 @@ public final class ViewComponents {
     private static final String BG_WHITE = "#ffffff";
     private static final String BG_GRAY = "#f5f5f7";
     private static final String LETTER_SPACING = "-0.025em";
+    private static final String BORDER_SUBTLE = "1px solid rgba(0,0,0,0.05)";
+    private static final String CSS_POSITION = "position";
 
     private ViewComponents() {
         // Utility class — prevent instantiation
@@ -100,7 +100,7 @@ public final class ViewComponents {
     public static Div createSectionCard(String title, String subtitle) {
         Div card = new Div();
         card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
+        card.getStyle().set(StyleConstants.CSS_BORDER, BORDER_SUBTLE);
         card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
         card.getStyle().set(StyleConstants.CSS_PADDING, "32px");
         card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
@@ -128,7 +128,7 @@ public final class ViewComponents {
             com.clbooster.app.i18n.TranslationService translationService) {
         Div card = new Div();
         card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
+        card.getStyle().set(StyleConstants.CSS_BORDER, BORDER_SUBTLE);
         card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
         card.getStyle().set(StyleConstants.CSS_PADDING, "32px");
         card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
@@ -152,17 +152,18 @@ public final class ViewComponents {
      * Creates a notification card with hover animation. Common pattern used in
      * NotificationsView.
      */
+    @SuppressWarnings("java:S107")
     public static Div createNotificationCard(String title, String message, String time, VaadinIcon iconType,
             String iconColor, boolean isUnread, boolean isNew,
             com.clbooster.app.i18n.TranslationService translationService) {
         Div card = new Div();
         card.getStyle().set(StyleConstants.CSS_BACKGROUND, isUnread ? BG_WHITE : BG_GRAY);
-        card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
+        card.getStyle().set(StyleConstants.CSS_BORDER, BORDER_SUBTLE);
         card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "16px");
         card.getStyle().set(StyleConstants.CSS_PADDING, "20px");
         card.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
         card.getStyle().set(StyleConstants.CSS_TRANSITION, "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)");
-        card.getStyle().set("position", "relative");
+        card.getStyle().set(CSS_POSITION, "relative");
         card.getStyle().set(StyleConstants.CSS_OVERFLOW, "hidden");
 
         if (isNew) {
@@ -171,7 +172,7 @@ public final class ViewComponents {
 
         if (isUnread) {
             Div unreadDot = new Div();
-            unreadDot.getStyle().set("position", "absolute");
+            unreadDot.getStyle().set(CSS_POSITION, "absolute");
             unreadDot.getStyle().set("top", "20px");
             unreadDot.getStyle().set("right", "20px");
             unreadDot.getStyle().set(StyleConstants.CSS_WIDTH, "8px");
@@ -240,10 +241,8 @@ public final class ViewComponents {
             iconContainer.getStyle().set(StyleConstants.CSS_TRANSFORM, "scale(1) rotate(0deg)");
         });
 
-        card.addClickListener(e -> {
-            Notification.show(translationService.translate("notifications.opening", title), 3000,
-                    Notification.Position.TOP_CENTER);
-        });
+        card.addClickListener(e -> Notification.show(translationService.translate("notifications.opening", title), 3000,
+                    Notification.Position.TOP_CENTER));
 
         return card;
     }
@@ -357,7 +356,7 @@ public final class ViewComponents {
         track.getStyle().set(StyleConstants.CSS_HEIGHT, "28px");
         track.getStyle().set(StyleConstants.CSS_BACKGROUND, enabled ? SUCCESS : "rgba(0,0,0,0.2)");
         track.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
-        track.getStyle().set("position", "relative");
+        track.getStyle().set(CSS_POSITION, "relative");
         track.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
         track.getStyle().set(StyleConstants.CSS_TRANSITION, "background 0.2s");
 
@@ -366,7 +365,7 @@ public final class ViewComponents {
         thumb.getStyle().set(StyleConstants.CSS_HEIGHT, "24px");
         thumb.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_WHITE);
         thumb.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "50%");
-        thumb.getStyle().set("position", "absolute");
+        thumb.getStyle().set(CSS_POSITION, "absolute");
         thumb.getStyle().set("top", "2px");
         thumb.getStyle().set(enabled ? "right" : "left", "2px");
         thumb.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 2px 4px rgba(0,0,0,0.2)");

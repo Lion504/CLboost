@@ -132,12 +132,6 @@ class OnboardingViewTest extends BaseVaadinViewTest {
                 new Class<?>[] { String.class, String.class, String.class, String.class },
                 new Object[] { "Professional", "Formal", "#007AFF", "BRIEFCASE" });
 
-        HorizontalLayout toggleRow = invoke(view, "createToggleRow", HorizontalLayout.class,
-                new Class<?>[] { String.class, String.class, boolean.class }, new Object[] { "Email", "Desc", true });
-
-        Div toggleSwitch = invoke(view, "createToggleSwitch", Div.class, new Class<?>[] { boolean.class },
-                new Object[] { false });
-
         VerticalLayout summaryStat = invoke(view, "createSummaryStat", VerticalLayout.class,
                 new Class<?>[] { String.class, String.class }, new Object[] { "Tone", "Professional" });
 
@@ -145,8 +139,6 @@ class OnboardingViewTest extends BaseVaadinViewTest {
         assertNotNull(chip);
         assertNotNull(radio);
         assertNotNull(tone);
-        assertNotNull(toggleRow);
-        assertNotNull(toggleSwitch);
         assertNotNull(summaryStat);
 
         chip.click();

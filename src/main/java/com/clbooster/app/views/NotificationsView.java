@@ -5,12 +5,7 @@ import com.clbooster.app.views.util.ViewComponents;
 
 import jakarta.annotation.security.PermitAll;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -35,10 +30,8 @@ public class NotificationsView extends VerticalLayout {
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
-    private static final String TEXT_PRIMARY = "#1d1d1f";
     private static final String TEXT_SECONDARY = "#86868b";
     private static final String BG_WHITE = "#ffffff";
-    private static final String BG_GRAY = "#f5f5f7";
     private static final String BG_DARK = "#1d1d1f";
 
     private VerticalLayout notificationsList;

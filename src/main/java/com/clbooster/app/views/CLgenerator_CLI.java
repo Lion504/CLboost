@@ -7,6 +7,7 @@ import com.clbooster.aiservice.Exporter;
 import com.clbooster.aiservice.Parser;
 
 import java.util.Scanner;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CLgenerator_CLI {
@@ -174,12 +175,12 @@ public class CLgenerator_CLI {
             exporter.saveAsDoc(coverLetter, outputPath);
 
             LOGGER.info("\n✅ Cover letter generated successfully!");
-            LOGGER.info("📁 Saved to: " + outputPath);
+            LOGGER.log(Level.INFO, "📁 Saved to: {0}", outputPath);
 
             // Ask if user wants to preview the letter
             LOGGER.info("\nPreview the generated cover letter? (y/n): ");
             if (scanner.nextLine().trim().toLowerCase().startsWith("y")) {
-                LOGGER.info("\n" + coverLetter);
+                LOGGER.log(Level.INFO, "\n{0}", coverLetter);
             }
 
         } catch (Exception e) {
@@ -265,7 +266,7 @@ public class CLgenerator_CLI {
         authService.login(username, password);
 
         if (authService.isLoggedIn()) {
-            LOGGER.info("✓ Login successful! Welcome, " + username);
+            LOGGER.log(Level.INFO, "✓ Login successful! Welcome, {0}", username);
         }
     }
 
@@ -321,41 +322,40 @@ public class CLgenerator_CLI {
         }
 
         // Experience Level
-        LOGGER.info("Experience Level (current: "
-                + (currentProfile.getExperienceLevel() != null ? currentProfile.getExperienceLevel() : MSG_NOT_SET)
-                + "): ");
+        LOGGER.log(Level.INFO, "Experience Level (current: {0}): ",
+                currentProfile.getExperienceLevel() != null ? currentProfile.getExperienceLevel() : MSG_NOT_SET);
         String experienceLevel = scanner.nextLine().trim();
         if (experienceLevel.isEmpty()) {
             experienceLevel = currentProfile.getExperienceLevel();
         }
 
         // Tools
-        LOGGER.info("Tools/Technologies (current: "
-                + (currentProfile.getTools() != null ? currentProfile.getTools() : MSG_NOT_SET) + "): ");
+        LOGGER.log(Level.INFO, "Tools/Technologies (current: {0}): ",
+                currentProfile.getTools() != null ? currentProfile.getTools() : MSG_NOT_SET);
         String tools = scanner.nextLine().trim();
         if (tools.isEmpty()) {
             tools = currentProfile.getTools();
         }
 
         // Skills
-        LOGGER.info("Skills (current: "
-                + (currentProfile.getSkills() != null ? currentProfile.getSkills() : MSG_NOT_SET) + "): ");
+        LOGGER.log(Level.INFO, "Skills (current: {0}): ",
+                currentProfile.getSkills() != null ? currentProfile.getSkills() : MSG_NOT_SET);
         String skills = scanner.nextLine().trim();
         if (skills.isEmpty()) {
             skills = currentProfile.getSkills();
         }
 
         // Link
-        LOGGER.info("Link/Portfolio URL (current: "
-                + (currentProfile.getLink() != null ? currentProfile.getLink() : MSG_NOT_SET) + "): ");
+        LOGGER.log(Level.INFO, "Link/Portfolio URL (current: {0}): ",
+                currentProfile.getLink() != null ? currentProfile.getLink() : MSG_NOT_SET);
         String link = scanner.nextLine().trim();
         if (link.isEmpty()) {
             link = currentProfile.getLink();
         }
 
         // Profile Email
-        LOGGER.info("Profile Email (current: "
-                + (currentProfile.getProfileEmail() != null ? currentProfile.getProfileEmail() : MSG_NOT_SET) + "): ");
+        LOGGER.log(Level.INFO, "Profile Email (current: {0}): ",
+                currentProfile.getProfileEmail() != null ? currentProfile.getProfileEmail() : MSG_NOT_SET);
         String profileEmail = scanner.nextLine().trim();
         if (profileEmail.isEmpty()) {
             profileEmail = currentProfile.getProfileEmail();

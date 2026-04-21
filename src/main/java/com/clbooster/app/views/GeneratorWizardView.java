@@ -28,9 +28,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.upload.SucceededEvent;
-import com.vaadin.flow.component.upload.FailedEvent;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -41,7 +38,6 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -551,16 +547,6 @@ public class GeneratorWizardView extends VerticalLayout {
         importDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
                 .set(StyleConstants.CSS_MARGIN, StyleConstants.VAL_0_0_16PX);
 
-        com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer buffer = new com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer();
-        com.vaadin.flow.component.upload.Upload upload = new com.vaadin.flow.component.upload.Upload();
-        upload.setReceiver(buffer);
-        upload.setDropAllowed(false);
-        upload.setAcceptedFileTypes("application/pdf", ".pdf", MIME_DOCX, DOCX_EXTENSION, "application/msword", ".doc");
-        upload.setMaxFiles(1);
-        upload.setMaxFileSize(10 * 1024 * 1024);
-        upload.setUploadButton(new Button(translationService.translate("generator.step2.uploadFile")));
-        upload.setDropLabel(new Span(""));
-
         Div fileTag = new Div();
         fileTag.getStyle().set(StyleConstants.CSS_DISPLAY, "inline-flex")
                 .set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER).set("gap", "6px")
@@ -573,9 +559,21 @@ public class GeneratorWizardView extends VerticalLayout {
                 .set(StyleConstants.CSS_WHITE_SPACE, VAL_NOWRAP);
         fileTag.setVisible(false);
 
-        upload.addSucceededListener((ComponentEventListener<SucceededEvent>) event -> handleUploadSucceeded(event,
-                buffer, fileTag, importTitle, importDesc));
-        upload.addFailedListener((ComponentEventListener<FailedEvent>) event -> handleUploadFailed());
+        com.vaadin.flow.component.upload.Upload upload = new com.vaadin.flow.component.upload.Upload(event -> {
+            try {
+                handleUploadSucceeded(event.getFileName(), event.getInputStream(), fileTag, importTitle, importDesc);
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Upload failed: {0}", e.getMessage());
+                handleUploadFailed();
+            }
+        });
+        upload.setDropAllowed(false);
+        upload.setAcceptedFileTypes("application/pdf", ".pdf", MIME_DOCX, DOCX_EXTENSION, "application/msword", ".doc");
+        upload.setMaxFiles(1);
+        upload.setMaxFileSize(10 * 1024 * 1024);
+        upload.setUploadButton(new Button(translationService.translate("generator.step2.uploadFile")));
+        upload.setDropLabel(new Span(""));
+
         upload.addFileRejectedListener(event -> {
             LOGGER.warning("[UPLOAD REJECTED] Cannot upload file");
             showUploadFailedNotification();
@@ -585,10 +583,8 @@ public class GeneratorWizardView extends VerticalLayout {
         layout.add(importCard);
     }
 
-    private void handleUploadSucceeded(com.vaadin.flow.component.upload.SucceededEvent event,
-            com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer buffer, Div fileTag, H3 importTitle,
+    private void handleUploadSucceeded(String fileName, java.io.InputStream inputStream, Div fileTag, H3 importTitle,
             Paragraph importDesc) {
-        String fileName = event.getFileName();
         LOGGER.log(Level.INFO, "[UPLOAD] File upload succeeded: {0}", fileName);
 
         try {
@@ -604,12 +600,18 @@ public class GeneratorWizardView extends VerticalLayout {
             if (!java.util.Arrays.asList(".pdf", DOCX_EXTENSION, ".doc").contains(fileExtension)) {
                 throw new IllegalArgumentException("Unsupported file type: " + fileExtension);
             }
-            java.io.File tempFile = buffer.getFileData(fileName).getFile();
+            java.nio.file.Path tempDir = java.nio.file.Paths.get(UPLOADS_DIR, "temp");
+            if (!java.nio.file.Files.exists(tempDir)) {
+                java.nio.file.Files.createDirectories(tempDir);
+            }
+            java.io.File tempFile = java.nio.file.Files.createTempFile(tempDir, "resume_", fileExtension).toFile();
+            java.nio.file.Files.copy(inputStream, tempFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
             if (!tempFile.exists() || tempFile.length() == 0) {
                 throw new java.io.IOException("Temp file does not exist or empty.");
             }
             Parser parser = new Parser();
-            String resumeText = parser.parseFileToJson(tempFile.getAbsolutePath());
+            parser.parseFileToJson(tempFile.getAbsolutePath());
 
             try {
                 AuthenticationService authServiceLoc = new AuthenticationService();

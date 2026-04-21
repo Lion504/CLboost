@@ -6,7 +6,6 @@ import com.clbooster.app.views.util.ViewComponents;
 import jakarta.annotation.security.PermitAll;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
@@ -31,19 +30,13 @@ import java.util.List;
 @PermitAll
 public class OnboardingView extends VerticalLayout {
     private static final String BORDER_2PX = "2px solid ";
-    private static final String MARGIN_24 = "0 0 24px 0";
-    private static final String LETTER_SPACING = "-0.025em";
     private static final String BG_HOVER = "rgba(0,0,0,0.05)";
     private static final String BORDER_LIGHT = "1px solid rgba(0,0,0,0.05)";
-    private static final String GRADIENT_PREFIX = "linear-gradient(135deg, ";
-    private static final String GRADIENT_MIDDLE = " 0%, ";
-    private static final String GRADIENT_SUFFIX = " 100%)";
     private static final String STEP_PROFILE = "Profile";
     private static final String STEP_CAREER = "Career";
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
-    private static final String PRIMARY_LIGHT = "#5AC8FA";
     private static final String TEXT_PRIMARY = "#1d1d1f";
     private static final String TEXT_SECONDARY = "#86868b";
     private static final String BG_WHITE = "#ffffff";
@@ -55,14 +48,10 @@ public class OnboardingView extends VerticalLayout {
     private final int totalSteps = 3;
 
     // Form data
-    private String fullName = "";
-    private String email = "";
-    private String jobTitle = "";
-    private String location = "";
     private List<String> selectedIndustries = new ArrayList<>();
     private List<String> selectedExperience = new ArrayList<>();
     private String selectedTone = "Professional";
-    private String careerGoal = "";
+
 
     // UI Components
     private VerticalLayout contentArea;
@@ -322,12 +311,10 @@ public class OnboardingView extends VerticalLayout {
         });
         backButton.setVisible(false);
 
-        backButton.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
-            backButton.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        });
-        backButton.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
-            backButton.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        });
+        backButton.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
+                e -> backButton.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY));
+        backButton.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE,
+                e -> backButton.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY));
 
         // Step counter
         Span stepCounter = new Span("Step " + currentStep + " of " + totalSteps);

@@ -38,7 +38,6 @@ public class SettingsView extends VerticalLayout {
     private static final Logger log = LoggerFactory.getLogger(SettingsView.class);
 
     // Figma Design System Colors
-    private static final String PRIMARY = "#007AFF";
     private static final String TEXT_PRIMARY = "#1d1d1f";
     private static final String TEXT_SECONDARY = "#86868b";
     private static final String BG_WHITE = "#ffffff";

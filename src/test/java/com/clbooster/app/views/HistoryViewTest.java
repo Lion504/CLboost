@@ -27,8 +27,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -119,16 +117,19 @@ class HistoryViewTest extends BaseVaadinViewTest {
         try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> when(mock.getCurrentUser()).thenReturn(null))) {
             Path tmp = Files.createTempFile("history-view-", ".docx");
-            createDocxWithDocumentXml(tmp,
-                    "<w:document><w:body><w:p><w:r><w:t>Hello</w:t></w:r></w:p><w:p><w:r><w:t>World</w:t></w:r></w:p></w:body></w:document>");
+            Files.writeString(tmp, "dummy");
 
             HistoryView view = new HistoryView();
-            Method method = HistoryView.class.getDeclaredMethod("extractTextFromDocx", File.class);
-            method.setAccessible(true);
-            String text = (String) method.invoke(view, tmp.toFile());
+            try (MockedConstruction<com.clbooster.aiservice.Parser> parserMock = Mockito.mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
+                Mockito.when(mock.parseFileToJson(tmp.toFile().getAbsolutePath())).thenReturn("Hello World");
+            })) {
+                Method method = HistoryView.class.getDeclaredMethod("extractTextFromDocx", File.class);
+                method.setAccessible(true);
+                String text = (String) method.invoke(view, tmp.toFile());
 
-            assertTrue(text.contains("Hello"));
-            assertTrue(text.contains("World"));
+                assertTrue(text.contains("Hello"));
+                assertTrue(text.contains("World"));
+            }
             Files.deleteIfExists(tmp);
         }
     }
@@ -157,13 +158,13 @@ class HistoryViewTest extends BaseVaadinViewTest {
             assertTrue(binaryResult.contains("Binary file"));
 
             Path brokenDocx = Files.createTempFile("history-view-broken-", ".docx");
-            try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(brokenDocx))) {
-                zip.putNextEntry(new ZipEntry("word/other.xml"));
-                zip.write("<root/>".getBytes(StandardCharsets.UTF_8));
-                zip.closeEntry();
+            Files.writeString(brokenDocx, "dummy");
+            try (MockedConstruction<com.clbooster.aiservice.Parser> parserMock = Mockito.mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
+                Mockito.when(mock.parseFileToJson(brokenDocx.toFile().getAbsolutePath())).thenThrow(new RuntimeException("Could not find document content"));
+            })) {
+                String brokenDocxResult = (String) method.invoke(view, brokenDocx.toFile());
+                assertTrue(brokenDocxResult.contains("Could not read file"));
             }
-            String brokenDocxResult = (String) method.invoke(view, brokenDocx.toFile());
-            assertTrue(brokenDocxResult.contains("Could not find document content"));
 
             Files.deleteIfExists(txt);
             Files.deleteIfExists(pdf);
@@ -360,16 +361,17 @@ class HistoryViewTest extends BaseVaadinViewTest {
         try (MockedConstruction<AuthenticationService> ignored = Mockito.mockConstruction(AuthenticationService.class,
                 (mock, context) -> when(mock.getCurrentUser()).thenReturn(null))) {
             Path tmp = Files.createTempFile("history-empty-docx-", ".docx");
-            createDocxWithDocumentXml(tmp,
-                    "<w:document><w:body><w:p><w:r><w:t></w:t></w:r></w:p></w:body></w:document>");
+            Files.writeString(tmp, "dummy");
 
             HistoryView view = new HistoryView();
-            Method method = HistoryView.class.getDeclaredMethod("extractTextFromDocx", File.class);
-            method.setAccessible(true);
-
-            String result = (String) method.invoke(view, tmp.toFile());
-            assertTrue(result.contains("Document appears to be empty"));
-
+            try (MockedConstruction<com.clbooster.aiservice.Parser> parserMock = Mockito.mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
+                Mockito.when(mock.parseFileToJson(tmp.toFile().getAbsolutePath())).thenReturn("");
+            })) {
+                Method method = HistoryView.class.getDeclaredMethod("extractTextFromDocx", File.class);
+                method.setAccessible(true);
+                String result = (String) method.invoke(view, tmp.toFile());
+                assertTrue(result.isEmpty());
+            }
             Files.deleteIfExists(tmp);
         }
     }
@@ -425,14 +427,6 @@ class HistoryViewTest extends BaseVaadinViewTest {
 
             notificationMock.verify(() -> Notification.show(anyString(), anyInt(), any()), Mockito.atLeastOnce());
             Files.deleteIfExists(file);
-        }
-    }
-
-    private void createDocxWithDocumentXml(Path target, String xmlContent) throws Exception {
-        try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(target))) {
-            zip.putNextEntry(new ZipEntry("word/document.xml"));
-            zip.write(xmlContent.getBytes(StandardCharsets.UTF_8));
-            zip.closeEntry();
         }
     }
 
