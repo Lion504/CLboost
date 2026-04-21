@@ -1,6 +1,7 @@
 package com.clbooster.app.views;
 
 import com.clbooster.app.views.util.StyleConstants;
+import com.clbooster.app.views.util.ViewComponents;
 
 import jakarta.annotation.security.PermitAll;
 import com.vaadin.flow.component.button.Button;
@@ -176,7 +177,7 @@ public class OnboardingView extends VerticalLayout {
         Div logoIcon = new Div();
         logoIcon.getStyle().set(StyleConstants.CSS_WIDTH, "40px");
         logoIcon.getStyle().set(StyleConstants.CSS_HEIGHT, "40px");
-        logoIcon.getStyle().set(StyleConstants.CSS_BACKGROUND, primaryGradient());
+        logoIcon.getStyle().set(StyleConstants.CSS_BACKGROUND, ViewComponents.primaryGradient());
         logoIcon.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "12px");
         logoIcon.getStyle().set(StyleConstants.CSS_DISPLAY, "flex");
         logoIcon.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
@@ -334,7 +335,7 @@ public class OnboardingView extends VerticalLayout {
         stepCounter.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
 
         // Next/Complete button
-        nextButton = createPrimaryButton("Continue", this::handleNext);
+        nextButton = ViewComponents.createPrimaryButton("Continue", this::handleNext);
 
         nav.add(backButton, stepCounter, nextButton);
         return nav;
@@ -403,25 +404,8 @@ public class OnboardingView extends VerticalLayout {
 
     private void showProfileStep() {
         // Header
-        VerticalLayout header = new VerticalLayout();
-        header.setPadding(false);
-        header.setSpacing(false);
-        header.getStyle().set("gap", "8px");
-        header.getStyle().set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER);
-
-        H1 title = new H1("Let's get to know you");
-        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "32px");
-        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
-        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        title.getStyle().set(StyleConstants.CSS_MARGIN, "0");
-        title.getStyle().set(StyleConstants.CSS_LETTER_SPACING, LETTER_SPACING);
-
-        Paragraph subtitle = new Paragraph("Start with the basics. This helps us personalize your experience.");
-        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "16px");
-        subtitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        subtitle.getStyle().set(StyleConstants.CSS_MARGIN, "0");
-
-        header.add(title, subtitle);
+        VerticalLayout header = ViewComponents.createStepHeader("Let's get to know you",
+                "Start with the basics. This helps us personalize your experience.");
 
         // Form card
         Div formCard = new Div();
@@ -458,46 +442,13 @@ public class OnboardingView extends VerticalLayout {
 
     private void showCareerStep() {
         // Header
-        VerticalLayout header = new VerticalLayout();
-        header.setPadding(false);
-        header.setSpacing(false);
-        header.getStyle().set("gap", "8px");
-        header.getStyle().set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER);
-
-        H1 title = new H1("Your career background");
-        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "32px");
-        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
-        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        title.getStyle().set(StyleConstants.CSS_MARGIN, "0");
-        title.getStyle().set(StyleConstants.CSS_LETTER_SPACING, LETTER_SPACING);
-
-        Paragraph subtitle = new Paragraph("Help us understand your experience and career goals.");
-        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "16px");
-        subtitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        subtitle.getStyle().set(StyleConstants.CSS_MARGIN, "0");
-
-        header.add(title, subtitle);
+        VerticalLayout header = ViewComponents.createStepHeader("Your career background",
+                "Help us understand your experience and career goals.");
 
         // Industries card
-        Div industriesCard = new Div();
-        industriesCard.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        industriesCard.getStyle().set(StyleConstants.CSS_BORDER, BORDER_LIGHT);
-        industriesCard.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
-        industriesCard.getStyle().set(StyleConstants.CSS_PADDING, "32px");
-        industriesCard.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
+        Div industriesCard = ViewComponents.createSectionCard("Industries you work in",
+                "Select all that apply to your experience");
 
-        H3 industriesTitle = new H3("Industries you work in");
-        industriesTitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
-        industriesTitle.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
-        industriesTitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        industriesTitle.getStyle().set(StyleConstants.CSS_MARGIN, StyleConstants.VAL_0_0_16PX);
-
-        Paragraph industriesDesc = new Paragraph("Select all that apply to your experience");
-        industriesDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
-        industriesDesc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        industriesDesc.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_24);
-
-        // Industry chips
         HorizontalLayout industryChips = new HorizontalLayout();
         industryChips.getStyle().set("gap", "10px");
         industryChips.getStyle().set(StyleConstants.CSS_FLEX_WRAP, "wrap");
@@ -514,27 +465,12 @@ public class OnboardingView extends VerticalLayout {
             industryChips.add(chip);
         }
 
-        industriesCard.add(industriesTitle, industriesDesc, industryChips);
+        industriesCard.add(industryChips);
 
         // Experience level card
-        Div expCard = new Div();
-        expCard.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        expCard.getStyle().set(StyleConstants.CSS_BORDER, BORDER_LIGHT);
-        expCard.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
-        expCard.getStyle().set(StyleConstants.CSS_PADDING, "32px");
-        expCard.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
+        Div expCard = ViewComponents.createSectionCard("Experience level",
+                "Select your current career level");
         expCard.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "24px");
-
-        H3 expTitle = new H3("Experience level");
-        expTitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
-        expTitle.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
-        expTitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        expTitle.getStyle().set(StyleConstants.CSS_MARGIN, StyleConstants.VAL_0_0_16PX);
-
-        Paragraph expDesc = new Paragraph("Select your current career level");
-        expDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
-        expDesc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        expDesc.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_24);
 
         VerticalLayout expOptions = new VerticalLayout();
         expOptions.setPadding(false);
@@ -549,75 +485,27 @@ public class OnboardingView extends VerticalLayout {
             }));
         }
 
-        expCard.add(expTitle, expDesc, expOptions);
+        expCard.add(expOptions);
 
         // Career goals
-        Div goalsCard = new Div();
-        goalsCard.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        goalsCard.getStyle().set(StyleConstants.CSS_BORDER, BORDER_LIGHT);
-        goalsCard.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
-        goalsCard.getStyle().set(StyleConstants.CSS_PADDING, "32px");
-        goalsCard.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
+        Div goalsCard = ViewComponents.createSectionCard("Career goals",
+                "What are you looking for in your next role?");
         goalsCard.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "24px");
 
-        H3 goalsTitle = new H3("Career goals");
-        goalsTitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
-        goalsTitle.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
-        goalsTitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        goalsTitle.getStyle().set(StyleConstants.CSS_MARGIN, StyleConstants.VAL_0_0_16PX);
-
-        Paragraph goalsDesc = new Paragraph("What are you looking for in your next role?");
-        goalsDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
-        goalsDesc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        goalsDesc.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_24);
-
-        goalsCard.add(goalsTitle, goalsDesc, createFormGroup(null, goalField, null));
+        goalsCard.add(createFormGroup(null, goalField, null));
 
         contentArea.add(header, industriesCard, expCard, goalsCard);
     }
 
     private void showPreferencesStep() {
         // Header
-        VerticalLayout header = new VerticalLayout();
-        header.setPadding(false);
-        header.setSpacing(false);
-        header.getStyle().set("gap", "8px");
-        header.getStyle().set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER);
-
-        H1 title = new H1("Personalize your experience");
-        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "32px");
-        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
-        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        title.getStyle().set(StyleConstants.CSS_MARGIN, "0");
-        title.getStyle().set(StyleConstants.CSS_LETTER_SPACING, LETTER_SPACING);
-
-        Paragraph subtitle = new Paragraph("Customize how CL Booster works for you.");
-        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "16px");
-        subtitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        subtitle.getStyle().set(StyleConstants.CSS_MARGIN, "0");
-
-        header.add(title, subtitle);
+        VerticalLayout header = ViewComponents.createStepHeader("Personalize your experience",
+                "Customize how CL Booster works for you.");
 
         // Writing tone card
-        Div toneCard = new Div();
-        toneCard.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        toneCard.getStyle().set(StyleConstants.CSS_BORDER, BORDER_LIGHT);
-        toneCard.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
-        toneCard.getStyle().set(StyleConstants.CSS_PADDING, "32px");
-        toneCard.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
+        Div toneCard = ViewComponents.createSectionCard("Preferred writing tone",
+                "Choose the default tone for your cover letters");
 
-        H3 toneTitle = new H3("Preferred writing tone");
-        toneTitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
-        toneTitle.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
-        toneTitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        toneTitle.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 8px 0");
-
-        Paragraph toneDesc = new Paragraph("Choose the default tone for your cover letters");
-        toneDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
-        toneDesc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        toneDesc.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_24);
-
-        // Tone options
         HorizontalLayout toneOptions = new HorizontalLayout();
         toneOptions.setWidthFull();
         toneOptions.getStyle().set("gap", "16px");
@@ -630,27 +518,11 @@ public class OnboardingView extends VerticalLayout {
             toneOptions.add(createToneOption(tone[0], tone[1], tone[2], tone[3]));
         }
 
-        toneCard.add(toneTitle, toneDesc, toneOptions);
+        toneCard.add(toneOptions);
 
         // Notifications card
-        Div notifCard = new Div();
-        notifCard.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        notifCard.getStyle().set(StyleConstants.CSS_BORDER, BORDER_LIGHT);
-        notifCard.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
-        notifCard.getStyle().set(StyleConstants.CSS_PADDING, "32px");
-        notifCard.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
-        notifCard.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "24px");
-
-        H3 notifTitle = new H3("Notifications");
-        notifTitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
-        notifTitle.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
-        notifTitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        notifTitle.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 8px 0");
-
-        Paragraph notifDesc = new Paragraph("Stay updated on your application progress");
-        notifDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
-        notifDesc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        notifDesc.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_24);
+        Div notifCard = ViewComponents.createSectionCard("Notifications",
+                "Stay updated on your application progress");
 
         VerticalLayout toggles = new VerticalLayout();
         toggles.setPadding(false);
@@ -661,11 +533,11 @@ public class OnboardingView extends VerticalLayout {
         toggles.add(createToggleRow("Match alerts", "Get notified when jobs match your profile", true));
         toggles.add(createToggleRow("Product updates", "New features and improvements", false));
 
-        notifCard.add(notifTitle, notifDesc, toggles);
+        notifCard.add(toggles);
 
         // Summary card
         Div summaryCard = new Div();
-        summaryCard.getStyle().set(StyleConstants.CSS_BACKGROUND, primaryGradient());
+        summaryCard.getStyle().set(StyleConstants.CSS_BACKGROUND, ViewComponents.primaryGradient());
         summaryCard.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
         summaryCard.getStyle().set(StyleConstants.CSS_PADDING, "32px");
         summaryCard.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "24px");
@@ -985,34 +857,5 @@ public class OnboardingView extends VerticalLayout {
                     Notification.Position.BOTTOM_CENTER);
             getUI().ifPresent(ui -> ui.navigate(DashboardView.class));
         }
-    }
-
-    private Button createPrimaryButton(String text, Runnable action) {
-        Button btn = new Button(text, e -> action.run());
-        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, primaryGradient());
-        btn.getStyle().set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
-        btn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
-        btn.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
-        btn.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
-        btn.getStyle().set(StyleConstants.CSS_BORDER, "none");
-        btn.getStyle().set(StyleConstants.CSS_PADDING, "12px 28px");
-        btn.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 10px 15px -3px rgba(0,122,255,0.3)");
-        btn.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_2S);
-        btn.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
-
-        btn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
-            btn.getStyle().set("filter", "brightness(1.1)");
-            btn.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(-1px)");
-        });
-        btn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
-            btn.getStyle().set("filter", "brightness(1)");
-            btn.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(0)");
-        });
-
-        return btn;
-    }
-
-    private String primaryGradient() {
-        return GRADIENT_PREFIX + PRIMARY + GRADIENT_MIDDLE + PRIMARY_LIGHT + GRADIENT_SUFFIX;
     }
 }

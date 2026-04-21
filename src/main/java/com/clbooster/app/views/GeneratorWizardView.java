@@ -28,6 +28,9 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.upload.SucceededEvent;
+import com.vaadin.flow.component.upload.FailedEvent;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -545,7 +548,7 @@ public class GeneratorWizardView extends VerticalLayout {
         importDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
                 .set(StyleConstants.CSS_MARGIN, StyleConstants.VAL_0_0_16PX);
 
-        com.vaadin.flow.component.upload.receivers.MemoryBuffer buffer = new com.vaadin.flow.component.upload.receivers.MemoryBuffer();
+        com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer buffer = new com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer();
         com.vaadin.flow.component.upload.Upload upload = new com.vaadin.flow.component.upload.Upload();
         upload.setReceiver(buffer);
         upload.setDropAllowed(false);
@@ -565,8 +568,8 @@ public class GeneratorWizardView extends VerticalLayout {
                 .set(StyleConstants.CSS_WHITE_SPACE, VAL_NOWRAP);
         fileTag.setVisible(false);
 
-        upload.addSucceededListener(event -> handleUploadSucceeded(event, buffer, fileTag, importTitle, importDesc, upload));
-        upload.addFailedListener(event -> handleUploadFailed());
+        upload.addSucceededListener((ComponentEventListener<SucceededEvent>) event -> handleUploadSucceeded(event, buffer, fileTag, importTitle, importDesc));
+        upload.addFailedListener((ComponentEventListener<FailedEvent>) event -> handleUploadFailed());
         upload.addFileRejectedListener(event -> {
             LOGGER.warning("[UPLOAD REJECTED] Cannot upload file");
             showUploadFailedNotification();
@@ -577,11 +580,10 @@ public class GeneratorWizardView extends VerticalLayout {
     }
     
     private void handleUploadSucceeded(com.vaadin.flow.component.upload.SucceededEvent event,
-                                       com.vaadin.flow.component.upload.receivers.MemoryBuffer buffer,
-                                       Div fileTag, H3 importTitle, Paragraph importDesc,
-                                       com.vaadin.flow.component.upload.Upload upload) {
+                                       com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer buffer,
+                                       Div fileTag, H3 importTitle, Paragraph importDesc) {
         String fileName = event.getFileName();
-        LOGGER.info("[UPLOAD] File upload succeeded: " + fileName);
+        LOGGER.log(Level.INFO, "[UPLOAD] File upload succeeded: {0}", fileName);
 
         try {
             if (fileName == null || fileName.trim().isEmpty()) {
@@ -596,13 +598,12 @@ public class GeneratorWizardView extends VerticalLayout {
             if (!java.util.Arrays.asList(".pdf", DOCX_EXTENSION, ".doc").contains(fileExtension)) {
                 throw new IllegalArgumentException("Unsupported file type: " + fileExtension);
             }
-            java.io.File tempFile = buffer.getFileData().getFile();
+            java.io.File tempFile = buffer.getFileData(fileName).getFile();
             if (!tempFile.exists() || tempFile.length() == 0) {
                 throw new java.io.IOException("Temp file does not exist or empty.");
             }
             Parser parser = new Parser();
             String resumeText = parser.parseFileToJson(tempFile.getAbsolutePath());
-            java.util.Set<String> extractedSkills = extractSkillsFromText(resumeText);
             
             try {
                 AuthenticationService authServiceLoc = new AuthenticationService();

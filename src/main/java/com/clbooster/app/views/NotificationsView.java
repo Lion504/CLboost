@@ -1,6 +1,7 @@
 package com.clbooster.app.views;
 
 import com.clbooster.app.views.util.StyleConstants;
+import com.clbooster.app.views.util.ViewComponents;
 
 import jakarta.annotation.security.PermitAll;
 import com.vaadin.flow.component.button.Button;
@@ -74,28 +75,8 @@ public class NotificationsView extends VerticalLayout {
     }
 
     private HorizontalLayout createHeader() {
-        HorizontalLayout header = new HorizontalLayout();
-        header.setWidthFull();
-        header.setAlignItems(FlexComponent.Alignment.CENTER);
-
-        // Title group
-        VerticalLayout titleGroup = new VerticalLayout();
-        titleGroup.setPadding(false);
-        titleGroup.setSpacing(false);
-        titleGroup.getStyle().set("gap", "4px");
-
-        H1 title = new H1(translationService.translate("notifications.title"));
-        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "30px");
-        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
-        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        title.getStyle().set(StyleConstants.CSS_MARGIN, "0");
-
-        Paragraph subtitle = new Paragraph(translationService.translate("notifications.stayUpdated"));
-        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
-        subtitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        subtitle.getStyle().set(StyleConstants.CSS_MARGIN, "0");
-
-        titleGroup.add(title, subtitle);
+        // Header with title and actions
+        HorizontalLayout header = ViewComponents.createPageHeader("notifications.title", "notifications.stayUpdated", translationService);
 
         // Actions
         HorizontalLayout actions = new HorizontalLayout();
@@ -125,8 +106,8 @@ public class NotificationsView extends VerticalLayout {
 
         actions.add(markAllBtn, settingsBtn);
 
-        header.add(titleGroup, actions);
-        header.expand(titleGroup);
+        header.add(actions);
+        // titleGroup (first child) already expanded by createPageHeader
 
         return header;
     }

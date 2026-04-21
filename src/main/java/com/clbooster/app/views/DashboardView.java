@@ -30,7 +30,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Route(value = "dashboard", layout = MainLayout.class)
@@ -456,7 +455,7 @@ class DashboardView extends VerticalLayout {
             letters.add(new LetterCardData("UX Engineer", "Airbnb", "3 days ago", "ARCHIVED"));
         }
         
-        return letters.stream().limit(6).collect(java.util.stream.Collectors.toList());
+        return letters.stream().limit(6).toList();
     }
 
     private int compareByLastModifiedDesc(Path a, Path b) {
@@ -532,16 +531,16 @@ class DashboardView extends VerticalLayout {
         List<com.vaadin.flow.component.Component> toRemove = lettersGrid.getChildren()
                 .filter(c -> c instanceof Div && !((Div) c).getChildren().anyMatch(
                         child -> child instanceof Span && "New Cover Letter".equals(((Span) child).getText())))
-                .collect(Collectors.toList());
+                .toList();
         toRemove.forEach(lettersGrid::remove);
 
         List<LetterCardData> source = (query == null
                 || query.isBlank())
-                        ? allLetters
-                        : allLetters.stream()
-                                .filter(l -> l.title.toLowerCase().contains(query.toLowerCase())
-                                        || l.company.toLowerCase().contains(query.toLowerCase()))
-                                .collect(Collectors.toList());
+                ? allLetters
+                : allLetters.stream()
+                        .filter(l -> l.title.toLowerCase().contains(query.toLowerCase())
+                                || l.company.toLowerCase().contains(query.toLowerCase()))
+                        .toList();
 
         // Insert letter cards before the "new" card
         source.forEach(l -> lettersGrid.addComponentAtIndex(Math.max(0, (int) lettersGrid.getChildren().count() - 1),

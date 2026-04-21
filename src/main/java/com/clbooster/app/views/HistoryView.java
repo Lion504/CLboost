@@ -5,6 +5,7 @@ import com.clbooster.app.views.util.StyleConstants;
 import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.i18n.TranslationService;
+import com.clbooster.aiservice.Parser;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
@@ -47,7 +48,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -238,7 +238,7 @@ public class HistoryView extends VerticalLayout {
                 .filter(item -> matchesSearch(item, searchText))
                 .filter(this::matchesStatus)
                 .filter(this::matchesDateRange)
-                .collect(Collectors.toList());
+                .toList();
 
         refreshCardsGrid(filtered);
     }
@@ -518,65 +518,11 @@ public class HistoryView extends VerticalLayout {
     }
 
     /**
-     * Extracts plain text from a .docx file by reading word/document.xml from the
-     * ZIP archive and stripping XML tags.
+     * Extracts plain text from a .docx file.
      */
-    private String extractTextFromDocx(File file) throws IOException {
-        try (java.util.zip.ZipFile zip = new java.util.zip.ZipFile(file)) {
-            java.util.zip.ZipEntry entry = zip.getEntry("word/document.xml");
-            if (entry == null) {
-                return "[Could not find document content in DOCX file.]";
-            }
-            try (java.io.InputStream is = zip.getInputStream(entry)) {
-                String xml = new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
-                StringBuilder sb = extractDocxPlainText(xml);
-                String result = sb.toString().trim();
-                return result.isEmpty() ? "[Document appears to be empty.]" : result;
-            }
-        }
-    }
-
-    private StringBuilder extractDocxPlainText(String xml) {
-        StringBuilder sb = new StringBuilder();
-        int i = 0;
-        while (i < xml.length()) {
-            appendParagraphBreakIfNeeded(xml, i, sb);
-            int nextIndex = appendTextRunIfPresent(xml, i, sb);
-            if (nextIndex >= 0) {
-                i = nextIndex;
-                continue;
-            }
-            i++;
-        }
-        return sb;
-    }
-
-    private void appendParagraphBreakIfNeeded(String xml, int index, StringBuilder sb) {
-        if (isParagraphStart(xml, index) && sb.length() > 0 && sb.charAt(sb.length() - 1) != '\n') {
-            sb.append('\n');
-        }
-    }
-
-    private boolean isParagraphStart(String xml, int index) {
-        return xml.startsWith("<w:p", index)
-                && index + 4 < xml.length()
-                && (xml.charAt(index + 4) == ' ' || xml.charAt(index + 4) == '>' || xml.charAt(index + 4) == '/');
-    }
-
-    private int appendTextRunIfPresent(String xml, int index, StringBuilder sb) {
-        if (!xml.startsWith("<w:t", index)) {
-            return -1;
-        }
-        int start = xml.indexOf('>', index);
-        if (start == -1) {
-            return -1;
-        }
-        int end = xml.indexOf("</w:t>", start);
-        if (end == -1) {
-            return -1;
-        }
-        sb.append(xml, start + 1, end);
-        return end + 6;
+    private String extractTextFromDocx(File file) {
+        Parser parser = new Parser();
+        return parser.parseFileToJson(file.getAbsolutePath());
     }
 
     private boolean isPrintable(String text) {

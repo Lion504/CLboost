@@ -1,6 +1,7 @@
 package com.clbooster.app.views;
 
 import com.clbooster.app.views.util.StyleConstants;
+import com.clbooster.app.views.util.ViewComponents;
 
 import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
@@ -217,7 +218,7 @@ public class ProfileView extends VerticalLayout {
 
         editBtn.addClickListener(e -> toggleEditMode());
 
-        saveBtn = createPrimaryButton(translationService.translate("profile.saveChanges"), this::saveProfile);
+        saveBtn = ViewComponents.createPrimaryButton(translationService.translate("profile.saveChanges"), this::saveProfile);
         saveBtn.setVisible(false); // Hidden initially
 
         actions.add(editBtn, saveBtn);
@@ -261,25 +262,8 @@ public class ProfileView extends VerticalLayout {
     }
 
     private Div createGeneralContent() {
-        Div card = new Div();
-        card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        card.getStyle().set(StyleConstants.CSS_BORDER, BORDER_BOTTOM);
-        card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
-        card.getStyle().set(StyleConstants.CSS_PADDING, "32px");
+        Div card = ViewComponents.createSectionCard("profile.accountDetails", "profile.personalInfo", translationService);
         card.getStyle().set(StyleConstants.CSS_WIDTH, "100%");
-        card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
-
-        // Section title
-        H3 title = new H3(translationService.translate("profile.accountDetails"));
-        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px");
-        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
-        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        title.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 8px 0");
-
-        Paragraph subtitle = new Paragraph(translationService.translate("profile.personalInfo"));
-        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
-        subtitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        subtitle.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 32px 0");
 
         // Form grid
         HorizontalLayout formGrid = new HorizontalLayout();
@@ -350,31 +334,14 @@ public class ProfileView extends VerticalLayout {
         VerticalLayout linkGroup = createFormGroup(translationService.translate("profile.portfolio"), linkField);
         linkGroup.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "16px");
 
-        card.add(title, subtitle, formGrid, skillsGroup, toolsGroup, linkGroup);
+        card.add(formGrid, skillsGroup, toolsGroup, linkGroup);
 
         return card;
     }
 
     private Div createSecurityContent() {
-        Div card = new Div();
-        card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
-        card.getStyle().set(StyleConstants.CSS_BORDER, BORDER_BOTTOM);
-        card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
-        card.getStyle().set(StyleConstants.CSS_PADDING, "32px");
+        Div card = ViewComponents.createSectionCard("profile.securitySettings", "profile.managePassword", translationService);
         card.getStyle().set(StyleConstants.CSS_WIDTH, "100%");
-        card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
-
-        // Section title
-        H3 title = new H3(translationService.translate("profile.securitySettings"));
-        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px");
-        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
-        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        title.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 8px 0");
-
-        Paragraph subtitle = new Paragraph(translationService.translate("profile.managePassword"));
-        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
-        subtitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        subtitle.getStyle().set(StyleConstants.CSS_MARGIN, "0 0 32px 0");
 
         // Change Password Section
         VerticalLayout passwordSection = new VerticalLayout();
@@ -417,7 +384,7 @@ public class ProfileView extends VerticalLayout {
         passwordSection.add(requirements);
 
         // Change Password Button
-        Button changePasswordBtn = createPrimaryButton(translationService.translate("profile.changePassword"),
+        Button changePasswordBtn = ViewComponents.createPrimaryButton(translationService.translate("profile.changePassword"),
                 this::changePassword);
         changePasswordBtn.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "16px");
         passwordSection.add(changePasswordBtn);
@@ -456,7 +423,7 @@ public class ProfileView extends VerticalLayout {
                         Notification.Position.TOP_CENTER));
         securityOptions.add(loginNotifRow);
 
-        card.add(title, subtitle, passwordSection, divider, securityTitle, securityOptions);
+        card.add(passwordSection, divider, securityTitle, securityOptions);
 
         return card;
     }
@@ -693,30 +660,5 @@ public class ProfileView extends VerticalLayout {
             Notification.show(translationService.translate("profile.saveFailed"), 3000,
                     Notification.Position.TOP_CENTER);
         }
-    }
-
-    private Button createPrimaryButton(String text, Runnable action) {
-        Button btn = new Button(text, e -> action.run());
-        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, "linear-gradient(135deg, " + PRIMARY + " 0%, #5AC8FA 100%)");
-        btn.getStyle().set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
-        btn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
-        btn.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
-        btn.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
-        btn.getStyle().set(StyleConstants.CSS_BORDER, "none");
-        btn.getStyle().set(StyleConstants.CSS_PADDING, "10px 24px");
-        btn.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 10px 15px -3px rgba(0, 122, 255, 0.3)");
-        btn.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_2S);
-        btn.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
-
-        btn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
-            btn.getStyle().set("filter", "brightness(1.1)");
-            btn.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(-1px)");
-        });
-        btn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
-            btn.getStyle().set("filter", "brightness(1)");
-            btn.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(0)");
-        });
-
-        return btn;
     }
 }
