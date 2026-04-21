@@ -2,10 +2,6 @@ package com.clbooster.aiservice;
 
 import java.util.Scanner;
 
-import com.clbooster.aiservice.AIService;
-import com.clbooster.aiservice.Exporter;
-import com.clbooster.aiservice.Parser;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
