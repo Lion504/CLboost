@@ -35,7 +35,8 @@ public final class AuthComponents {
     private static final String MARGIN = StyleConstants.CSS_MARGIN;
     private static final String RGBA_BLACK_10 = "rgba(0, 0, 0, 0.1)";
 
-    private AuthComponents() { }
+    private AuthComponents() {
+    }
 
     public static Div createCard() {
         Div card = new Div();
@@ -195,7 +196,6 @@ public final class AuthComponents {
         return divider;
     }
 
-    
     public static H2 createTitle(String text) {
         H2 title = new H2(text);
         title.getStyle().set(FONT_SIZE, "28px");
@@ -228,19 +228,22 @@ public final class AuthComponents {
     }
 
     public static void showError(String message) {
-        com.vaadin.flow.component.notification.Notification notification = new com.vaadin.flow.component.notification.Notification(message, 3000, com.vaadin.flow.component.notification.Notification.Position.TOP_CENTER);
+        com.vaadin.flow.component.notification.Notification notification = new com.vaadin.flow.component.notification.Notification(
+                message, 3000, com.vaadin.flow.component.notification.Notification.Position.TOP_CENTER);
         notification.addThemeVariants(com.vaadin.flow.component.notification.NotificationVariant.LUMO_ERROR);
         notification.open();
     }
 
     public static void showSuccess(String message) {
-        com.vaadin.flow.component.notification.Notification notification = new com.vaadin.flow.component.notification.Notification(message, 3000, com.vaadin.flow.component.notification.Notification.Position.TOP_CENTER);
+        com.vaadin.flow.component.notification.Notification notification = new com.vaadin.flow.component.notification.Notification(
+                message, 3000, com.vaadin.flow.component.notification.Notification.Position.TOP_CENTER);
         notification.addThemeVariants(com.vaadin.flow.component.notification.NotificationVariant.LUMO_SUCCESS);
         notification.open();
     }
 
     public static void showInfo(String message) {
-        com.vaadin.flow.component.notification.Notification notification = new com.vaadin.flow.component.notification.Notification(message, 4000, com.vaadin.flow.component.notification.Notification.Position.TOP_CENTER);
+        com.vaadin.flow.component.notification.Notification notification = new com.vaadin.flow.component.notification.Notification(
+                message, 4000, com.vaadin.flow.component.notification.Notification.Position.TOP_CENTER);
         notification.open();
     }
 

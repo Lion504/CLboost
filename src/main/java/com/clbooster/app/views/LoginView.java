@@ -28,7 +28,7 @@ public class LoginView extends VerticalLayout {
     private static final String FONT_WEIGHT_PROP = StyleConstants.CSS_FONT_WEIGHT;
     private static final String COLOR_PROP = StyleConstants.CSS_COLOR;
 
-        private final transient AuthenticationService authService;
+    private final transient AuthenticationService authService;
     private final TranslationService translationService;
     private TextField usernameField;
     private PasswordField passwordField;
@@ -47,10 +47,8 @@ public class LoginView extends VerticalLayout {
         Div card = AuthComponents.createCard();
 
         // Back link
-        HorizontalLayout backLink = AuthComponents.createBackLink(
-            translationService.translate("landing.backToHome"), 
-            () -> getUI().ifPresent(ui -> ui.navigate(""))
-        );
+        HorizontalLayout backLink = AuthComponents.createBackLink(translationService.translate("landing.backToHome"),
+                () -> getUI().ifPresent(ui -> ui.navigate("")));
 
         // Logo icon
         Div logoIcon = AuthComponents.createLogoIcon();
@@ -103,7 +101,8 @@ public class LoginView extends VerticalLayout {
         rememberRow.add(remember, forgot);
 
         // Sign In button
-        Button signIn = AuthComponents.createPrimaryButton(translationService.translate("action.login"), this::handleLogin);
+        Button signIn = AuthComponents.createPrimaryButton(translationService.translate("action.login"),
+                this::handleLogin);
         signIn.setWidthFull();
         signIn.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "8px");
 
@@ -161,7 +160,4 @@ public class LoginView extends VerticalLayout {
         }
     }
 
-    
-
-    
 }

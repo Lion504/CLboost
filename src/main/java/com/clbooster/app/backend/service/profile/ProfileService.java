@@ -97,7 +97,8 @@ public class ProfileService {
         log.info("\n_____________________________________");
         log.info("           YOUR PROFILE");
         log.info("______________________________________");
-        log.info("Experience Level: {}", (profile.getExperienceLevel() != null ? profile.getExperienceLevel() : NOT_SET));
+        log.info("Experience Level: {}",
+                (profile.getExperienceLevel() != null ? profile.getExperienceLevel() : NOT_SET));
         log.info("Tools:            {}", (profile.getTools() != null ? profile.getTools() : NOT_SET));
         log.info("Skills:           {}", (profile.getSkills() != null ? profile.getSkills() : NOT_SET));
         log.info("Link:             {}", (profile.getLink() != null ? profile.getLink() : NOT_SET));

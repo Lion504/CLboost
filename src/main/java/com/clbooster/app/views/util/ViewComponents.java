@@ -17,8 +17,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
-
-
 /**
  * UI component factory methods to avoid duplication across views.
  */
@@ -48,6 +46,21 @@ public final class ViewComponents {
      */
     public static Button createPrimaryButton(String text, Runnable action) {
         Button btn = new Button(text, e -> action.run());
+        stylePrimaryButtonGradient(btn);
+        return btn;
+    }
+
+    /**
+     * Creates a styled primary button with an icon (no action listener). Used in
+     * EditorView.
+     */
+    public static Button createPrimaryButton(String text, VaadinIcon icon) {
+        Button btn = new Button(text, icon.create());
+        stylePrimaryButtonSolid(btn);
+        return btn;
+    }
+
+    private static void stylePrimaryButtonGradient(Button btn) {
         btn.getStyle().set(StyleConstants.CSS_BACKGROUND, primaryGradient());
         btn.getStyle().set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
         btn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
@@ -67,8 +80,17 @@ public final class ViewComponents {
             btn.getStyle().set("filter", "brightness(1)");
             btn.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(0)");
         });
+    }
 
-        return btn;
+    private static void stylePrimaryButtonSolid(Button btn) {
+        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY);
+        btn.getStyle().set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
+        btn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        btn.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
+        btn.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+        btn.getStyle().set(StyleConstants.CSS_BORDER, "none");
+        btn.getStyle().set(StyleConstants.CSS_PADDING, "10px 24px");
+        btn.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 10px 15px -3px rgba(0, 122, 255, 0.3)");
     }
 
     /**
@@ -99,11 +121,11 @@ public final class ViewComponents {
     }
 
     /**
-     * Creates a section card container with title and subtitle using translation keys.
-     * Common pattern used in ProfileView.
+     * Creates a section card container with title and subtitle using translation
+     * keys. Common pattern used in ProfileView.
      */
     public static Div createSectionCard(String titleKey, String subtitleKey,
-                                        com.clbooster.app.i18n.TranslationService translationService) {
+            com.clbooster.app.i18n.TranslationService translationService) {
         Div card = new Div();
         card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
         card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
@@ -127,12 +149,12 @@ public final class ViewComponents {
     }
 
     /**
-     * Creates a notification card with hover animation.
-     * Common pattern used in NotificationsView.
+     * Creates a notification card with hover animation. Common pattern used in
+     * NotificationsView.
      */
     public static Div createNotificationCard(String title, String message, String time, VaadinIcon iconType,
-                                             String iconColor, boolean isUnread, boolean isNew,
-                                             com.clbooster.app.i18n.TranslationService translationService) {
+            String iconColor, boolean isUnread, boolean isNew,
+            com.clbooster.app.i18n.TranslationService translationService) {
         Div card = new Div();
         card.getStyle().set(StyleConstants.CSS_BACKGROUND, isUnread ? BG_WHITE : BG_GRAY);
         card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
@@ -227,8 +249,8 @@ public final class ViewComponents {
     }
 
     /**
-     * Creates an onboarding step header (H1 + subtitle) with raw strings.
-     * Used in OnboardingView.
+     * Creates an onboarding step header (H1 + subtitle) with raw strings. Used in
+     * OnboardingView.
      */
     public static VerticalLayout createStepHeader(String title, String subtitle) {
         VerticalLayout header = new VerticalLayout();
@@ -254,11 +276,11 @@ public final class ViewComponents {
     }
 
     /**
-     * Creates a page header with title and subtitle using translation keys.
-     * Used in NotificationsView and other pages.
+     * Creates a page header with title and subtitle using translation keys. Used in
+     * NotificationsView and other pages.
      */
     public static HorizontalLayout createPageHeader(String titleKey, String subtitleKey,
-                                                    TranslationService translationService) {
+            TranslationService translationService) {
         HorizontalLayout header = new HorizontalLayout();
         header.setWidthFull();
         header.setAlignItems(FlexComponent.Alignment.CENTER);
@@ -286,5 +308,75 @@ public final class ViewComponents {
         return header;
     }
 
+    /**
+     * Creates a notification card with hover animation (raw strings, no
+     * translation). Used in NotificationsView.
+     */
+    public static Div createNotificationCard(String title, String message, String time, VaadinIcon iconType,
+            String iconColor, boolean isUnread, boolean isNew) {
+        return createNotificationCard(title, message, time, iconType, iconColor, isUnread, isNew, null);
+    }
+
+    /**
+     * Creates a toggle row (title + description + toggle switch). Common pattern
+     * used in OnboardingView.
+     */
+    public static HorizontalLayout createToggleRow(String title, String description, boolean enabled) {
+        HorizontalLayout row = new HorizontalLayout();
+        row.setWidthFull();
+        row.setAlignItems(FlexComponent.Alignment.CENTER);
+        row.getStyle().set(StyleConstants.CSS_PADDING, "8px 0");
+
+        VerticalLayout textGroup = new VerticalLayout();
+        textGroup.setPadding(false);
+        textGroup.setSpacing(false);
+        textGroup.getStyle().set("gap", "4px");
+
+        Span titleSpan = new Span(title);
+        titleSpan.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
+        titleSpan.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        titleSpan.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+
+        Span descSpan = new Span(description);
+        descSpan.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px");
+        descSpan.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+
+        textGroup.add(titleSpan, descSpan);
+
+        Div toggle = createToggleSwitch(enabled);
+
+        row.add(textGroup, toggle);
+        row.expand(textGroup);
+
+        return row;
+    }
+
+    private static Div createToggleSwitch(boolean enabled) {
+        Div track = new Div();
+        track.getStyle().set(StyleConstants.CSS_WIDTH, "48px");
+        track.getStyle().set(StyleConstants.CSS_HEIGHT, "28px");
+        track.getStyle().set(StyleConstants.CSS_BACKGROUND, enabled ? SUCCESS : "rgba(0,0,0,0.2)");
+        track.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+        track.getStyle().set("position", "relative");
+        track.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+        track.getStyle().set(StyleConstants.CSS_TRANSITION, "background 0.2s");
+
+        Div thumb = new Div();
+        thumb.getStyle().set(StyleConstants.CSS_WIDTH, "24px");
+        thumb.getStyle().set(StyleConstants.CSS_HEIGHT, "24px");
+        thumb.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_WHITE);
+        thumb.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "50%");
+        thumb.getStyle().set("position", "absolute");
+        thumb.getStyle().set("top", "2px");
+        thumb.getStyle().set(enabled ? "right" : "left", "2px");
+        thumb.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 2px 4px rgba(0,0,0,0.2)");
+        thumb.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_2S);
+
+        track.add(thumb);
+
+        return track;
+    }
+
     private static final String MARGIN_BOTTOM_24 = "0 0 24px 0";
+    private static final String SUCCESS = "#34C759";
 }

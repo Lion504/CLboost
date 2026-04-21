@@ -468,8 +468,7 @@ public class OnboardingView extends VerticalLayout {
         industriesCard.add(industryChips);
 
         // Experience level card
-        Div expCard = ViewComponents.createSectionCard("Experience level",
-                "Select your current career level");
+        Div expCard = ViewComponents.createSectionCard("Experience level", "Select your current career level");
         expCard.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "24px");
 
         VerticalLayout expOptions = new VerticalLayout();
@@ -488,8 +487,7 @@ public class OnboardingView extends VerticalLayout {
         expCard.add(expOptions);
 
         // Career goals
-        Div goalsCard = ViewComponents.createSectionCard("Career goals",
-                "What are you looking for in your next role?");
+        Div goalsCard = ViewComponents.createSectionCard("Career goals", "What are you looking for in your next role?");
         goalsCard.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "24px");
 
         goalsCard.add(createFormGroup(null, goalField, null));
@@ -521,17 +519,16 @@ public class OnboardingView extends VerticalLayout {
         toneCard.add(toneOptions);
 
         // Notifications card
-        Div notifCard = ViewComponents.createSectionCard("Notifications",
-                "Stay updated on your application progress");
+        Div notifCard = ViewComponents.createSectionCard("Notifications", "Stay updated on your application progress");
 
         VerticalLayout toggles = new VerticalLayout();
         toggles.setPadding(false);
         toggles.setSpacing(false);
         toggles.getStyle().set("gap", "16px");
 
-        toggles.add(createToggleRow("Email notifications", "Weekly summaries and updates", true));
-        toggles.add(createToggleRow("Match alerts", "Get notified when jobs match your profile", true));
-        toggles.add(createToggleRow("Product updates", "New features and improvements", false));
+        toggles.add(ViewComponents.createToggleRow("Email notifications", "Weekly summaries and updates", true));
+        toggles.add(ViewComponents.createToggleRow("Match alerts", "Get notified when jobs match your profile", true));
+        toggles.add(ViewComponents.createToggleRow("Product updates", "New features and improvements", false));
 
         notifCard.add(toggles);
 
@@ -681,7 +678,8 @@ public class OnboardingView extends VerticalLayout {
         radio.getStyle().set(StyleConstants.CSS_WIDTH, "20px");
         radio.getStyle().set(StyleConstants.CSS_HEIGHT, "20px");
         radio.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "50%");
-        radio.getStyle().set(StyleConstants.CSS_BORDER, selected ? "6px solid " + PRIMARY : BORDER_2PX + TEXT_SECONDARY);
+        radio.getStyle().set(StyleConstants.CSS_BORDER,
+                selected ? "6px solid " + PRIMARY : BORDER_2PX + TEXT_SECONDARY);
         radio.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_2S);
 
         Span labelSpan = new Span(label);
@@ -770,62 +768,6 @@ public class OnboardingView extends VerticalLayout {
         });
 
         return card;
-    }
-
-    private HorizontalLayout createToggleRow(String title, String description, boolean enabled) {
-        HorizontalLayout row = new HorizontalLayout();
-        row.setWidthFull();
-        row.setAlignItems(FlexComponent.Alignment.CENTER);
-        row.getStyle().set(StyleConstants.CSS_PADDING, "8px 0");
-
-        VerticalLayout textGroup = new VerticalLayout();
-        textGroup.setPadding(false);
-        textGroup.setSpacing(false);
-        textGroup.getStyle().set("gap", "4px");
-
-        Span titleSpan = new Span(title);
-        titleSpan.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
-        titleSpan.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
-        titleSpan.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-
-        Span descSpan = new Span(description);
-        descSpan.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px");
-        descSpan.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-
-        textGroup.add(titleSpan, descSpan);
-
-        Div toggle = createToggleSwitch(enabled);
-
-        row.add(textGroup, toggle);
-        row.expand(textGroup);
-
-        return row;
-    }
-
-    private Div createToggleSwitch(boolean enabled) {
-        Div track = new Div();
-        track.getStyle().set(StyleConstants.CSS_WIDTH, "48px");
-        track.getStyle().set(StyleConstants.CSS_HEIGHT, "28px");
-        track.getStyle().set(StyleConstants.CSS_BACKGROUND, enabled ? SUCCESS : "rgba(0,0,0,0.2)");
-        track.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
-        track.getStyle().set("position", "relative");
-        track.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
-        track.getStyle().set(StyleConstants.CSS_TRANSITION, "background 0.2s");
-
-        Div thumb = new Div();
-        thumb.getStyle().set(StyleConstants.CSS_WIDTH, "24px");
-        thumb.getStyle().set(StyleConstants.CSS_HEIGHT, "24px");
-        thumb.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_WHITE);
-        thumb.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "50%");
-        thumb.getStyle().set("position", "absolute");
-        thumb.getStyle().set("top", "2px");
-        thumb.getStyle().set(enabled ? "right" : "left", "2px");
-        thumb.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 2px 4px rgba(0,0,0,0.2)");
-        thumb.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_2S);
-
-        track.add(thumb);
-
-        return track;
     }
 
     private VerticalLayout createSummaryStat(String label, String value) {

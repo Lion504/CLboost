@@ -175,7 +175,6 @@ class LandingViewTest extends BaseVaadinViewTest {
 
         invokeNoArgs(view, "scrollToTop");
 
-
         assertNotNull(view);
     }
 

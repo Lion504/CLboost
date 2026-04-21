@@ -12,7 +12,6 @@ public class ThemeService {
 
     private static final String THEME_KEY = "theme";
 
-
     /**
      * Applies the specified theme to the current UI. Theme is applied immediately
      * via JavaScript.

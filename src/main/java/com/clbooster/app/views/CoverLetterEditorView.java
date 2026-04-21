@@ -47,8 +47,9 @@ public class CoverLetterEditorView extends VerticalLayout implements HasUrlParam
     public CoverLetterEditorView() {
         setPadding(true);
         setSpacing(false);
-        getStyle().set("gap", "24px").set(StyleConstants.CSS_PADDING, "32px").set(StyleConstants.CSS_BACKGROUND, BG_WHITE).set("font-family",
-                "-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif");
+        getStyle().set("gap", "24px").set(StyleConstants.CSS_PADDING, "32px")
+                .set(StyleConstants.CSS_BACKGROUND, BG_WHITE)
+                .set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif");
         setSizeFull();
     }
 
@@ -70,8 +71,10 @@ public class CoverLetterEditorView extends VerticalLayout implements HasUrlParam
         header.getStyle().set("gap", "16px");
 
         Button backBtn = new Button("Back to History", VaadinIcon.ARROW_LEFT.create());
-        backBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_FONT_WEIGHT, "600")
-                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "10px 20px").set(StyleConstants.CSS_BORDER, "none");
+        backBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
+                .set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_PADDING, "10px 20px").set(StyleConstants.CSS_BORDER, "none");
         backBtn.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("history")));
 
         VerticalLayout titleGroup = new VerticalLayout();
@@ -80,16 +83,19 @@ public class CoverLetterEditorView extends VerticalLayout implements HasUrlParam
         titleGroup.getStyle().set("gap", "4px");
 
         titleLabel = new H2(currentFile != null ? currentFile.getName() : "Cover Letter");
-        titleLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "24px").set(StyleConstants.CSS_FONT_WEIGHT, "700").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
-                .set(StyleConstants.CSS_MARGIN, "0");
+        titleLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "24px").set(StyleConstants.CSS_FONT_WEIGHT, "700")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph subtitle = new Paragraph("Edit your cover letter below and save when done.");
-        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_MARGIN, "0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+                .set(StyleConstants.CSS_MARGIN, "0");
         titleGroup.add(titleLabel, subtitle);
 
         Button saveBtn = new Button("Save Changes", VaadinIcon.CHECK.create());
-        saveBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY).set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
-                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "10px 20px").set(StyleConstants.CSS_BORDER, "none");
+        saveBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY)
+                .set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_PADDING, "10px 20px").set(StyleConstants.CSS_BORDER, "none");
         saveBtn.addClickListener(e -> saveFile());
 
         header.add(backBtn, titleGroup, saveBtn);
@@ -158,4 +164,3 @@ public class CoverLetterEditorView extends VerticalLayout implements HasUrlParam
         return parser.parseFileToJson(file.getAbsolutePath());
     }
 }
-

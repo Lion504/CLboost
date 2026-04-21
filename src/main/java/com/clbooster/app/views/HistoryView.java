@@ -80,8 +80,9 @@ public class HistoryView extends VerticalLayout {
         this.translationService = new TranslationService();
         setPadding(true);
         setSpacing(true);
-        getStyle().set("gap", "32px").set(StyleConstants.CSS_PADDING, "32px").set(StyleConstants.CSS_BACKGROUND, BG_WHITE).set("font-family",
-                "-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif");
+        getStyle().set("gap", "32px").set(StyleConstants.CSS_PADDING, "32px")
+                .set(StyleConstants.CSS_BACKGROUND, BG_WHITE)
+                .set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif");
         setSizeFull();
 
         allItems = loadCoverLetterHistory();
@@ -89,7 +90,8 @@ public class HistoryView extends VerticalLayout {
         add(createHeader(), createFilters());
 
         cardsGrid = new Div();
-        cardsGrid.getStyle().set(StyleConstants.CSS_DISPLAY, "flex").set(StyleConstants.CSS_FLEX_WRAP, "wrap").set("gap", "24px").set(StyleConstants.CSS_WIDTH, "100%");
+        cardsGrid.getStyle().set(StyleConstants.CSS_DISPLAY, "flex").set(StyleConstants.CSS_FLEX_WRAP, "wrap")
+                .set("gap", "24px").set(StyleConstants.CSS_WIDTH, "100%");
 
         refreshCardsGrid(allItems);
         add(cardsGrid);
@@ -104,16 +106,19 @@ public class HistoryView extends VerticalLayout {
         titleGroup.setSpacing(false);
 
         H2 title = new H2(translationService.translate("history.title"));
-        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "30px").set(StyleConstants.CSS_FONT_WEIGHT, "700").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN,
-                "0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "30px").set(StyleConstants.CSS_FONT_WEIGHT, "700")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph subtitle = new Paragraph(translationService.translate("history.reviewRefine"));
-        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_MARGIN, "0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+                .set(StyleConstants.CSS_MARGIN, "0");
         titleGroup.add(title, subtitle);
 
         Button exportBtn = new Button(translationService.translate("history.exportAll"), VaadinIcon.DOWNLOAD.create());
-        exportBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_HOVER).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_FONT_WEIGHT, "600")
-                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "10px 20px").set(StyleConstants.CSS_BORDER, "none");
+        exportBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_HOVER).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
+                .set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_PADDING, "10px 20px").set(StyleConstants.CSS_BORDER, "none");
         exportBtn.addClickListener(e -> exportAllFiles());
 
         HorizontalLayout header = new HorizontalLayout(titleGroup, exportBtn);
@@ -150,8 +155,9 @@ public class HistoryView extends VerticalLayout {
 
     private Button createFilterButton(String text, VaadinIcon icon) {
         Button btn = new Button(text, icon.create());
-        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_FONT_WEIGHT, "500")
-                .set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_BORDER_RADIUS, "12px").set(StyleConstants.CSS_BORDER, "none")
+        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
+                .set(StyleConstants.CSS_FONT_WEIGHT, "500").set(StyleConstants.CSS_FONT_SIZE, "14px")
+                .set(StyleConstants.CSS_BORDER_RADIUS, "12px").set(StyleConstants.CSS_BORDER, "none")
                 .set(StyleConstants.CSS_PADDING, "10px 16px");
         return btn;
     }
@@ -187,7 +193,8 @@ public class HistoryView extends VerticalLayout {
             applyFilters();
             dialog.close();
         });
-        applyBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY).set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
+        applyBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY).set(StyleConstants.CSS_COLOR,
+                StyleConstants.VAL_WHITE);
 
         buttons.add(clearBtn, applyBtn);
         content.add(buttons);
@@ -223,7 +230,8 @@ public class HistoryView extends VerticalLayout {
             applyFilters();
             dialog.close();
         });
-        applyBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY).set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
+        applyBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY).set(StyleConstants.CSS_COLOR,
+                StyleConstants.VAL_WHITE);
 
         buttons.add(clearBtn, applyBtn);
         content.add(buttons);
@@ -234,18 +242,14 @@ public class HistoryView extends VerticalLayout {
     private void applyFilters() {
         String searchText = searchField.getValue() != null ? searchField.getValue().toLowerCase().trim() : "";
 
-        List<HistoryItem> filtered = allItems.stream()
-                .filter(item -> matchesSearch(item, searchText))
-                .filter(this::matchesStatus)
-                .filter(this::matchesDateRange)
-                .toList();
+        List<HistoryItem> filtered = allItems.stream().filter(item -> matchesSearch(item, searchText))
+                .filter(this::matchesStatus).filter(this::matchesDateRange).toList();
 
         refreshCardsGrid(filtered);
     }
 
     private boolean matchesSearch(HistoryItem item, String searchText) {
-        return searchText.isEmpty()
-                || item.title.toLowerCase().contains(searchText)
+        return searchText.isEmpty() || item.title.toLowerCase().contains(searchText)
                 || item.company.toLowerCase().contains(searchText);
     }
 
@@ -282,19 +286,23 @@ public class HistoryView extends VerticalLayout {
         emptyState.getStyle().set(StyleConstants.CSS_PADDING, "60px 20px").set("gap", "16px");
 
         Icon emptyIcon = VaadinIcon.FILE_TEXT_O.create();
-        emptyIcon.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_WIDTH, "64px").set(StyleConstants.CSS_HEIGHT, "64px");
+        emptyIcon.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_WIDTH, "64px")
+                .set(StyleConstants.CSS_HEIGHT, "64px");
 
         H3 title = new H3(translationService.translate("history.noCoverLetters"));
-        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "600").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN,
-                "0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph description = new Paragraph(translationService.translate("history.generateFirst"));
-        description.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_MARGIN, "0");
+        description.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+                .set(StyleConstants.CSS_MARGIN, "0");
 
         Button createBtn = new Button(translationService.translate("history.createCoverLetter"),
                 VaadinIcon.PLUS.create());
-        createBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY).set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
-                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "12px 24px").set(StyleConstants.CSS_BORDER, "none")
+        createBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY)
+                .set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_PADDING, "12px 24px").set(StyleConstants.CSS_BORDER, "none")
                 .set(StyleConstants.CSS_MARGIN_TOP, "8px");
         createBtn.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(GeneratorWizardView.class)));
 
@@ -304,8 +312,10 @@ public class HistoryView extends VerticalLayout {
 
     private Div createHistoryCard(HistoryItem item) {
         Div card = new Div();
-        card.getStyle().set(StyleConstants.CSS_WIDTH, "280px").set(StyleConstants.CSS_BACKGROUND, BG_WHITE).set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)")
-                .set(StyleConstants.CSS_BORDER_RADIUS, "24px").set(StyleConstants.CSS_PADDING, "24px").set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER)
+        card.getStyle().set(StyleConstants.CSS_WIDTH, "280px").set(StyleConstants.CSS_BACKGROUND, BG_WHITE)
+                .set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)")
+                .set(StyleConstants.CSS_BORDER_RADIUS, "24px").set(StyleConstants.CSS_PADDING, "24px")
+                .set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER)
                 .set(StyleConstants.CSS_TRANSITION, "all 0.3s ease");
 
         // Header row: icon + status badge
@@ -314,11 +324,13 @@ public class HistoryView extends VerticalLayout {
         header.setWidthFull();
 
         Div iconContainer = new Div();
-        iconContainer.getStyle().set(StyleConstants.CSS_WIDTH, "48px").set(StyleConstants.CSS_HEIGHT, "48px").set(StyleConstants.CSS_BORDER_RADIUS, "16px")
-                .set(StyleConstants.CSS_BACKGROUND, BG_GRAY).set(StyleConstants.CSS_DISPLAY, "flex").set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER)
+        iconContainer.getStyle().set(StyleConstants.CSS_WIDTH, "48px").set(StyleConstants.CSS_HEIGHT, "48px")
+                .set(StyleConstants.CSS_BORDER_RADIUS, "16px").set(StyleConstants.CSS_BACKGROUND, BG_GRAY)
+                .set(StyleConstants.CSS_DISPLAY, "flex").set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER)
                 .set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER);
         Icon fileIcon = VaadinIcon.FILE_TEXT.create();
-        fileIcon.getStyle().set(StyleConstants.CSS_COLOR, PRIMARY).set(StyleConstants.CSS_WIDTH, "24px").set(StyleConstants.CSS_HEIGHT, "24px");
+        fileIcon.getStyle().set(StyleConstants.CSS_COLOR, PRIMARY).set(StyleConstants.CSS_WIDTH, "24px")
+                .set(StyleConstants.CSS_HEIGHT, "24px");
         iconContainer.add(fileIcon);
 
         Span statusBadge = createStatusBadge(item.status);
@@ -327,11 +339,12 @@ public class HistoryView extends VerticalLayout {
         header.expand(statusBadge);
 
         H3 title = new H3(item.title);
-        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "16px").set(StyleConstants.CSS_FONT_WEIGHT, "700").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN,
-                "16px 0 4px 0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "16px").set(StyleConstants.CSS_FONT_WEIGHT, "700")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "16px 0 4px 0");
 
         Paragraph company = new Paragraph(item.company);
-        company.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_MARGIN, StyleConstants.VAL_0_0_16PX);
+        company.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+                .set(StyleConstants.CSS_MARGIN, StyleConstants.VAL_0_0_16PX);
 
         // Footer: date + action buttons
         HorizontalLayout footer = new HorizontalLayout();
@@ -394,8 +407,8 @@ public class HistoryView extends VerticalLayout {
         card.add(header, title, company, footer);
 
         card.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
-            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 20px 25px -5px rgba(0,0,0,0.1)").set(StyleConstants.CSS_BORDER_COLOR,
-                    "rgba(0,0,0,0.1)");
+            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 20px 25px -5px rgba(0,0,0,0.1)")
+                    .set(StyleConstants.CSS_BORDER_COLOR, "rgba(0,0,0,0.1)");
         });
         card.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
             card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "none").set(StyleConstants.CSS_BORDER_COLOR, BG_HOVER);
@@ -431,7 +444,8 @@ public class HistoryView extends VerticalLayout {
             }
             confirm.close();
         });
-        deleteBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "#FF3B30").set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
+        deleteBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "#FF3B30").set(StyleConstants.CSS_COLOR,
+                StyleConstants.VAL_WHITE);
 
         buttons.add(cancelBtn, deleteBtn);
         content.add(buttons);
@@ -463,8 +477,9 @@ public class HistoryView extends VerticalLayout {
         if (file.exists()) {
             String text = extractTextFromFile(file);
             Pre pre = new Pre(text);
-            pre.getStyle().set(StyleConstants.CSS_WHITE_SPACE, "pre-wrap").set(StyleConstants.CSS_FONT_SIZE, "13px").set("line-height", "1.7")
-                    .set(StyleConstants.CSS_MARGIN, "0").set(StyleConstants.CSS_WIDTH, "100%");
+            pre.getStyle().set(StyleConstants.CSS_WHITE_SPACE, "pre-wrap").set(StyleConstants.CSS_FONT_SIZE, "13px")
+                    .set("line-height", "1.7").set(StyleConstants.CSS_MARGIN, "0")
+                    .set(StyleConstants.CSS_WIDTH, "100%");
             content.add(pre);
         } else {
             content.add(new Paragraph(translationService.translate(HISTORY_FILE_NOT_FOUND_KEY, item.filePath)));
@@ -482,7 +497,8 @@ public class HistoryView extends VerticalLayout {
             downloadCoverLetter(item);
             dialog.close();
         });
-        dlBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY).set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
+        dlBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY).set(StyleConstants.CSS_COLOR,
+                StyleConstants.VAL_WHITE);
 
         footer.add(closeBtn, dlBtn);
         wrapper.add(content, footer);
@@ -537,7 +553,7 @@ public class HistoryView extends VerticalLayout {
     private void downloadCoverLetter(HistoryItem item) {
         File file = new File(item.filePath);
         if (!file.exists()) {
-                Notification.show(translationService.translate(HISTORY_FILE_NOT_FOUND_KEY, item.filePath), 3000,
+            Notification.show(translationService.translate(HISTORY_FILE_NOT_FOUND_KEY, item.filePath), 3000,
                     Notification.Position.TOP_CENTER);
             return;
         }
@@ -547,7 +563,7 @@ public class HistoryView extends VerticalLayout {
                     : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             serveDownload(bytes, mimeType, file.getName());
         } catch (IOException ex) {
-                Notification.show(translationService.translate(HISTORY_FILE_NOT_FOUND_KEY, ex.getMessage()), 3000,
+            Notification.show(translationService.translate(HISTORY_FILE_NOT_FOUND_KEY, ex.getMessage()), 3000,
                     Notification.Position.TOP_CENTER);
             LOGGER.log(Level.SEVERE, "Download error", ex);
         }
@@ -702,14 +718,18 @@ public class HistoryView extends VerticalLayout {
 
     private Span createStatusBadge(String status) {
         Span badge = new Span(status);
-        badge.getStyle().set(StyleConstants.CSS_FONT_SIZE, "11px").set(StyleConstants.CSS_FONT_WEIGHT, "700").set(StyleConstants.CSS_PADDING, "4px 10px")
-                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_TEXT_TRANSFORM, "uppercase").set(StyleConstants.CSS_LETTER_SPACING, "0.05em");
+        badge.getStyle().set(StyleConstants.CSS_FONT_SIZE, "11px").set(StyleConstants.CSS_FONT_WEIGHT, "700")
+                .set(StyleConstants.CSS_PADDING, "4px 10px")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_TEXT_TRANSFORM, "uppercase").set(StyleConstants.CSS_LETTER_SPACING, "0.05em");
         switch (status) {
         case "SENT":
-            badge.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(52,199,89,0.1)").set(StyleConstants.CSS_COLOR, SUCCESS);
+            badge.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(52,199,89,0.1)").set(StyleConstants.CSS_COLOR,
+                    SUCCESS);
             break;
         case StyleConstants.VAL_FINALIZED:
-            badge.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,122,255,0.1)").set(StyleConstants.CSS_COLOR, PRIMARY);
+            badge.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,122,255,0.1)").set(StyleConstants.CSS_COLOR,
+                    PRIMARY);
             break;
         default:
             badge.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_HOVER).set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
@@ -719,20 +739,24 @@ public class HistoryView extends VerticalLayout {
 
     private Button createIconButton(VaadinIcon icon) {
         Button btn = new Button(icon.create());
-        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT).set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_PADDING, "6px")
+        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT)
+                .set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_PADDING, "6px")
                 .set(StyleConstants.CSS_BORDER_RADIUS, "8px").set(StyleConstants.CSS_BORDER, "none");
-        btn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
-                e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_HOVER).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY));
+        btn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> btn.getStyle()
+                .set(StyleConstants.CSS_BACKGROUND, BG_HOVER).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY));
         btn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE,
-                e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT).set(StyleConstants.CSS_COLOR, TEXT_SECONDARY));
+                e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT)
+                        .set(StyleConstants.CSS_COLOR, TEXT_SECONDARY));
         return btn;
     }
 
     private Button createLoadMoreButton() {
         Button btn = new Button(translationService.translate("history.loadMore"));
-        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT).set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_FONT_WEIGHT, "500")
-                .set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_BORDER, "1px dashed rgba(0,0,0,0.15)").set(StyleConstants.CSS_BORDER_RADIUS, "12px")
-                .set(StyleConstants.CSS_PADDING, "16px").set(StyleConstants.CSS_WIDTH, "100%").set(StyleConstants.CSS_MARGIN_TOP, "8px");
+        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT)
+                .set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_FONT_WEIGHT, "500")
+                .set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_BORDER, "1px dashed rgba(0,0,0,0.15)")
+                .set(StyleConstants.CSS_BORDER_RADIUS, "12px").set(StyleConstants.CSS_PADDING, "16px")
+                .set(StyleConstants.CSS_WIDTH, "100%").set(StyleConstants.CSS_MARGIN_TOP, "8px");
         return btn;
     }
 

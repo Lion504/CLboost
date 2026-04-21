@@ -28,16 +28,14 @@ public class DatabaseMigration {
                 "    PRIMARY KEY (profile_pin, locale_code),",
                 "    FOREIGN KEY (profile_pin) REFERENCES profile(Pin) ON DELETE CASCADE,",
                 "    FOREIGN KEY (locale_code) REFERENCES locale(locale_code) ON DELETE RESTRICT,",
-                "    INDEX idx_profile_locale (profile_pin, locale_code)",
-                ENGINE_CHARSET };
+                "    INDEX idx_profile_locale (profile_pin, locale_code)", ENGINE_CHARSET };
 
         String[] createSystemMessageTranslationTable = { "CREATE TABLE IF NOT EXISTS system_message_translation (",
                 "    message_key VARCHAR(128) NOT NULL,", "    locale_code CHAR(5) NOT NULL,",
                 "    message_content TEXT NOT NULL,",
                 "    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,",
                 "    PRIMARY KEY (message_key, locale_code),",
-                "    FOREIGN KEY (locale_code) REFERENCES locale(locale_code) ON DELETE RESTRICT",
-                ENGINE_CHARSET };
+                "    FOREIGN KEY (locale_code) REFERENCES locale(locale_code) ON DELETE RESTRICT", ENGINE_CHARSET };
 
         String[] insertLocales = {
                 "INSERT IGNORE INTO locale (locale_code, language_name, native_name, rtl_direction, sort_order) VALUES",

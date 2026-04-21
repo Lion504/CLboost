@@ -1,6 +1,7 @@
 package com.clbooster.app.views;
 
 import com.clbooster.app.views.util.StyleConstants;
+import com.clbooster.app.views.util.ViewComponents;
 
 import jakarta.annotation.security.PermitAll;
 import com.clbooster.aiservice.AIService;
@@ -60,8 +61,8 @@ public class EditorView extends HorizontalLayout {
 
     private static final Logger LOGGER = Logger.getLogger(EditorView.class.getName());
 
-        private final transient DocumentService documentService;
-        private final transient AIService aiService;
+    private final transient DocumentService documentService;
+    private final transient AIService aiService;
 
     private TextArea editorArea;
     private String jobTitle;
@@ -207,11 +208,12 @@ public class EditorView extends HorizontalLayout {
         titleGroup.setSpacing(false);
 
         H2 title = new H2(jobTitle);
-        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "700").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN,
-                "0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "700")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph subtitle = new Paragraph(companyName + " • " + selectedTone + " tone");
-        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_MARGIN, "0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+                .set(StyleConstants.CSS_MARGIN, "0");
 
         titleGroup.add(title, subtitle);
         leftGroup.add(backBtn, titleGroup);
@@ -223,12 +225,14 @@ public class EditorView extends HorizontalLayout {
 
         // Save as DOCX button
         Button saveDocxBtn = new Button("Save DOCX", VaadinIcon.DOWNLOAD.create());
-        saveDocxBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
-                .set(StyleConstants.CSS_FONT_WEIGHT, "600").set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "10px 20px");
+        saveDocxBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_PADDING, "10px 20px");
         saveDocxBtn.addClickListener(e -> downloadAsDocx());
 
         // Export PDF button
-        Button exportPdfBtn = createPrimaryButton("Export PDF", VaadinIcon.FILE_TEXT);
+        Button exportPdfBtn = ViewComponents.createPrimaryButton("Export PDF", VaadinIcon.FILE_TEXT);
         exportPdfBtn.addClickListener(e -> downloadAsPdf());
 
         actions.add(saveDocxBtn, exportPdfBtn);
@@ -242,8 +246,9 @@ public class EditorView extends HorizontalLayout {
         HorizontalLayout toolbar = new HorizontalLayout();
         toolbar.setWidthFull();
         toolbar.setAlignItems(FlexComponent.Alignment.CENTER);
-        toolbar.getStyle().set("gap", "8px").set(StyleConstants.CSS_PADDING, "12px 16px").set(StyleConstants.CSS_BACKGROUND, BG_GRAY)
-                .set(StyleConstants.CSS_BORDER_RADIUS, "12px").set(StyleConstants.CSS_MARGIN_BOTTOM, "8px");
+        toolbar.getStyle().set("gap", "8px").set(StyleConstants.CSS_PADDING, "12px 16px")
+                .set(StyleConstants.CSS_BACKGROUND, BG_GRAY).set(StyleConstants.CSS_BORDER_RADIUS, "12px")
+                .set(StyleConstants.CSS_MARGIN_BOTTOM, "8px");
 
         // Wrap selected text in markers (plain-text simulation)
         Button boldBtn = createToolbarButton(VaadinIcon.BOLD, "Bold");
@@ -280,11 +285,14 @@ public class EditorView extends HorizontalLayout {
         });
 
         Div divider = new Div();
-        divider.getStyle().set(StyleConstants.CSS_WIDTH, "1px").set(StyleConstants.CSS_HEIGHT, "24px").set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.1)");
+        divider.getStyle().set(StyleConstants.CSS_WIDTH, "1px").set(StyleConstants.CSS_HEIGHT, "24px")
+                .set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.1)");
 
         Button regenBtn = new Button("Regenerate", VaadinIcon.MAGIC.create());
-        regenBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY + "15").set(StyleConstants.CSS_COLOR, PRIMARY).set(StyleConstants.CSS_FONT_WEIGHT, "600")
-                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "8px 16px").set(StyleConstants.CSS_BORDER, "none");
+        regenBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY + "15").set(StyleConstants.CSS_COLOR, PRIMARY)
+                .set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_PADDING, "8px 16px").set(StyleConstants.CSS_BORDER, "none");
         regenBtn.addClickListener(e -> regenerateLetter());
 
         toolbar.add(boldBtn, italicBtn, underlineBtn, listBtn, copyBtn, clearBtn, divider, regenBtn);
@@ -308,10 +316,13 @@ public class EditorView extends HorizontalLayout {
     private Button createToolbarButton(VaadinIcon icon, String tooltip) {
         Button btn = new Button(icon.create());
         btn.getElement().setAttribute("title", tooltip);
-        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT).set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_BORDER, "none")
+        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT)
+                .set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_BORDER, "none")
                 .set(StyleConstants.CSS_PADDING, "8px").set(StyleConstants.CSS_BORDER_RADIUS, "8px");
-        btn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)"));
-        btn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT));
+        btn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
+                e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)"));
+        btn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE,
+                e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT));
         return btn;
     }
 
@@ -371,9 +382,8 @@ public class EditorView extends HorizontalLayout {
     }
 
     private void serveDownload(byte[] bytes, String mimeType, String fileName) {
-        InputStreamDownloadHandler downloadHandler = new InputStreamDownloadHandler(e ->
-                new DownloadResponse(new ByteArrayInputStream(bytes), fileName,
-                        mimeType, bytes.length));
+        InputStreamDownloadHandler downloadHandler = new InputStreamDownloadHandler(
+                e -> new DownloadResponse(new ByteArrayInputStream(bytes), fileName, mimeType, bytes.length));
 
         Anchor anchor = new Anchor(downloadHandler, "");
         anchor.getElement().setAttribute("download", fileName);
@@ -505,16 +515,6 @@ public class EditorView extends HorizontalLayout {
         });
         t.setDaemon(true);
         t.start();
-    }
-
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private Button createPrimaryButton(String text, VaadinIcon icon) {
-        Button btn = new Button(text, icon.create());
-        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY).set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
-                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "10px 24px").set(StyleConstants.CSS_BORDER, "none")
-                .set(StyleConstants.CSS_BOX_SHADOW, "0 10px 15px -3px rgba(0,122,255,0.3)");
-        return btn;
     }
 
     private String generateCoverLetter() {

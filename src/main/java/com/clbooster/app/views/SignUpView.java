@@ -77,10 +77,8 @@ public class SignUpView extends VerticalLayout {
         Div card = AuthComponents.createCard();
 
         // Back link
-        HorizontalLayout backLink = AuthComponents.createBackLink(
-            translationService.translate("landing.backToHome"), 
-            () -> getUI().ifPresent(ui -> ui.navigate(""))
-        );
+        HorizontalLayout backLink = AuthComponents.createBackLink(translationService.translate("landing.backToHome"),
+                () -> getUI().ifPresent(ui -> ui.navigate("")));
 
         // Logo icon
         Div logoIcon = AuthComponents.createLogoIcon();
@@ -290,10 +288,6 @@ public class SignUpView extends VerticalLayout {
         add(card);
     }
 
-    
-
-    
-
     private void handleRegistration() {
         String firstName = firstNameField.getValue();
         String lastName = lastNameField.getValue();
@@ -335,10 +329,6 @@ public class SignUpView extends VerticalLayout {
             AuthComponents.showError("Registration failed. Username or email may already be registered.");
         }
     }
-
-    
-
-    
 
     private void updatePasswordStrength(String password) {
         if (password == null || password.isEmpty()) {
@@ -428,8 +418,6 @@ public class SignUpView extends VerticalLayout {
         return Math.min(strength, 4);
     }
 
-
-
     private void showTermsOfServiceDialog() {
         H4 section1 = new H4(translationService.translate("terms.section1.title"));
         Paragraph text1 = new Paragraph(translationService.translate("terms.section1.text"));
@@ -450,8 +438,8 @@ public class SignUpView extends VerticalLayout {
         H4 section5 = new H4(translationService.translate("terms.section5.title"));
         Paragraph text5 = new Paragraph(translationService.translate("terms.section5.text"));
 
-        createInfoDialog("terms.title", "terms.intro", 
-                section1, text1, section2, text2, list2, section3, text3, section4, text4, section5, text5).open();
+        createInfoDialog("terms.title", "terms.intro", section1, text1, section2, text2, list2, section3, text3,
+                section4, text4, section5, text5).open();
     }
 
     private void showPrivacyPolicyDialog() {
@@ -487,9 +475,8 @@ public class SignUpView extends VerticalLayout {
         H4 section7 = new H4(translationService.translate("privacy.section7.title"));
         Paragraph text7 = new Paragraph(translationService.translate("privacy.section7.text"));
 
-        createInfoDialog("privacy.title", "privacy.intro", 
-                section1, text1, list1, section2, text2, list2, section3, text3, section4, text4,
-                section5, text5, section6, text6, section7, text7).open();
+        createInfoDialog("privacy.title", "privacy.intro", section1, text1, list1, section2, text2, list2, section3,
+                text3, section4, text4, section5, text5, section6, text6, section7, text7).open();
     }
 
     private Dialog createInfoDialog(String titleKey, String introKey, com.vaadin.flow.component.Component... sections) {
@@ -509,7 +496,7 @@ public class SignUpView extends VerticalLayout {
 
         content.add(title, intro);
         content.add(sections);
-        
+
         content.getStyle().set(StyleConstants.CSS_OVERFLOW, "auto");
         content.setHeight("400px");
 
@@ -519,7 +506,7 @@ public class SignUpView extends VerticalLayout {
 
         dialog.add(content);
         dialog.getFooter().add(closeButton);
-        
+
         return dialog;
     }
 }

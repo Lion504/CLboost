@@ -121,7 +121,7 @@ public class GeneratorWizardView extends VerticalLayout {
     private static final String[] AVAILABLE_SKILLS = { "React", "TypeScript", "Node.js", "UI Design", "GraphQL", "AWS",
             "Agile", "Leadership" };
 
-        private final transient AIService aiService;
+    private final transient AIService aiService;
 
     public GeneratorWizardView(AIService aiService) {
         this.aiService = aiService;
@@ -406,28 +406,23 @@ public class GeneratorWizardView extends VerticalLayout {
 
     private void buildStep2Header(VerticalLayout layout) {
         H1 title = new H1(translationService.translate("generator.step2.title"));
-        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "36px")
-             .set(StyleConstants.CSS_FONT_WEIGHT, "700")
-             .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
-             .set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER)
-             .set(StyleConstants.CSS_MARGIN, "0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "36px").set(StyleConstants.CSS_FONT_WEIGHT, "700")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
+                .set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER).set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph subtitle = new Paragraph(translationService.translate("generator.step2.description"));
-        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px")
-                .set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
                 .set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER)
                 .set(StyleConstants.CSS_MARGIN, StyleConstants.VAL_0_0_16PX);
-        
+
         layout.add(title, subtitle);
     }
 
     private void buildStep2SkillsGrid(VerticalLayout layout) {
         skillsGrid = new Div();
         skillsGrid.getStyle().set(StyleConstants.CSS_DISPLAY, "grid")
-                .set("grid-template-columns", "repeat(auto-fill, minmax(140px, 1fr))")
-                .set("gap", "16px")
-                .set(StyleConstants.CSS_WIDTH, "100%")
-                .set(StyleConstants.CSS_MAX_WIDTH, "640px");
+                .set("grid-template-columns", "repeat(auto-fill, minmax(140px, 1fr))").set("gap", "16px")
+                .set(StyleConstants.CSS_WIDTH, "100%").set(StyleConstants.CSS_MAX_WIDTH, "640px");
 
         skillButtons.clear();
         for (String skill : AVAILABLE_SKILLS) {
@@ -440,11 +435,12 @@ public class GeneratorWizardView extends VerticalLayout {
 
     private void buildSavedResumeSection(VerticalLayout layout) {
         java.util.Map<String, java.io.File> resumeFileMap = fetchUserResumes();
-        
+
         Div savedResumeCard = new Div();
-        savedResumeCard.getStyle().set(StyleConstants.CSS_BACKGROUND, GREEN_LIGHT).set(StyleConstants.CSS_BORDER, "1.5px solid " + GREEN)
-                .set(StyleConstants.CSS_BORDER_RADIUS, "16px").set(StyleConstants.CSS_PADDING, "16px 24px").set(StyleConstants.CSS_WIDTH, "100%").set(StyleConstants.CSS_MAX_WIDTH, MAX_WIDTH_600PX)
-                .set(StyleConstants.CSS_MARGIN_TOP, "16px");
+        savedResumeCard.getStyle().set(StyleConstants.CSS_BACKGROUND, GREEN_LIGHT)
+                .set(StyleConstants.CSS_BORDER, "1.5px solid " + GREEN).set(StyleConstants.CSS_BORDER_RADIUS, "16px")
+                .set(StyleConstants.CSS_PADDING, "16px 24px").set(StyleConstants.CSS_WIDTH, "100%")
+                .set(StyleConstants.CSS_MAX_WIDTH, MAX_WIDTH_600PX).set(StyleConstants.CSS_MARGIN_TOP, "16px");
 
         if (!resumeFileMap.isEmpty()) {
             HorizontalLayout savedRow = new HorizontalLayout();
@@ -483,7 +479,8 @@ public class GeneratorWizardView extends VerticalLayout {
                     }
                 }
             }
-        } catch (Exception ignored) { /* Ignored */ }
+        } catch (Exception ignored) {
+            /* Ignored */ }
         return resumeFileMap;
     }
 
@@ -492,8 +489,9 @@ public class GeneratorWizardView extends VerticalLayout {
             java.io.File singleFile = resumeFileMap.values().iterator().next();
             String singleName = resumeFileMap.keySet().iterator().next();
             Span singleLabel = new Span("\uD83D\uDCCE " + singleName);
-            singleLabel.getStyle().set("flex", "1").set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_FONT_WEIGHT, "600")
-                    .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_OVERFLOW, "hidden").set("text-overflow", "ellipsis")
+            singleLabel.getStyle().set("flex", "1").set(StyleConstants.CSS_FONT_SIZE, "14px")
+                    .set(StyleConstants.CSS_FONT_WEIGHT, "600").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
+                    .set(StyleConstants.CSS_OVERFLOW, "hidden").set("text-overflow", "ellipsis")
                     .set(StyleConstants.CSS_WHITE_SPACE, VAL_NOWRAP);
             Button useBtn = createUseResumeButton();
             useBtn.setText(translationService.translate("generator.step2.useResume"));
@@ -506,15 +504,17 @@ public class GeneratorWizardView extends VerticalLayout {
             resumeSelect.setValue(resumeFileMap.keySet().iterator().next());
             resumeSelect.setLabel(null);
             resumeSelect.getStyle().set("flex", "1").set(StyleConstants.CSS_MIN_WIDTH, "0");
-            resumeSelect.getElement().setAttribute("title", translationService.translate("generator.step2.selectSavedResume"));
+            resumeSelect.getElement().setAttribute("title",
+                    translationService.translate("generator.step2.selectSavedResume"));
             Span selectHint = new Span("\uD83D\uDCCE " + translationService.translate("generator.step2.savedResumes"));
-            selectHint.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_FONT_WEIGHT, "600").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
-                    .set(StyleConstants.CSS_WHITE_SPACE, VAL_NOWRAP);
+            selectHint.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                    .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_WHITE_SPACE, VAL_NOWRAP);
             Button useBtn = createUseResumeButton();
             useBtn.setText(translationService.translate("generator.step2.useSelected"));
             useBtn.addClickListener(e -> {
                 String selected = resumeSelect.getValue();
-                if (selected != null && resumeFileMap.get(selected) != null) loadResumeSkills(resumeFileMap.get(selected));
+                if (selected != null && resumeFileMap.get(selected) != null)
+                    loadResumeSkills(resumeFileMap.get(selected));
             });
             savedRow.add(selectHint, resumeSelect, useBtn);
             savedRow.expand(resumeSelect);
@@ -523,8 +523,10 @@ public class GeneratorWizardView extends VerticalLayout {
 
     private Button createUseResumeButton() {
         Button useBtn = new Button(VaadinIcon.CHECK_CIRCLE.create());
-        useBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, GREEN).set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
-                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_BORDER, "none").set(StyleConstants.CSS_WHITE_SPACE, VAL_NOWRAP);
+        useBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, GREEN)
+                .set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_BORDER, "none")
+                .set(StyleConstants.CSS_WHITE_SPACE, VAL_NOWRAP);
         return useBtn;
     }
 
@@ -534,7 +536,8 @@ public class GeneratorWizardView extends VerticalLayout {
                 .set(StyleConstants.CSS_BORDER, "2px dashed rgba(0,0,0,0.1)")
                 .set(StyleConstants.CSS_BORDER_RADIUS, "24px").set(StyleConstants.CSS_PADDING, "32px")
                 .set(StyleConstants.CSS_WIDTH, "100%").set(StyleConstants.CSS_MAX_WIDTH, MAX_WIDTH_600PX)
-                .set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER).set(StyleConstants.CSS_MARGIN_TOP, "16px");
+                .set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER)
+                .set(StyleConstants.CSS_MARGIN_TOP, "16px");
 
         Icon fileIcon = VaadinIcon.FILE_SEARCH.create();
         fileIcon.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_WIDTH, "32px")
@@ -552,23 +555,26 @@ public class GeneratorWizardView extends VerticalLayout {
         com.vaadin.flow.component.upload.Upload upload = new com.vaadin.flow.component.upload.Upload();
         upload.setReceiver(buffer);
         upload.setDropAllowed(false);
-        upload.setAcceptedFileTypes("application/pdf", ".pdf",
-            MIME_DOCX, DOCX_EXTENSION,
-                "application/msword", ".doc");
+        upload.setAcceptedFileTypes("application/pdf", ".pdf", MIME_DOCX, DOCX_EXTENSION, "application/msword", ".doc");
         upload.setMaxFiles(1);
         upload.setMaxFileSize(10 * 1024 * 1024);
         upload.setUploadButton(new Button(translationService.translate("generator.step2.uploadFile")));
         upload.setDropLabel(new Span(""));
 
         Div fileTag = new Div();
-        fileTag.getStyle().set(StyleConstants.CSS_DISPLAY, "inline-flex").set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER).set("gap", "6px")
-                .set(StyleConstants.CSS_BACKGROUND, GREEN_LIGHT).set(StyleConstants.CSS_COLOR, "#2e7d32").set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_FONT_WEIGHT, "600")
-                .set(StyleConstants.CSS_PADDING, "6px 14px").set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_MARGIN_TOP, "12px")
-                .set(StyleConstants.CSS_MAX_WIDTH, "100%").set(StyleConstants.CSS_OVERFLOW, "hidden").set("text-overflow", "ellipsis")
+        fileTag.getStyle().set(StyleConstants.CSS_DISPLAY, "inline-flex")
+                .set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER).set("gap", "6px")
+                .set(StyleConstants.CSS_BACKGROUND, GREEN_LIGHT).set(StyleConstants.CSS_COLOR, "#2e7d32")
+                .set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_PADDING, "6px 14px")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_MARGIN_TOP, "12px").set(StyleConstants.CSS_MAX_WIDTH, "100%")
+                .set(StyleConstants.CSS_OVERFLOW, "hidden").set("text-overflow", "ellipsis")
                 .set(StyleConstants.CSS_WHITE_SPACE, VAL_NOWRAP);
         fileTag.setVisible(false);
 
-        upload.addSucceededListener((ComponentEventListener<SucceededEvent>) event -> handleUploadSucceeded(event, buffer, fileTag, importTitle, importDesc));
+        upload.addSucceededListener((ComponentEventListener<SucceededEvent>) event -> handleUploadSucceeded(event,
+                buffer, fileTag, importTitle, importDesc));
         upload.addFailedListener((ComponentEventListener<FailedEvent>) event -> handleUploadFailed());
         upload.addFileRejectedListener(event -> {
             LOGGER.warning("[UPLOAD REJECTED] Cannot upload file");
@@ -578,10 +584,10 @@ public class GeneratorWizardView extends VerticalLayout {
         importCard.add(fileIcon, importTitle, importDesc, upload, fileTag);
         layout.add(importCard);
     }
-    
+
     private void handleUploadSucceeded(com.vaadin.flow.component.upload.SucceededEvent event,
-                                       com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer buffer,
-                                       Div fileTag, H3 importTitle, Paragraph importDesc) {
+            com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer buffer, Div fileTag, H3 importTitle,
+            Paragraph importDesc) {
         String fileName = event.getFileName();
         LOGGER.log(Level.INFO, "[UPLOAD] File upload succeeded: {0}", fileName);
 
@@ -604,16 +610,19 @@ public class GeneratorWizardView extends VerticalLayout {
             }
             Parser parser = new Parser();
             String resumeText = parser.parseFileToJson(tempFile.getAbsolutePath());
-            
+
             try {
                 AuthenticationService authServiceLoc = new AuthenticationService();
                 com.clbooster.app.backend.service.profile.User u = authServiceLoc.getCurrentUser();
                 if (u != null) {
                     java.nio.file.Path resumeDir = java.nio.file.Paths.get(UPLOADS_DIR, RESUMES_DIR);
-                    if (!java.nio.file.Files.exists(resumeDir)) java.nio.file.Files.createDirectories(resumeDir);
+                    if (!java.nio.file.Files.exists(resumeDir))
+                        java.nio.file.Files.createDirectories(resumeDir);
                     String safeFileName = originalFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
-                    java.nio.file.Path destFile = resumeDir.resolve(u.getPin() + "_" + System.currentTimeMillis() + "_" + safeFileName);
-                    java.nio.file.Files.copy(tempFile.toPath(), destFile, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    java.nio.file.Path destFile = resumeDir
+                            .resolve(u.getPin() + "_" + System.currentTimeMillis() + "_" + safeFileName);
+                    java.nio.file.Files.copy(tempFile.toPath(), destFile,
+                            java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                 }
             } catch (Exception persistenceEx) {
                 LOGGER.warning("[UPLOAD] Failed to persist file, continuing: " + persistenceEx.getMessage());
@@ -629,8 +638,9 @@ public class GeneratorWizardView extends VerticalLayout {
             importTitle.getStyle().set(StyleConstants.CSS_COLOR, "#2e7d32");
             importDesc.setVisible(false);
 
-            Notification.show(translationService.translate("generator.step2.parsing"), 1500, Notification.Position.TOP_CENTER);
-            
+            Notification.show(translationService.translate("generator.step2.parsing"), 1500,
+                    Notification.Position.TOP_CENTER);
+
             getUI().ifPresent(ui -> ui.access(() -> loadResumeSkills(tempFile)));
 
         } catch (Exception ex) {
@@ -638,9 +648,9 @@ public class GeneratorWizardView extends VerticalLayout {
         }
     }
 
-    
     private void showUploadFailedNotification() {
-        Notification.show(translationService.translate("generator.step2.uploadFailed"), 3000, Notification.Position.TOP_CENTER);
+        Notification.show(translationService.translate("generator.step2.uploadFailed"), 3000,
+                Notification.Position.TOP_CENTER);
     }
 
     private void handleUploadFailed() {
@@ -1178,11 +1188,12 @@ public class GeneratorWizardView extends VerticalLayout {
         titleGroup.setPadding(false);
         titleGroup.setSpacing(false);
         H1 jobTitleLabel = new H1(jobTitle);
-        jobTitleLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "700").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
-                .set(StyleConstants.CSS_MARGIN, "0");
+        jobTitleLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "700")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "0");
         Paragraph subLabel = new Paragraph(
                 companyName + " \u2022 " + translationService.translate("history.tone") + ": " + selectedTone);
-        subLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_MARGIN, "0");
+        subLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+                .set(StyleConstants.CSS_MARGIN, "0");
         titleGroup.add(jobTitleLabel, subLabel);
 
         HorizontalLayout actions = new HorizontalLayout();
@@ -1192,13 +1203,17 @@ public class GeneratorWizardView extends VerticalLayout {
         Button saveDocxBtn = new Button(translationService.translate("generator.step5.saveDocx"),
                 VaadinIcon.DOWNLOAD.create());
         saveDocxBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_SOFT).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
-                .set(StyleConstants.CSS_FONT_WEIGHT, "600").set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "10px 20px");
+                .set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_PADDING, "10px 20px");
         saveDocxBtn.addClickListener(e -> downloadEditorAsDocx());
 
         Button exportPdfBtn = new Button(translationService.translate("generator.step5.exportPdf"),
                 VaadinIcon.FILE_TEXT.create());
-        exportPdfBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY).set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
-                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "10px 24px").set(StyleConstants.CSS_BORDER, "none")
+        exportPdfBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY)
+                .set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_PADDING, "10px 24px").set(StyleConstants.CSS_BORDER, "none")
                 .set(StyleConstants.CSS_BOX_SHADOW, "0 10px 15px -3px rgba(0,122,255,0.3)");
         exportPdfBtn.addClickListener(e -> downloadEditorAsPdf());
 
@@ -1210,8 +1225,8 @@ public class GeneratorWizardView extends VerticalLayout {
         HorizontalLayout toolbar = new HorizontalLayout();
         toolbar.setWidthFull();
         toolbar.setAlignItems(FlexComponent.Alignment.CENTER);
-        toolbar.getStyle().set("gap", "8px").set(StyleConstants.CSS_PADDING, "12px 16px").set(StyleConstants.CSS_BACKGROUND, BG_GRAY).set(StyleConstants.CSS_BORDER_RADIUS,
-                "12px");
+        toolbar.getStyle().set("gap", "8px").set(StyleConstants.CSS_PADDING, "12px 16px")
+                .set(StyleConstants.CSS_BACKGROUND, BG_GRAY).set(StyleConstants.CSS_BORDER_RADIUS, "12px");
 
         Button boldBtn = createEditorToolbarButton(VaadinIcon.BOLD,
                 translationService.translate("editor.toolbar.bold"));
@@ -1241,12 +1256,15 @@ public class GeneratorWizardView extends VerticalLayout {
         });
 
         Div divider = new Div();
-        divider.getStyle().set(StyleConstants.CSS_WIDTH, "1px").set(StyleConstants.CSS_HEIGHT, "24px").set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.1)");
+        divider.getStyle().set(StyleConstants.CSS_WIDTH, "1px").set(StyleConstants.CSS_HEIGHT, "24px")
+                .set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.1)");
 
         Button regenBtn = new Button(translationService.translate("editor.toolbar.regenerate"),
                 VaadinIcon.MAGIC.create());
-        regenBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY + "15").set(StyleConstants.CSS_COLOR, PRIMARY).set(StyleConstants.CSS_FONT_WEIGHT, "600")
-                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_PADDING, "8px 16px").set(StyleConstants.CSS_BORDER, "none");
+        regenBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY + "15").set(StyleConstants.CSS_COLOR, PRIMARY)
+                .set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_PADDING, "8px 16px").set(StyleConstants.CSS_BORDER, "none");
         regenBtn.addClickListener(e -> {
             if (editorTextArea == null)
                 return;
@@ -1270,9 +1288,10 @@ public class GeneratorWizardView extends VerticalLayout {
         editorTextArea = new TextArea();
         editorTextArea.setWidthFull();
         editorTextArea.setMinHeight("460px");
-        editorTextArea.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE).set(StyleConstants.CSS_BORDER, BORDER_LIGHT)
-                .set(StyleConstants.CSS_BORDER_RADIUS, "16px").set(StyleConstants.CSS_PADDING, "24px").set(StyleConstants.CSS_FONT_SIZE, "15px").set("line-height", "1.8")
-                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
+        editorTextArea.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE)
+                .set(StyleConstants.CSS_BORDER, BORDER_LIGHT).set(StyleConstants.CSS_BORDER_RADIUS, "16px")
+                .set(StyleConstants.CSS_PADDING, "24px").set(StyleConstants.CSS_FONT_SIZE, "15px")
+                .set("line-height", "1.8").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
                 .set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif");
         editorTextArea.setValue("\u23f3 " + translationService.translate("generator.notif.generating"));
         editorTextArea.setEnabled(false);
@@ -1310,10 +1329,13 @@ public class GeneratorWizardView extends VerticalLayout {
     private Button createEditorToolbarButton(VaadinIcon icon, String tooltip) {
         Button btn = new Button(icon.create());
         btn.getElement().setAttribute("title", tooltip);
-        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT).set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_BORDER, "none")
+        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT)
+                .set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_BORDER, "none")
                 .set(StyleConstants.CSS_PADDING, "8px").set(StyleConstants.CSS_BORDER_RADIUS, "8px");
-        btn.getElement().addEventListener("mouseenter", e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_SOFT));
-        btn.getElement().addEventListener("mouseleave", e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT));
+        btn.getElement().addEventListener("mouseenter",
+                e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_SOFT));
+        btn.getElement().addEventListener("mouseleave",
+                e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT));
         return btn;
     }
 
@@ -1413,9 +1435,7 @@ public class GeneratorWizardView extends VerticalLayout {
             return;
         }
 
-        ctx.append("\nSelected Skills for this application: ")
-                .append(String.join(", ", selectedSkills))
-                .append("\n");
+        ctx.append("\nSelected Skills for this application: ").append(String.join(", ", selectedSkills)).append("\n");
         LOGGER.info("buildCandidateContext: no resume found, using wizard skills");
     }
 
@@ -1505,7 +1525,7 @@ public class GeneratorWizardView extends VerticalLayout {
             if (!Files.exists(dir))
                 Files.createDirectories(dir);
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-                String fileName = userPin + "_" + timestamp + "_" + sanitizeEditorFilename(companyName) + "_"
+            String fileName = userPin + "_" + timestamp + "_" + sanitizeEditorFilename(companyName) + "_"
                     + sanitizeEditorFilename(jobTitle) + DOCX_EXTENSION;
             Path filePath = dir.resolve(fileName);
             new Exporter().saveAsDoc(content, filePath.toString());
@@ -1531,13 +1551,12 @@ public class GeneratorWizardView extends VerticalLayout {
             if (!Files.exists(dir))
                 Files.createDirectories(dir);
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-                String fileName = sanitizeEditorFilename(companyName) + "_" + sanitizeEditorFilename(jobTitle) + "_"
+            String fileName = sanitizeEditorFilename(companyName) + "_" + sanitizeEditorFilename(jobTitle) + "_"
                     + timestamp + DOCX_EXTENSION;
             Path outPath = dir.resolve(fileName);
             new Exporter().saveAsDoc(content, outPath.toString());
             byte[] bytes = Files.readAllBytes(outPath);
-            serveEditorDownload(bytes, MIME_DOCX,
-                    fileName);
+            serveEditorDownload(bytes, MIME_DOCX, fileName);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "DOCX export failed: " + ex.getMessage(), ex);
             Notification.show(translationService.translate("generator.notif.exportFailed", ex.getMessage()), 3000,
@@ -1638,7 +1657,7 @@ public class GeneratorWizardView extends VerticalLayout {
         for (int p = 0; p < pages.size(); p++) {
             StringBuilder stream = new StringBuilder();
             stream.append("BT /F1 ").append(fontSize).append(" Tf ").append(leftMargin).append(" ").append(topMargin)
-                .append(" Td ").append(lineHeight).append(" TL\n");
+                    .append(" Td ").append(lineHeight).append(" TL\n");
             for (String line : pages.get(p)) {
                 String safe = line.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)");
                 stream.append("(").append(safe).append(") Tj T*\n");

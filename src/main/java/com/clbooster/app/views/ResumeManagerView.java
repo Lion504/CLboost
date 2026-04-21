@@ -67,7 +67,7 @@ public class ResumeManagerView extends VerticalLayout {
 
     private static final Logger LOGGER = Logger.getLogger(ResumeManagerView.class.getName());
 
-        private final transient DocumentService documentService;
+    private final transient DocumentService documentService;
     private final TranslationService translationService;
     private List<ResumeData> resumes = new ArrayList<>();
     private VerticalLayout resumeListContainer;
@@ -179,8 +179,8 @@ public class ResumeManagerView extends VerticalLayout {
         HorizontalLayout tabToggle = new HorizontalLayout();
         tabToggle.setPadding(false);
         tabToggle.setSpacing(false);
-        tabToggle.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY).set(StyleConstants.CSS_BORDER_RADIUS, "12px").set(StyleConstants.CSS_PADDING, "4px")
-                .set("gap", "4px").set(StyleConstants.CSS_WIDTH, "fit-content");
+        tabToggle.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY).set(StyleConstants.CSS_BORDER_RADIUS, "12px")
+                .set(StyleConstants.CSS_PADDING, "4px").set("gap", "4px").set(StyleConstants.CSS_WIDTH, "fit-content");
 
         Button uploadTabBtn = new Button(translationService.translate("resume.uploadFile"));
         Button pasteTabBtn = new Button(translationService.translate("resume.pasteText"));
@@ -285,39 +285,46 @@ public class ResumeManagerView extends VerticalLayout {
 
         // Accept all three formats - use extensions only for broader browser
         // compatibility
-        upload.setAcceptedFileTypes(MIME_APPLICATION_PDF, ".pdf",
-            MIME_APPLICATION_DOCX, ".docx",
-                "application/msword", ".doc", "text/plain", "text/x-plain", "application/text", ".txt");
+        upload.setAcceptedFileTypes(MIME_APPLICATION_PDF, ".pdf", MIME_APPLICATION_DOCX, ".docx", "application/msword",
+                ".doc", "text/plain", "text/x-plain", "application/text", ".txt");
         upload.setMaxFileSize(10 * 1024 * 1024);
         upload.setMaxFiles(1);
         upload.setDropAllowed(true);
 
         // Style upload component to fill the zone visually — don't hide it
-        upload.getStyle().set("position", "absolute").set("inset", "0").set(StyleConstants.CSS_OPACITY, "0").set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER)
-                .set(StyleConstants.CSS_WIDTH, "100%").set(StyleConstants.CSS_HEIGHT, "100%");
+        upload.getStyle().set("position", "absolute").set("inset", "0").set(StyleConstants.CSS_OPACITY, "0")
+                .set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER).set(StyleConstants.CSS_WIDTH, "100%")
+                .set(StyleConstants.CSS_HEIGHT, "100%");
 
         // Wrapper is position:relative so absolute upload overlays it
         Div uploadContainer = new Div();
         uploadContainer.getStyle().set("position", "relative").set(StyleConstants.CSS_WIDTH, "90%")
                 .set(StyleConstants.CSS_BACKGROUND, BG_GRADIENT)
-                .set(StyleConstants.CSS_BORDER, "2px dashed " + PRIMARY + "40").set(StyleConstants.CSS_BORDER_RADIUS, "24px").set(StyleConstants.CSS_PADDING, "48px")
-                .set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_3S).set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER).set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+                .set(StyleConstants.CSS_BORDER, "2px dashed " + PRIMARY + "40")
+                .set(StyleConstants.CSS_BORDER_RADIUS, "24px").set(StyleConstants.CSS_PADDING, "48px")
+                .set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_3S)
+                .set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER)
+                .set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
 
         Div iconContainer = new Div();
-        iconContainer.getStyle().set(StyleConstants.CSS_WIDTH, "72px").set(StyleConstants.CSS_HEIGHT, "72px").set(StyleConstants.CSS_BACKGROUND, "rgba(0,122,255,0.1)")
-                .set(StyleConstants.CSS_BORDER_RADIUS, "50%").set(StyleConstants.CSS_DISPLAY, "flex").set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER)
-                .set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER).set(StyleConstants.CSS_MARGIN, "0 auto 24px");
+        iconContainer.getStyle().set(StyleConstants.CSS_WIDTH, "72px").set(StyleConstants.CSS_HEIGHT, "72px")
+                .set(StyleConstants.CSS_BACKGROUND, "rgba(0,122,255,0.1)").set(StyleConstants.CSS_BORDER_RADIUS, "50%")
+                .set(StyleConstants.CSS_DISPLAY, "flex").set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER)
+                .set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER)
+                .set(StyleConstants.CSS_MARGIN, "0 auto 24px");
 
         Icon uploadIcon = VaadinIcon.UPLOAD_ALT.create();
-        uploadIcon.getStyle().set(StyleConstants.CSS_COLOR, PRIMARY).set(StyleConstants.CSS_WIDTH, "32px").set(StyleConstants.CSS_HEIGHT, "32px");
+        uploadIcon.getStyle().set(StyleConstants.CSS_COLOR, PRIMARY).set(StyleConstants.CSS_WIDTH, "32px")
+                .set(StyleConstants.CSS_HEIGHT, "32px");
         iconContainer.add(uploadIcon);
 
         H3 title = new H3(translationService.translate("resume.dropResume"));
-        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "700").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN,
-                "0 0 8px 0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "700")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "0 0 8px 0");
 
         Paragraph subtitle = new Paragraph(translationService.translate("resume.orClickBrowse"));
-        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_MARGIN, "0 0 24px 0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+                .set(StyleConstants.CSS_MARGIN, "0 0 24px 0");
 
         HorizontalLayout formats = new HorizontalLayout();
         formats.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
@@ -335,14 +342,13 @@ public class ResumeManagerView extends VerticalLayout {
 
         // Drag-over styling
         uploadContainer.getElement().addEventListener("dragover",
-                e -> uploadContainer.getStyle().set(StyleConstants.CSS_BORDER_COLOR, PRIMARY).set(StyleConstants.CSS_BACKGROUND,
+                e -> uploadContainer.getStyle().set(StyleConstants.CSS_BORDER_COLOR, PRIMARY).set(
+                        StyleConstants.CSS_BACKGROUND,
                         "linear-gradient(135deg, rgba(0,122,255,0.1) 0%, rgba(90,200,250,0.1) 100%)"));
-        uploadContainer.getElement().addEventListener("dragleave",
-                e -> uploadContainer.getStyle().set(StyleConstants.CSS_BORDER_COLOR, PRIMARY + "40").set(StyleConstants.CSS_BACKGROUND,
-                        BG_GRADIENT));
-        uploadContainer.getElement().addEventListener("drop",
-                e -> uploadContainer.getStyle().set(StyleConstants.CSS_BORDER_COLOR, PRIMARY + "40").set(StyleConstants.CSS_BACKGROUND,
-                        BG_GRADIENT));
+        uploadContainer.getElement().addEventListener("dragleave", e -> uploadContainer.getStyle()
+                .set(StyleConstants.CSS_BORDER_COLOR, PRIMARY + "40").set(StyleConstants.CSS_BACKGROUND, BG_GRADIENT));
+        uploadContainer.getElement().addEventListener("drop", e -> uploadContainer.getStyle()
+                .set(StyleConstants.CSS_BORDER_COLOR, PRIMARY + "40").set(StyleConstants.CSS_BACKGROUND, BG_GRADIENT));
 
         // File upload success handler
         upload.addSucceededListener(event -> {
@@ -382,19 +388,24 @@ public class ResumeManagerView extends VerticalLayout {
 
     private void styleActiveTab(Button btn, boolean active) {
         if (active) {
-            btn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_FONT_WEIGHT, "700")
-                    .set(StyleConstants.CSS_BORDER_RADIUS, "10px").set(StyleConstants.CSS_PADDING, "8px 20px").set(StyleConstants.CSS_BORDER, "none")
-                    .set(StyleConstants.CSS_BOX_SHADOW, "0 1px 4px rgba(0,0,0,0.1)").set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+            btn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
+                    .set(StyleConstants.CSS_FONT_WEIGHT, "700").set(StyleConstants.CSS_BORDER_RADIUS, "10px")
+                    .set(StyleConstants.CSS_PADDING, "8px 20px").set(StyleConstants.CSS_BORDER, "none")
+                    .set(StyleConstants.CSS_BOX_SHADOW, "0 1px 4px rgba(0,0,0,0.1)")
+                    .set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
         } else {
-            btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT).set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_FONT_WEIGHT, "500")
-                    .set(StyleConstants.CSS_BORDER_RADIUS, "10px").set(StyleConstants.CSS_PADDING, "8px 20px").set(StyleConstants.CSS_BORDER, "none")
-                    .set(StyleConstants.CSS_BOX_SHADOW, "none").set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+            btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT)
+                    .set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_FONT_WEIGHT, "500")
+                    .set(StyleConstants.CSS_BORDER_RADIUS, "10px").set(StyleConstants.CSS_PADDING, "8px 20px")
+                    .set(StyleConstants.CSS_BORDER, "none").set(StyleConstants.CSS_BOX_SHADOW, "none")
+                    .set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
         }
     }
 
     private Div createPasteTextPanel() {
         Div panel = new Div();
-        panel.getStyle().set(StyleConstants.CSS_WIDTH, "90%").set(StyleConstants.CSS_BACKGROUND, BG_WHITE).set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.08)")
+        panel.getStyle().set(StyleConstants.CSS_WIDTH, "90%").set(StyleConstants.CSS_BACKGROUND, BG_WHITE)
+                .set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.08)")
                 .set(StyleConstants.CSS_BORDER_RADIUS, "24px").set(StyleConstants.CSS_PADDING, "32px");
 
         VerticalLayout inner = new VerticalLayout();
@@ -403,8 +414,8 @@ public class ResumeManagerView extends VerticalLayout {
         inner.getStyle().set("gap", "16px");
 
         H3 heading = new H3(translationService.translate("resume.pasteResumeText"));
-        heading.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px").set(StyleConstants.CSS_FONT_WEIGHT, "700").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN,
-                "0");
+        heading.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px").set(StyleConstants.CSS_FONT_WEIGHT, "700")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "0");
 
         TextArea resumeTextArea = new TextArea();
         resumeTextArea.setPlaceholder(translationService.translate("resume.pastePlainText"));
@@ -420,8 +431,11 @@ public class ResumeManagerView extends VerticalLayout {
                 .set("--vaadin-input-field-border-radius", "12px");
 
         Button saveBtn = new Button(translationService.translate("resume.saveAsText"));
-        saveBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)")
-                .set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600").set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_BORDER, "none")
+        saveBtn.getStyle()
+                .set(StyleConstants.CSS_BACKGROUND,
+                        "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)")
+                .set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_BORDER, "none")
                 .set(StyleConstants.CSS_PADDING, "12px 24px").set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER)
                 .set(StyleConstants.CSS_BOX_SHADOW, "0 10px 15px -3px rgba(0,122,255,0.3)");
 
@@ -494,14 +508,16 @@ public class ResumeManagerView extends VerticalLayout {
         emptyState.getStyle().set(StyleConstants.CSS_PADDING, "60px 20px").set("gap", "16px");
 
         Icon emptyIcon = VaadinIcon.FILE_TEXT_O.create();
-        emptyIcon.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_WIDTH, "64px").set(StyleConstants.CSS_HEIGHT, "64px");
+        emptyIcon.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_WIDTH, "64px")
+                .set(StyleConstants.CSS_HEIGHT, "64px");
 
         H3 title = new H3(translationService.translate("resume.noResumes"));
-        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "600").set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN,
-                "0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph description = new Paragraph(translationService.translate("resume.uploadFirst"));
-        description.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_MARGIN, "0");
+        description.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+                .set(StyleConstants.CSS_MARGIN, "0");
 
         emptyState.add(emptyIcon, title, description);
         return emptyState;
@@ -634,7 +650,7 @@ public class ResumeManagerView extends VerticalLayout {
     private void downloadResume(ResumeData resume) {
         try {
             byte[] bytes = documentService.retrieveResumeFile(resume.filePath);
-                String mimeType = resume.format.equalsIgnoreCase("PDF") ? MIME_APPLICATION_PDF : MIME_APPLICATION_DOCX;
+            String mimeType = resume.format.equalsIgnoreCase("PDF") ? MIME_APPLICATION_PDF : MIME_APPLICATION_DOCX;
             serveDownload(bytes, mimeType, resume.name);
             Notification.show(translationService.translate("resume.downloading", resume.name), 2000,
                     Notification.Position.TOP_CENTER);

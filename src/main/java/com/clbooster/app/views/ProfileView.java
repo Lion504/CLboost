@@ -51,11 +51,11 @@ public class ProfileView extends VerticalLayout {
     private static final Pattern DIGIT_PATTERN = Pattern.compile("\\d");
     private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile("[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]");
 
-        private final transient AuthenticationService authService;
-        private final transient ProfileService profileService;
+    private final transient AuthenticationService authService;
+    private final transient ProfileService profileService;
     private final TranslationService translationService;
-        private transient User currentUser;
-        private transient Profile userProfile;
+    private transient User currentUser;
+    private transient Profile userProfile;
 
     // Form fields - stored as instance variables for save functionality
     private TextField firstNameField;
@@ -218,7 +218,8 @@ public class ProfileView extends VerticalLayout {
 
         editBtn.addClickListener(e -> toggleEditMode());
 
-        saveBtn = ViewComponents.createPrimaryButton(translationService.translate("profile.saveChanges"), this::saveProfile);
+        saveBtn = ViewComponents.createPrimaryButton(translationService.translate("profile.saveChanges"),
+                this::saveProfile);
         saveBtn.setVisible(false); // Hidden initially
 
         actions.add(editBtn, saveBtn);
@@ -262,7 +263,8 @@ public class ProfileView extends VerticalLayout {
     }
 
     private Div createGeneralContent() {
-        Div card = ViewComponents.createSectionCard("profile.accountDetails", "profile.personalInfo", translationService);
+        Div card = ViewComponents.createSectionCard("profile.accountDetails", "profile.personalInfo",
+                translationService);
         card.getStyle().set(StyleConstants.CSS_WIDTH, "100%");
 
         // Form grid
@@ -340,7 +342,8 @@ public class ProfileView extends VerticalLayout {
     }
 
     private Div createSecurityContent() {
-        Div card = ViewComponents.createSectionCard("profile.securitySettings", "profile.managePassword", translationService);
+        Div card = ViewComponents.createSectionCard("profile.securitySettings", "profile.managePassword",
+                translationService);
         card.getStyle().set(StyleConstants.CSS_WIDTH, "100%");
 
         // Change Password Section
@@ -384,8 +387,8 @@ public class ProfileView extends VerticalLayout {
         passwordSection.add(requirements);
 
         // Change Password Button
-        Button changePasswordBtn = ViewComponents.createPrimaryButton(translationService.translate("profile.changePassword"),
-                this::changePassword);
+        Button changePasswordBtn = ViewComponents
+                .createPrimaryButton(translationService.translate("profile.changePassword"), this::changePassword);
         changePasswordBtn.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "16px");
         passwordSection.add(changePasswordBtn);
 
@@ -520,10 +523,8 @@ public class ProfileView extends VerticalLayout {
     }
 
     private boolean isStrongPassword(String password) {
-        return password.length() >= 10
-                && UPPERCASE_PATTERN.matcher(password).find()
-                && LOWERCASE_PATTERN.matcher(password).find()
-                && DIGIT_PATTERN.matcher(password).find()
+        return password.length() >= 10 && UPPERCASE_PATTERN.matcher(password).find()
+                && LOWERCASE_PATTERN.matcher(password).find() && DIGIT_PATTERN.matcher(password).find()
                 && SPECIAL_CHAR_PATTERN.matcher(password).find();
     }
 

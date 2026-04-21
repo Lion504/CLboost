@@ -76,7 +76,8 @@ public class NotificationsView extends VerticalLayout {
 
     private HorizontalLayout createHeader() {
         // Header with title and actions
-        HorizontalLayout header = ViewComponents.createPageHeader("notifications.title", "notifications.stayUpdated", translationService);
+        HorizontalLayout header = ViewComponents.createPageHeader("notifications.title", "notifications.stayUpdated",
+                translationService);
 
         // Actions
         HorizontalLayout actions = new HorizontalLayout();
@@ -145,13 +146,15 @@ public class NotificationsView extends VerticalLayout {
         notificationsList.add(todayLabel);
 
         // Today's notifications
-        notificationsList.add(createNotificationCard(translationService.translate("notifications.aiGenerated"),
-                translationService.translate("notifications.coverLetterReady"), "2 hours ago", VaadinIcon.MAGIC,
-                PRIMARY, true, true));
+        notificationsList
+                .add(ViewComponents.createNotificationCard(translationService.translate("notifications.aiGenerated"),
+                        translationService.translate("notifications.coverLetterReady"), "2 hours ago", VaadinIcon.MAGIC,
+                        PRIMARY, true, true, translationService));
 
-        notificationsList.add(createNotificationCard(translationService.translate("notifications.optimizationComplete"),
+        notificationsList.add(ViewComponents.createNotificationCard(
+                translationService.translate("notifications.optimizationComplete"),
                 translationService.translate("notifications.scoreImproved"), "4 hours ago", VaadinIcon.CHART, "#34C759",
-                false, true));
+                false, true, translationService));
 
         // Yesterday section
         Span yesterdayLabel = new Span(translationService.translate("notifications.yesterday"));
@@ -164,13 +167,15 @@ public class NotificationsView extends VerticalLayout {
 
         notificationsList.add(yesterdayLabel);
 
-        notificationsList.add(createNotificationCard(translationService.translate("notifications.documentExported"),
-                translationService.translate("notifications.exportedAsPDF"), "Yesterday", VaadinIcon.FILE_TEXT,
-                TEXT_SECONDARY, false, false));
+        notificationsList.add(
+                ViewComponents.createNotificationCard(translationService.translate("notifications.documentExported"),
+                        translationService.translate("notifications.exportedAsPDF"), "Yesterday", VaadinIcon.FILE_TEXT,
+                        TEXT_SECONDARY, false, false, translationService));
 
-        notificationsList.add(createNotificationCard(translationService.translate("notifications.newFeature"),
-                translationService.translate("notifications.tryToneCustomization"), "Yesterday", VaadinIcon.SPARK_LINE,
-                "#AF52DE", false, false));
+        notificationsList
+                .add(ViewComponents.createNotificationCard(translationService.translate("notifications.newFeature"),
+                        translationService.translate("notifications.tryToneCustomization"), "Yesterday",
+                        VaadinIcon.SPARK_LINE, "#AF52DE", false, false, translationService));
 
         // Earlier section
         Span earlierLabel = new Span(translationService.translate("notifications.earlier"));
@@ -183,109 +188,10 @@ public class NotificationsView extends VerticalLayout {
 
         notificationsList.add(earlierLabel);
 
-        notificationsList.add(createNotificationCard(translationService.translate("notifications.welcome"),
-                translationService.translate("notifications.getStarted"), "3 days ago", VaadinIcon.HANDSHAKE, "#FF9500",
-                false, false));
-    }
-
-    private Div createNotificationCard(String title, String message, String time, VaadinIcon iconType, String iconColor,
-            boolean isUnread, boolean isNew) {
-        Div card = new Div();
-        card.getStyle().set(StyleConstants.CSS_BACKGROUND, isUnread ? BG_WHITE : BG_GRAY);
-        card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
-        card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "16px");
-        card.getStyle().set(StyleConstants.CSS_PADDING, "20px");
-        card.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
-        card.getStyle().set(StyleConstants.CSS_TRANSITION, "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)");
-        card.getStyle().set("position", "relative");
-        card.getStyle().set(StyleConstants.CSS_OVERFLOW, "hidden");
-
-        // Animation for new items
-        if (isNew) {
-            card.getStyle().set("animation", "slideInRight 0.4s ease forwards");
-        }
-
-        // Unread indicator
-        if (isUnread) {
-            Div unreadDot = new Div();
-            unreadDot.getStyle().set("position", "absolute");
-            unreadDot.getStyle().set("top", "20px");
-            unreadDot.getStyle().set("right", "20px");
-            unreadDot.getStyle().set(StyleConstants.CSS_WIDTH, "8px");
-            unreadDot.getStyle().set(StyleConstants.CSS_HEIGHT, "8px");
-            unreadDot.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY);
-            unreadDot.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "50%");
-            card.add(unreadDot);
-        }
-
-        HorizontalLayout content = new HorizontalLayout();
-        content.setAlignItems(FlexComponent.Alignment.START);
-        content.getStyle().set("gap", "16px");
-
-        // Icon
-        Div iconContainer = new Div();
-        iconContainer.getStyle().set(StyleConstants.CSS_WIDTH, "44px");
-        iconContainer.getStyle().set(StyleConstants.CSS_HEIGHT, "44px");
-        iconContainer.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "12px");
-        iconContainer.getStyle().set(StyleConstants.CSS_BACKGROUND, iconColor + "15");
-        iconContainer.getStyle().set(StyleConstants.CSS_DISPLAY, "flex");
-        iconContainer.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
-        iconContainer.getStyle().set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER);
-        iconContainer.getStyle().set("flex-shrink", "0");
-        iconContainer.getStyle().set(StyleConstants.CSS_TRANSITION, "transform 0.3s");
-
-        Icon icon = iconType.create();
-        icon.getStyle().set(StyleConstants.CSS_COLOR, iconColor);
-        icon.getStyle().set(StyleConstants.CSS_WIDTH, "22px");
-        icon.getStyle().set(StyleConstants.CSS_HEIGHT, "22px");
-        iconContainer.add(icon);
-
-        // Text content
-        VerticalLayout textGroup = new VerticalLayout();
-        textGroup.setPadding(false);
-        textGroup.setSpacing(false);
-        textGroup.getStyle().set("gap", "4px");
-
-        H2 cardTitle = new H2(title);
-        cardTitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "15px");
-        cardTitle.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, isUnread ? "700" : "600");
-        cardTitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
-        cardTitle.getStyle().set(StyleConstants.CSS_MARGIN, "0");
-
-        Paragraph cardMessage = new Paragraph(message);
-        cardMessage.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
-        cardMessage.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        cardMessage.getStyle().set("line-height", "1.5");
-        cardMessage.getStyle().set(StyleConstants.CSS_MARGIN, "0");
-
-        Span timeSpan = new Span(time);
-        timeSpan.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
-        timeSpan.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
-        timeSpan.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "4px");
-
-        textGroup.add(cardTitle, cardMessage, timeSpan);
-        content.add(iconContainer, textGroup);
-        card.add(content);
-
-        // Hover effects
-        card.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
-            card.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateX(4px)");
-            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 4px 20px rgba(0,0,0,0.08)");
-            iconContainer.getStyle().set(StyleConstants.CSS_TRANSFORM, "scale(1.1) rotate(-5deg)");
-        });
-
-        card.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
-            card.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateX(0)");
-            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "none");
-            iconContainer.getStyle().set(StyleConstants.CSS_TRANSFORM, "scale(1) rotate(0deg)");
-        });
-
-        card.addClickListener(e -> {
-            Notification.show(translationService.translate("notifications.opening", title), 3000,
-                    Notification.Position.TOP_CENTER);
-        });
-
-        return card;
+        notificationsList
+                .add(ViewComponents.createNotificationCard(translationService.translate("notifications.welcome"),
+                        translationService.translate("notifications.getStarted"), "3 days ago", VaadinIcon.HANDSHAKE,
+                        "#FF9500", false, false, translationService));
     }
 
     private void markAllAsRead() {

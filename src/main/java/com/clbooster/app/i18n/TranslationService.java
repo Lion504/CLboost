@@ -15,12 +15,11 @@ import java.util.*;
 public class TranslationService implements I18NProvider {
     private static final String LOCALE_KEY = "locale";
 
-
     private static final String BUNDLE_PREFIX = "messages";
     private static final Locale DEFAULT_LOCALE = new Locale("en");
 
-        private final transient SettingsService settingsService;
-        private final transient AuthenticationService authService;
+    private final transient SettingsService settingsService;
+    private final transient AuthenticationService authService;
 
     public TranslationService() {
         this.settingsService = new SettingsService();

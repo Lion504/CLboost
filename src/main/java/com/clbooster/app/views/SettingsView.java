@@ -1,6 +1,7 @@
 package com.clbooster.app.views;
 
 import com.clbooster.app.views.util.StyleConstants;
+import com.clbooster.app.views.util.ViewComponents;
 
 import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
@@ -46,12 +47,12 @@ public class SettingsView extends VerticalLayout {
     private static final String LANG_ENGLISH = "English";
     private static final String SETTINGS_DELETE_ACCOUNT_TITLE = "settings.deleteAccountTitle";
 
-        private final transient SettingsService settingsService;
-        private final transient AuthenticationService authService;
-        private final transient UserService userService;
+    private final transient SettingsService settingsService;
+    private final transient AuthenticationService authService;
+    private final transient UserService userService;
     private final TranslationService translationService;
-        private transient Settings userSettings;
-        private transient User currentUser;
+    private transient Settings userSettings;
+    private transient User currentUser;
 
     // Language select
     private Select<String> langSelect;
@@ -453,8 +454,10 @@ public class SettingsView extends VerticalLayout {
         deleteBtn.getStyle().set(StyleConstants.CSS_COLOR, COLOR_DANGER);
         deleteBtn.getStyle().set(StyleConstants.CSS_PADDING, "8px 16px");
 
-        deleteBtn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> deleteBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(255, 59, 48, 0.2)"));
-        deleteBtn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> deleteBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(255, 59, 48, 0.1)"));
+        deleteBtn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
+                e -> deleteBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(255, 59, 48, 0.2)"));
+        deleteBtn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE,
+                e -> deleteBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(255, 59, 48, 0.1)"));
 
         deleteBtn.addClickListener(e -> showDeleteAccountDialog());
 
@@ -553,7 +556,8 @@ public class SettingsView extends VerticalLayout {
             discardBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
         });
 
-        Button saveBtn = createPrimaryButton(translationService.translate("action.save"), this::saveSettings);
+        Button saveBtn = ViewComponents.createPrimaryButton(translationService.translate("action.save"),
+                this::saveSettings);
 
         actions.add(discardBtn, saveBtn);
 
@@ -610,31 +614,12 @@ public class SettingsView extends VerticalLayout {
         card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
         card.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_3S);
 
-        card.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 8px 24px rgba(0, 0, 0, 0.06)"));
-        card.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX));
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
+                e -> card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 8px 24px rgba(0, 0, 0, 0.06)"));
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE,
+                e -> card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX));
 
         return card;
-    }
-
-    private Button createPrimaryButton(String text, Runnable action) {
-        Button btn = new Button(text, e -> action.run());
-        applyBaseButtonStyles(btn);
-        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, "linear-gradient(135deg, " + PRIMARY + " 0%, #5AC8FA 100%)");
-        btn.getStyle().set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
-        btn.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
-        btn.getStyle().set(StyleConstants.CSS_PADDING, "12px 24px");
-        btn.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 10px 15px -3px rgba(0, 122, 255, 0.3)");
-
-        btn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
-            btn.getStyle().set("filter", "brightness(1.1)");
-            btn.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(-1px)");
-        });
-        btn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
-            btn.getStyle().set("filter", "brightness(1)");
-            btn.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(0)");
-        });
-
-        return btn;
     }
 
     private void styleCardTitle(H3 title) {

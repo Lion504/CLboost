@@ -1,6 +1,7 @@
 package com.clbooster.app.views;
 
 import com.clbooster.app.views.util.StyleConstants;
+import com.clbooster.app.views.util.ViewComponents;
 
 import com.clbooster.app.i18n.TranslationService;
 import com.vaadin.flow.component.button.Button;
@@ -92,7 +93,6 @@ public class LandingView extends VerticalLayout {
     private static final String MAX_WIDTH_PROP = StyleConstants.CSS_MAX_WIDTH;
     private static final String FILTER_PROP = "filter";
     private static final String YOUR_NAME_PLACEHOLDER = "[Your Name]";
-
 
     private Dialog activeModal = null;
     private final TranslationService translationService;
@@ -257,9 +257,10 @@ public class LandingView extends VerticalLayout {
         loginBtn.getStyle().set(TRANSITION_PROP, TRANSITION_ALL_FAST);
         loginBtn.getElement().addEventListener(EVENT_MOUSEENTER,
                 e -> loginBtn.getStyle().set(BACKGROUND_PROP, "rgba(0, 0, 0, 0.08)"));
-        loginBtn.getElement().addEventListener(EVENT_MOUSELEAVE, e -> loginBtn.getStyle().set(BACKGROUND_PROP, TRANSPARENT_COLOR));
+        loginBtn.getElement().addEventListener(EVENT_MOUSELEAVE,
+                e -> loginBtn.getStyle().set(BACKGROUND_PROP, TRANSPARENT_COLOR));
 
-        Button signupBtn = createPrimaryButton(translationService.translate("signup.signup"),
+        Button signupBtn = ViewComponents.createPrimaryButton(translationService.translate("signup.signup"),
                 () -> getUI().ifPresent(ui -> ui.navigate(SignUpView.class)));
         signupBtn.getStyle().set(FONT_SIZE_PROP, "13px");
         signupBtn.getStyle().set(PADDING_PROP, "8px 20px");
@@ -342,7 +343,7 @@ public class LandingView extends VerticalLayout {
         ctaRow.getStyle().set(GAP_PROP, "16px");
         ctaRow.getStyle().set("padding-top", "16px");
 
-        Button generateBtn = createPrimaryButton(translationService.translate("landing.generateNow"),
+        Button generateBtn = ViewComponents.createPrimaryButton(translationService.translate("landing.generateNow"),
                 () -> getUI().ifPresent(ui -> ui.navigate(LoginView.class)));
         generateBtn.getStyle().set(FONT_SIZE_PROP, "16px");
         generateBtn.getStyle().set(PADDING_PROP, "16px 40px");
@@ -529,9 +530,9 @@ public class LandingView extends VerticalLayout {
         content.setPadding(false);
         content.setSpacing(false);
 
-        HorizontalLayout header = createModalHeader(dialog, VaadinIcon.QUESTION, 
-            translationService.translate("help.faqTitle"), 
-            translationService.translate("landing.everythingYouNeed"), STANDARD_HEADER_STYLE);
+        HorizontalLayout header = createModalHeader(dialog, VaadinIcon.QUESTION,
+                translationService.translate("help.faqTitle"),
+                translationService.translate("landing.everythingYouNeed"), STANDARD_HEADER_STYLE);
 
         // FAQ Content
         VerticalLayout faqContent = new VerticalLayout();
@@ -603,9 +604,9 @@ public class LandingView extends VerticalLayout {
         content.setPadding(false);
         content.setSpacing(false);
 
-        HorizontalLayout header = createModalHeader(dialog, VaadinIcon.FILE_TEXT, 
-            translationService.translate("generator.title"), 
-            translationService.translate("landing.seeWhatAiCanGenerate"), STANDARD_HEADER_STYLE);
+        HorizontalLayout header = createModalHeader(dialog, VaadinIcon.FILE_TEXT,
+                translationService.translate("generator.title"),
+                translationService.translate("landing.seeWhatAiCanGenerate"), STANDARD_HEADER_STYLE);
 
         // Samples Grid - 2 columns like Figma
         Div samplesGrid = new Div();
@@ -757,9 +758,9 @@ public class LandingView extends VerticalLayout {
         content.setPadding(false);
         content.setSpacing(false);
 
-        HorizontalLayout header = createModalHeader(dialog, VaadinIcon.LIGHTBULB, 
-            translationService.translate("help.howItWorks"), 
-            translationService.translate("landing.simpleSteps"), STANDARD_HEADER_STYLE);
+        HorizontalLayout header = createModalHeader(dialog, VaadinIcon.LIGHTBULB,
+                translationService.translate("help.howItWorks"), translationService.translate("landing.simpleSteps"),
+                STANDARD_HEADER_STYLE);
 
         // Steps Content
         VerticalLayout stepsContent = new VerticalLayout();
@@ -790,7 +791,7 @@ public class LandingView extends VerticalLayout {
         footer.getStyle().set(BORDER_TOP_PROP, BORDER_SUBTLE);
         footer.getStyle().set(BACKGROUND_PROP, BG_LIGHT);
 
-        Button ctaBtn = createPrimaryButton(translationService.translate("landing.getStarted"), () -> {
+        Button ctaBtn = ViewComponents.createPrimaryButton(translationService.translate("landing.getStarted"), () -> {
             dialog.close();
             getUI().ifPresent(ui -> ui.navigate(LoginView.class));
         });
@@ -855,8 +856,7 @@ public class LandingView extends VerticalLayout {
         content.setPadding(false);
         content.setSpacing(false);
 
-        HorizontalLayout header = createModalHeader(dialog, VaadinIcon.FILE_TEXT_O, 
-            jobTitle, company, CV_HEADER_STYLE);
+        HorizontalLayout header = createModalHeader(dialog, VaadinIcon.FILE_TEXT_O, jobTitle, company, CV_HEADER_STYLE);
 
         // Letter Content
         Div letterContainer = new Div();
@@ -964,19 +964,25 @@ public class LandingView extends VerticalLayout {
         btn.getStyle().set(TRANSITION_PROP, TRANSITION_ALL_FAST);
         btn.getStyle().set(CURSOR_PROP, POINTER_CURSOR);
 
-        btn.getElement().addEventListener(EVENT_MOUSEENTER, e -> btn.getStyle().set(BACKGROUND_PROP, "rgba(0,0,0,0.1)"));
+        btn.getElement().addEventListener(EVENT_MOUSEENTER,
+                e -> btn.getStyle().set(BACKGROUND_PROP, "rgba(0,0,0,0.1)"));
 
-        btn.getElement().addEventListener(EVENT_MOUSELEAVE, e -> btn.getStyle().set(BACKGROUND_PROP, BG_BLACK_ALPHA_05));
+        btn.getElement().addEventListener(EVENT_MOUSELEAVE,
+                e -> btn.getStyle().set(BACKGROUND_PROP, BG_BLACK_ALPHA_05));
 
         return btn;
     }
 
+    private record HeaderStyle(String padding, String iconSize, String iconRadius, String titleSize,
+            String subtitleSize, String subtitleMargin) {
+    }
 
-    private record HeaderStyle(String padding, String iconSize, String iconRadius, String titleSize, String subtitleSize, String subtitleMargin) {}
-    private static final HeaderStyle STANDARD_HEADER_STYLE = new HeaderStyle("24px", "40px", "12px", "20px", "13px", MARGIN_TOP_SMALL);
-    private static final HeaderStyle CV_HEADER_STYLE = new HeaderStyle("20px 24px", "36px", "10px", "16px", "12px", "2px 0 0");
+    private static final HeaderStyle STANDARD_HEADER_STYLE = new HeaderStyle("24px", "40px", "12px", "20px", "13px",
+            MARGIN_TOP_SMALL);
+    private static final HeaderStyle CV_HEADER_STYLE = new HeaderStyle("20px 24px", "36px", "10px", "16px", "12px",
+            "2px 0 0");
 
-private Dialog setupDialog(String width, String maxHeight) {
+    private Dialog setupDialog(String width, String maxHeight) {
         Dialog dialog = new Dialog();
         dialog.setModal(true);
         dialog.setWidth(width);
@@ -984,7 +990,8 @@ private Dialog setupDialog(String width, String maxHeight) {
         return dialog;
     }
 
-    private HorizontalLayout createModalHeader(Dialog dialog, VaadinIcon iconType, String titleText, String subtitleText, HeaderStyle style) {
+    private HorizontalLayout createModalHeader(Dialog dialog, VaadinIcon iconType, String titleText,
+            String subtitleText, HeaderStyle style) {
         HorizontalLayout header = new HorizontalLayout();
         header.setWidthFull();
         header.setAlignItems(FlexComponent.Alignment.CENTER);
@@ -1041,7 +1048,9 @@ private Dialog setupDialog(String width, String maxHeight) {
         });
         footer.add(ctaBtn);
         return footer;
-    }    private void scrollToTop() {
+    }
+
+    private void scrollToTop() {
         getElement().executeJs("window.scrollTo({top: 0, behavior: 'smooth'})");
     }
 }

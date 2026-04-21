@@ -38,7 +38,7 @@ public class MainLayout extends AppLayout {
     private static final String SIDEBAR_TEXT = "#495057";
     private static final String SIDEBAR_LABEL = "#6c757d";
 
-        private final transient AuthenticationService authService;
+    private final transient AuthenticationService authService;
     private final TranslationService translationService;
 
     public MainLayout() {
