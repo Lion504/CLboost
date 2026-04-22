@@ -30,3 +30,5 @@ Test-Resume.pdf
 .env
 test-jobads.md
 documentation/wdiagrams
+.github/instructions/*
+.sonarlint/*
