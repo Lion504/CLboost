@@ -8,6 +8,7 @@ public class LocaleMapper {
     private LocaleMapper() {
         // Hide implicit public constructor
     }
+
     private static final String EN_US = "en_US";
 
     private static final Map<String, String> APP_TO_DB = new HashMap<>();

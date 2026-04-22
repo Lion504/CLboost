@@ -120,9 +120,10 @@ class HistoryViewTest extends BaseVaadinViewTest {
             Files.writeString(tmp, "dummy");
 
             HistoryView view = new HistoryView();
-            try (MockedConstruction<com.clbooster.aiservice.Parser> parserMock = Mockito.mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
-                Mockito.when(mock.parseFileToJson(tmp.toFile().getAbsolutePath())).thenReturn("Hello World");
-            })) {
+            try (MockedConstruction<com.clbooster.aiservice.Parser> parserMock = Mockito
+                    .mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
+                        Mockito.when(mock.parseFileToJson(tmp.toFile().getAbsolutePath())).thenReturn("Hello World");
+                    })) {
                 Method method = HistoryView.class.getDeclaredMethod("extractTextFromDocx", File.class);
                 method.setAccessible(true);
                 String text = (String) method.invoke(view, tmp.toFile());
@@ -159,9 +160,11 @@ class HistoryViewTest extends BaseVaadinViewTest {
 
             Path brokenDocx = Files.createTempFile("history-view-broken-", ".docx");
             Files.writeString(brokenDocx, "dummy");
-            try (MockedConstruction<com.clbooster.aiservice.Parser> parserMock = Mockito.mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
-                Mockito.when(mock.parseFileToJson(brokenDocx.toFile().getAbsolutePath())).thenThrow(new RuntimeException("Could not find document content"));
-            })) {
+            try (MockedConstruction<com.clbooster.aiservice.Parser> parserMock = Mockito
+                    .mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
+                        Mockito.when(mock.parseFileToJson(brokenDocx.toFile().getAbsolutePath()))
+                                .thenThrow(new RuntimeException("Could not find document content"));
+                    })) {
                 String brokenDocxResult = (String) method.invoke(view, brokenDocx.toFile());
                 assertTrue(brokenDocxResult.contains("Could not read file"));
             }
@@ -364,9 +367,10 @@ class HistoryViewTest extends BaseVaadinViewTest {
             Files.writeString(tmp, "dummy");
 
             HistoryView view = new HistoryView();
-            try (MockedConstruction<com.clbooster.aiservice.Parser> parserMock = Mockito.mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
-                Mockito.when(mock.parseFileToJson(tmp.toFile().getAbsolutePath())).thenReturn("");
-            })) {
+            try (MockedConstruction<com.clbooster.aiservice.Parser> parserMock = Mockito
+                    .mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
+                        Mockito.when(mock.parseFileToJson(tmp.toFile().getAbsolutePath())).thenReturn("");
+                    })) {
                 Method method = HistoryView.class.getDeclaredMethod("extractTextFromDocx", File.class);
                 method.setAccessible(true);
                 String result = (String) method.invoke(view, tmp.toFile());

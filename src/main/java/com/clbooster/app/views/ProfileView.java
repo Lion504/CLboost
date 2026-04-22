@@ -209,12 +209,10 @@ public class ProfileView extends VerticalLayout {
         editBtn.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_2S);
         editBtn.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
 
-        editBtn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> 
-            editBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0, 0, 0, 0.08)")
-        );
-        editBtn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> 
-            editBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY)
-        );
+        editBtn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
+                e -> editBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0, 0, 0, 0.08)"));
+        editBtn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE,
+                e -> editBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY));
 
         editBtn.addClickListener(e -> toggleEditMode());
 

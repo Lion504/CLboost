@@ -52,7 +52,6 @@ public class OnboardingView extends VerticalLayout {
     private List<String> selectedExperience = new ArrayList<>();
     private String selectedTone = "Professional";
 
-
     // UI Components
     private VerticalLayout contentArea;
     private HorizontalLayout stepIndicator;

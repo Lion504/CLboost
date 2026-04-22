@@ -366,7 +366,8 @@ public class CLgenerator_CLI {
         String confirm = scanner.nextLine().trim().toLowerCase();
 
         if (confirm.equals("y") || confirm.equals("yes")) {
-            profileService.updateProfile(pin, "", "", experienceLevel, tools, skills, link, profileEmail, java.util.Locale.getDefault());
+            profileService.updateProfile(pin, "", "", experienceLevel, tools, skills, link, profileEmail,
+                    java.util.Locale.getDefault());
             LOGGER.info("✓ Profile updated successfully!");
         } else {
             LOGGER.info("Changes discarded.");

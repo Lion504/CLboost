@@ -146,7 +146,8 @@ class CLgenerator_CLITest {
         setScannerInput("Senior\nJava,SQL\nSpring,Cloud\nhttps://new\nnew@mail.com\ny\n");
         invokeStaticVoid("handleEditProfile");
 
-        verify(profileService).updateProfile(eq(12), eq(""), eq(""), eq("Senior"), eq("Java,SQL"), eq("Spring,Cloud"), eq("https://new"), eq("new@mail.com"), any(java.util.Locale.class));
+        verify(profileService).updateProfile(eq(12), eq(""), eq(""), eq("Senior"), eq("Java,SQL"), eq("Spring,Cloud"),
+                eq("https://new"), eq("new@mail.com"), any(java.util.Locale.class));
     }
 
     @Test

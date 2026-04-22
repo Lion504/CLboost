@@ -70,7 +70,8 @@ class ProfileServiceTest {
 
     @Test
     void updateProfile_success_validEmail() {
-        boolean result = service.updateProfile(1, "", "", "Senior", "Java", "Backend", "link", "test@mail.com", Locale.getDefault());
+        boolean result = service.updateProfile(1, "", "", "Senior", "Java", "Backend", "link", "test@mail.com",
+                Locale.getDefault());
 
         assertTrue(result);
         verify(userDAOMock).updateUser(1, "", "", "test@mail.com");
@@ -79,7 +80,8 @@ class ProfileServiceTest {
 
     @Test
     void updateProfile_invalidEmail_blocksDaoCall() {
-        boolean result = service.updateProfile(1, "", "", "Senior", "Java", "Backend", "link", "bad-email", Locale.getDefault());
+        boolean result = service.updateProfile(1, "", "", "Senior", "Java", "Backend", "link", "bad-email",
+                Locale.getDefault());
 
         assertFalse(result);
         verifyNoInteractions(userDAOMock, profileDAOMock);
@@ -99,7 +101,8 @@ class ProfileServiceTest {
         doThrow(new RuntimeException("DB failure")).when(profileDAOMock).saveTranslation(any(Profile.class),
                 any(Locale.class));
 
-        boolean result = service.updateProfile(1, "", "", "Senior", "Java", "Backend", "link", "test@mail.com", Locale.getDefault());
+        boolean result = service.updateProfile(1, "", "", "Senior", "Java", "Backend", "link", "test@mail.com",
+                Locale.getDefault());
 
         assertFalse(result);
     }

@@ -406,13 +406,11 @@ public class HistoryView extends VerticalLayout {
 
         card.add(header, title, company, footer);
 
-        card.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> 
-            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 20px 25px -5px rgba(0,0,0,0.1)")
-                    .set(StyleConstants.CSS_BORDER_COLOR, "rgba(0,0,0,0.1)")
-        );
-        card.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> 
-            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "none").set(StyleConstants.CSS_BORDER_COLOR, BG_HOVER)
-        );
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
+                e -> card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 20px 25px -5px rgba(0,0,0,0.1)")
+                        .set(StyleConstants.CSS_BORDER_COLOR, "rgba(0,0,0,0.1)"));
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> card.getStyle()
+                .set(StyleConstants.CSS_BOX_SHADOW, "none").set(StyleConstants.CSS_BORDER_COLOR, BG_HOVER));
 
         return card;
     }

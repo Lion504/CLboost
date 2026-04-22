@@ -242,7 +242,7 @@ public final class ViewComponents {
         });
 
         card.addClickListener(e -> Notification.show(translationService.translate("notifications.opening", title), 3000,
-                    Notification.Position.TOP_CENTER));
+                Notification.Position.TOP_CENTER));
 
         return card;
     }

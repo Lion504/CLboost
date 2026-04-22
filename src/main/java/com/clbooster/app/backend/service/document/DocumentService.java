@@ -180,7 +180,8 @@ public class DocumentService {
             }
 
             byte[] content = Files.readAllBytes(path);
-            logger.log(Level.INFO, "Retrieved resume file: {0} ({1} bytes)", new Object[]{storagePath, content.length});
+            logger.log(Level.INFO, "Retrieved resume file: {0} ({1} bytes)",
+                    new Object[] { storagePath, content.length });
             return content;
 
         } catch (IOException e) {

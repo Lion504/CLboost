@@ -15,7 +15,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -137,9 +136,11 @@ class CoverLetterEditorViewTest extends BaseVaadinViewTest {
         Files.writeString(docx, "dummy");
         CoverLetterEditorView view = new CoverLetterEditorView();
 
-        try (org.mockito.MockedConstruction<com.clbooster.aiservice.Parser> mocked = org.mockito.Mockito.mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
-            org.mockito.Mockito.when(mock.parseFileToJson(docx.toFile().getAbsolutePath())).thenReturn("Hello World");
-        })) {
+        try (org.mockito.MockedConstruction<com.clbooster.aiservice.Parser> mocked = org.mockito.Mockito
+                .mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
+                    org.mockito.Mockito.when(mock.parseFileToJson(docx.toFile().getAbsolutePath()))
+                            .thenReturn("Hello World");
+                })) {
             Method method = CoverLetterEditorView.class.getDeclaredMethod("extractTextFromDocx", File.class);
             method.setAccessible(true);
             String text = (String) method.invoke(view, docx.toFile());
@@ -154,9 +155,11 @@ class CoverLetterEditorViewTest extends BaseVaadinViewTest {
         Files.writeString(docx, "dummy");
         CoverLetterEditorView view = new CoverLetterEditorView();
 
-        try (org.mockito.MockedConstruction<com.clbooster.aiservice.Parser> mocked = org.mockito.Mockito.mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
-            org.mockito.Mockito.when(mock.parseFileToJson(docx.toFile().getAbsolutePath())).thenThrow(new RuntimeException("Could not find document content"));
-        })) {
+        try (org.mockito.MockedConstruction<com.clbooster.aiservice.Parser> mocked = org.mockito.Mockito
+                .mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
+                    org.mockito.Mockito.when(mock.parseFileToJson(docx.toFile().getAbsolutePath()))
+                            .thenThrow(new RuntimeException("Could not find document content"));
+                })) {
             Method method = CoverLetterEditorView.class.getDeclaredMethod("extractTextFromDocx", File.class);
             method.setAccessible(true);
             try {
@@ -173,9 +176,10 @@ class CoverLetterEditorViewTest extends BaseVaadinViewTest {
         Files.writeString(docx, "dummy");
         CoverLetterEditorView view = new CoverLetterEditorView();
 
-        try (org.mockito.MockedConstruction<com.clbooster.aiservice.Parser> mocked = org.mockito.Mockito.mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
-            org.mockito.Mockito.when(mock.parseFileToJson(docx.toFile().getAbsolutePath())).thenReturn("");
-        })) {
+        try (org.mockito.MockedConstruction<com.clbooster.aiservice.Parser> mocked = org.mockito.Mockito
+                .mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
+                    org.mockito.Mockito.when(mock.parseFileToJson(docx.toFile().getAbsolutePath())).thenReturn("");
+                })) {
             Method method = CoverLetterEditorView.class.getDeclaredMethod("extractTextFromDocx", File.class);
             method.setAccessible(true);
             String text = (String) method.invoke(view, docx.toFile());

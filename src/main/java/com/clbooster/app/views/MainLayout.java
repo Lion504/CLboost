@@ -127,12 +127,10 @@ public class MainLayout extends AppLayout {
             getUI().ifPresent(ui -> ui.navigate(LoginView.class));
         });
 
-        avatarWrapper.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> 
-            avatarWrapper.getStyle().set(StyleConstants.CSS_TRANSFORM, "scale(1.05)")
-        );
-        avatarWrapper.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> 
-            avatarWrapper.getStyle().set(StyleConstants.CSS_TRANSFORM, "scale(1)")
-        );
+        avatarWrapper.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
+                e -> avatarWrapper.getStyle().set(StyleConstants.CSS_TRANSFORM, "scale(1.05)"));
+        avatarWrapper.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE,
+                e -> avatarWrapper.getStyle().set(StyleConstants.CSS_TRANSFORM, "scale(1)"));
 
         rightSide.add(notifBtn, avatarWrapper);
 
