@@ -6,6 +6,8 @@ pipeline {
         DOCKER_IMAGE = "tfabinader/sp1-inclass-assignment"
         // This ID must match the 'ID' you gave your credentials in Jenkins
         DOCKER_HUB_CREDS = 'docker-hub-creds'
+        // Jenkins global environment variable (set in Manage Jenkins → Configure System)
+        PATH = "${env.JMETER_HOME}/bin:${env.PATH}"
     }
 
     tools {
@@ -15,13 +17,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                // Added credentialsId for SSH authentication
-                git url: 'git@github.com:TaysaAbinader/SoftwareProject1_Actvity1.git',
-                    branch: 'main'
-            }
-        }
         stage('Build') {
             steps {
                 sh 'mvn clean install'
@@ -45,6 +40,43 @@ pipeline {
         stage('Publish Coverage Report') {
             steps {
                 jacoco()
+            }
+        }
+
+        stage('Static Code Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn sonar:sonar'
+                }
+            }
+        }
+        stage('Quality Gate') {
+            steps {
+                script {
+                    def qg = waitForQualityGate()
+                    if (qg.status != 'OK') {
+                        error "SonarQube quality gate failed: ${qg.status}"
+                    }
+                }
+            }
+        }
+
+        stage('Performance Test') {
+            steps {
+                // Run JMeter performance tests against locally running app instance
+                sh '''
+                    echo "Running JMeter performance tests..."
+                    mkdir -p tests/performance/reports
+                    jmeter -n -t tests/performance/clboost_performance.jmx -l tests/performance/result_${BUILD_NUMBER}.jtl -e -o tests/performance/report_${BUILD_NUMBER}
+                '''
+            }
+            post {
+                always {
+                    // Archive raw JTL results
+                    archiveArtifacts artifacts: 'tests/performance/result_*.jtl', allowEmptyArchive: true
+                    // Archive HTML performance reports
+                    archiveArtifacts artifacts: 'tests/performance/report_*/**/*', allowEmptyArchive: true
+                }
             }
         }
 
