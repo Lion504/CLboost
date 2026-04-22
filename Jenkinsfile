@@ -4,6 +4,8 @@ pipeline {
     environment {
         // Docker Hub repository
         DOCKER_IMAGE = "timo2233/clboost"
+        // Jenkins credential ID for Docker Hub authentication
+        DOCKER_HUB_CREDS = 'docker-hub-credentials'
         // Jenkins global environment variable (set in Manage Jenkins → Configure System)
         PATH = "${env.JMETER_HOME}/bin:${env.PATH}"
     }
@@ -120,7 +122,7 @@ pipeline {
             steps {
                 script {
                     // Push both tags to Docker Hub using stored credentials
-                    withDockerRegistry(credentialsId: docker-hub-credentials) {
+                    withDockerRegistry(credentialsId: DOCKER_HUB_CREDS) {
                         docker.push("${DOCKER_IMAGE}:${BUILD_NUMBER}")
                         docker.push("${DOCKER_IMAGE}:latest")
                     }
