@@ -2,6 +2,8 @@ pipeline {
     agent any
 
     environment {
+        // Docker Hub repository
+        DOCKER_IMAGE = "timo2233/clboost"
         // Jenkins global environment variable (set in Manage Jenkins → Configure System)
         PATH = "${env.JMETER_HOME}/bin:${env.PATH}"
     }
