@@ -46,7 +46,7 @@ pipeline {
         stage('Static Code Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh 'mvn sonar:sonar -Dsonar.token=$SONAR_TOKEN'
+                    sh 'mvn sonar:sonar'
                 }
             }
         }
