@@ -202,6 +202,37 @@ mvn test
 mvn test jacoco:report
 ```
 
+### Performance Testing (Sprint 7+)
+
+The project includes an Apache JMeter test plan for load testing.
+
+1. **Install JMeter** 5.6.3+:
+   ```bash
+   # Linux/macOS example (using wget)
+   wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.6.3.tgz
+   tar -xzf apache-jmeter-5.6.3.tgz
+   export JMETER_HOME=$PWD/apache-jmeter-5.6.3
+   export PATH=$JMETER_HOME/bin:$PATH
+   ```
+
+2. **Start the application** on a known port (default 8080 or 8081 from `.env`).
+
+3. **Run the test plan**:
+
+```bash
+jmeter -n -t tests/performance/clboost_performance.jmx -l result.jtl -Jport=8080 -e -o report/
+```
+
+- Use `-Jhost=` and `-Jport=` to override target.
+- The `-e` flag generates an HTML dashboard in `report/`.
+
+4. **Review results**:
+   - Open `report/index.html` in a browser.
+   - Focus on **Average** response time and **Error %**.
+   - Acceptable: Avg < 2s, Errors < 5%.
+
+**Note:** The CI pipeline (Jenkins) automatically executes performance tests on each build and archives results.
+
 ## Deployment
 
 ### Production Build
