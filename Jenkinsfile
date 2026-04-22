@@ -2,10 +2,6 @@ pipeline {
     agent any
 
     environment {
-        // Define your Docker Hub info here
-        DOCKER_IMAGE = "tfabinader/sp1-inclass-assignment"
-        // This ID must match the 'ID' you gave your credentials in Jenkins
-        DOCKER_HUB_CREDS = 'docker-hub-creds'
         // Jenkins global environment variable (set in Manage Jenkins → Configure System)
         PATH = "${env.JMETER_HOME}/bin:${env.PATH}"
     }
