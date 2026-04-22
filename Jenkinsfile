@@ -120,7 +120,7 @@ pipeline {
             steps {
                 script {
                     // Push both tags to Docker Hub using stored credentials
-                    withDockerRegistry(credentialsId: DOCKER_HUB_CREDS) {
+                    withDockerRegistry(credentialsId: docker-hub-credentials) {
                         docker.push("${DOCKER_IMAGE}:${BUILD_NUMBER}")
                         docker.push("${DOCKER_IMAGE}:latest")
                     }
