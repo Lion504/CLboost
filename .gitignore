@@ -35,3 +35,4 @@ bin/
 documentation/*
 .github/instructions/sonarqube_mcp.instructions.md
 .sonarlint/connectedMode.json
+tests/performance/result_local.jtl
