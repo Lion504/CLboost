@@ -121,10 +121,18 @@ pipeline {
             }
             steps {
                 script {
-                    // Push both tags to Docker Hub using stored credentials
-                    withDockerRegistry(credentialsId: DOCKER_HUB_CREDS) {
-                        docker.push("${DOCKER_IMAGE}:${BUILD_NUMBER}")
-                        docker.push("${DOCKER_IMAGE}:latest")
+                    // Authenticate with Docker Hub and push images using shell commands
+                    withCredentials([usernamePassword(
+                        credentialsId: DOCKER_HUB_CREDS,
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )]) {
+                        sh """
+                            echo "\$DOCKER_PASS" | docker login -u "\$DOCKER_USER" --password-stdin
+                            docker push timo2233/clboost:${BUILD_NUMBER}
+                            docker push timo2233/clboost:latest
+                            docker logout
+                        """
                     }
                 }
             }
