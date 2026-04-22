@@ -58,12 +58,50 @@ pipeline {
 
         stage('Performance Test') {
             steps {
-                // Run JMeter performance tests against locally running app instance
-                sh '''
-                    echo "Running JMeter performance tests..."
-                    mkdir -p tests/performance/reports
-                    jmeter -n -t tests/performance/clboost_performance.jmx -l tests/performance/result_${BUILD_NUMBER}.jtl -e -o tests/performance/report_${BUILD_NUMBER}
-                '''
+                script {
+                    // Build Docker image
+                    sh "docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} ."
+                    sh "docker tag ${DOCKER_IMAGE}:${BUILD_NUMBER} ${DOCKER_IMAGE}:latest"
+                    
+                    // Start container in background
+                    def container = sh(
+                        script: "docker run -d -p 8081:8080 --name clboost-test ${DOCKER_IMAGE}:${BUILD_NUMBER}",
+                        returnStdout: true
+                    ).trim()
+                    
+                    try {
+                        // Wait for application to start
+                        sh '''
+                            echo "Waiting for application to start on port 8081..."
+                            for i in {1..30}; do
+                                if curl -s http://localhost:8081/actuator/health > /dev/null 2>&1; then
+                                    echo "Application is up!"
+                                    break
+                                fi
+                                echo "Waiting... ($i/30)"
+                                sleep 2
+                                if [ $i -eq 30 ]; then
+                                    echo "Application did not start within timeout"
+                                    exit 1
+                                fi
+                            done
+                        '''
+                        
+                        // Run JMeter tests
+                        sh '''
+                            echo "Running JMeter performance tests..."
+                            mkdir -p tests/performance/reports
+                            jmeter -n -t tests/performance/clboost_performance.jmx \
+                                -Jhost=localhost -Jport=8081 \
+                                -l tests/performance/result_${BUILD_NUMBER}.jtl \
+                                -e -o tests/performance/report_${BUILD_NUMBER}
+                        '''
+                    } finally {
+                        // Clean up container regardless of test outcome
+                        sh "docker stop ${container}"
+                        sh "docker rm ${container}"
+                    }
+                }
             }
             post {
                 always {
@@ -75,13 +113,17 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Deploy to Docker Hub') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
             steps {
                 script {
-                    // Builds using the Dockerfile in your root directory
-                    // We tag it with the Jenkins build number for versioning
-                    sh "docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} ."
-                    sh "docker tag ${DOCKER_IMAGE}:${BUILD_NUMBER} ${DOCKER_IMAGE}:latest"
+                    // Push both tags to Docker Hub using stored credentials
+                    withDockerRegistry(credentialsId: DOCKER_HUB_CREDS) {
+                        docker.push("${DOCKER_IMAGE}:${BUILD_NUMBER}")
+                        docker.push("${DOCKER_IMAGE}:latest")
+                    }
                 }
             }
         }
