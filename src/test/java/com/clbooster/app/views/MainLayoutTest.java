@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.when;
 
-public class MainLayoutTest extends BaseVaadinViewTest {
+class MainLayoutTest extends BaseVaadinViewTest {
 
     @AfterAll
     static void cleanup() {

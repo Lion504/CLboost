@@ -18,7 +18,7 @@ class ThemeServiceTest {
 
     @Test
     void applyTheme_withNullUi_doesNothing() {
-        ThemeService.applyTheme("dark", null);
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(() -> ThemeService.applyTheme("dark", null));
     }
 
     @Test

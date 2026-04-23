@@ -1,5 +1,8 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.views.util.StyleConstants;
+import com.clbooster.aiservice.Parser;
+
 import jakarta.annotation.security.PermitAll;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
@@ -44,8 +47,9 @@ public class CoverLetterEditorView extends VerticalLayout implements HasUrlParam
     public CoverLetterEditorView() {
         setPadding(true);
         setSpacing(false);
-        getStyle().set("gap", "24px").set("padding", "32px").set("background", BG_WHITE).set("font-family",
-                "-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif");
+        getStyle().set("gap", "24px").set(StyleConstants.CSS_PADDING, "32px")
+                .set(StyleConstants.CSS_BACKGROUND, BG_WHITE)
+                .set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif");
         setSizeFull();
     }
 
@@ -67,8 +71,10 @@ public class CoverLetterEditorView extends VerticalLayout implements HasUrlParam
         header.getStyle().set("gap", "16px");
 
         Button backBtn = new Button("Back to History", VaadinIcon.ARROW_LEFT.create());
-        backBtn.getStyle().set("background", BG_GRAY).set("color", TEXT_PRIMARY).set("font-weight", "600")
-                .set("border-radius", "9999px").set("padding", "10px 20px").set("border", "none");
+        backBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
+                .set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_PADDING, "10px 20px").set(StyleConstants.CSS_BORDER, "none");
         backBtn.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("history")));
 
         VerticalLayout titleGroup = new VerticalLayout();
@@ -77,16 +83,19 @@ public class CoverLetterEditorView extends VerticalLayout implements HasUrlParam
         titleGroup.getStyle().set("gap", "4px");
 
         titleLabel = new H2(currentFile != null ? currentFile.getName() : "Cover Letter");
-        titleLabel.getStyle().set("font-size", "24px").set("font-weight", "700").set("color", TEXT_PRIMARY)
-                .set("margin", "0");
+        titleLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "24px").set(StyleConstants.CSS_FONT_WEIGHT, "700")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph subtitle = new Paragraph("Edit your cover letter below and save when done.");
-        subtitle.getStyle().set("font-size", "14px").set("color", TEXT_SECONDARY).set("margin", "0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+                .set(StyleConstants.CSS_MARGIN, "0");
         titleGroup.add(titleLabel, subtitle);
 
         Button saveBtn = new Button("Save Changes", VaadinIcon.CHECK.create());
-        saveBtn.getStyle().set("background", PRIMARY).set("color", "white").set("font-weight", "600")
-                .set("border-radius", "9999px").set("padding", "10px 20px").set("border", "none");
+        saveBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY)
+                .set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_PADDING, "10px 20px").set(StyleConstants.CSS_BORDER, "none");
         saveBtn.addClickListener(e -> saveFile());
 
         header.add(backBtn, titleGroup, saveBtn);
@@ -97,7 +106,7 @@ public class CoverLetterEditorView extends VerticalLayout implements HasUrlParam
         editor.setWidthFull();
         editor.setSizeFull();
         editor.getStyle().set("font-family", "'SF Mono', 'Fira Code', 'Courier New', monospace")
-                .set("font-size", "14px").set("line-height", "1.7");
+                .set(StyleConstants.CSS_FONT_SIZE, "14px").set("line-height", "1.7");
         // Make the textarea tall
         editor.getElement().getStyle().set("--vaadin-text-area-height", "600px");
         editor.setHeight("600px");
@@ -150,37 +159,8 @@ public class CoverLetterEditorView extends VerticalLayout implements HasUrlParam
         }
     }
 
-    private String extractTextFromDocx(File file) throws IOException {
-        try (java.util.zip.ZipFile zip = new java.util.zip.ZipFile(file)) {
-            java.util.zip.ZipEntry entry = zip.getEntry("word/document.xml");
-            if (entry == null)
-                return "[Could not find document content in DOCX file.]";
-            try (java.io.InputStream is = zip.getInputStream(entry)) {
-                String xml = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-                StringBuilder sb = new StringBuilder();
-                int i = 0;
-                while (i < xml.length()) {
-                    if (xml.startsWith("<w:p", i) && i + 4 < xml.length()
-                            && (xml.charAt(i + 4) == ' ' || xml.charAt(i + 4) == '>' || xml.charAt(i + 4) == '/')) {
-                        if (sb.length() > 0 && sb.charAt(sb.length() - 1) != '\n')
-                            sb.append('\n');
-                    }
-                    if (xml.startsWith("<w:t", i)) {
-                        int start = xml.indexOf('>', i);
-                        if (start != -1) {
-                            int end = xml.indexOf("</w:t>", start);
-                            if (end != -1) {
-                                sb.append(xml, start + 1, end);
-                                i = end + 6;
-                                continue;
-                            }
-                        }
-                    }
-                    i++;
-                }
-                String result = sb.toString().trim();
-                return result.isEmpty() ? "[Document appears to be empty.]" : result;
-            }
-        }
+    private String extractTextFromDocx(File file) {
+        Parser parser = new Parser();
+        return parser.parseFileToJson(file.getAbsolutePath());
     }
 }

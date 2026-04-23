@@ -2,37 +2,59 @@ package com.clbooster.app.views;
 
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.i18n.TranslationService;
+import com.clbooster.app.views.util.AuthComponents;
+import com.clbooster.app.views.util.StyleConstants;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.UnorderedList;
+import com.vaadin.flow.component.html.ListItem;
+import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.NotificationVariant;
-import com.vaadin.flow.component.orderedlayout.*;
-import com.vaadin.flow.component.textfield.*;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.PasswordField;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import java.util.regex.Pattern;
 
 @Route("signup")
 @PageTitle("Create Account | CL Booster")
 @AnonymousAllowed
 public class SignUpView extends VerticalLayout {
+    private static final String FONT_SIZE_PROP = StyleConstants.CSS_FONT_SIZE;
+    private static final String FONT_WEIGHT_PROP = StyleConstants.CSS_FONT_WEIGHT;
+    private static final String COLOR_PROP = StyleConstants.CSS_COLOR;
+    private static final String BACKGROUND_PROP = StyleConstants.CSS_BACKGROUND;
+    private static final String HEIGHT_PROP = StyleConstants.CSS_HEIGHT;
+    private static final String VAADIN_INPUT_FIELD_BACKGROUND_PROP = "--vaadin-input-field-background";
+    private static final String GAP_PROP = "gap";
+    private static final String MARGIN_PROP = StyleConstants.CSS_MARGIN;
+    private static final String WIDTH_PROP = StyleConstants.CSS_WIDTH;
+    private static final String MARGIN_TOP_PROP = StyleConstants.CSS_MARGIN_TOP;
+    private static final String FLEX_PROP = "flex";
+    private static final String BORDER_RADIUS_PROP = StyleConstants.CSS_BORDER_RADIUS;
+    private static final String WHITE_VAL = StyleConstants.VAL_WHITE;
+    private static final String TEXT_DECORATION_PROP = "text-decoration";
+    private static final String VAADIN_INPUT_FIELD_BORDER_RADIUS_PROP = "--vaadin-input-field-border-radius";
 
-    // Figma Design System Colors
-    private static final String PRIMARY = "#007AFF";
-    private static final String TEXT_PRIMARY = "#1d1d1f";
-    private static final String TEXT_SECONDARY = "#86868b";
-    private static final String BG_GRAY = "#f5f5f7";
-    private static final String BG_WHITE = "#ffffff";
-    private static final String SUCCESS = "#34C759";
-    private static final String ERROR = "#FF3B30";
-    private static final String WEAK = "#FF3B30";
-    private static final String MEDIUM = "#FF9500";
-    private static final String GRAY = "rgba(0, 0, 0, 0.1)";
+    private static final Pattern UPPERCASE_PATTERN = Pattern.compile("[A-Z]");
+    private static final Pattern LOWERCASE_PATTERN = Pattern.compile("[a-z]");
+    private static final Pattern DIGIT_PATTERN = Pattern.compile("\\d");
+    private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile("[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]");
 
-    private final AuthenticationService authService;
-    private final TranslationService translationService;
+    private final transient AuthenticationService authService;
+    private final transient TranslationService translationService;
     private TextField firstNameField;
     private TextField lastNameField;
     private TextField usernameField;
@@ -47,94 +69,48 @@ public class SignUpView extends VerticalLayout {
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
-        getStyle().set("background", BG_GRAY);
+        getStyle().set(BACKGROUND_PROP, StyleConstants.BG_GRAY);
         getStyle().set("font-family",
                 "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
 
         // Main card container
-        Div card = new Div();
-        card.getStyle().set("background", BG_WHITE);
-        card.getStyle().set("border-radius", "24px");
-        card.getStyle().set("padding", "48px");
-        card.getStyle().set("width", "100%");
-        card.getStyle().set("max-width", "420px");
-        card.getStyle().set("box-shadow", "0 2px 12px rgba(0, 0, 0, 0.04)");
-        card.getStyle().set("border", "1px solid rgba(0, 0, 0, 0.05)");
-        card.getStyle().set("transition", "all 0.5s ease");
+        Div card = AuthComponents.createCard();
 
         // Back link
-        HorizontalLayout backLink = new HorizontalLayout();
-        backLink.setAlignItems(FlexComponent.Alignment.CENTER);
-        backLink.getStyle().set("gap", "6px");
-        backLink.getStyle().set("cursor", "pointer");
-        backLink.getStyle().set("margin-bottom", "24px");
-        backLink.getStyle().set("width", "fit-content");
-        backLink.getStyle().set("transition", "opacity 0.2s");
-
-        Icon arrowLeft = VaadinIcon.ARROW_LEFT.create();
-        arrowLeft.getStyle().set("width", "14px");
-        arrowLeft.getStyle().set("height", "14px");
-        arrowLeft.getStyle().set("color", TEXT_SECONDARY);
-
-        Span backText = new Span(translationService.translate("landing.backToHome"));
-        backText.getStyle().set("font-size", "13px");
-        backText.getStyle().set("font-weight", "500");
-        backText.getStyle().set("color", TEXT_SECONDARY);
-
-        backLink.add(arrowLeft, backText);
-        backLink.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("")));
-        backLink.getElement().addEventListener("mouseenter", e -> backLink.getStyle().set("opacity", "0.7"));
-        backLink.getElement().addEventListener("mouseleave", e -> backLink.getStyle().set("opacity", "1"));
+        HorizontalLayout backLink = AuthComponents.createBackLink(translationService.translate("landing.backToHome"),
+                () -> getUI().ifPresent(ui -> ui.navigate("")));
 
         // Logo icon
-        Div logoIcon = new Div();
-        logoIcon.getStyle().set("width", "48px");
-        logoIcon.getStyle().set("height", "48px");
-        logoIcon.getStyle().set("background", PRIMARY);
-        logoIcon.getStyle().set("border-radius", "12px");
-        logoIcon.getStyle().set("display", "flex");
-        logoIcon.getStyle().set("align-items", "center");
-        logoIcon.getStyle().set("justify-content", "center");
-        logoIcon.getStyle().set("margin-bottom", "24px");
-        logoIcon.getStyle().set("box-shadow", "0 10px 15px -3px rgba(0, 122, 255, 0.3)");
-        logoIcon.add(VaadinIcon.SPARK_LINE.create());
+        Div logoIcon = AuthComponents.createLogoIcon();
 
         // Title section
-        H2 title = new H2(translationService.translate("signup.createAccount"));
-        title.getStyle().set("font-size", "28px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 8px 0");
-        title.getStyle().set("letter-spacing", "-0.025em");
+        H2 title = AuthComponents.createTitle(translationService.translate("signup.createAccount"));
 
-        Paragraph subtitle = new Paragraph(translationService.translate("signup.joinThousands"));
-        subtitle.getStyle().set("font-size", "15px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "0 0 32px 0");
+        Paragraph subtitle = AuthComponents.createSubtitle(translationService.translate("signup.joinThousands"));
 
         // Form fields
         VerticalLayout form = new VerticalLayout();
         form.setPadding(false);
         form.setSpacing(false);
-        form.getStyle().set("gap", "20px");
+        form.getStyle().set(GAP_PROP, "20px");
         form.setWidthFull();
 
         // Name fields (First and Last)
         HorizontalLayout nameRow = new HorizontalLayout();
         nameRow.setWidthFull();
-        nameRow.getStyle().set("gap", "12px");
+        nameRow.getStyle().set(GAP_PROP, "12px");
 
         firstNameField = new TextField(translationService.translate("label.firstName"));
         firstNameField.setPlaceholder("Alex");
         firstNameField.setWidthFull();
-        firstNameField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        firstNameField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        firstNameField.getStyle().set(VAADIN_INPUT_FIELD_BACKGROUND_PROP, StyleConstants.BG_GRAY);
+        firstNameField.getStyle().set(VAADIN_INPUT_FIELD_BORDER_RADIUS_PROP, "12px");
 
         lastNameField = new TextField(translationService.translate("label.lastName"));
         lastNameField.setPlaceholder("Riviera");
         lastNameField.setWidthFull();
-        lastNameField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        lastNameField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        lastNameField.getStyle().set(VAADIN_INPUT_FIELD_BACKGROUND_PROP, StyleConstants.BG_GRAY);
+        lastNameField.getStyle().set(VAADIN_INPUT_FIELD_BORDER_RADIUS_PROP, "12px");
 
         nameRow.add(firstNameField, lastNameField);
         nameRow.expand(firstNameField, lastNameField);
@@ -143,49 +119,49 @@ public class SignUpView extends VerticalLayout {
         usernameField = new TextField(translationService.translate("label.username"));
         usernameField.setPlaceholder("alexriviera");
         usernameField.setWidthFull();
-        usernameField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        usernameField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        usernameField.getStyle().set(VAADIN_INPUT_FIELD_BACKGROUND_PROP, StyleConstants.BG_GRAY);
+        usernameField.getStyle().set(VAADIN_INPUT_FIELD_BORDER_RADIUS_PROP, "12px");
 
         // Email field
         emailField = new EmailField(translationService.translate("label.email"));
         emailField.setPlaceholder("alex@example.com");
         emailField.setWidthFull();
-        emailField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        emailField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        emailField.getStyle().set(VAADIN_INPUT_FIELD_BACKGROUND_PROP, StyleConstants.BG_GRAY);
+        emailField.getStyle().set(VAADIN_INPUT_FIELD_BORDER_RADIUS_PROP, "12px");
 
         // Password field
         passwordField = new PasswordField(translationService.translate("label.password"));
         passwordField.setWidthFull();
-        passwordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        passwordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        passwordField.getStyle().set(VAADIN_INPUT_FIELD_BACKGROUND_PROP, StyleConstants.BG_GRAY);
+        passwordField.getStyle().set(VAADIN_INPUT_FIELD_BORDER_RADIUS_PROP, "12px");
 
         // Password strength indicator
         VerticalLayout strengthIndicator = new VerticalLayout();
         strengthIndicator.setPadding(false);
         strengthIndicator.setSpacing(false);
-        strengthIndicator.getStyle().set("gap", "8px");
-        strengthIndicator.getStyle().set("margin-top", "-12px");
+        strengthIndicator.getStyle().set(GAP_PROP, "8px");
+        strengthIndicator.getStyle().set(MARGIN_TOP_PROP, "-12px");
 
         HorizontalLayout strengthBarsLayout = new HorizontalLayout();
-        strengthBarsLayout.getStyle().set("gap", "4px");
+        strengthBarsLayout.getStyle().set(GAP_PROP, "4px");
         strengthBarsLayout.setWidthFull();
 
         strengthBars = new Div[4];
         for (int i = 0; i < 4; i++) {
             Div bar = new Div();
-            bar.getStyle().set("flex", "1");
-            bar.getStyle().set("height", "4px");
-            bar.getStyle().set("background", GRAY);
-            bar.getStyle().set("border-radius", "2px");
-            bar.getStyle().set("transition", "background 0.3s");
+            bar.getStyle().set(FLEX_PROP, "1");
+            bar.getStyle().set(HEIGHT_PROP, "4px");
+            bar.getStyle().set(BACKGROUND_PROP, StyleConstants.GRAY);
+            bar.getStyle().set(BORDER_RADIUS_PROP, "2px");
+            bar.getStyle().set(StyleConstants.CSS_TRANSITION, "background 0.3s");
             strengthBars[i] = bar;
             strengthBarsLayout.add(bar);
         }
 
         strengthText = new Span(translationService.translate("signup.passwordStrength"));
-        strengthText.getStyle().set("font-size", "12px");
-        strengthText.getStyle().set("color", TEXT_SECONDARY);
-        strengthText.getStyle().set("font-weight", "500");
+        strengthText.getStyle().set(FONT_SIZE_PROP, "12px");
+        strengthText.getStyle().set(COLOR_PROP, StyleConstants.TEXT_SECONDARY);
+        strengthText.getStyle().set(FONT_WEIGHT_PROP, "500");
 
         strengthIndicator.add(strengthBarsLayout, strengthText);
 
@@ -195,48 +171,48 @@ public class SignUpView extends VerticalLayout {
         // Terms checkbox
         HorizontalLayout termsRow = new HorizontalLayout();
         termsRow.setAlignItems(FlexComponent.Alignment.START);
-        termsRow.getStyle().set("gap", "12px");
-        termsRow.getStyle().set("margin", "8px 0");
+        termsRow.getStyle().set(GAP_PROP, "12px");
+        termsRow.getStyle().set(MARGIN_PROP, "8px 0");
 
         Div checkIcon = new Div();
-        checkIcon.getStyle().set("width", "20px");
-        checkIcon.getStyle().set("height", "20px");
-        checkIcon.getStyle().set("background", SUCCESS);
-        checkIcon.getStyle().set("border-radius", "6px");
-        checkIcon.getStyle().set("display", "flex");
-        checkIcon.getStyle().set("align-items", "center");
-        checkIcon.getStyle().set("justify-content", "center");
+        checkIcon.getStyle().set(WIDTH_PROP, "20px");
+        checkIcon.getStyle().set(HEIGHT_PROP, "20px");
+        checkIcon.getStyle().set(BACKGROUND_PROP, StyleConstants.SUCCESS);
+        checkIcon.getStyle().set(BORDER_RADIUS_PROP, "6px");
+        checkIcon.getStyle().set(StyleConstants.CSS_DISPLAY, FLEX_PROP);
+        checkIcon.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
+        checkIcon.getStyle().set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER);
         checkIcon.getStyle().set("flex-shrink", "0");
-        checkIcon.getStyle().set("margin-top", "2px");
+        checkIcon.getStyle().set(MARGIN_TOP_PROP, "2px");
 
         Icon check = VaadinIcon.CHECK.create();
-        check.getStyle().set("width", "12px");
-        check.getStyle().set("height", "12px");
-        check.getStyle().set("color", "white");
+        check.getStyle().set(WIDTH_PROP, "12px");
+        check.getStyle().set(HEIGHT_PROP, "12px");
+        check.getStyle().set(COLOR_PROP, WHITE_VAL);
         checkIcon.add(check);
 
         // Terms text - two lines
         VerticalLayout termsTextLayout = new VerticalLayout();
         termsTextLayout.setPadding(false);
         termsTextLayout.setSpacing(false);
-        termsTextLayout.getStyle().set("gap", "2px");
+        termsTextLayout.getStyle().set(GAP_PROP, "2px");
 
         // Line 1: Terms of Service
         HorizontalLayout termsLine1 = new HorizontalLayout();
         termsLine1.setAlignItems(FlexComponent.Alignment.CENTER);
-        termsLine1.getStyle().set("gap", "4px");
-        termsLine1.getStyle().set("flex-wrap", "nowrap");
+        termsLine1.getStyle().set(GAP_PROP, "4px");
+        termsLine1.getStyle().set(StyleConstants.CSS_FLEX_WRAP, "nowrap");
 
         Span agreeText = new Span(translationService.translate("signup.bySigningUp"));
-        agreeText.getStyle().set("font-size", "13px");
-        agreeText.getStyle().set("color", TEXT_SECONDARY);
+        agreeText.getStyle().set(FONT_SIZE_PROP, "13px");
+        agreeText.getStyle().set(COLOR_PROP, StyleConstants.TEXT_SECONDARY);
 
         Span termsLink = new Span(translationService.translate("signup.termsOfService"));
-        termsLink.getStyle().set("font-size", "13px");
-        termsLink.getStyle().set("font-weight", "500");
-        termsLink.getStyle().set("color", PRIMARY);
-        termsLink.getStyle().set("cursor", "pointer");
-        termsLink.getStyle().set("text-decoration", "underline");
+        termsLink.getStyle().set(FONT_SIZE_PROP, "13px");
+        termsLink.getStyle().set(FONT_WEIGHT_PROP, "500");
+        termsLink.getStyle().set(COLOR_PROP, StyleConstants.PRIMARY);
+        termsLink.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+        termsLink.getStyle().set(TEXT_DECORATION_PROP, "underline");
         termsLink.addClickListener(e -> showTermsOfServiceDialog());
 
         termsLine1.add(agreeText, termsLink);
@@ -244,19 +220,19 @@ public class SignUpView extends VerticalLayout {
         // Line 2: Privacy Policy
         HorizontalLayout termsLine2 = new HorizontalLayout();
         termsLine2.setAlignItems(FlexComponent.Alignment.CENTER);
-        termsLine2.getStyle().set("gap", "4px");
-        termsLine2.getStyle().set("flex-wrap", "nowrap");
+        termsLine2.getStyle().set(GAP_PROP, "4px");
+        termsLine2.getStyle().set(StyleConstants.CSS_FLEX_WRAP, "nowrap");
 
         Span andText = new Span(translationService.translate("signup.and"));
-        andText.getStyle().set("font-size", "13px");
-        andText.getStyle().set("color", TEXT_SECONDARY);
+        andText.getStyle().set(FONT_SIZE_PROP, "13px");
+        andText.getStyle().set(COLOR_PROP, StyleConstants.TEXT_SECONDARY);
 
         Span privacyLink = new Span(translationService.translate("signup.privacyPolicy"));
-        privacyLink.getStyle().set("font-size", "13px");
-        privacyLink.getStyle().set("font-weight", "500");
-        privacyLink.getStyle().set("color", PRIMARY);
-        privacyLink.getStyle().set("cursor", "pointer");
-        privacyLink.getStyle().set("text-decoration", "underline");
+        privacyLink.getStyle().set(FONT_SIZE_PROP, "13px");
+        privacyLink.getStyle().set(FONT_WEIGHT_PROP, "500");
+        privacyLink.getStyle().set(COLOR_PROP, StyleConstants.PRIMARY);
+        privacyLink.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+        privacyLink.getStyle().set(TEXT_DECORATION_PROP, "underline");
         privacyLink.addClickListener(e -> showPrivacyPolicyDialog());
 
         termsLine2.add(andText, privacyLink);
@@ -265,65 +241,34 @@ public class SignUpView extends VerticalLayout {
         termsRow.add(checkIcon, termsTextLayout);
 
         // Create Account button
-        Button createBtn = createPrimaryButton(translationService.translate("signup.createAccount"),
+        Button createBtn = AuthComponents.createPrimaryButton(translationService.translate("signup.createAccount"),
                 this::handleRegistration);
         createBtn.setWidthFull();
-        createBtn.getStyle().set("margin-top", "8px");
+        createBtn.getStyle().set(MARGIN_TOP_PROP, "8px");
 
         // Divider
-        HorizontalLayout divider = new HorizontalLayout();
-        divider.setWidthFull();
-        divider.setAlignItems(FlexComponent.Alignment.CENTER);
-        divider.getStyle().set("gap", "16px");
-        divider.getStyle().set("margin", "24px 0");
-
-        Div line1 = new Div();
-        line1.getStyle().set("flex", "1");
-        line1.getStyle().set("height", "1px");
-        line1.getStyle().set("background", "rgba(0, 0, 0, 0.1)");
-
-        Span orText = new Span(translationService.translate("login.orContinueWith"));
-        orText.getStyle().set("font-size", "13px");
-        orText.getStyle().set("color", TEXT_SECONDARY);
-        orText.getStyle().set("white-space", "nowrap");
-
-        Div line2 = new Div();
-        line2.getStyle().set("flex", "1");
-        line2.getStyle().set("height", "1px");
-        line2.getStyle().set("background", "rgba(0, 0, 0, 0.1)");
-
-        divider.add(line1, orText, line2);
+        HorizontalLayout divider = AuthComponents.createDivider(translationService.translate("login.orContinueWith"));
 
         // Social buttons
-        HorizontalLayout socialButtons = new HorizontalLayout();
-        socialButtons.setWidthFull();
-        socialButtons.getStyle().set("gap", "12px");
-
-        Button googleBtn = createSocialButton("Google");
-        Button linkedinBtn = createSocialButton("LinkedIn");
-
-        socialButtons.add(googleBtn, linkedinBtn);
-        socialButtons.expand(googleBtn, linkedinBtn);
+        HorizontalLayout socialButtons = AuthComponents.createSocialButtonsLayout();
 
         // Login link
         HorizontalLayout loginRow = new HorizontalLayout();
         loginRow.setWidthFull();
         loginRow.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-        loginRow.getStyle().set("margin-top", "24px");
-        loginRow.getStyle().set("gap", "4px");
+        loginRow.getStyle().set(MARGIN_TOP_PROP, "24px");
+        loginRow.getStyle().set(GAP_PROP, "4px");
 
         Span haveAccount = new Span(translationService.translate("signup.haveAccount"));
-        haveAccount.getStyle().set("font-size", "14px");
-        haveAccount.getStyle().set("color", TEXT_SECONDARY);
+        haveAccount.getStyle().set(FONT_SIZE_PROP, "14px");
+        haveAccount.getStyle().set(COLOR_PROP, StyleConstants.TEXT_SECONDARY);
 
         Anchor loginLink = new Anchor("login", translationService.translate("landing.logIn"));
-        loginLink.getStyle().set("font-size", "14px");
-        loginLink.getStyle().set("font-weight", "600");
-        loginLink.getStyle().set("color", PRIMARY);
-        loginLink.getStyle().set("text-decoration", "none");
-        loginLink.getStyle().set("transition", "opacity 0.2s");
-        loginLink.getElement().addEventListener("mouseenter", e -> loginLink.getStyle().set("opacity", "0.7"));
-        loginLink.getElement().addEventListener("mouseleave", e -> loginLink.getStyle().set("opacity", "1"));
+        loginLink.getStyle().set(FONT_SIZE_PROP, "14px");
+        loginLink.getStyle().set(FONT_WEIGHT_PROP, "600");
+        loginLink.getStyle().set(COLOR_PROP, StyleConstants.PRIMARY);
+        loginLink.getStyle().set(TEXT_DECORATION_PROP, "none");
+        AuthComponents.applyLinkHoverEffect(loginLink);
 
         loginRow.add(haveAccount, loginLink);
 
@@ -331,65 +276,16 @@ public class SignUpView extends VerticalLayout {
         card.add(backLink, logoIcon, title, subtitle, form, divider, socialButtons, loginRow);
 
         // Hover effect for card
-        card.getElement().addEventListener("mouseenter", e -> {
-            card.getStyle().set("box-shadow", "0 24px 48px rgba(0, 0, 0, 0.06)");
-            card.getStyle().set("transform", "translateY(-2px)");
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
+            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 24px 48px rgba(0, 0, 0, 0.06)");
+            card.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(-2px)");
         });
-        card.getElement().addEventListener("mouseleave", e -> {
-            card.getStyle().set("box-shadow", "0 2px 12px rgba(0, 0, 0, 0.04)");
-            card.getStyle().set("transform", "translateY(0)");
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
+            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
+            card.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(0)");
         });
 
         add(card);
-    }
-
-    private Button createPrimaryButton(String text, Runnable action) {
-        Button btn = new Button(text, e -> action.run());
-        btn.getStyle().set("background", "linear-gradient(135deg, " + PRIMARY + " 0%, #5AC8FA 100%)");
-        btn.getStyle().set("color", "white");
-        btn.getStyle().set("font-weight", "600");
-        btn.getStyle().set("font-size", "15px");
-        btn.getStyle().set("border-radius", "9999px");
-        btn.getStyle().set("border", "none");
-        btn.getStyle().set("padding", "14px 24px");
-        btn.getStyle().set("box-shadow", "0 10px 15px -3px rgba(0, 122, 255, 0.3)");
-        btn.getStyle().set("transition", "all 0.2s ease");
-        btn.getStyle().set("cursor", "pointer");
-
-        btn.getElement().addEventListener("mouseenter", e -> {
-            btn.getStyle().set("filter", "brightness(1.1)");
-            btn.getStyle().set("transform", "translateY(-1px)");
-        });
-        btn.getElement().addEventListener("mouseleave", e -> {
-            btn.getStyle().set("filter", "brightness(1)");
-            btn.getStyle().set("transform", "translateY(0)");
-        });
-
-        return btn;
-    }
-
-    private Button createSocialButton(String provider) {
-        Button btn = new Button(provider);
-        btn.getStyle().set("background", BG_GRAY);
-        btn.getStyle().set("color", TEXT_PRIMARY);
-        btn.getStyle().set("font-weight", "600");
-        btn.getStyle().set("font-size", "14px");
-        btn.getStyle().set("border-radius", "12px");
-        btn.getStyle().set("border", "1px solid rgba(0, 0, 0, 0.05)");
-        btn.getStyle().set("padding", "12px 24px");
-        btn.getStyle().set("transition", "all 0.2s ease");
-        btn.getStyle().set("cursor", "pointer");
-
-        btn.getElement().addEventListener("mouseenter", e -> {
-            btn.getStyle().set("background", "rgba(0, 0, 0, 0.08)");
-            btn.getStyle().set("border-color", "rgba(0, 0, 0, 0.1)");
-        });
-        btn.getElement().addEventListener("mouseleave", e -> {
-            btn.getStyle().set("background", BG_GRAY);
-            btn.getStyle().set("border-color", "rgba(0, 0, 0, 0.05)");
-        });
-
-        return btn;
     }
 
     private void handleRegistration() {
@@ -401,23 +297,23 @@ public class SignUpView extends VerticalLayout {
 
         // Validation
         if (firstName == null || firstName.trim().isEmpty()) {
-            showError("Please enter your first name");
+            AuthComponents.showError("Please enter your first name");
             return;
         }
         if (lastName == null || lastName.trim().isEmpty()) {
-            showError("Please enter your last name");
+            AuthComponents.showError("Please enter your last name");
             return;
         }
         if (username == null || username.trim().isEmpty()) {
-            showError("Please enter a username");
+            AuthComponents.showError("Please enter a username");
             return;
         }
         if (email == null || email.trim().isEmpty()) {
-            showError("Please enter your email address");
+            AuthComponents.showError("Please enter your email address");
             return;
         }
         if (password == null || password.trim().isEmpty()) {
-            showError("Please enter a password");
+            AuthComponents.showError("Please enter a password");
             return;
         }
 
@@ -426,34 +322,22 @@ public class SignUpView extends VerticalLayout {
         if (success) {
             // Log the new user in immediately so the session is populated
             authService.login(username, password);
-            showSuccess("Account created successfully! Welcome, " + firstName + "!");
+            AuthComponents.showSuccess("Account created successfully! Welcome, " + firstName + "!");
             // Navigate to dashboard as the newly created user
             getUI().ifPresent(ui -> ui.navigate(DashboardView.class));
         } else {
-            showError("Registration failed. Username or email may already be registered.");
+            AuthComponents.showError("Registration failed. Username or email may already be registered.");
         }
-    }
-
-    private void showSuccess(String message) {
-        Notification notification = new Notification(message, 3000, Notification.Position.TOP_CENTER);
-        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-        notification.open();
-    }
-
-    private void showError(String message) {
-        Notification notification = new Notification(message, 3000, Notification.Position.TOP_CENTER);
-        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-        notification.open();
     }
 
     private void updatePasswordStrength(String password) {
         if (password == null || password.isEmpty()) {
             // Reset to gray
             for (int i = 0; i < 4; i++) {
-                strengthBars[i].getStyle().set("background", GRAY);
+                strengthBars[i].getStyle().set(BACKGROUND_PROP, StyleConstants.GRAY);
             }
             strengthText.setText("Password strength: Enter password");
-            strengthText.getStyle().set("color", TEXT_SECONDARY);
+            strengthText.getStyle().set(COLOR_PROP, StyleConstants.TEXT_SECONDARY);
             return;
         }
 
@@ -465,34 +349,34 @@ public class SignUpView extends VerticalLayout {
         String textColor;
 
         if (strength <= 1) {
-            barColor = WEAK;
+            barColor = StyleConstants.WEAK;
             strengthLabel = "Weak";
-            textColor = WEAK;
+            textColor = StyleConstants.WEAK;
         } else if (strength == 2) {
-            barColor = MEDIUM;
+            barColor = StyleConstants.MEDIUM;
             strengthLabel = "Fair";
-            textColor = MEDIUM;
+            textColor = StyleConstants.MEDIUM;
         } else if (strength == 3) {
-            barColor = SUCCESS;
+            barColor = StyleConstants.SUCCESS;
             strengthLabel = "Good";
-            textColor = SUCCESS;
+            textColor = StyleConstants.SUCCESS;
         } else {
-            barColor = SUCCESS;
+            barColor = StyleConstants.SUCCESS;
             strengthLabel = "Strong";
-            textColor = SUCCESS;
+            textColor = StyleConstants.SUCCESS;
         }
 
         // Fill bars
         for (int i = 0; i < 4; i++) {
             if (i < strength) {
-                strengthBars[i].getStyle().set("background", barColor);
+                strengthBars[i].getStyle().set(BACKGROUND_PROP, barColor);
             } else {
-                strengthBars[i].getStyle().set("background", GRAY);
+                strengthBars[i].getStyle().set(BACKGROUND_PROP, StyleConstants.GRAY);
             }
         }
 
         strengthText.setText("Password strength: " + strengthLabel);
-        strengthText.getStyle().set("color", textColor);
+        strengthText.getStyle().set(COLOR_PROP, textColor);
     }
 
     /**
@@ -510,10 +394,10 @@ public class SignUpView extends VerticalLayout {
             strength++;
 
         // Character variety checks
-        boolean hasUpper = password.matches(".*[A-Z].*");
-        boolean hasLower = password.matches(".*[a-z].*");
-        boolean hasNumber = password.matches(".*\\d.*");
-        boolean hasSpecial = password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*");
+        boolean hasUpper = UPPERCASE_PATTERN.matcher(password).find();
+        boolean hasLower = LOWERCASE_PATTERN.matcher(password).find();
+        boolean hasNumber = DIGIT_PATTERN.matcher(password).find();
+        boolean hasSpecial = SPECIAL_CHAR_PATTERN.matcher(password).find();
 
         int varietyCount = 0;
         if (hasUpper)
@@ -535,20 +419,6 @@ public class SignUpView extends VerticalLayout {
     }
 
     private void showTermsOfServiceDialog() {
-        Dialog dialog = new Dialog();
-        dialog.setHeaderTitle(translationService.translate("terms.title"));
-        dialog.setWidth("500px");
-        dialog.setHeight("600px");
-
-        VerticalLayout content = new VerticalLayout();
-        content.setPadding(true);
-        content.setSpacing(true);
-
-        H3 title = new H3(translationService.translate("terms.title"));
-        title.getStyle().set("margin-top", "0");
-
-        Paragraph intro = new Paragraph(translationService.translate("terms.intro"));
-
         H4 section1 = new H4(translationService.translate("terms.section1.title"));
         Paragraph text1 = new Paragraph(translationService.translate("terms.section1.text"));
 
@@ -568,35 +438,11 @@ public class SignUpView extends VerticalLayout {
         H4 section5 = new H4(translationService.translate("terms.section5.title"));
         Paragraph text5 = new Paragraph(translationService.translate("terms.section5.text"));
 
-        content.add(title, intro, section1, text1, section2, text2, list2, section3, text3, section4, text4, section5,
-                text5);
-        content.getStyle().set("overflow", "auto");
-        content.setHeight("400px");
-
-        Button closeButton = new Button(translationService.translate("landing.iUnderstand"), e -> dialog.close());
-        closeButton.getStyle().set("background", PRIMARY);
-        closeButton.getStyle().set("color", "white");
-
-        dialog.add(content);
-        dialog.getFooter().add(closeButton);
-        dialog.open();
+        createInfoDialog("terms.title", "terms.intro", section1, text1, section2, text2, list2, section3, text3,
+                section4, text4, section5, text5).open();
     }
 
     private void showPrivacyPolicyDialog() {
-        Dialog dialog = new Dialog();
-        dialog.setHeaderTitle(translationService.translate("privacy.title"));
-        dialog.setWidth("500px");
-        dialog.setHeight("600px");
-
-        VerticalLayout content = new VerticalLayout();
-        content.setPadding(true);
-        content.setSpacing(true);
-
-        H3 title = new H3(translationService.translate("privacy.title"));
-        title.getStyle().set("margin-top", "0");
-
-        Paragraph intro = new Paragraph(translationService.translate("privacy.intro"));
-
         H4 section1 = new H4(translationService.translate("privacy.section1.title"));
         Paragraph text1 = new Paragraph(translationService.translate("privacy.section1.text"));
         UnorderedList list1 = new UnorderedList(
@@ -629,17 +475,38 @@ public class SignUpView extends VerticalLayout {
         H4 section7 = new H4(translationService.translate("privacy.section7.title"));
         Paragraph text7 = new Paragraph(translationService.translate("privacy.section7.text"));
 
-        content.add(title, intro, section1, text1, list1, section2, text2, list2, section3, text3, section4, text4,
-                section5, text5, section6, text6, section7, text7);
-        content.getStyle().set("overflow", "auto");
+        createInfoDialog("privacy.title", "privacy.intro", section1, text1, list1, section2, text2, list2, section3,
+                text3, section4, text4, section5, text5, section6, text6, section7, text7).open();
+    }
+
+    private Dialog createInfoDialog(String titleKey, String introKey, com.vaadin.flow.component.Component... sections) {
+        Dialog dialog = new Dialog();
+        dialog.setHeaderTitle(translationService.translate(titleKey));
+        dialog.setWidth("500px");
+        dialog.setHeight("600px");
+
+        VerticalLayout content = new VerticalLayout();
+        content.setPadding(true);
+        content.setSpacing(true);
+
+        H3 title = new H3(translationService.translate(titleKey));
+        title.getStyle().set(MARGIN_TOP_PROP, "0");
+
+        Paragraph intro = new Paragraph(translationService.translate(introKey));
+
+        content.add(title, intro);
+        content.add(sections);
+
+        content.getStyle().set(StyleConstants.CSS_OVERFLOW, "auto");
         content.setHeight("400px");
 
         Button closeButton = new Button(translationService.translate("landing.iUnderstand"), e -> dialog.close());
-        closeButton.getStyle().set("background", PRIMARY);
-        closeButton.getStyle().set("color", "white");
+        closeButton.getStyle().set(BACKGROUND_PROP, StyleConstants.PRIMARY);
+        closeButton.getStyle().set(COLOR_PROP, WHITE_VAL);
 
         dialog.add(content);
         dialog.getFooter().add(closeButton);
-        dialog.open();
+
+        return dialog;
     }
 }

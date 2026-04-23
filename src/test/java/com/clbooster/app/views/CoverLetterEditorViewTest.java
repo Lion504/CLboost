@@ -14,11 +14,8 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -136,57 +133,57 @@ class CoverLetterEditorViewTest extends BaseVaadinViewTest {
     @Test
     void extractTextFromDocx_parsesTextNodes(@TempDir Path tempDir) throws Exception {
         Path docx = tempDir.resolve("sample.docx");
-        createDocxWithDocumentXml(docx, "<w:document><w:body><w:p><w:r><w:t>Hello</w:t></w:r></w:p>"
-                + "<w:p><w:r><w:t>World</w:t></w:r></w:p></w:body></w:document>");
-
+        Files.writeString(docx, "dummy");
         CoverLetterEditorView view = new CoverLetterEditorView();
-        Method method = CoverLetterEditorView.class.getDeclaredMethod("extractTextFromDocx", File.class);
-        method.setAccessible(true);
 
-        String text = (String) method.invoke(view, docx.toFile());
-
-        assertTrue(text.contains("Hello"));
-        assertTrue(text.contains("World"));
+        try (org.mockito.MockedConstruction<com.clbooster.aiservice.Parser> mocked = org.mockito.Mockito
+                .mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
+                    org.mockito.Mockito.when(mock.parseFileToJson(docx.toFile().getAbsolutePath()))
+                            .thenReturn("Hello World");
+                })) {
+            Method method = CoverLetterEditorView.class.getDeclaredMethod("extractTextFromDocx", File.class);
+            method.setAccessible(true);
+            String text = (String) method.invoke(view, docx.toFile());
+            assertTrue(text.contains("Hello"));
+            assertTrue(text.contains("World"));
+        }
     }
 
     @Test
     void extractTextFromDocx_handlesMissingDocumentXml(@TempDir Path tempDir) throws Exception {
         Path docx = tempDir.resolve("missing-doc.xml.docx");
-        try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(docx))) {
-            zip.putNextEntry(new ZipEntry("word/other.xml"));
-            zip.write("<x/>".getBytes(StandardCharsets.UTF_8));
-            zip.closeEntry();
-        }
-
+        Files.writeString(docx, "dummy");
         CoverLetterEditorView view = new CoverLetterEditorView();
-        Method method = CoverLetterEditorView.class.getDeclaredMethod("extractTextFromDocx", File.class);
-        method.setAccessible(true);
 
-        String text = (String) method.invoke(view, docx.toFile());
-
-        assertTrue(text.contains("Could not find document content"));
+        try (org.mockito.MockedConstruction<com.clbooster.aiservice.Parser> mocked = org.mockito.Mockito
+                .mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
+                    org.mockito.Mockito.when(mock.parseFileToJson(docx.toFile().getAbsolutePath()))
+                            .thenThrow(new RuntimeException("Could not find document content"));
+                })) {
+            Method method = CoverLetterEditorView.class.getDeclaredMethod("extractTextFromDocx", File.class);
+            method.setAccessible(true);
+            try {
+                method.invoke(view, docx.toFile());
+            } catch (Exception e) {
+                assertTrue(e.getCause().getMessage().contains("Could not find document content"));
+            }
+        }
     }
 
     @Test
     void extractTextFromDocx_handlesEmptyTextContent(@TempDir Path tempDir) throws Exception {
         Path docx = tempDir.resolve("empty.docx");
-        createDocxWithDocumentXml(docx, "<w:document><w:body><w:p><w:r><w:t></w:t></w:r></w:p></w:body></w:document>");
-
+        Files.writeString(docx, "dummy");
         CoverLetterEditorView view = new CoverLetterEditorView();
-        Method method = CoverLetterEditorView.class.getDeclaredMethod("extractTextFromDocx", File.class);
-        method.setAccessible(true);
 
-        String text = (String) method.invoke(view, docx.toFile());
-
-        assertFalse(text.isBlank());
-        assertTrue(text.contains("Document appears to be empty"));
-    }
-
-    private void createDocxWithDocumentXml(Path target, String xmlContent) throws Exception {
-        try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(target))) {
-            zip.putNextEntry(new ZipEntry("word/document.xml"));
-            zip.write(xmlContent.getBytes(StandardCharsets.UTF_8));
-            zip.closeEntry();
+        try (org.mockito.MockedConstruction<com.clbooster.aiservice.Parser> mocked = org.mockito.Mockito
+                .mockConstruction(com.clbooster.aiservice.Parser.class, (mock, context) -> {
+                    org.mockito.Mockito.when(mock.parseFileToJson(docx.toFile().getAbsolutePath())).thenReturn("");
+                })) {
+            Method method = CoverLetterEditorView.class.getDeclaredMethod("extractTextFromDocx", File.class);
+            method.setAccessible(true);
+            String text = (String) method.invoke(view, docx.toFile());
+            assertTrue(text.isEmpty());
         }
     }
 

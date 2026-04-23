@@ -6,9 +6,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 @Lazy
 public class AIService {
+
+    private static final Logger log = LoggerFactory.getLogger(AIService.class);
 
     private ChatLanguageModel languageModel;
     private final String apiKey;
@@ -122,11 +127,11 @@ public class AIService {
     }
 
     public String generateCoverLetter(String resume, String jobDetails, String tone) {
-        System.out.println("Matching Resume and Job Details...");
+        log.info("Matching Resume and Job Details...");
         String rawAnalysis = matchQualification(resume, jobDetails);
         String analysis = rawAnalysis.replaceAll("(?s)```json\\s*", "").replaceAll("(?s)```\\s*", "").trim();
 
-        System.out.println("Drafting Cover Letter (tone: " + tone + ")...");
+        log.info("Drafting Cover Letter (tone: {})...", tone);
         return writeCoverLetter(analysis, jobDetails, tone);
     }
 }

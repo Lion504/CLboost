@@ -16,7 +16,7 @@ public abstract class FileUploadService {
      * Template method: validates and prepares the file, delegates actual
      * persistence to subclasses.
      */
-    public void saveFile(MultipartFile file) throws Exception {
+    public void saveFile(MultipartFile file) throws java.io.IOException {
         validate(file);
 
         StoredFile storedFile = new StoredFile(file.getOriginalFilename(), file.getContentType(), file.getBytes());

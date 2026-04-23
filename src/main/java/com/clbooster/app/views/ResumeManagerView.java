@@ -1,5 +1,7 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.views.util.StyleConstants;
+
 import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.document.DocumentService;
@@ -30,7 +32,6 @@ import com.vaadin.flow.server.StreamResource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,6 +50,10 @@ import java.util.logging.Logger;
 @PageTitle("Resume Manager | CL Booster")
 @PermitAll
 public class ResumeManagerView extends VerticalLayout {
+    private static final String BG_GRADIENT = "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)";
+    private static final String RESUME_SORT_BY_RECENT_KEY = "resume.sortByRecent";
+    private static final String MIME_APPLICATION_PDF = "application/pdf";
+    private static final String MIME_APPLICATION_DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
     private static final String PRIMARY = "#007AFF";
     private static final String PRIMARY_LIGHT = "#5AC8FA";
@@ -62,7 +67,7 @@ public class ResumeManagerView extends VerticalLayout {
 
     private static final Logger LOGGER = Logger.getLogger(ResumeManagerView.class.getName());
 
-    private final DocumentService documentService;
+    private final transient DocumentService documentService;
     private final TranslationService translationService;
     private List<ResumeData> resumes = new ArrayList<>();
     private VerticalLayout resumeListContainer;
@@ -74,8 +79,8 @@ public class ResumeManagerView extends VerticalLayout {
         setPadding(true);
         setSpacing(true);
         getStyle().set("gap", "32px");
-        getStyle().set("padding", "32px");
-        getStyle().set("background", BG_WHITE);
+        getStyle().set(StyleConstants.CSS_PADDING, "32px");
+        getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
         getStyle().set("font-family",
                 "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
         setSizeFull();
@@ -94,7 +99,7 @@ public class ResumeManagerView extends VerticalLayout {
         HorizontalLayout mainContent = new HorizontalLayout();
         mainContent.setWidthFull();
         mainContent.getStyle().set("gap", "32px");
-        mainContent.getStyle().set("align-items", "flex-start");
+        mainContent.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, "flex-start");
 
         // Left panel - Upload and Resume List
         VerticalLayout leftPanel = createLeftPanel();
@@ -118,16 +123,16 @@ public class ResumeManagerView extends VerticalLayout {
         titleGroup.getStyle().set("gap", "4px");
 
         H1 title = new H1(translationService.translate("resume.title"));
-        title.getStyle().set("font-size", "30px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("letter-spacing", "-0.025em");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "30px");
+        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        title.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "-0.025em");
+        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        title.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph subtitle = new Paragraph(translationService.translate("resume.uploadManage"));
-        subtitle.getStyle().set("font-size", "14px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
+        subtitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        subtitle.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         titleGroup.add(title, subtitle);
 
@@ -136,25 +141,23 @@ public class ResumeManagerView extends VerticalLayout {
         actions.getStyle().set("gap", "12px");
 
         Button importBtn = new Button(translationService.translate("resume.importLinkedIn"), VaadinIcon.LINK.create());
-        importBtn.getStyle().set("background", BG_GRAY);
-        importBtn.getStyle().set("color", TEXT_PRIMARY);
-        importBtn.getStyle().set("font-weight", "600");
-        importBtn.getStyle().set("border-radius", "9999px");
-        importBtn.getStyle().set("padding", "10px 20px");
-        importBtn.getStyle().set("border", "none");
-        importBtn.getStyle().set("cursor", "pointer");
+        importBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
+        importBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        importBtn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        importBtn.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+        importBtn.getStyle().set(StyleConstants.CSS_PADDING, "10px 20px");
+        importBtn.getStyle().set(StyleConstants.CSS_BORDER, "none");
+        importBtn.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
 
         importBtn.addClickListener(e -> {
             Notification.show(translationService.translate("resume.linkedInComing"), 5000,
                     Notification.Position.TOP_CENTER);
         });
 
-        importBtn.getElement().addEventListener("mouseenter", e -> {
-            importBtn.getStyle().set("background", "rgba(0,0,0,0.08)");
-        });
-        importBtn.getElement().addEventListener("mouseleave", e -> {
-            importBtn.getStyle().set("background", BG_GRAY);
-        });
+        importBtn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
+                e -> importBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.08)"));
+        importBtn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE,
+                e -> importBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY));
 
         actions.add(importBtn);
 
@@ -174,8 +177,8 @@ public class ResumeManagerView extends VerticalLayout {
         HorizontalLayout tabToggle = new HorizontalLayout();
         tabToggle.setPadding(false);
         tabToggle.setSpacing(false);
-        tabToggle.getStyle().set("background", BG_GRAY).set("border-radius", "12px").set("padding", "4px")
-                .set("gap", "4px").set("width", "fit-content");
+        tabToggle.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY).set(StyleConstants.CSS_BORDER_RADIUS, "12px")
+                .set(StyleConstants.CSS_PADDING, "4px").set("gap", "4px").set(StyleConstants.CSS_WIDTH, "fit-content");
 
         Button uploadTabBtn = new Button(translationService.translate("resume.uploadFile"));
         Button pasteTabBtn = new Button(translationService.translate("resume.pasteText"));
@@ -207,21 +210,21 @@ public class ResumeManagerView extends VerticalLayout {
         HorizontalLayout listHeader = new HorizontalLayout();
         listHeader.setWidthFull();
         listHeader.setAlignItems(FlexComponent.Alignment.CENTER);
-        listHeader.getStyle().set("margin-top", "8px");
+        listHeader.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "8px");
 
         H2 listTitle = new H2(translationService.translate("resume.yourResumes"));
-        listTitle.getStyle().set("font-size", "18px");
-        listTitle.getStyle().set("font-weight", "700");
-        listTitle.getStyle().set("color", TEXT_PRIMARY);
-        listTitle.getStyle().set("margin", "0");
+        listTitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
+        listTitle.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        listTitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        listTitle.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         countBadge = new Span(String.valueOf(resumes.size()));
-        countBadge.getStyle().set("font-size", "12px");
-        countBadge.getStyle().set("font-weight", "700");
-        countBadge.getStyle().set("padding", "4px 10px");
-        countBadge.getStyle().set("background", BG_GRAY);
-        countBadge.getStyle().set("color", TEXT_SECONDARY);
-        countBadge.getStyle().set("border-radius", "9999px");
+        countBadge.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
+        countBadge.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        countBadge.getStyle().set(StyleConstants.CSS_PADDING, "4px 10px");
+        countBadge.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
+        countBadge.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        countBadge.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
 
         HorizontalLayout titleWithBadge = new HorizontalLayout();
         titleWithBadge.setAlignItems(FlexComponent.Alignment.CENTER);
@@ -229,21 +232,21 @@ public class ResumeManagerView extends VerticalLayout {
         titleWithBadge.add(listTitle, countBadge);
 
         // Sort dropdown button
-        Button sortBtn = new Button(translationService.translate("resume.sortByRecent"),
+        Button sortBtn = new Button(translationService.translate(RESUME_SORT_BY_RECENT_KEY),
                 VaadinIcon.CHEVRON_DOWN.create());
-        sortBtn.getStyle().set("background", "transparent");
-        sortBtn.getStyle().set("color", TEXT_SECONDARY);
-        sortBtn.getStyle().set("font-weight", "500");
-        sortBtn.getStyle().set("border", "none");
-        sortBtn.getStyle().set("padding", "8px 12px");
+        sortBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
+        sortBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        sortBtn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "500");
+        sortBtn.getStyle().set(StyleConstants.CSS_BORDER, "none");
+        sortBtn.getStyle().set(StyleConstants.CSS_PADDING, "8px 12px");
 
         // Create sort menu - open on left click
         ContextMenu sortMenu = new ContextMenu();
         sortMenu.setTarget(sortBtn);
         sortMenu.setOpenOnClick(true);
-        sortMenu.addItem(translationService.translate("resume.sortByRecent"), e -> {
+        sortMenu.addItem(translationService.translate(RESUME_SORT_BY_RECENT_KEY), e -> {
             sortResumes(ResumeSort.RECENT);
-            sortBtn.setText(translationService.translate("resume.sortByRecent"));
+            sortBtn.setText(translationService.translate(RESUME_SORT_BY_RECENT_KEY));
         });
         sortMenu.addItem(translationService.translate("resume.sortByName"), e -> {
             sortResumes(ResumeSort.NAME_ASC);
@@ -280,39 +283,46 @@ public class ResumeManagerView extends VerticalLayout {
 
         // Accept all three formats - use extensions only for broader browser
         // compatibility
-        upload.setAcceptedFileTypes("application/pdf", ".pdf",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".docx",
-                "application/msword", ".doc", "text/plain", "text/x-plain", "application/text", ".txt");
+        upload.setAcceptedFileTypes(MIME_APPLICATION_PDF, ".pdf", MIME_APPLICATION_DOCX, ".docx", "application/msword",
+                ".doc", "text/plain", "text/x-plain", "application/text", ".txt");
         upload.setMaxFileSize(10 * 1024 * 1024);
         upload.setMaxFiles(1);
         upload.setDropAllowed(true);
 
         // Style upload component to fill the zone visually — don't hide it
-        upload.getStyle().set("position", "absolute").set("inset", "0").set("opacity", "0").set("cursor", "pointer")
-                .set("width", "100%").set("height", "100%");
+        upload.getStyle().set("position", "absolute").set("inset", "0").set(StyleConstants.CSS_OPACITY, "0")
+                .set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER).set(StyleConstants.CSS_WIDTH, "100%")
+                .set(StyleConstants.CSS_HEIGHT, "100%");
 
         // Wrapper is position:relative so absolute upload overlays it
         Div uploadContainer = new Div();
-        uploadContainer.getStyle().set("position", "relative").set("width", "90%")
-                .set("background", "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)")
-                .set("border", "2px dashed " + PRIMARY + "40").set("border-radius", "24px").set("padding", "48px")
-                .set("transition", "all 0.3s").set("text-align", "center").set("cursor", "pointer");
+        uploadContainer.getStyle().set("position", "relative").set(StyleConstants.CSS_WIDTH, "90%")
+                .set(StyleConstants.CSS_BACKGROUND, BG_GRADIENT)
+                .set(StyleConstants.CSS_BORDER, "2px dashed " + PRIMARY + "40")
+                .set(StyleConstants.CSS_BORDER_RADIUS, "24px").set(StyleConstants.CSS_PADDING, "48px")
+                .set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_3S)
+                .set(StyleConstants.CSS_TEXT_ALIGN, StyleConstants.VAL_CENTER)
+                .set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
 
         Div iconContainer = new Div();
-        iconContainer.getStyle().set("width", "72px").set("height", "72px").set("background", "rgba(0,122,255,0.1)")
-                .set("border-radius", "50%").set("display", "flex").set("align-items", "center")
-                .set("justify-content", "center").set("margin", "0 auto 24px");
+        iconContainer.getStyle().set(StyleConstants.CSS_WIDTH, "72px").set(StyleConstants.CSS_HEIGHT, "72px")
+                .set(StyleConstants.CSS_BACKGROUND, "rgba(0,122,255,0.1)").set(StyleConstants.CSS_BORDER_RADIUS, "50%")
+                .set(StyleConstants.CSS_DISPLAY, "flex").set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER)
+                .set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER)
+                .set(StyleConstants.CSS_MARGIN, "0 auto 24px");
 
         Icon uploadIcon = VaadinIcon.UPLOAD_ALT.create();
-        uploadIcon.getStyle().set("color", PRIMARY).set("width", "32px").set("height", "32px");
+        uploadIcon.getStyle().set(StyleConstants.CSS_COLOR, PRIMARY).set(StyleConstants.CSS_WIDTH, "32px")
+                .set(StyleConstants.CSS_HEIGHT, "32px");
         iconContainer.add(uploadIcon);
 
         H3 title = new H3(translationService.translate("resume.dropResume"));
-        title.getStyle().set("font-size", "20px").set("font-weight", "700").set("color", TEXT_PRIMARY).set("margin",
-                "0 0 8px 0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "700")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "0 0 8px 0");
 
         Paragraph subtitle = new Paragraph(translationService.translate("resume.orClickBrowse"));
-        subtitle.getStyle().set("font-size", "14px").set("color", TEXT_SECONDARY).set("margin", "0 0 24px 0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+                .set(StyleConstants.CSS_MARGIN, "0 0 24px 0");
 
         HorizontalLayout formats = new HorizontalLayout();
         formats.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
@@ -330,14 +340,13 @@ public class ResumeManagerView extends VerticalLayout {
 
         // Drag-over styling
         uploadContainer.getElement().addEventListener("dragover",
-                e -> uploadContainer.getStyle().set("border-color", PRIMARY).set("background",
+                e -> uploadContainer.getStyle().set(StyleConstants.CSS_BORDER_COLOR, PRIMARY).set(
+                        StyleConstants.CSS_BACKGROUND,
                         "linear-gradient(135deg, rgba(0,122,255,0.1) 0%, rgba(90,200,250,0.1) 100%)"));
-        uploadContainer.getElement().addEventListener("dragleave",
-                e -> uploadContainer.getStyle().set("border-color", PRIMARY + "40").set("background",
-                        "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)"));
-        uploadContainer.getElement().addEventListener("drop",
-                e -> uploadContainer.getStyle().set("border-color", PRIMARY + "40").set("background",
-                        "linear-gradient(135deg, rgba(0,122,255,0.05) 0%, rgba(90,200,250,0.05) 100%)"));
+        uploadContainer.getElement().addEventListener("dragleave", e -> uploadContainer.getStyle()
+                .set(StyleConstants.CSS_BORDER_COLOR, PRIMARY + "40").set(StyleConstants.CSS_BACKGROUND, BG_GRADIENT));
+        uploadContainer.getElement().addEventListener("drop", e -> uploadContainer.getStyle()
+                .set(StyleConstants.CSS_BORDER_COLOR, PRIMARY + "40").set(StyleConstants.CSS_BACKGROUND, BG_GRADIENT));
 
         // File upload success handler
         upload.addSucceededListener(event -> {
@@ -377,20 +386,25 @@ public class ResumeManagerView extends VerticalLayout {
 
     private void styleActiveTab(Button btn, boolean active) {
         if (active) {
-            btn.getStyle().set("background", BG_WHITE).set("color", TEXT_PRIMARY).set("font-weight", "700")
-                    .set("border-radius", "10px").set("padding", "8px 20px").set("border", "none")
-                    .set("box-shadow", "0 1px 4px rgba(0,0,0,0.1)").set("cursor", "pointer");
+            btn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE).set(StyleConstants.CSS_COLOR, TEXT_PRIMARY)
+                    .set(StyleConstants.CSS_FONT_WEIGHT, "700").set(StyleConstants.CSS_BORDER_RADIUS, "10px")
+                    .set(StyleConstants.CSS_PADDING, "8px 20px").set(StyleConstants.CSS_BORDER, "none")
+                    .set(StyleConstants.CSS_BOX_SHADOW, "0 1px 4px rgba(0,0,0,0.1)")
+                    .set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
         } else {
-            btn.getStyle().set("background", "transparent").set("color", TEXT_SECONDARY).set("font-weight", "500")
-                    .set("border-radius", "10px").set("padding", "8px 20px").set("border", "none")
-                    .set("box-shadow", "none").set("cursor", "pointer");
+            btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT)
+                    .set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_FONT_WEIGHT, "500")
+                    .set(StyleConstants.CSS_BORDER_RADIUS, "10px").set(StyleConstants.CSS_PADDING, "8px 20px")
+                    .set(StyleConstants.CSS_BORDER, "none").set(StyleConstants.CSS_BOX_SHADOW, "none")
+                    .set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
         }
     }
 
     private Div createPasteTextPanel() {
         Div panel = new Div();
-        panel.getStyle().set("width", "90%").set("background", BG_WHITE).set("border", "1px solid rgba(0,0,0,0.08)")
-                .set("border-radius", "24px").set("padding", "32px");
+        panel.getStyle().set(StyleConstants.CSS_WIDTH, "90%").set(StyleConstants.CSS_BACKGROUND, BG_WHITE)
+                .set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.08)")
+                .set(StyleConstants.CSS_BORDER_RADIUS, "24px").set(StyleConstants.CSS_PADDING, "32px");
 
         VerticalLayout inner = new VerticalLayout();
         inner.setPadding(false);
@@ -398,8 +412,8 @@ public class ResumeManagerView extends VerticalLayout {
         inner.getStyle().set("gap", "16px");
 
         H3 heading = new H3(translationService.translate("resume.pasteResumeText"));
-        heading.getStyle().set("font-size", "18px").set("font-weight", "700").set("color", TEXT_PRIMARY).set("margin",
-                "0");
+        heading.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px").set(StyleConstants.CSS_FONT_WEIGHT, "700")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "0");
 
         TextArea resumeTextArea = new TextArea();
         resumeTextArea.setPlaceholder(translationService.translate("resume.pastePlainText"));
@@ -415,10 +429,13 @@ public class ResumeManagerView extends VerticalLayout {
                 .set("--vaadin-input-field-border-radius", "12px");
 
         Button saveBtn = new Button(translationService.translate("resume.saveAsText"));
-        saveBtn.getStyle().set("background", "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)")
-                .set("color", "white").set("font-weight", "600").set("border-radius", "9999px").set("border", "none")
-                .set("padding", "12px 24px").set("cursor", "pointer")
-                .set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
+        saveBtn.getStyle()
+                .set(StyleConstants.CSS_BACKGROUND,
+                        "linear-gradient(135deg, " + PRIMARY + " 0%, " + PRIMARY_LIGHT + " 100%)")
+                .set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX).set(StyleConstants.CSS_BORDER, "none")
+                .set(StyleConstants.CSS_PADDING, "12px 24px").set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER)
+                .set(StyleConstants.CSS_BOX_SHADOW, "0 10px 15px -3px rgba(0,122,255,0.3)");
 
         saveBtn.addClickListener(e -> {
             String text = resumeTextArea.getValue();
@@ -457,12 +474,12 @@ public class ResumeManagerView extends VerticalLayout {
 
     private Span createFormatBadge(String format) {
         Span badge = new Span(format);
-        badge.getStyle().set("font-size", "11px");
-        badge.getStyle().set("font-weight", "700");
-        badge.getStyle().set("padding", "6px 12px");
-        badge.getStyle().set("background", "rgba(0,0,0,0.05)");
-        badge.getStyle().set("color", TEXT_SECONDARY);
-        badge.getStyle().set("border-radius", "9999px");
+        badge.getStyle().set(StyleConstants.CSS_FONT_SIZE, "11px");
+        badge.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        badge.getStyle().set(StyleConstants.CSS_PADDING, "6px 12px");
+        badge.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)");
+        badge.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        badge.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
         return badge;
     }
 
@@ -486,17 +503,19 @@ public class ResumeManagerView extends VerticalLayout {
         emptyState.setWidthFull();
         emptyState.setAlignItems(FlexComponent.Alignment.CENTER);
         emptyState.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-        emptyState.getStyle().set("padding", "60px 20px").set("gap", "16px");
+        emptyState.getStyle().set(StyleConstants.CSS_PADDING, "60px 20px").set("gap", "16px");
 
         Icon emptyIcon = VaadinIcon.FILE_TEXT_O.create();
-        emptyIcon.getStyle().set("color", TEXT_SECONDARY).set("width", "64px").set("height", "64px");
+        emptyIcon.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_WIDTH, "64px")
+                .set(StyleConstants.CSS_HEIGHT, "64px");
 
         H3 title = new H3(translationService.translate("resume.noResumes"));
-        title.getStyle().set("font-size", "20px").set("font-weight", "600").set("color", TEXT_PRIMARY).set("margin",
-                "0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph description = new Paragraph(translationService.translate("resume.uploadFirst"));
-        description.getStyle().set("font-size", "14px").set("color", TEXT_SECONDARY).set("margin", "0");
+        description.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+                .set(StyleConstants.CSS_MARGIN, "0");
 
         emptyState.add(emptyIcon, title, description);
         return emptyState;
@@ -504,14 +523,14 @@ public class ResumeManagerView extends VerticalLayout {
 
     private Div createResumeCard(ResumeData resume) {
         Div card = new Div();
-        card.getStyle().set("width", "95%");
-        card.getStyle().set("background", BG_WHITE);
-        card.getStyle().set("border", "1px solid rgba(0,0,0,0.05)");
-        card.getStyle().set("border-radius", "20px");
-        card.getStyle().set("padding", "24px");
-        card.getStyle().set("box-shadow", "0 2px 12px rgba(0,0,0,0.04)");
-        card.getStyle().set("transition", "all 0.3s");
-        card.getStyle().set("cursor", "pointer");
+        card.getStyle().set(StyleConstants.CSS_WIDTH, "95%");
+        card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.05)");
+        card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "20px");
+        card.getStyle().set(StyleConstants.CSS_PADDING, "24px");
+        card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
+        card.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_3S);
+        card.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
 
         HorizontalLayout content = new HorizontalLayout();
         content.setWidthFull();
@@ -520,19 +539,19 @@ public class ResumeManagerView extends VerticalLayout {
 
         // File icon
         Div fileIcon = new Div();
-        fileIcon.getStyle().set("width", "56px");
-        fileIcon.getStyle().set("height", "56px");
-        fileIcon.getStyle().set("border-radius", "16px");
-        fileIcon.getStyle().set("background", getFileColor(resume.format) + "15");
-        fileIcon.getStyle().set("display", "flex");
-        fileIcon.getStyle().set("align-items", "center");
-        fileIcon.getStyle().set("justify-content", "center");
+        fileIcon.getStyle().set(StyleConstants.CSS_WIDTH, "56px");
+        fileIcon.getStyle().set(StyleConstants.CSS_HEIGHT, "56px");
+        fileIcon.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "16px");
+        fileIcon.getStyle().set(StyleConstants.CSS_BACKGROUND, getFileColor(resume.format) + "15");
+        fileIcon.getStyle().set(StyleConstants.CSS_DISPLAY, "flex");
+        fileIcon.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
+        fileIcon.getStyle().set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER);
         fileIcon.getStyle().set("flex-shrink", "0");
 
         Icon icon = VaadinIcon.FILE_TEXT.create();
-        icon.getStyle().set("color", getFileColor(resume.format));
-        icon.getStyle().set("width", "28px");
-        icon.getStyle().set("height", "28px");
+        icon.getStyle().set(StyleConstants.CSS_COLOR, getFileColor(resume.format));
+        icon.getStyle().set(StyleConstants.CSS_WIDTH, "28px");
+        icon.getStyle().set(StyleConstants.CSS_HEIGHT, "28px");
         fileIcon.add(icon);
 
         // File info
@@ -547,16 +566,16 @@ public class ResumeManagerView extends VerticalLayout {
         nameRow.getStyle().set("gap", "8px");
 
         H3 fileName = new H3(resume.name);
-        fileName.getStyle().set("font-size", "16px");
-        fileName.getStyle().set("font-weight", "700");
-        fileName.getStyle().set("color", TEXT_PRIMARY);
-        fileName.getStyle().set("margin", "0");
+        fileName.getStyle().set(StyleConstants.CSS_FONT_SIZE, "16px");
+        fileName.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        fileName.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        fileName.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         if (resume.starred) {
             Icon starIcon = VaadinIcon.STAR.create();
-            starIcon.getStyle().set("color", WARNING);
-            starIcon.getStyle().set("width", "16px");
-            starIcon.getStyle().set("height", "16px");
+            starIcon.getStyle().set(StyleConstants.CSS_COLOR, WARNING);
+            starIcon.getStyle().set(StyleConstants.CSS_WIDTH, "16px");
+            starIcon.getStyle().set(StyleConstants.CSS_HEIGHT, "16px");
             nameRow.add(fileName, starIcon);
         } else {
             nameRow.add(fileName);
@@ -567,23 +586,23 @@ public class ResumeManagerView extends VerticalLayout {
         metaRow.getStyle().set("gap", "12px");
 
         Span formatBadge = new Span(resume.format);
-        formatBadge.getStyle().set("font-size", "11px");
-        formatBadge.getStyle().set("font-weight", "600");
-        formatBadge.getStyle().set("padding", "2px 8px");
-        formatBadge.getStyle().set("background", BG_GRAY);
-        formatBadge.getStyle().set("color", TEXT_SECONDARY);
-        formatBadge.getStyle().set("border-radius", "4px");
+        formatBadge.getStyle().set(StyleConstants.CSS_FONT_SIZE, "11px");
+        formatBadge.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        formatBadge.getStyle().set(StyleConstants.CSS_PADDING, "2px 8px");
+        formatBadge.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
+        formatBadge.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        formatBadge.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "4px");
 
         Span sizeText = new Span(resume.size);
-        sizeText.getStyle().set("font-size", "13px");
-        sizeText.getStyle().set("color", TEXT_SECONDARY);
+        sizeText.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px");
+        sizeText.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
 
         Span dot = new Span("•");
-        dot.getStyle().set("color", TEXT_SECONDARY);
+        dot.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
 
         Span dateText = new Span(resume.date);
-        dateText.getStyle().set("font-size", "13px");
-        dateText.getStyle().set("color", TEXT_SECONDARY);
+        dateText.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px");
+        dateText.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
 
         metaRow.add(formatBadge, sizeText, dot, dateText);
 
@@ -591,10 +610,10 @@ public class ResumeManagerView extends VerticalLayout {
 
         // Actions menu (3 dots) - open on left click
         Button menuBtn = new Button(VaadinIcon.ELLIPSIS_DOTS_H.create());
-        menuBtn.getStyle().set("background", "transparent");
-        menuBtn.getStyle().set("color", TEXT_SECONDARY);
-        menuBtn.getStyle().set("border", "none");
-        menuBtn.getStyle().set("cursor", "pointer");
+        menuBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
+        menuBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        menuBtn.getStyle().set(StyleConstants.CSS_BORDER, "none");
+        menuBtn.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
 
         // Create context menu that opens on left click
         ContextMenu contextMenu = new ContextMenu();
@@ -611,16 +630,16 @@ public class ResumeManagerView extends VerticalLayout {
         card.add(content);
 
         // Hover effects
-        card.getElement().addEventListener("mouseenter", e -> {
-            card.getStyle().set("box-shadow", "0 8px 24px rgba(0,0,0,0.08)");
-            card.getStyle().set("transform", "translateY(-2px)");
-            card.getStyle().set("border-color", PRIMARY + "30");
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
+            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 8px 24px rgba(0,0,0,0.08)");
+            card.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(-2px)");
+            card.getStyle().set(StyleConstants.CSS_BORDER_COLOR, PRIMARY + "30");
         });
 
-        card.getElement().addEventListener("mouseleave", e -> {
-            card.getStyle().set("box-shadow", "0 2px 12px rgba(0,0,0,0.04)");
-            card.getStyle().set("transform", "translateY(0)");
-            card.getStyle().set("border-color", "rgba(0,0,0,0.05)");
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
+            card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
+            card.getStyle().set(StyleConstants.CSS_TRANSFORM, "translateY(0)");
+            card.getStyle().set(StyleConstants.CSS_BORDER_COLOR, "rgba(0,0,0,0.05)");
         });
 
         return card;
@@ -629,8 +648,7 @@ public class ResumeManagerView extends VerticalLayout {
     private void downloadResume(ResumeData resume) {
         try {
             byte[] bytes = documentService.retrieveResumeFile(resume.filePath);
-            String mimeType = resume.format.equalsIgnoreCase("PDF") ? "application/pdf"
-                    : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            String mimeType = resume.format.equalsIgnoreCase("PDF") ? MIME_APPLICATION_PDF : MIME_APPLICATION_DOCX;
             serveDownload(bytes, mimeType, resume.name);
             Notification.show(translationService.translate("resume.downloading", resume.name), 2000,
                     Notification.Position.TOP_CENTER);
@@ -645,9 +663,9 @@ public class ResumeManagerView extends VerticalLayout {
         try {
             byte[] bytes = documentService.retrieveResumeFile(resume.filePath);
             String mimeType = switch (resume.format.toUpperCase()) {
-            case "PDF" -> "application/pdf";
+            case "PDF" -> MIME_APPLICATION_PDF;
             case "TXT" -> "text/plain";
-            default -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            default -> MIME_APPLICATION_DOCX;
             };
 
             StreamResource resource = new StreamResource(resume.name, () -> new ByteArrayInputStream(bytes));

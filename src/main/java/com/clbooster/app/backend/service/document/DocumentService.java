@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -62,11 +63,10 @@ public class DocumentService {
 
             Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-            logger.info("File stored successfully: " + targetPath);
+            logger.log(Level.INFO, "File stored successfully: {0}", targetPath);
             return targetPath.toString();
 
         } catch (IOException e) {
-            logger.severe("Failed to store resume file: " + e.getMessage());
             throw new IOException("Failed to store resume file", e);
         }
     }
@@ -112,11 +112,10 @@ public class DocumentService {
 
             Files.write(targetPath, resumeText.getBytes());
 
-            logger.info("Resume text stored: " + targetPath);
+            logger.log(Level.INFO, "Resume text stored: {0}", targetPath);
             return targetPath.toString();
 
         } catch (IOException e) {
-            logger.severe("Failed to store resume text: " + e.getMessage());
             throw new IOException("Failed to store resume text", e);
         }
     }
@@ -148,7 +147,7 @@ public class DocumentService {
      */
     public boolean exportResumeAsDocument(ResumeData resumeData, String outputPath) {
         try {
-            logger.info("Exporting resume as document: " + outputPath);
+            logger.log(Level.INFO, "Exporting resume as document: {0}", outputPath);
 
             String formattedContent = formatResumeContent(resumeData);
 
@@ -181,12 +180,12 @@ public class DocumentService {
             }
 
             byte[] content = Files.readAllBytes(path);
-            logger.info("Retrieved resume file: " + storagePath + " (" + content.length + " bytes)");
+            logger.log(Level.INFO, "Retrieved resume file: {0} ({1} bytes)",
+                    new Object[] { storagePath, content.length });
             return content;
 
         } catch (IOException e) {
-            logger.severe("Failed to retrieve resume file: " + e.getMessage());
-            throw e;
+            throw new IOException("Failed to retrieve resume file", e);
         }
     }
 
@@ -202,10 +201,10 @@ public class DocumentService {
             Path path = resolveStoragePath(storagePath);
             if (Files.exists(path)) {
                 Files.delete(path);
-                logger.info("Deleted resume file: " + storagePath);
+                logger.log(Level.INFO, "Deleted resume file: {0}", storagePath);
                 return true;
             } else {
-                logger.warning("File not found for deletion: " + storagePath);
+                logger.log(Level.WARNING, "File not found for deletion: {0}", storagePath);
                 return false;
             }
 
@@ -248,83 +247,78 @@ public class DocumentService {
      */
     private String formatResumeContent(ResumeData resumeData) {
         StringBuilder content = new StringBuilder();
+        formatHeader(resumeData, content);
+        formatSummaryAndSkills(resumeData, content);
+        formatWorkExperience(resumeData, content);
+        formatEducationAndCertifications(resumeData, content);
+        return content.toString();
+    }
 
-        // Header
+    private void formatHeader(ResumeData resumeData, StringBuilder content) {
         if (resumeData.getFullName() != null) {
             content.append(resumeData.getFullName()).append("\n");
         }
         if (resumeData.getEmail() != null || resumeData.getPhone() != null) {
-            if (resumeData.getEmail() != null) {
+            if (resumeData.getEmail() != null)
                 content.append(resumeData.getEmail()).append(" ");
-            }
-            if (resumeData.getPhone() != null) {
+            if (resumeData.getPhone() != null)
                 content.append(resumeData.getPhone());
-            }
             content.append("\n\n");
         }
+    }
 
-        // Summary
+    private void formatSummaryAndSkills(ResumeData resumeData, StringBuilder content) {
         if (resumeData.getSummary() != null && !resumeData.getSummary().isEmpty()) {
-            content.append("PROFESSIONAL SUMMARY\n");
-            content.append(resumeData.getSummary()).append("\n\n");
+            content.append("PROFESSIONAL SUMMARY\n").append(resumeData.getSummary()).append("\n\n");
         }
-
-        // Skills
         if (!resumeData.getSkills().isEmpty()) {
             content.append("SKILLS\n");
-            for (String skill : resumeData.getSkills()) {
+            for (String skill : resumeData.getSkills())
                 content.append("• ").append(skill).append("\n");
-            }
             content.append("\n");
         }
+    }
 
-        // Work Experience
+    private void formatWorkExperience(ResumeData resumeData, StringBuilder content) {
         if (!resumeData.getWorkExperience().isEmpty()) {
             content.append("WORK EXPERIENCE\n");
             for (ResumeData.WorkExperience exp : resumeData.getWorkExperience()) {
-                if (exp.getJobTitle() != null) {
-                    content.append(exp.getJobTitle());
-                }
-                if (exp.getCompany() != null) {
-                    content.append(" at ").append(exp.getCompany());
-                }
-                content.append("\n");
-
-                if (exp.getStartDate() != null || exp.getEndDate() != null) {
-                    if (exp.getStartDate() != null) {
-                        content.append(exp.getStartDate());
-                    }
-                    content.append(" - ");
-                    if (exp.getEndDate() != null) {
-                        content.append(exp.getEndDate());
-                    }
-                    content.append("\n");
-                }
-
-                for (String resp : exp.getResponsibilities()) {
-                    content.append("• ").append(resp).append("\n");
-                }
-                content.append("\n");
+                formatSingleWorkExperience(exp, content);
             }
         }
+    }
 
-        // Education
-        if (!resumeData.getEducation().isEmpty()) {
-            content.append("EDUCATION\n");
-            for (String edu : resumeData.getEducation()) {
-                content.append("• ").append(edu).append("\n");
-            }
+    private void formatSingleWorkExperience(ResumeData.WorkExperience exp, StringBuilder content) {
+        if (exp.getJobTitle() != null)
+            content.append(exp.getJobTitle());
+        if (exp.getCompany() != null)
+            content.append(" at ").append(exp.getCompany());
+        content.append("\n");
+        if (exp.getStartDate() != null || exp.getEndDate() != null) {
+            if (exp.getStartDate() != null)
+                content.append(exp.getStartDate());
+            content.append(" - ");
+            if (exp.getEndDate() != null)
+                content.append(exp.getEndDate());
             content.append("\n");
         }
+        for (String resp : exp.getResponsibilities())
+            content.append("• ").append(resp).append("\n");
+        content.append("\n");
+    }
 
-        // Certifications
+    private void formatEducationAndCertifications(ResumeData resumeData, StringBuilder content) {
+        if (!resumeData.getEducation().isEmpty()) {
+            content.append("EDUCATION\n");
+            for (String edu : resumeData.getEducation())
+                content.append("• ").append(edu).append("\n");
+            content.append("\n");
+        }
         if (!resumeData.getCertifications().isEmpty()) {
             content.append("CERTIFICATIONS\n");
-            for (String cert : resumeData.getCertifications()) {
+            for (String cert : resumeData.getCertifications())
                 content.append("• ").append(cert).append("\n");
-            }
+            content.append("\n");
         }
-
-        return content.toString();
     }
 }

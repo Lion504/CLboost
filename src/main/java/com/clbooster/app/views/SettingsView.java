@@ -1,5 +1,8 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.views.util.StyleConstants;
+import com.clbooster.app.views.util.ViewComponents;
+
 import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.User;
@@ -29,43 +32,29 @@ import com.vaadin.flow.router.Route;
 @PageTitle("Settings | CL Booster")
 @PermitAll
 public class SettingsView extends VerticalLayout {
+    private static final String COLOR_DANGER = "#FF3B30";
+    private static final String MARGIN_24 = "0 0 24px 0";
+    private static final String MARGIN_8 = "0 0 8px 0";
     private static final Logger log = LoggerFactory.getLogger(SettingsView.class);
 
     // Figma Design System Colors
-    private static final String PRIMARY = "#007AFF";
     private static final String TEXT_PRIMARY = "#1d1d1f";
     private static final String TEXT_SECONDARY = "#86868b";
     private static final String BG_WHITE = "#ffffff";
     private static final String BG_GRAY = "#f5f5f7";
     private static final String SUCCESS = "#34C759";
+    private static final String LANG_ENGLISH = "English";
+    private static final String SETTINGS_DELETE_ACCOUNT_TITLE = "settings.deleteAccountTitle";
 
-    private final SettingsService settingsService;
-    private final AuthenticationService authService;
-    private final UserService userService;
+    private final transient SettingsService settingsService;
+    private final transient AuthenticationService authService;
+    private final transient UserService userService;
     private final TranslationService translationService;
-    private Settings userSettings;
-    private User currentUser;
+    private transient Settings userSettings;
+    private transient User currentUser;
 
     // Language select
     private Select<String> langSelect;
-
-    // Toggle track elements for updating styles
-    private Div emailTrack;
-    private Div pushTrack;
-    private Div productTrack;
-    private Div marketingTrack;
-    private Div cloudTrack;
-    private Div aiTrack;
-    private Div usageTrack;
-
-    // Toggle thumbs for animation
-    private Div emailThumb;
-    private Div pushThumb;
-    private Div productThumb;
-    private Div marketingThumb;
-    private Div cloudThumb;
-    private Div aiThumb;
-    private Div usageThumb;
 
     // Toggle states
     private boolean emailNotifications;
@@ -86,8 +75,8 @@ public class SettingsView extends VerticalLayout {
         setPadding(true);
         setSpacing(true);
         getStyle().set("gap", "24px");
-        getStyle().set("padding", "32px");
-        getStyle().set("background", BG_WHITE);
+        getStyle().set(StyleConstants.CSS_PADDING, "32px");
+        getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
         getStyle().set("font-family",
                 "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
         setSizeFull();
@@ -101,19 +90,19 @@ public class SettingsView extends VerticalLayout {
         pageHeader.setPadding(false);
         pageHeader.setSpacing(false);
         pageHeader.getStyle().set("gap", "4px");
-        pageHeader.getStyle().set("margin-bottom", "8px");
+        pageHeader.getStyle().set(StyleConstants.CSS_MARGIN_BOTTOM, "8px");
 
         H2 title = new H2(translationService.translate("settings.preferences"));
-        title.getStyle().set("font-size", "30px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("letter-spacing", "-0.025em");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "30px");
+        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        title.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "-0.025em");
+        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        title.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph subtitle = new Paragraph(translationService.translate("settings.preferencesDesc"));
-        subtitle.getStyle().set("font-size", "14px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
+        subtitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        subtitle.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         pageHeader.add(title, subtitle);
 
@@ -155,15 +144,10 @@ public class SettingsView extends VerticalLayout {
         Div card = createCard();
 
         H3 title = new H3(translationService.translate("settings.appearance"));
-        title.getStyle().set("font-size", "18px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 8px 0");
+        styleCardTitle(title);
 
         Paragraph desc = new Paragraph(translationService.translate("settings.appearance.desc"));
-        desc.getStyle().set("font-size", "14px");
-        desc.getStyle().set("color", TEXT_SECONDARY);
-        desc.getStyle().set("margin", "0");
+        styleCardDescription(desc, "0");
 
         card.add(title, desc);
 
@@ -174,15 +158,10 @@ public class SettingsView extends VerticalLayout {
         Div card = createCard();
 
         H3 title = new H3(translationService.translate("settings.language"));
-        title.getStyle().set("font-size", "18px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 8px 0");
+        styleCardTitle(title);
 
         Paragraph desc = new Paragraph(translationService.translate("settings.languageSelect"));
-        desc.getStyle().set("font-size", "14px");
-        desc.getStyle().set("color", TEXT_SECONDARY);
-        desc.getStyle().set("margin", "0 0 24px 0");
+        styleCardDescription(desc, MARGIN_24);
 
         // Language select
         VerticalLayout selectGroup = new VerticalLayout();
@@ -192,11 +171,11 @@ public class SettingsView extends VerticalLayout {
         selectGroup.setWidth("280px");
 
         Span label = new Span(translationService.translate("label.language"));
-        label.getStyle().set("font-size", "12px");
-        label.getStyle().set("font-weight", "700");
-        label.getStyle().set("color", TEXT_SECONDARY);
-        label.getStyle().set("text-transform", "uppercase");
-        label.getStyle().set("letter-spacing", "0.05em");
+        label.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
+        label.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        label.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        label.getStyle().set(StyleConstants.CSS_TEXT_TRANSFORM, "uppercase");
+        label.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "0.05em");
 
         langSelect = new Select<>();
         langSelect.setItems(translationService.translate("settings.langEnglish"),
@@ -207,19 +186,7 @@ public class SettingsView extends VerticalLayout {
                 translationService.translate("settings.langUrdu"));
         // Convert stored language code to display name
         String savedLanguage = userSettings.getLanguage();
-        String displayValue = "English";
-        if (savedLanguage != null) {
-            if (savedLanguage.contains("Finnish"))
-                displayValue = "Suomi";
-            else if (savedLanguage.contains("Portuguese"))
-                displayValue = "Português";
-            else if (savedLanguage.contains("Persian"))
-                displayValue = "فارسی";
-            else if (savedLanguage.contains("Chinese"))
-                displayValue = "中文";
-            else if (savedLanguage.contains("Urdu"))
-                displayValue = "اردو";
-        }
+        String displayValue = getDisplayLanguage(savedLanguage);
         langSelect.setValue(displayValue);
         langSelect.setWidthFull();
         langSelect.getStyle().set("--vaadin-input-field-background", BG_GRAY);
@@ -228,21 +195,8 @@ public class SettingsView extends VerticalLayout {
         // Apply language change immediately when selected
         langSelect.addValueChangeListener(e -> {
             if (e.getValue() != null) {
-                String langCode;
                 String selectedDisplay = e.getValue();
-                if (selectedDisplay.equals(translationService.translate("settings.langFinnish"))) {
-                    langCode = "Finnish (Suomi)";
-                } else if (selectedDisplay.equals(translationService.translate("settings.langPortuguese"))) {
-                    langCode = "Portuguese (Português)";
-                } else if (selectedDisplay.equals(translationService.translate("settings.langPersian"))) {
-                    langCode = "Persian (فارسی)";
-                } else if (selectedDisplay.equals(translationService.translate("settings.langChinese"))) {
-                    langCode = "Chinese (中文)";
-                } else if (selectedDisplay.equals("اردو")) {
-                    langCode = "Urdu (اردو)";
-                } else {
-                    langCode = "English";
-                }
+                String langCode = getLanguageCode(selectedDisplay);
                 translationService.setLanguage(langCode);
                 Notification.show(
                         translationService.translate("settings.languageChanged") + " " + selectedDisplay + ". "
@@ -257,19 +211,49 @@ public class SettingsView extends VerticalLayout {
         return card;
     }
 
+    private String getDisplayLanguage(String savedLanguage) {
+        String displayValue = LANG_ENGLISH;
+        if (savedLanguage != null) {
+            if (savedLanguage.contains("Finnish"))
+                displayValue = "Suomi";
+            else if (savedLanguage.contains("Portuguese"))
+                displayValue = "Português";
+            else if (savedLanguage.contains("Persian"))
+                displayValue = "فارسی";
+            else if (savedLanguage.contains("Chinese"))
+                displayValue = "中文";
+            else if (savedLanguage.contains("Urdu"))
+                displayValue = "اردو";
+        }
+        return displayValue;
+    }
+
+    private String getLanguageCode(String selectedDisplay) {
+        String langCode;
+        if (selectedDisplay.equals(translationService.translate("settings.langFinnish"))) {
+            langCode = "Finnish (Suomi)";
+        } else if (selectedDisplay.equals(translationService.translate("settings.langPortuguese"))) {
+            langCode = "Portuguese (Português)";
+        } else if (selectedDisplay.equals(translationService.translate("settings.langPersian"))) {
+            langCode = "Persian (فارسی)";
+        } else if (selectedDisplay.equals(translationService.translate("settings.langChinese"))) {
+            langCode = "Chinese (中文)";
+        } else if (selectedDisplay.equals("اردو")) {
+            langCode = "Urdu (اردو)";
+        } else {
+            langCode = LANG_ENGLISH;
+        }
+        return langCode;
+    }
+
     private Div createNotificationsCard() {
         Div card = createCard();
 
         H3 title = new H3(translationService.translate("settings.notifications"));
-        title.getStyle().set("font-size", "18px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 8px 0");
+        styleCardTitle(title);
 
         Paragraph desc = new Paragraph(translationService.translate("settings.notificationsDesc"));
-        desc.getStyle().set("font-size", "14px");
-        desc.getStyle().set("color", TEXT_SECONDARY);
-        desc.getStyle().set("margin", "0 0 24px 0");
+        styleCardDescription(desc, MARGIN_24);
 
         // Toggle items
         VerticalLayout toggles = new VerticalLayout();
@@ -279,8 +263,8 @@ public class SettingsView extends VerticalLayout {
 
         ToggleResult emailResult = createToggleRow(translationService.translate("settings.emailNotifications"),
                 translationService.translate("settings.emailNotifications.desc"), emailNotifications);
-        emailTrack = emailResult.track;
-        emailThumb = emailResult.thumb;
+        Div emailTrack = emailResult.track;
+        Div emailThumb = emailResult.thumb;
         emailTrack.addClickListener(e -> {
             emailNotifications = !emailNotifications;
             updateToggleVisual(emailTrack, emailThumb, emailNotifications);
@@ -288,8 +272,8 @@ public class SettingsView extends VerticalLayout {
 
         ToggleResult pushResult = createToggleRow(translationService.translate("settings.pushNotifications"),
                 translationService.translate("settings.pushNotifications.desc"), pushNotifications);
-        pushTrack = pushResult.track;
-        pushThumb = pushResult.thumb;
+        Div pushTrack = pushResult.track;
+        Div pushThumb = pushResult.thumb;
         pushTrack.addClickListener(e -> {
             pushNotifications = !pushNotifications;
             updateToggleVisual(pushTrack, pushThumb, pushNotifications);
@@ -297,8 +281,8 @@ public class SettingsView extends VerticalLayout {
 
         ToggleResult productResult = createToggleRow(translationService.translate("settings.productUpdates"),
                 translationService.translate("settings.productUpdates.desc"), productUpdates);
-        productTrack = productResult.track;
-        productThumb = productResult.thumb;
+        Div productTrack = productResult.track;
+        Div productThumb = productResult.thumb;
         productTrack.addClickListener(e -> {
             productUpdates = !productUpdates;
             updateToggleVisual(productTrack, productThumb, productUpdates);
@@ -306,8 +290,8 @@ public class SettingsView extends VerticalLayout {
 
         ToggleResult marketingResult = createToggleRow(translationService.translate("settings.marketing"),
                 translationService.translate("settings.marketing.desc"), marketing);
-        marketingTrack = marketingResult.track;
-        marketingThumb = marketingResult.thumb;
+        Div marketingTrack = marketingResult.track;
+        Div marketingThumb = marketingResult.thumb;
         marketingTrack.addClickListener(e -> {
             marketing = !marketing;
             updateToggleVisual(marketingTrack, marketingThumb, marketing);
@@ -336,7 +320,7 @@ public class SettingsView extends VerticalLayout {
         HorizontalLayout row = new HorizontalLayout();
         row.setWidthFull();
         row.setAlignItems(FlexComponent.Alignment.CENTER);
-        row.getStyle().set("padding", "16px 0");
+        row.getStyle().set(StyleConstants.CSS_PADDING, "16px 0");
         row.getStyle().set("border-bottom", "1px solid rgba(0, 0, 0, 0.05)");
 
         VerticalLayout textGroup = new VerticalLayout();
@@ -345,35 +329,35 @@ public class SettingsView extends VerticalLayout {
         textGroup.getStyle().set("gap", "4px");
 
         Span titleSpan = new Span(title);
-        titleSpan.getStyle().set("font-size", "15px");
-        titleSpan.getStyle().set("font-weight", "600");
-        titleSpan.getStyle().set("color", TEXT_PRIMARY);
+        titleSpan.getStyle().set(StyleConstants.CSS_FONT_SIZE, "15px");
+        titleSpan.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        titleSpan.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
 
         Span descSpan = new Span(description);
-        descSpan.getStyle().set("font-size", "13px");
-        descSpan.getStyle().set("color", TEXT_SECONDARY);
+        descSpan.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px");
+        descSpan.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
 
         textGroup.add(titleSpan, descSpan);
 
         // Create toggle
         Div track = new Div();
-        track.getStyle().set("width", "48px");
-        track.getStyle().set("height", "28px");
-        track.getStyle().set("border-radius", "9999px");
+        track.getStyle().set(StyleConstants.CSS_WIDTH, "48px");
+        track.getStyle().set(StyleConstants.CSS_HEIGHT, "28px");
+        track.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
         track.getStyle().set("position", "relative");
-        track.getStyle().set("cursor", "pointer");
-        track.getStyle().set("transition", "background 0.2s");
+        track.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+        track.getStyle().set(StyleConstants.CSS_TRANSITION, "background 0.2s");
         track.getStyle().set("flex-shrink", "0");
 
         Div thumb = new Div();
-        thumb.getStyle().set("width", "24px");
-        thumb.getStyle().set("height", "24px");
-        thumb.getStyle().set("background", "white");
-        thumb.getStyle().set("border-radius", "50%");
+        thumb.getStyle().set(StyleConstants.CSS_WIDTH, "24px");
+        thumb.getStyle().set(StyleConstants.CSS_HEIGHT, "24px");
+        thumb.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_WHITE);
+        thumb.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "50%");
         thumb.getStyle().set("position", "absolute");
         thumb.getStyle().set("top", "2px");
-        thumb.getStyle().set("box-shadow", "0 2px 4px rgba(0,0,0,0.2)");
-        thumb.getStyle().set("transition", "all 0.2s");
+        thumb.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 2px 4px rgba(0,0,0,0.2)");
+        thumb.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_2S);
 
         track.add(thumb);
 
@@ -387,7 +371,7 @@ public class SettingsView extends VerticalLayout {
     }
 
     private void updateToggleVisual(Div track, Div thumb, boolean enabled) {
-        track.getStyle().set("background", enabled ? SUCCESS : "rgba(0, 0, 0, 0.2)");
+        track.getStyle().set(StyleConstants.CSS_BACKGROUND, enabled ? SUCCESS : "rgba(0, 0, 0, 0.2)");
         thumb.getStyle().set("inset-inline-start", enabled ? "auto" : "2px");
         thumb.getStyle().set("inset-inline-end", enabled ? "2px" : "auto");
         thumb.getStyle().remove(enabled ? "left" : "right");
@@ -397,15 +381,10 @@ public class SettingsView extends VerticalLayout {
         Div card = createCard();
 
         H3 title = new H3(translationService.translate("settings.privacy"));
-        title.getStyle().set("font-size", "18px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 8px 0");
+        styleCardTitle(title);
 
         Paragraph desc = new Paragraph(translationService.translate("settings.privacyDesc"));
-        desc.getStyle().set("font-size", "14px");
-        desc.getStyle().set("color", TEXT_SECONDARY);
-        desc.getStyle().set("margin", "0 0 24px 0");
+        styleCardDescription(desc, MARGIN_24);
 
         // Privacy options
         VerticalLayout options = new VerticalLayout();
@@ -415,8 +394,8 @@ public class SettingsView extends VerticalLayout {
 
         ToggleResult cloudResult = createToggleRow(translationService.translate("settings.cloudStorage"),
                 translationService.translate("settings.cloudStorage.desc"), storeInCloud);
-        cloudTrack = cloudResult.track;
-        cloudThumb = cloudResult.thumb;
+        Div cloudTrack = cloudResult.track;
+        Div cloudThumb = cloudResult.thumb;
         cloudTrack.addClickListener(e -> {
             storeInCloud = !storeInCloud;
             updateToggleVisual(cloudTrack, cloudThumb, storeInCloud);
@@ -424,8 +403,8 @@ public class SettingsView extends VerticalLayout {
 
         ToggleResult aiResult = createToggleRow(translationService.translate("settings.aiTraining"),
                 translationService.translate("settings.aiTraining.desc"), allowAiTraining);
-        aiTrack = aiResult.track;
-        aiThumb = aiResult.thumb;
+        Div aiTrack = aiResult.track;
+        Div aiThumb = aiResult.thumb;
         aiTrack.addClickListener(e -> {
             allowAiTraining = !allowAiTraining;
             updateToggleVisual(aiTrack, aiThumb, allowAiTraining);
@@ -433,8 +412,8 @@ public class SettingsView extends VerticalLayout {
 
         ToggleResult usageResult = createToggleRow(translationService.translate("settings.usageData"),
                 translationService.translate("settings.usageData.desc"), shareUsageData);
-        usageTrack = usageResult.track;
-        usageThumb = usageResult.thumb;
+        Div usageTrack = usageResult.track;
+        Div usageThumb = usageResult.thumb;
         usageTrack.addClickListener(e -> {
             shareUsageData = !shareUsageData;
             updateToggleVisual(usageTrack, usageThumb, shareUsageData);
@@ -444,7 +423,7 @@ public class SettingsView extends VerticalLayout {
 
         // Danger zone
         Div dangerZone = new Div();
-        dangerZone.getStyle().set("margin-top", "24px");
+        dangerZone.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "24px");
         dangerZone.getStyle().set("padding-top", "24px");
         dangerZone.getStyle().set("border-top", "1px solid rgba(255, 59, 48, 0.2)");
 
@@ -457,33 +436,27 @@ public class SettingsView extends VerticalLayout {
         dangerText.setSpacing(false);
         dangerText.getStyle().set("gap", "4px");
 
-        Span dangerTitle = new Span(translationService.translate("settings.deleteAccountTitle"));
-        dangerTitle.getStyle().set("font-size", "15px");
-        dangerTitle.getStyle().set("font-weight", "600");
-        dangerTitle.getStyle().set("color", "#FF3B30");
+        Span dangerTitle = new Span(translationService.translate(SETTINGS_DELETE_ACCOUNT_TITLE));
+        dangerTitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "15px");
+        dangerTitle.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        dangerTitle.getStyle().set(StyleConstants.CSS_COLOR, COLOR_DANGER);
 
         Span dangerDesc = new Span(translationService.translate("settings.deleteAccountDesc2"));
-        dangerDesc.getStyle().set("font-size", "13px");
-        dangerDesc.getStyle().set("color", TEXT_SECONDARY);
+        dangerDesc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px");
+        dangerDesc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
 
         dangerText.add(dangerTitle, dangerDesc);
 
         Button deleteBtn = new Button(translationService.translate("action.delete"));
-        deleteBtn.getStyle().set("background", "rgba(255, 59, 48, 0.1)");
-        deleteBtn.getStyle().set("color", "#FF3B30");
-        deleteBtn.getStyle().set("font-weight", "600");
-        deleteBtn.getStyle().set("border-radius", "9999px");
-        deleteBtn.getStyle().set("padding", "8px 16px");
-        deleteBtn.getStyle().set("border", "none");
-        deleteBtn.getStyle().set("cursor", "pointer");
-        deleteBtn.getStyle().set("transition", "all 0.2s");
+        applyBaseButtonStyles(deleteBtn);
+        deleteBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(255, 59, 48, 0.1)");
+        deleteBtn.getStyle().set(StyleConstants.CSS_COLOR, COLOR_DANGER);
+        deleteBtn.getStyle().set(StyleConstants.CSS_PADDING, "8px 16px");
 
-        deleteBtn.getElement().addEventListener("mouseenter", e -> {
-            deleteBtn.getStyle().set("background", "rgba(255, 59, 48, 0.2)");
-        });
-        deleteBtn.getElement().addEventListener("mouseleave", e -> {
-            deleteBtn.getStyle().set("background", "rgba(255, 59, 48, 0.1)");
-        });
+        deleteBtn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
+                e -> deleteBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(255, 59, 48, 0.2)"));
+        deleteBtn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE,
+                e -> deleteBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(255, 59, 48, 0.1)"));
 
         deleteBtn.addClickListener(e -> showDeleteAccountDialog());
 
@@ -505,14 +478,14 @@ public class SettingsView extends VerticalLayout {
         }
 
         Dialog dialog = new Dialog();
-        dialog.setHeaderTitle(translationService.translate("settings.deleteAccountTitle"));
+        dialog.setHeaderTitle(translationService.translate(SETTINGS_DELETE_ACCOUNT_TITLE));
 
         VerticalLayout content = new VerticalLayout();
         content.setPadding(true);
         content.setSpacing(true);
 
         Paragraph warning = new Paragraph(translationService.translate("settings.deleteConfirm"));
-        warning.getStyle().set("color", TEXT_SECONDARY);
+        warning.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
 
         PasswordField passwordField = new PasswordField(translationService.translate("label.password"));
         passwordField.setWidthFull();
@@ -521,10 +494,10 @@ public class SettingsView extends VerticalLayout {
         content.add(warning, passwordField);
 
         Button cancelBtn = new Button(translationService.translate("action.cancel"), e -> dialog.close());
-        cancelBtn.getStyle().set("background", "transparent");
-        cancelBtn.getStyle().set("color", TEXT_SECONDARY);
+        cancelBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
+        cancelBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
 
-        Button confirmBtn = new Button(translationService.translate("settings.deleteAccountTitle"), e -> {
+        Button confirmBtn = new Button(translationService.translate(SETTINGS_DELETE_ACCOUNT_TITLE), e -> {
             String password = passwordField.getValue();
             if (password == null || password.isEmpty()) {
                 Notification.show(translationService.translate("settings.enterPassword"), 3000,
@@ -547,8 +520,8 @@ public class SettingsView extends VerticalLayout {
                 Notification.show("Incorrect password", 3000, Notification.Position.TOP_CENTER);
             }
         });
-        confirmBtn.getStyle().set("background", "#FF3B30");
-        confirmBtn.getStyle().set("color", "white");
+        confirmBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, COLOR_DANGER);
+        confirmBtn.getStyle().set(StyleConstants.CSS_COLOR, StyleConstants.VAL_WHITE);
 
         dialog.add(content);
         dialog.getFooter().add(cancelBtn, confirmBtn);
@@ -560,7 +533,7 @@ public class SettingsView extends VerticalLayout {
         actions.setWidthFull();
         actions.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
         actions.getStyle().set("gap", "12px");
-        actions.getStyle().set("margin-top", "8px");
+        actions.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "8px");
 
         Button discardBtn = new Button(translationService.translate("action.discard"), e -> {
             loadSettings();
@@ -568,25 +541,22 @@ public class SettingsView extends VerticalLayout {
             Notification.show(translationService.translate("settings.changesDiscarded"), 2000,
                     Notification.Position.BOTTOM_END);
         });
-        discardBtn.getStyle().set("background", "transparent");
-        discardBtn.getStyle().set("color", TEXT_SECONDARY);
-        discardBtn.getStyle().set("font-weight", "600");
-        discardBtn.getStyle().set("border-radius", "9999px");
-        discardBtn.getStyle().set("padding", "12px 24px");
-        discardBtn.getStyle().set("border", "none");
-        discardBtn.getStyle().set("cursor", "pointer");
-        discardBtn.getStyle().set("transition", "all 0.2s");
+        applyBaseButtonStyles(discardBtn);
+        discardBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
+        discardBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        discardBtn.getStyle().set(StyleConstants.CSS_PADDING, "12px 24px");
 
-        discardBtn.getElement().addEventListener("mouseenter", e -> {
-            discardBtn.getStyle().set("background", "rgba(0, 0, 0, 0.05)");
-            discardBtn.getStyle().set("color", TEXT_PRIMARY);
+        discardBtn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
+            discardBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0, 0, 0, 0.05)");
+            discardBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
         });
-        discardBtn.getElement().addEventListener("mouseleave", e -> {
-            discardBtn.getStyle().set("background", "transparent");
-            discardBtn.getStyle().set("color", TEXT_SECONDARY);
+        discardBtn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
+            discardBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
+            discardBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
         });
 
-        Button saveBtn = createPrimaryButton(translationService.translate("action.save"), () -> saveSettings());
+        Button saveBtn = ViewComponents.createPrimaryButton(translationService.translate("action.save"),
+                this::saveSettings);
 
         actions.add(discardBtn, saveBtn);
 
@@ -601,7 +571,7 @@ public class SettingsView extends VerticalLayout {
 
         String languageValue = langSelect.getValue();
         if (languageValue == null) {
-            languageValue = "English";
+            languageValue = LANG_ENGLISH;
         }
 
         userSettings.setUserPin(currentUser.getPin());
@@ -636,45 +606,39 @@ public class SettingsView extends VerticalLayout {
 
     private Div createCard() {
         Div card = new Div();
-        card.getStyle().set("background", BG_WHITE);
-        card.getStyle().set("border", "1px solid rgba(0, 0, 0, 0.05)");
-        card.getStyle().set("border-radius", "24px");
-        card.getStyle().set("padding", "28px");
-        card.getStyle().set("box-shadow", "0 2px 12px rgba(0, 0, 0, 0.04)");
-        card.getStyle().set("transition", "all 0.3s");
+        card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        card.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0, 0, 0, 0.05)");
+        card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
+        card.getStyle().set(StyleConstants.CSS_PADDING, "28px");
+        card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
+        card.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_3S);
 
-        card.getElement().addEventListener("mouseenter", e -> {
-            card.getStyle().set("box-shadow", "0 8px 24px rgba(0, 0, 0, 0.06)");
-        });
-        card.getElement().addEventListener("mouseleave", e -> {
-            card.getStyle().set("box-shadow", "0 2px 12px rgba(0, 0, 0, 0.04)");
-        });
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
+                e -> card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 8px 24px rgba(0, 0, 0, 0.06)"));
+        card.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE,
+                e -> card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX));
 
         return card;
     }
 
-    private Button createPrimaryButton(String text, Runnable action) {
-        Button btn = new Button(text, e -> action.run());
-        btn.getStyle().set("background", "linear-gradient(135deg, " + PRIMARY + " 0%, #5AC8FA 100%)");
-        btn.getStyle().set("color", "white");
-        btn.getStyle().set("font-weight", "600");
-        btn.getStyle().set("font-size", "14px");
-        btn.getStyle().set("border-radius", "9999px");
-        btn.getStyle().set("border", "none");
-        btn.getStyle().set("padding", "12px 24px");
-        btn.getStyle().set("box-shadow", "0 10px 15px -3px rgba(0, 122, 255, 0.3)");
-        btn.getStyle().set("transition", "all 0.2s");
-        btn.getStyle().set("cursor", "pointer");
+    private void styleCardTitle(H3 title) {
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
+        title.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        title.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        title.getStyle().set(StyleConstants.CSS_MARGIN, MARGIN_8);
+    }
 
-        btn.getElement().addEventListener("mouseenter", e -> {
-            btn.getStyle().set("filter", "brightness(1.1)");
-            btn.getStyle().set("transform", "translateY(-1px)");
-        });
-        btn.getElement().addEventListener("mouseleave", e -> {
-            btn.getStyle().set("filter", "brightness(1)");
-            btn.getStyle().set("transform", "translateY(0)");
-        });
+    private void styleCardDescription(Paragraph desc, String margin) {
+        desc.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
+        desc.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        desc.getStyle().set(StyleConstants.CSS_MARGIN, margin);
+    }
 
-        return btn;
+    private void applyBaseButtonStyles(Button btn) {
+        btn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        btn.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+        btn.getStyle().set(StyleConstants.CSS_BORDER, "none");
+        btn.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+        btn.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_2S);
     }
 }

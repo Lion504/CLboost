@@ -2,45 +2,46 @@ package com.clbooster.aiservice;
 
 import java.util.Scanner;
 
-import com.clbooster.aiservice.AIService;
-import com.clbooster.aiservice.Exporter;
-import com.clbooster.aiservice.Parser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
+
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
         String apiKey = System.getenv("API_KEY");
         if (apiKey == null || apiKey.isEmpty()) {
-            System.out.print("⚠️ API Key not found in environment. Please paste your Google API Key: ");
+            log.info("⚠️ API Key not found in environment. Please paste your Google API Key: ");
             apiKey = scanner.nextLine();
         }
         Parser parser = new Parser();
         AIService aiService = new AIService(apiKey);
         Exporter exporter = new Exporter();
 
-        System.out.println("Resume Cover Letter Generator");
+        log.info("Resume Cover Letter Generator");
 
-        System.out.print("Please type the path to your resume PDF: ");
+        log.info("Please type the path to your resume PDF: ");
         String rawPath = scanner.nextLine();
         String resumePath = rawPath.replace("\"", "").replace("'", "").trim();
 
-        System.out.println("Paste the Job Description here (one line): ");
+        log.info("Paste the Job Description here (one line): ");
         String jobDescription = scanner.nextLine();
 
-        System.out.print("Name your output file (e.g. Letter.docx): ");
+        log.info("Name your output file (e.g. Letter.docx): ");
         String outputPath = scanner.nextLine();
 
-        System.out.println("Reading...");
+        log.info("Reading...");
         String resumeText = parser.parseFileToJson(resumePath);
 
-        System.out.println("Thinking...");
+        log.info("Thinking...");
         String coverLetter = aiService.generateCoverLetter(resumeText, jobDescription);
 
         exporter.saveAsDoc(coverLetter, outputPath);
 
-        System.out.println("Done! Saved to " + outputPath);
+        log.info("Done! Saved to {}", outputPath);
 
         scanner.close();
     }

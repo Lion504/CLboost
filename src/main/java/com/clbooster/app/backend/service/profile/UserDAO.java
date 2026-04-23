@@ -25,7 +25,7 @@ public class UserDAO {
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("SHA-256 algorithm not available", e);
         }
     }
 

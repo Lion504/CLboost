@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseMigration {
+    private static final String ENGINE_CHARSET = ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+
     private static final Logger log = LoggerFactory.getLogger(DatabaseMigration.class);
 
     public static void runMigration() {
@@ -17,7 +19,7 @@ public class DatabaseMigration {
                 "    locale_code CHAR(5) PRIMARY KEY COMMENT 'ISO 639-1 + country code',",
                 "    language_name VARCHAR(64) NOT NULL,", "    native_name VARCHAR(64) NOT NULL,",
                 "    rtl_direction BOOLEAN DEFAULT FALSE,", "    is_active BOOLEAN DEFAULT TRUE,",
-                "    sort_order INT DEFAULT 0", ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" };
+                "    sort_order INT DEFAULT 0", ENGINE_CHARSET };
 
         String[] createProfileTranslationTable = { "CREATE TABLE IF NOT EXISTS profile_translation (",
                 "    profile_pin INT NOT NULL,", "    locale_code CHAR(5) NOT NULL,", "    experience_level TEXT,",
@@ -26,16 +28,14 @@ public class DatabaseMigration {
                 "    PRIMARY KEY (profile_pin, locale_code),",
                 "    FOREIGN KEY (profile_pin) REFERENCES profile(Pin) ON DELETE CASCADE,",
                 "    FOREIGN KEY (locale_code) REFERENCES locale(locale_code) ON DELETE RESTRICT,",
-                "    INDEX idx_profile_locale (profile_pin, locale_code)",
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" };
+                "    INDEX idx_profile_locale (profile_pin, locale_code)", ENGINE_CHARSET };
 
         String[] createSystemMessageTranslationTable = { "CREATE TABLE IF NOT EXISTS system_message_translation (",
                 "    message_key VARCHAR(128) NOT NULL,", "    locale_code CHAR(5) NOT NULL,",
                 "    message_content TEXT NOT NULL,",
                 "    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,",
                 "    PRIMARY KEY (message_key, locale_code),",
-                "    FOREIGN KEY (locale_code) REFERENCES locale(locale_code) ON DELETE RESTRICT",
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" };
+                "    FOREIGN KEY (locale_code) REFERENCES locale(locale_code) ON DELETE RESTRICT", ENGINE_CHARSET };
 
         String[] insertLocales = {
                 "INSERT IGNORE INTO locale (locale_code, language_name, native_name, rtl_direction, sort_order) VALUES",

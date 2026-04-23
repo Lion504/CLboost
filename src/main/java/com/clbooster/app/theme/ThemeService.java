@@ -8,13 +8,16 @@ import com.vaadin.flow.server.VaadinSession;
  * Uses JavaScript to set a data-theme attribute on the document element.
  */
 public class ThemeService {
+    private static final String LIGHT_THEME = "light";
+
+    private static final String THEME_KEY = "theme";
 
     /**
      * Applies the specified theme to the current UI. Theme is applied immediately
      * via JavaScript.
      *
      * @param theme
-     *            the theme preference: "light", "dark", or "system"
+     *            the theme preference: LIGHT_THEME, "dark", or "system"
      * @param ui
      *            the UI instance to apply the theme to
      */
@@ -26,7 +29,7 @@ public class ThemeService {
         String effectiveTheme = getEffectiveTheme(theme);
 
         // Store in session for persistence during the session
-        VaadinSession.getCurrent().setAttribute("theme", effectiveTheme);
+        VaadinSession.getCurrent().setAttribute(THEME_KEY, effectiveTheme);
 
         // Apply theme via JavaScript
         ui.getPage().executeJs("document.documentElement.setAttribute('data-theme', $0);"
@@ -49,11 +52,11 @@ public class ThemeService {
      *
      * @param themePreference
      *            the user's theme preference
-     * @return the effective theme: "light" or "dark"
+     * @return the effective theme: LIGHT_THEME or "dark"
      */
     public static String getEffectiveTheme(String themePreference) {
         if (themePreference == null) {
-            return "light";
+            return LIGHT_THEME;
         }
 
         return switch (themePreference.toLowerCase()) {
@@ -62,16 +65,16 @@ public class ThemeService {
             // Check session first (if already determined)
             VaadinSession session = VaadinSession.getCurrent();
             if (session != null) {
-                String sessionTheme = (String) session.getAttribute("theme");
+                String sessionTheme = (String) session.getAttribute(THEME_KEY);
                 if (sessionTheme != null && !sessionTheme.equals("system")) {
                     yield sessionTheme;
                 }
             }
             // Default to light if system can't be determined server-side
             // Client-side JavaScript will handle the actual detection
-            yield "light";
+            yield LIGHT_THEME;
         }
-        default -> "light";
+        default -> LIGHT_THEME;
         };
     }
 
@@ -106,11 +109,11 @@ public class ThemeService {
     public static String getCurrentTheme() {
         VaadinSession session = VaadinSession.getCurrent();
         if (session != null) {
-            String theme = (String) session.getAttribute("theme");
+            String theme = (String) session.getAttribute(THEME_KEY);
             if (theme != null) {
                 return theme;
             }
         }
-        return "light";
+        return LIGHT_THEME;
     }
 }

@@ -1,5 +1,8 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.views.util.StyleConstants;
+import com.clbooster.app.views.util.ViewComponents;
+
 import jakarta.annotation.security.PermitAll;
 import com.clbooster.aiservice.AIService;
 import com.clbooster.aiservice.Exporter;
@@ -13,10 +16,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -25,8 +25,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.streams.DownloadResponse;
+import com.vaadin.flow.server.streams.InputStreamDownloadHandler;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -49,6 +50,7 @@ import java.util.logging.Logger;
 @PageTitle("Editor | CL Booster")
 @PermitAll
 public class EditorView extends HorizontalLayout {
+    private static final String TIMESTAMP_PATTERN = "yyyyMMdd_HHmmss";
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
@@ -59,8 +61,8 @@ public class EditorView extends HorizontalLayout {
 
     private static final Logger LOGGER = Logger.getLogger(EditorView.class.getName());
 
-    private final DocumentService documentService;
-    private final AIService aiService;
+    private final transient DocumentService documentService;
+    private final transient AIService aiService;
 
     private TextArea editorArea;
     private String jobTitle;
@@ -69,11 +71,7 @@ public class EditorView extends HorizontalLayout {
     private Set<String> selectedSkills;
     private String jobDescription;
     private String userName;
-    private String savedFilePath; // path of the saved .docx after generation
     private String existingContent; // non-null when opened from history (skip generation)
-
-    // Loading indicator shown while AI generates
-    private Div loadingOverlay;
 
     public EditorView(DocumentService documentService, AIService aiService) {
         this.documentService = documentService;
@@ -81,8 +79,8 @@ public class EditorView extends HorizontalLayout {
         setSizeFull();
         setPadding(true);
         getStyle().set("gap", "24px");
-        getStyle().set("background", BG_WHITE);
-        getStyle().set("padding", "24px");
+        getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        getStyle().set(StyleConstants.CSS_PADDING, "24px");
 
         // Read wizard data from VaadinSession
         VaadinSession session = VaadinSession.getCurrent();
@@ -147,7 +145,7 @@ public class EditorView extends HorizontalLayout {
                 editorArea.setValue(result);
                 editorArea.setEnabled(true);
                 // Save after generation completes
-                savedFilePath = saveGeneratedCoverLetter(result);
+                saveGeneratedCoverLetter(result);
             });
         });
         generationThread.setDaemon(true);
@@ -171,13 +169,13 @@ public class EditorView extends HorizontalLayout {
         editorArea = new TextArea();
         editorArea.setWidthFull();
         editorArea.setHeightFull();
-        editorArea.getStyle().set("background", BG_WHITE);
-        editorArea.getStyle().set("border", "1px solid rgba(0,0,0,0.1)");
-        editorArea.getStyle().set("border-radius", "16px");
-        editorArea.getStyle().set("padding", "32px");
-        editorArea.getStyle().set("font-size", "15px");
+        editorArea.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        editorArea.getStyle().set(StyleConstants.CSS_BORDER, "1px solid rgba(0,0,0,0.1)");
+        editorArea.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "16px");
+        editorArea.getStyle().set(StyleConstants.CSS_PADDING, "32px");
+        editorArea.getStyle().set(StyleConstants.CSS_FONT_SIZE, "15px");
         editorArea.getStyle().set("line-height", "1.8");
-        editorArea.getStyle().set("color", TEXT_PRIMARY);
+        editorArea.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
         editorArea.getStyle().set("font-family", "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif");
         editorArea.getStyle().set("resize", "none");
 
@@ -191,7 +189,7 @@ public class EditorView extends HorizontalLayout {
         HorizontalLayout header = new HorizontalLayout();
         header.setWidthFull();
         header.setAlignItems(FlexComponent.Alignment.CENTER);
-        header.getStyle().set("padding", "0 0 8px 0");
+        header.getStyle().set(StyleConstants.CSS_PADDING, "0 0 8px 0");
 
         // Back button and title
         HorizontalLayout leftGroup = new HorizontalLayout();
@@ -199,10 +197,10 @@ public class EditorView extends HorizontalLayout {
         leftGroup.getStyle().set("gap", "16px");
 
         Button backBtn = new Button(VaadinIcon.ARROW_LEFT.create());
-        backBtn.getStyle().set("background", "transparent");
-        backBtn.getStyle().set("color", TEXT_SECONDARY);
-        backBtn.getStyle().set("border", "none");
-        backBtn.getStyle().set("cursor", "pointer");
+        backBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
+        backBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        backBtn.getStyle().set(StyleConstants.CSS_BORDER, "none");
+        backBtn.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
         backBtn.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate(DashboardView.class)));
 
         VerticalLayout titleGroup = new VerticalLayout();
@@ -210,11 +208,12 @@ public class EditorView extends HorizontalLayout {
         titleGroup.setSpacing(false);
 
         H2 title = new H2(jobTitle);
-        title.getStyle().set("font-size", "20px").set("font-weight", "700").set("color", TEXT_PRIMARY).set("margin",
-                "0");
+        title.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px").set(StyleConstants.CSS_FONT_WEIGHT, "700")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph subtitle = new Paragraph(companyName + " • " + selectedTone + " tone");
-        subtitle.getStyle().set("font-size", "13px").set("color", TEXT_SECONDARY).set("margin", "0");
+        subtitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px").set(StyleConstants.CSS_COLOR, TEXT_SECONDARY)
+                .set(StyleConstants.CSS_MARGIN, "0");
 
         titleGroup.add(title, subtitle);
         leftGroup.add(backBtn, titleGroup);
@@ -226,12 +225,14 @@ public class EditorView extends HorizontalLayout {
 
         // Save as DOCX button
         Button saveDocxBtn = new Button("Save DOCX", VaadinIcon.DOWNLOAD.create());
-        saveDocxBtn.getStyle().set("background", "rgba(0,0,0,0.05)").set("color", TEXT_PRIMARY)
-                .set("font-weight", "600").set("border-radius", "9999px").set("padding", "10px 20px");
+        saveDocxBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)")
+                .set(StyleConstants.CSS_COLOR, TEXT_PRIMARY).set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_PADDING, "10px 20px");
         saveDocxBtn.addClickListener(e -> downloadAsDocx());
 
         // Export PDF button
-        Button exportPdfBtn = createPrimaryButton("Export PDF", VaadinIcon.FILE_TEXT);
+        Button exportPdfBtn = ViewComponents.createPrimaryButton("Export PDF", VaadinIcon.FILE_TEXT);
         exportPdfBtn.addClickListener(e -> downloadAsPdf());
 
         actions.add(saveDocxBtn, exportPdfBtn);
@@ -245,8 +246,9 @@ public class EditorView extends HorizontalLayout {
         HorizontalLayout toolbar = new HorizontalLayout();
         toolbar.setWidthFull();
         toolbar.setAlignItems(FlexComponent.Alignment.CENTER);
-        toolbar.getStyle().set("gap", "8px").set("padding", "12px 16px").set("background", BG_GRAY)
-                .set("border-radius", "12px").set("margin-bottom", "8px");
+        toolbar.getStyle().set("gap", "8px").set(StyleConstants.CSS_PADDING, "12px 16px")
+                .set(StyleConstants.CSS_BACKGROUND, BG_GRAY).set(StyleConstants.CSS_BORDER_RADIUS, "12px")
+                .set(StyleConstants.CSS_MARGIN_BOTTOM, "8px");
 
         // Wrap selected text in markers (plain-text simulation)
         Button boldBtn = createToolbarButton(VaadinIcon.BOLD, "Bold");
@@ -283,11 +285,14 @@ public class EditorView extends HorizontalLayout {
         });
 
         Div divider = new Div();
-        divider.getStyle().set("width", "1px").set("height", "24px").set("background", "rgba(0,0,0,0.1)");
+        divider.getStyle().set(StyleConstants.CSS_WIDTH, "1px").set(StyleConstants.CSS_HEIGHT, "24px")
+                .set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.1)");
 
         Button regenBtn = new Button("Regenerate", VaadinIcon.MAGIC.create());
-        regenBtn.getStyle().set("background", PRIMARY + "15").set("color", PRIMARY).set("font-weight", "600")
-                .set("border-radius", "9999px").set("padding", "8px 16px").set("border", "none");
+        regenBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY + "15").set(StyleConstants.CSS_COLOR, PRIMARY)
+                .set(StyleConstants.CSS_FONT_WEIGHT, "600")
+                .set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX)
+                .set(StyleConstants.CSS_PADDING, "8px 16px").set(StyleConstants.CSS_BORDER, "none");
         regenBtn.addClickListener(e -> regenerateLetter());
 
         toolbar.add(boldBtn, italicBtn, underlineBtn, listBtn, copyBtn, clearBtn, divider, regenBtn);
@@ -311,10 +316,13 @@ public class EditorView extends HorizontalLayout {
     private Button createToolbarButton(VaadinIcon icon, String tooltip) {
         Button btn = new Button(icon.create());
         btn.getElement().setAttribute("title", tooltip);
-        btn.getStyle().set("background", "transparent").set("color", TEXT_SECONDARY).set("border", "none")
-                .set("padding", "8px").set("border-radius", "8px");
-        btn.getElement().addEventListener("mouseenter", e -> btn.getStyle().set("background", "rgba(0,0,0,0.05)"));
-        btn.getElement().addEventListener("mouseleave", e -> btn.getStyle().set("background", "transparent"));
+        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT)
+                .set(StyleConstants.CSS_COLOR, TEXT_SECONDARY).set(StyleConstants.CSS_BORDER, "none")
+                .set(StyleConstants.CSS_PADDING, "8px").set(StyleConstants.CSS_BORDER_RADIUS, "8px");
+        btn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
+                e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0,0,0,0.05)"));
+        btn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE,
+                e -> btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT));
         return btn;
     }
 
@@ -330,7 +338,7 @@ public class EditorView extends HorizontalLayout {
         }
         try {
             String fileName = sanitizeForFilename(companyName) + "_" + sanitizeForFilename(jobTitle) + "_"
-                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".docx";
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern(TIMESTAMP_PATTERN)) + ".docx";
             Path outPath = Paths.get(System.getProperty("java.io.tmpdir"), fileName);
 
             com.clbooster.app.backend.service.ResumeData resumeData = new com.clbooster.app.backend.service.ResumeData();
@@ -359,7 +367,7 @@ public class EditorView extends HorizontalLayout {
         }
         try {
             String fileName = sanitizeForFilename(companyName) + "_" + sanitizeForFilename(jobTitle) + "_"
-                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".pdf";
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern(TIMESTAMP_PATTERN)) + ".pdf";
 
             byte[] pdfBytes = generateSimplePdf(content);
             if (pdfBytes == null || pdfBytes.length == 0) {
@@ -374,10 +382,10 @@ public class EditorView extends HorizontalLayout {
     }
 
     private void serveDownload(byte[] bytes, String mimeType, String fileName) {
-        StreamResource resource = new StreamResource(fileName, () -> new ByteArrayInputStream(bytes));
-        resource.setContentType(mimeType);
+        InputStreamDownloadHandler downloadHandler = new InputStreamDownloadHandler(
+                e -> new DownloadResponse(new ByteArrayInputStream(bytes), fileName, mimeType, bytes.length));
 
-        Anchor anchor = new Anchor(resource, "");
+        Anchor anchor = new Anchor(downloadHandler, "");
         anchor.getElement().setAttribute("download", fileName);
         anchor.getElement().setAttribute("style", "display:none");
         add(anchor);
@@ -502,21 +510,11 @@ public class EditorView extends HorizontalLayout {
             ui.access(() -> {
                 editorArea.setValue(result);
                 editorArea.setEnabled(true);
-                savedFilePath = saveGeneratedCoverLetter(result);
+                saveGeneratedCoverLetter(result);
             });
         });
         t.setDaemon(true);
         t.start();
-    }
-
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    private Button createPrimaryButton(String text, VaadinIcon icon) {
-        Button btn = new Button(text, icon.create());
-        btn.getStyle().set("background", PRIMARY).set("color", "white").set("font-weight", "600")
-                .set("border-radius", "9999px").set("padding", "10px 24px").set("border", "none")
-                .set("box-shadow", "0 10px 15px -3px rgba(0,122,255,0.3)");
-        return btn;
     }
 
     private String generateCoverLetter() {
@@ -568,7 +566,7 @@ public class EditorView extends HorizontalLayout {
             if (!Files.exists(dir))
                 Files.createDirectories(dir);
 
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern(TIMESTAMP_PATTERN));
             String fileName = userPin + "_" + timestamp + "_" + sanitizeForFilename(companyName) + "_"
                     + sanitizeForFilename(jobTitle) + ".docx";
             Path filePath = dir.resolve(fileName);
@@ -586,6 +584,6 @@ public class EditorView extends HorizontalLayout {
         if (input == null || input.isBlank())
             return "Unknown";
         return input.trim().replaceAll("\\s+", "_").replaceAll("[^a-zA-Z0-9_\\-]", "").replaceAll("_+", "_")
-                .replaceAll("^_|_$", "");
+                .replaceAll("(^_)|(_$)", "");
     }
 }

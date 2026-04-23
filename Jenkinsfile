@@ -2,10 +2,12 @@ pipeline {
     agent any
 
     environment {
-        // Define your Docker Hub info here
-        DOCKER_IMAGE = "tfabinader/sp1-inclass-assignment"
-        // This ID must match the 'ID' you gave your credentials in Jenkins
-        DOCKER_HUB_CREDS = 'docker-hub-creds'
+        // Docker Hub repository
+        DOCKER_IMAGE = "timo2233/clboost"
+        // Jenkins credential ID for Docker Hub authentication
+        DOCKER_HUB_CREDS = 'docker-hub-credentials'
+        // Jenkins global environment variable (set in Manage Jenkins → Configure System)
+        PATH = "${env.JMETER_HOME}/bin:${env.PATH}"
     }
 
     tools {
@@ -15,13 +17,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                // Added credentialsId for SSH authentication
-                git url: 'git@github.com:TaysaAbinader/SoftwareProject1_Actvity1.git',
-                    branch: 'main'
-            }
-        }
         stage('Build') {
             steps {
                 sh 'mvn clean install'
@@ -48,13 +43,97 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Static Code Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn sonar:sonar'
+                }
+            }
+        }
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('Performance Test') {
             steps {
                 script {
-                    // Builds using the Dockerfile in your root directory
-                    // We tag it with the Jenkins build number for versioning
+                    // Build Docker image
                     sh "docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} ."
                     sh "docker tag ${DOCKER_IMAGE}:${BUILD_NUMBER} ${DOCKER_IMAGE}:latest"
+                    
+                    // Start container in background
+                    def container = sh(
+                        script: "docker run -d -p 8081:8080 --name clboost-test ${DOCKER_IMAGE}:${BUILD_NUMBER}",
+                        returnStdout: true
+                    ).trim()
+                    
+                    try {
+                        // Wait for application to start
+                        sh '''
+                            echo "Waiting for application to start on port 8081..."
+                            for i in {1..30}; do
+                                if curl -s http://localhost:8081/actuator/health > /dev/null 2>&1; then
+                                    echo "Application is up!"
+                                    break
+                                fi
+                                echo "Waiting... ($i/30)"
+                                sleep 2
+                                if [ $i -eq 30 ]; then
+                                    echo "Application did not start within timeout"
+                                    exit 1
+                                fi
+                            done
+                        '''
+                        
+                        // Run JMeter tests
+                        sh '''
+                            echo "Running JMeter performance tests..."
+                            mkdir -p tests/performance/reports
+                            jmeter -n -t tests/performance/clboost_performance.jmx \
+                                -Jhost=localhost -Jport=8081 \
+                                -l tests/performance/result_${BUILD_NUMBER}.jtl \
+                                -e -o tests/performance/report_${BUILD_NUMBER}
+                        '''
+                    } finally {
+                        // Clean up container regardless of test outcome
+                        sh "docker stop ${container}"
+                        sh "docker rm ${container}"
+                    }
+                }
+            }
+            post {
+                always {
+                    // Archive raw JTL results
+                    archiveArtifacts artifacts: 'tests/performance/result_*.jtl', allowEmptyArchive: true
+                    // Archive HTML performance reports
+                    archiveArtifacts artifacts: 'tests/performance/report_*/**/*', allowEmptyArchive: true
+                }
+            }
+        }
+
+        stage('Deploy to Docker Hub') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                script {
+                    // Authenticate with Docker Hub and push images using shell commands
+                    withCredentials([usernamePassword(
+                        credentialsId: DOCKER_HUB_CREDS,
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )]) {
+                        sh """
+                            echo "\$DOCKER_PASS" | docker login -u "\$DOCKER_USER" --password-stdin
+                            docker push timo2233/clboost:${BUILD_NUMBER}
+                            docker push timo2233/clboost:latest
+                            docker logout
+                        """
+                    }
                 }
             }
         }

@@ -2,31 +2,33 @@ package com.clbooster.app.views;
 
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.i18n.TranslationService;
+import com.clbooster.app.views.util.AuthComponents;
+import com.clbooster.app.views.util.StyleConstants;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.html.*;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.NotificationVariant;
-import com.vaadin.flow.component.orderedlayout.*;
-import com.vaadin.flow.component.textfield.*;
-import com.vaadin.flow.router.*;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.PasswordField;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 @Route("login")
 @PageTitle("Login | CL Booster")
 @AnonymousAllowed
 public class LoginView extends VerticalLayout {
+    private static final String FONT_SIZE_PROP = StyleConstants.CSS_FONT_SIZE;
+    private static final String FONT_WEIGHT_PROP = StyleConstants.CSS_FONT_WEIGHT;
+    private static final String COLOR_PROP = StyleConstants.CSS_COLOR;
 
-    // Figma Design System Colors
-    private static final String PRIMARY = "#007AFF";
-    private static final String TEXT_PRIMARY = "#1d1d1f";
-    private static final String TEXT_SECONDARY = "#86868b";
-    private static final String BG_GRAY = "#f5f5f7";
-    private static final String BG_WHITE = "#ffffff";
-
-    private final AuthenticationService authService;
+    private final transient AuthenticationService authService;
     private final TranslationService translationService;
     private TextField usernameField;
     private PasswordField passwordField;
@@ -37,70 +39,24 @@ public class LoginView extends VerticalLayout {
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
-        getStyle().set("background", BG_GRAY);
+        getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.BG_GRAY);
         getStyle().set("font-family",
                 "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
 
         // Main card container
-        Div card = new Div();
-        card.getStyle().set("background", BG_WHITE);
-        card.getStyle().set("border-radius", "24px");
-        card.getStyle().set("padding", "48px");
-        card.getStyle().set("width", "100%");
-        card.getStyle().set("max-width", "420px");
-        card.getStyle().set("box-shadow", "0 2px 12px rgba(0, 0, 0, 0.04)");
-        card.getStyle().set("border", "1px solid rgba(0, 0, 0, 0.05)");
-        card.getStyle().set("transition", "all 0.5s ease");
+        Div card = AuthComponents.createCard();
 
         // Back link
-        HorizontalLayout backLink = new HorizontalLayout();
-        backLink.setAlignItems(FlexComponent.Alignment.CENTER);
-        backLink.getStyle().set("gap", "6px");
-        backLink.getStyle().set("cursor", "pointer");
-        backLink.getStyle().set("margin-bottom", "24px");
-        backLink.getStyle().set("width", "fit-content");
-        backLink.getStyle().set("transition", "opacity 0.2s");
-
-        Icon arrowLeft = VaadinIcon.ARROW_LEFT.create();
-        arrowLeft.getStyle().set("width", "14px");
-        arrowLeft.getStyle().set("height", "14px");
-        arrowLeft.getStyle().set("color", TEXT_SECONDARY);
-
-        Span backText = new Span(translationService.translate("landing.backToHome"));
-        backText.getStyle().set("font-size", "13px");
-        backText.getStyle().set("font-weight", "500");
-        backText.getStyle().set("color", TEXT_SECONDARY);
-
-        backLink.add(arrowLeft, backText);
-        backLink.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("")));
-        backLink.getElement().addEventListener("mouseenter", e -> backLink.getStyle().set("opacity", "0.7"));
-        backLink.getElement().addEventListener("mouseleave", e -> backLink.getStyle().set("opacity", "1"));
+        HorizontalLayout backLink = AuthComponents.createBackLink(translationService.translate("landing.backToHome"),
+                () -> getUI().ifPresent(ui -> ui.navigate("")));
 
         // Logo icon
-        Div logoIcon = new Div();
-        logoIcon.getStyle().set("width", "48px");
-        logoIcon.getStyle().set("height", "48px");
-        logoIcon.getStyle().set("background", PRIMARY);
-        logoIcon.getStyle().set("border-radius", "12px");
-        logoIcon.getStyle().set("display", "flex");
-        logoIcon.getStyle().set("align-items", "center");
-        logoIcon.getStyle().set("justify-content", "center");
-        logoIcon.getStyle().set("margin-bottom", "24px");
-        logoIcon.getStyle().set("box-shadow", "0 10px 15px -3px rgba(0, 122, 255, 0.3)");
-        logoIcon.add(VaadinIcon.SPARK_LINE.create());
+        Div logoIcon = AuthComponents.createLogoIcon();
 
         // Title section
-        H2 title = new H2(translationService.translate("login.title"));
-        title.getStyle().set("font-size", "28px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 8px 0");
-        title.getStyle().set("letter-spacing", "-0.025em");
+        H2 title = AuthComponents.createTitle(translationService.translate("login.title"));
 
-        Paragraph subtitle = new Paragraph(translationService.translate("login.subtitle"));
-        subtitle.getStyle().set("font-size", "15px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "0 0 32px 0");
+        Paragraph subtitle = AuthComponents.createSubtitle(translationService.translate("login.subtitle"));
 
         // Form fields
         VerticalLayout form = new VerticalLayout();
@@ -110,10 +66,10 @@ public class LoginView extends VerticalLayout {
         form.setWidthFull();
 
         // Username field
-        usernameField = createTextField(translationService.translate("label.username"), "alexsmith");
+        usernameField = AuthComponents.createTextField(translationService.translate("label.username"), "alexsmith");
 
         // Password field
-        passwordField = createPasswordField(translationService.translate("label.password"));
+        passwordField = AuthComponents.createPasswordField(translationService.translate("label.password"));
 
         // Remember me and Forgot password row
         HorizontalLayout rememberRow = new HorizontalLayout();
@@ -122,104 +78,62 @@ public class LoginView extends VerticalLayout {
         rememberRow.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 
         Checkbox remember = new Checkbox(translationService.translate("action.rememberMe"));
-        remember.getStyle().set("font-size", "14px");
-        remember.getStyle().set("color", TEXT_PRIMARY);
+        remember.getStyle().set(FONT_SIZE_PROP, "14px");
+        remember.getStyle().set(COLOR_PROP, StyleConstants.TEXT_PRIMARY);
         remember.addValueChangeListener(e -> {
             if (e.getValue()) {
-                showInfo("Remember me is not yet implemented");
+                AuthComponents.showInfo("Remember me is not yet implemented");
                 remember.setValue(false);
             }
         });
 
         Span forgot = new Span(translationService.translate("login.forgotPassword"));
-        forgot.getStyle().set("font-size", "14px");
-        forgot.getStyle().set("font-weight", "500");
-        forgot.getStyle().set("color", PRIMARY);
+        forgot.getStyle().set(FONT_SIZE_PROP, "14px");
+        forgot.getStyle().set(FONT_WEIGHT_PROP, "500");
+        forgot.getStyle().set(COLOR_PROP, StyleConstants.PRIMARY);
         forgot.getStyle().set("text-decoration", "none");
-        forgot.getStyle().set("transition", "opacity 0.2s");
-        forgot.getStyle().set("cursor", "pointer");
-        forgot.getElement().addEventListener("mouseenter", e -> forgot.getStyle().set("opacity", "0.7"));
-        forgot.getElement().addEventListener("mouseleave", e -> forgot.getStyle().set("opacity", "1"));
+        forgot.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+        AuthComponents.applyLinkHoverEffect(forgot);
         forgot.addClickListener(e -> {
-            showInfo("Please contact admin@clbooster.com for password reset assistance");
+            AuthComponents.showInfo("Please contact admin@clbooster.com for password reset assistance");
         });
 
         rememberRow.add(remember, forgot);
 
         // Sign In button
-        Button signIn = createPrimaryButton(translationService.translate("action.login"), this::handleLogin);
+        Button signIn = AuthComponents.createPrimaryButton(translationService.translate("action.login"),
+                this::handleLogin);
         signIn.setWidthFull();
-        signIn.getStyle().set("margin-top", "8px");
+        signIn.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "8px");
 
         // Divider
-        HorizontalLayout divider = new HorizontalLayout();
-        divider.setWidthFull();
-        divider.setAlignItems(FlexComponent.Alignment.CENTER);
-        divider.getStyle().set("gap", "16px");
-        divider.getStyle().set("margin", "24px 0");
-
-        Div line1 = new Div();
-        line1.getStyle().set("flex", "1");
-        line1.getStyle().set("height", "1px");
-        line1.getStyle().set("background", "rgba(0, 0, 0, 0.1)");
-
-        Span orText = new Span(translationService.translate("login.orContinueWith"));
-        orText.getStyle().set("font-size", "13px");
-        orText.getStyle().set("color", TEXT_SECONDARY);
-        orText.getStyle().set("white-space", "nowrap");
-
-        Div line2 = new Div();
-        line2.getStyle().set("flex", "1");
-        line2.getStyle().set("height", "1px");
-        line2.getStyle().set("background", "rgba(0, 0, 0, 0.1)");
-
-        divider.add(line1, orText, line2);
+        HorizontalLayout divider = AuthComponents.createDivider(translationService.translate("login.orContinueWith"));
 
         // Social buttons
-        HorizontalLayout socialButtons = new HorizontalLayout();
-        socialButtons.setWidthFull();
-        socialButtons.getStyle().set("gap", "12px");
-
-        Button googleBtn = createSocialButton("Google");
-        Button linkedinBtn = createSocialButton("LinkedIn");
-
-        socialButtons.add(googleBtn, linkedinBtn);
-        socialButtons.expand(googleBtn, linkedinBtn);
+        HorizontalLayout socialButtons = AuthComponents.createSocialButtonsLayout();
 
         // Sign up link
         HorizontalLayout signupRow = new HorizontalLayout();
         signupRow.setWidthFull();
         signupRow.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-        signupRow.getStyle().set("margin-top", "24px");
+        signupRow.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "24px");
         signupRow.getStyle().set("gap", "4px");
 
         Span noAccount = new Span(translationService.translate("login.noAccount"));
-        noAccount.getStyle().set("font-size", "14px");
-        noAccount.getStyle().set("color", TEXT_SECONDARY);
+        noAccount.getStyle().set(FONT_SIZE_PROP, "14px");
+        noAccount.getStyle().set(COLOR_PROP, StyleConstants.TEXT_SECONDARY);
 
         Anchor createLink = new Anchor("signup", translationService.translate("signup.signup"));
-        createLink.getStyle().set("font-size", "14px");
-        createLink.getStyle().set("font-weight", "600");
-        createLink.getStyle().set("color", PRIMARY);
+        createLink.getStyle().set(FONT_SIZE_PROP, "14px");
+        createLink.getStyle().set(FONT_WEIGHT_PROP, "600");
+        createLink.getStyle().set(COLOR_PROP, StyleConstants.PRIMARY);
         createLink.getStyle().set("text-decoration", "none");
-        createLink.getStyle().set("transition", "opacity 0.2s");
-        createLink.getElement().addEventListener("mouseenter", e -> createLink.getStyle().set("opacity", "0.7"));
-        createLink.getElement().addEventListener("mouseleave", e -> createLink.getStyle().set("opacity", "1"));
+        AuthComponents.applyLinkHoverEffect(createLink);
 
         signupRow.add(noAccount, createLink);
 
         form.add(usernameField, passwordField, rememberRow, signIn);
         card.add(backLink, logoIcon, title, subtitle, form, divider, socialButtons, signupRow);
-
-        // Hover effect for card
-        card.getElement().addEventListener("mouseenter", e -> {
-            card.getStyle().set("box-shadow", "0 24px 48px rgba(0, 0, 0, 0.06)");
-            card.getStyle().set("transform", "translateY(-2px)");
-        });
-        card.getElement().addEventListener("mouseleave", e -> {
-            card.getStyle().set("box-shadow", "0 2px 12px rgba(0, 0, 0, 0.04)");
-            card.getStyle().set("transform", "translateY(0)");
-        });
 
         add(card);
     }
@@ -229,11 +143,11 @@ public class LoginView extends VerticalLayout {
         String password = passwordField.getValue();
 
         if (username == null || username.trim().isEmpty()) {
-            showError("Please enter your username");
+            AuthComponents.showError("Please enter your username");
             return;
         }
         if (password == null || password.trim().isEmpty()) {
-            showError("Please enter your password");
+            AuthComponents.showError("Please enter your password");
             return;
         }
 
@@ -241,85 +155,9 @@ public class LoginView extends VerticalLayout {
         if (success) {
             getUI().ifPresent(ui -> ui.navigate(DashboardView.class));
         } else {
-            showError("Invalid username or password");
+            AuthComponents.showError("Invalid username or password");
             passwordField.clear();
         }
     }
 
-    private void showError(String message) {
-        Notification notification = new Notification(message, 3000, Notification.Position.TOP_CENTER);
-        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-        notification.open();
-    }
-
-    private void showInfo(String message) {
-        Notification notification = new Notification(message, 4000, Notification.Position.TOP_CENTER);
-        notification.open();
-    }
-
-    private TextField createTextField(String label, String placeholder) {
-        TextField field = new TextField(label);
-        field.setPlaceholder(placeholder);
-        field.setWidthFull();
-        field.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        field.getStyle().set("--vaadin-input-field-border-radius", "12px");
-        return field;
-    }
-
-    private PasswordField createPasswordField(String label) {
-        PasswordField field = new PasswordField(label);
-        field.setWidthFull();
-        field.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        field.getStyle().set("--vaadin-input-field-border-radius", "12px");
-        return field;
-    }
-
-    private Button createPrimaryButton(String text, Runnable action) {
-        Button btn = new Button(text, e -> action.run());
-        btn.getStyle().set("background", "linear-gradient(135deg, " + PRIMARY + " 0%, #5AC8FA 100%)");
-        btn.getStyle().set("color", "white");
-        btn.getStyle().set("font-weight", "600");
-        btn.getStyle().set("font-size", "15px");
-        btn.getStyle().set("border-radius", "9999px");
-        btn.getStyle().set("border", "none");
-        btn.getStyle().set("padding", "14px 24px");
-        btn.getStyle().set("box-shadow", "0 10px 15px -3px rgba(0, 122, 255, 0.3)");
-        btn.getStyle().set("transition", "all 0.2s ease");
-        btn.getStyle().set("cursor", "pointer");
-
-        btn.getElement().addEventListener("mouseenter", e -> {
-            btn.getStyle().set("filter", "brightness(1.1)");
-            btn.getStyle().set("transform", "translateY(-1px)");
-        });
-        btn.getElement().addEventListener("mouseleave", e -> {
-            btn.getStyle().set("filter", "brightness(1)");
-            btn.getStyle().set("transform", "translateY(0)");
-        });
-
-        return btn;
-    }
-
-    private Button createSocialButton(String provider) {
-        Button btn = new Button(provider);
-        btn.getStyle().set("background", BG_GRAY);
-        btn.getStyle().set("color", TEXT_PRIMARY);
-        btn.getStyle().set("font-weight", "600");
-        btn.getStyle().set("font-size", "14px");
-        btn.getStyle().set("border-radius", "12px");
-        btn.getStyle().set("border", "1px solid rgba(0, 0, 0, 0.05)");
-        btn.getStyle().set("padding", "12px 24px");
-        btn.getStyle().set("transition", "all 0.2s ease");
-        btn.getStyle().set("cursor", "pointer");
-
-        btn.getElement().addEventListener("mouseenter", e -> {
-            btn.getStyle().set("background", "rgba(0, 0, 0, 0.08)");
-            btn.getStyle().set("border-color", "rgba(0, 0, 0, 0.1)");
-        });
-        btn.getElement().addEventListener("mouseleave", e -> {
-            btn.getStyle().set("background", BG_GRAY);
-            btn.getStyle().set("border-color", "rgba(0, 0, 0, 0.05)");
-        });
-
-        return btn;
-    }
 }

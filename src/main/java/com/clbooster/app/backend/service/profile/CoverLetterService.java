@@ -41,7 +41,7 @@ public class CoverLetterService {
     public byte[] readCoverLetter(int id) {
         CoverLetter cl = coverLetterDAO.getCoverLetterById(id);
         if (cl == null) {
-            return null;
+            return new byte[0];
         }
 
         try {
@@ -49,7 +49,7 @@ public class CoverLetterService {
             return Files.readAllBytes(filePath);
         } catch (IOException e) {
             log.error("Failed to read cover letter", e);
-            return null;
+            return new byte[0];
         }
     }
 

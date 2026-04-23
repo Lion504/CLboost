@@ -178,6 +178,97 @@ RTL languages use Arabic-script fonts with cascading fallbacks: `Noto Sans Arabi
 4. Verify: sidebar moves right, all text aligns right, toggle switches flip, no overlapping or clipped content
 5. Switch back to English — verify everything flips back to LTR
 
+## 🧪 Testing & Code Quality
+
+### SonarQube (Static Code Analysis)
+
+SonarQube provides continuous inspection of code quality, security, and maintainability.
+
+#### Quick Start with Docker
+
+```bash
+# Start SonarQube container (runs on http://localhost:9000)
+docker run -d --name sonarqube \
+  -p 9000:9000 \
+  sonarqube:lts-community
+
+# Wait ~2 minutes for startup, then access:
+# http://localhost:9000 | admin / admin
+```
+
+#### Linux Installation (Manual / Systemd)
+
+# 1. Start SonarQube
+
+sudo -u sonar /opt/sonarqube/bin/linux-x86-64/sonar.sh start
+
+# Check logs on first run
+
+sudo -u sonar /opt/sonarqube/bin/linux-x86-64/sonar.sh status
+tail -f /opt/sonarqube/logs/sonar.log
+
+# 2. Access at http://localhost:9000
+
+# Default credentials: admin / admin (change on first login)
+
+#### Run Analysis
+
+```bash
+# Full build with tests + coverage + Sonar analysis
+mvn clean verify sonar:sonar
+
+# Or run analysis only (skip tests)
+mvn compile sonar:sonar
+
+# Or
+mvn clean jacoco:prepare-agent test jacoco:report sonar:sonar -Dmaven.test.failure.ignore=true
+```
+
+## 🚀 Performance Testing
+
+CLboost includes an Apache JMeter test plan for load testing the web application, helping evaluate responsiveness and stability under concurrent user load.
+
+### Test Plan Location
+
+`tests/performance/clboost_performance.jmx`
+
+### Test Scenarios
+
+- Simulates **10 concurrent users** performing typical navigation (landing, login, dashboard, editor, history, etc.)
+- Each user performs **5 iterations** with a **2-second think time** between requests.
+- Both public and protected pages are tested; protected pages return redirects for anonymous users (expected).
+
+### Running Locally
+
+1. **Install JMeter** 5.6.3+ and ensure `jmeter` is on your `PATH`.  
+   Download: https://jmeter.apache.org/download_jmeter.cgi
+
+2. **Start the application** (Docker or `mvn spring-boot:run`) on port `8080` (or adjust).
+
+3. **Execute the test:**
+
+```bash
+jmeter -n -t tests/performance/clboost_performance.jmx -l result.jtl -Jport=8080 -e -o report/
+```
+
+1. **View the report:** Open `report/index.html` in a browser.
+
+### CI Integration
+
+Performance tests are part of the Jenkins pipeline (`Jenkinsfile`). The **Performance Test** stage runs automatically on every build against a running test environment. Results are archived as build artifacts.
+
+### Interpreting Results
+
+- **Avg** – average response time (ms). Aim for < 2000ms.
+- **Err %** – error rate. Should be ≤ 5% (5xx responses or assertion failures).
+- **Throughput** – requests/second; higher is better.
+
+### Current Limitations
+
+JMeter simulates HTTP requests only; it does not execute JavaScript or Vaadin client-side interactions. Tests focus on server response times for page bootstrap. For full browser-level performance, consider Vaadin TestBench with Selenium Grid.
+
+---
+
 ## 🔧 Development
 
 See [dev_instructions.md](dev_instructions.md) for full setup, CLI usage, Docker, and deployment details.

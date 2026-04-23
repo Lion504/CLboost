@@ -1,12 +1,13 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.views.util.StyleConstants;
+
 import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.User;
 import com.clbooster.app.backend.service.settings.Settings;
 import com.clbooster.app.backend.service.settings.SettingsService;
 import com.clbooster.app.i18n.TranslationService;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
@@ -20,10 +21,10 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
-import com.vaadin.flow.component.textfield.TextField;
 
 @PermitAll
 public class MainLayout extends AppLayout {
+    private static final String VAL_0_1EM = "0.1em";
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
@@ -37,7 +38,7 @@ public class MainLayout extends AppLayout {
     private static final String SIDEBAR_TEXT = "#495057";
     private static final String SIDEBAR_LABEL = "#6c757d";
 
-    private final AuthenticationService authService;
+    private final transient AuthenticationService authService;
     private final TranslationService translationService;
 
     public MainLayout() {
@@ -70,7 +71,7 @@ public class MainLayout extends AppLayout {
     private void createHeader() {
         // Drawer toggle
         DrawerToggle toggle = new DrawerToggle();
-        toggle.getStyle().set("color", TEXT_PRIMARY);
+        toggle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
 
         // Right side icons
         HorizontalLayout rightSide = new HorizontalLayout();
@@ -86,8 +87,8 @@ public class MainLayout extends AppLayout {
 
         // User avatar with dropdown menu
         Div avatarWrapper = new Div();
-        avatarWrapper.getStyle().set("cursor", "pointer");
-        avatarWrapper.getStyle().set("transition", "transform 0.2s");
+        avatarWrapper.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+        avatarWrapper.getStyle().set(StyleConstants.CSS_TRANSITION, "transform 0.2s");
 
         // Get current user from auth service
         User currentUser = authService.getCurrentUser();
@@ -105,8 +106,8 @@ public class MainLayout extends AppLayout {
 
         Avatar avatar = new Avatar(userName);
         avatar.setColorIndex(2);
-        avatar.getStyle().set("border", "2px solid " + BG_WHITE);
-        avatar.getStyle().set("box-shadow", "0 2px 8px rgba(0, 0, 0, 0.1)");
+        avatar.getStyle().set(StyleConstants.CSS_BORDER, "2px solid " + BG_WHITE);
+        avatar.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 2px 8px rgba(0, 0, 0, 0.1)");
 
         avatarWrapper.add(avatar);
 
@@ -126,20 +127,18 @@ public class MainLayout extends AppLayout {
             getUI().ifPresent(ui -> ui.navigate(LoginView.class));
         });
 
-        avatarWrapper.getElement().addEventListener("mouseenter", e -> {
-            avatarWrapper.getStyle().set("transform", "scale(1.05)");
-        });
-        avatarWrapper.getElement().addEventListener("mouseleave", e -> {
-            avatarWrapper.getStyle().set("transform", "scale(1)");
-        });
+        avatarWrapper.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
+                e -> avatarWrapper.getStyle().set(StyleConstants.CSS_TRANSFORM, "scale(1.05)"));
+        avatarWrapper.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE,
+                e -> avatarWrapper.getStyle().set(StyleConstants.CSS_TRANSFORM, "scale(1)"));
 
         rightSide.add(notifBtn, avatarWrapper);
 
         HorizontalLayout header = new HorizontalLayout(toggle, rightSide);
         header.setWidthFull();
         header.setAlignItems(FlexComponent.Alignment.CENTER);
-        header.getStyle().set("padding", "12px 24px");
-        header.getStyle().set("background", BG_WHITE);
+        header.getStyle().set(StyleConstants.CSS_PADDING, "12px 24px");
+        header.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
         header.getStyle().set("border-bottom", "1px solid rgba(0, 0, 0, 0.05)");
         // No expand — toggle stays left, rightSide hugs the right naturally
         header.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
@@ -149,21 +148,21 @@ public class MainLayout extends AppLayout {
 
     private Button createIconButton(VaadinIcon icon) {
         Button btn = new Button(icon.create());
-        btn.getStyle().set("background", "transparent");
-        btn.getStyle().set("color", TEXT_SECONDARY);
-        btn.getStyle().set("padding", "8px");
-        btn.getStyle().set("border-radius", "10px");
-        btn.getStyle().set("border", "none");
-        btn.getStyle().set("cursor", "pointer");
-        btn.getStyle().set("transition", "all 0.2s");
+        btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
+        btn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        btn.getStyle().set(StyleConstants.CSS_PADDING, "8px");
+        btn.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "10px");
+        btn.getStyle().set(StyleConstants.CSS_BORDER, "none");
+        btn.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
+        btn.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_2S);
 
-        btn.getElement().addEventListener("mouseenter", e -> {
-            btn.getStyle().set("background", BG_GRAY);
-            btn.getStyle().set("color", TEXT_PRIMARY);
+        btn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
+            btn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
+            btn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
         });
-        btn.getElement().addEventListener("mouseleave", e -> {
-            btn.getStyle().set("background", "transparent");
-            btn.getStyle().set("color", TEXT_SECONDARY);
+        btn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
+            btn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
+            btn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
         });
 
         return btn;
@@ -173,48 +172,48 @@ public class MainLayout extends AppLayout {
         VerticalLayout drawer = new VerticalLayout();
         drawer.setPadding(false);
         drawer.setSpacing(false);
-        drawer.getStyle().set("height", "100%");
-        drawer.getStyle().set("background",
+        drawer.getStyle().set(StyleConstants.CSS_HEIGHT, "100%");
+        drawer.getStyle().set(StyleConstants.CSS_BACKGROUND,
                 "linear-gradient(180deg, " + SIDEBAR_BG + " 0%, " + SIDEBAR_HOVER + " 100%)");
 
         // Logo section
         HorizontalLayout logoSection = new HorizontalLayout();
         logoSection.setAlignItems(FlexComponent.Alignment.CENTER);
         logoSection.getStyle().set("gap", "12px");
-        logoSection.getStyle().set("padding", "24px 20px");
-        logoSection.getStyle().set("cursor", "pointer");
+        logoSection.getStyle().set(StyleConstants.CSS_PADDING, "24px 20px");
+        logoSection.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
 
         Div logoIcon = new Div();
-        logoIcon.getStyle().set("width", "36px");
-        logoIcon.getStyle().set("height", "36px");
-        logoIcon.getStyle().set("background", PRIMARY);
-        logoIcon.getStyle().set("border-radius", "10px");
-        logoIcon.getStyle().set("display", "flex");
-        logoIcon.getStyle().set("align-items", "center");
-        logoIcon.getStyle().set("justify-content", "center");
-        logoIcon.getStyle().set("box-shadow", "0 4px 12px rgba(0, 122, 255, 0.3)");
+        logoIcon.getStyle().set(StyleConstants.CSS_WIDTH, "36px");
+        logoIcon.getStyle().set(StyleConstants.CSS_HEIGHT, "36px");
+        logoIcon.getStyle().set(StyleConstants.CSS_BACKGROUND, PRIMARY);
+        logoIcon.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "10px");
+        logoIcon.getStyle().set(StyleConstants.CSS_DISPLAY, "flex");
+        logoIcon.getStyle().set(StyleConstants.CSS_ALIGN_ITEMS, StyleConstants.VAL_CENTER);
+        logoIcon.getStyle().set(StyleConstants.CSS_JUSTIFY_CONTENT, StyleConstants.VAL_CENTER);
+        logoIcon.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 4px 12px rgba(0, 122, 255, 0.3)");
         logoIcon.add(VaadinIcon.SPARK_LINE.create());
 
         Span logoText = new Span("CL Booster");
-        logoText.getStyle().set("font-weight", "700");
-        logoText.getStyle().set("font-size", "20px");
-        logoText.getStyle().set("color", TEXT_PRIMARY);
-        logoText.getStyle().set("letter-spacing", "-0.025em");
+        logoText.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        logoText.getStyle().set(StyleConstants.CSS_FONT_SIZE, "20px");
+        logoText.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        logoText.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "-0.025em");
 
         logoSection.add(logoIcon, logoText);
         logoSection.addClickListener(e -> getUI().ifPresent(ui -> ui.navigate("dashboard")));
 
         // Navigation
         SideNav nav = new SideNav();
-        nav.getStyle().set("margin-top", "8px");
+        nav.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "8px");
 
         // Main section
         Span mainLabel = new Span(translationService.translate("nav.section.main"));
-        mainLabel.getStyle().set("font-size", "11px");
-        mainLabel.getStyle().set("font-weight", "700");
-        mainLabel.getStyle().set("color", SIDEBAR_LABEL);
-        mainLabel.getStyle().set("padding", "0 20px");
-        mainLabel.getStyle().set("letter-spacing", "0.1em");
+        mainLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "11px");
+        mainLabel.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        mainLabel.getStyle().set(StyleConstants.CSS_COLOR, SIDEBAR_LABEL);
+        mainLabel.getStyle().set(StyleConstants.CSS_PADDING, "0 20px");
+        mainLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, VAL_0_1EM);
 
         SideNavItem dashboard = createNavItem(translationService.translate("nav.dashboard"), "dashboard",
                 VaadinIcon.DASHBOARD);
@@ -224,21 +223,21 @@ public class MainLayout extends AppLayout {
 
         // Add Resume section
         Span toolsLabel = new Span(translationService.translate("nav.section.tools"));
-        toolsLabel.getStyle().set("font-size", "11px");
-        toolsLabel.getStyle().set("font-weight", "700");
-        toolsLabel.getStyle().set("color", SIDEBAR_LABEL);
-        toolsLabel.getStyle().set("padding", "24px 20px 8px");
-        toolsLabel.getStyle().set("letter-spacing", "0.1em");
+        toolsLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "11px");
+        toolsLabel.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        toolsLabel.getStyle().set(StyleConstants.CSS_COLOR, SIDEBAR_LABEL);
+        toolsLabel.getStyle().set(StyleConstants.CSS_PADDING, "24px 20px 8px");
+        toolsLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, VAL_0_1EM);
 
         SideNavItem resume = createNavItem(translationService.translate("nav.resume"), "resume", VaadinIcon.FILE_TEXT);
 
         // Support section
         Span supportLabel = new Span(translationService.translate("nav.section.support"));
-        supportLabel.getStyle().set("font-size", "11px");
-        supportLabel.getStyle().set("font-weight", "700");
-        supportLabel.getStyle().set("color", SIDEBAR_LABEL);
-        supportLabel.getStyle().set("padding", "24px 20px 8px");
-        supportLabel.getStyle().set("letter-spacing", "0.1em");
+        supportLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "11px");
+        supportLabel.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        supportLabel.getStyle().set(StyleConstants.CSS_COLOR, SIDEBAR_LABEL);
+        supportLabel.getStyle().set(StyleConstants.CSS_PADDING, "24px 20px 8px");
+        supportLabel.getStyle().set(StyleConstants.CSS_LETTER_SPACING, VAL_0_1EM);
 
         SideNavItem help = createNavItem(translationService.translate("nav.help"), "help", VaadinIcon.QUESTION_CIRCLE);
 
@@ -265,22 +264,22 @@ public class MainLayout extends AppLayout {
 
         HorizontalLayout versionInfo = new HorizontalLayout();
         versionInfo.setAlignItems(FlexComponent.Alignment.CENTER);
-        versionInfo.getStyle().set("padding", "20px");
+        versionInfo.getStyle().set(StyleConstants.CSS_PADDING, "20px");
         versionInfo.getStyle().set("gap", "8px");
 
         Span versionLabel = new Span(translationService.translate("mainlayout.version") + ": 4.0.0");
-        versionLabel.getStyle().set("font-size", "12px");
-        versionLabel.getStyle().set("color", SIDEBAR_LABEL);
+        versionLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
+        versionLabel.getStyle().set(StyleConstants.CSS_COLOR, SIDEBAR_LABEL);
 
         Div dot = new Div();
-        dot.getStyle().set("width", "6px");
-        dot.getStyle().set("height", "6px");
-        dot.getStyle().set("background", "#34C759");
-        dot.getStyle().set("border-radius", "50%");
+        dot.getStyle().set(StyleConstants.CSS_WIDTH, "6px");
+        dot.getStyle().set(StyleConstants.CSS_HEIGHT, "6px");
+        dot.getStyle().set(StyleConstants.CSS_BACKGROUND, "#34C759");
+        dot.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "50%");
 
         Span statusLabel = new Span(translationService.translate("mainlayout.online"));
-        statusLabel.getStyle().set("font-size", "12px");
-        statusLabel.getStyle().set("color", SIDEBAR_TEXT);
+        statusLabel.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
+        statusLabel.getStyle().set(StyleConstants.CSS_COLOR, SIDEBAR_TEXT);
 
         versionInfo.add(versionLabel, dot, statusLabel);
 
@@ -292,22 +291,22 @@ public class MainLayout extends AppLayout {
 
     private SideNavItem createNavItem(String label, String route, VaadinIcon icon) {
         SideNavItem item = new SideNavItem(label, route, icon.create());
-        item.getStyle().set("color", SIDEBAR_TEXT);
-        item.getStyle().set("font-weight", "500");
-        item.getStyle().set("font-size", "14px");
-        item.getStyle().set("padding", "12px 20px");
-        item.getStyle().set("border-radius", "12px");
-        item.getStyle().set("margin", "2px 12px");
-        item.getStyle().set("transition", "all 0.2s");
+        item.getStyle().set(StyleConstants.CSS_COLOR, SIDEBAR_TEXT);
+        item.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "500");
+        item.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
+        item.getStyle().set(StyleConstants.CSS_PADDING, "12px 20px");
+        item.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "12px");
+        item.getStyle().set(StyleConstants.CSS_MARGIN, "2px 12px");
+        item.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_2S);
 
         // Hover effect
-        item.getElement().addEventListener("mouseenter", e -> {
-            item.getStyle().set("background", SIDEBAR_HOVER);
-            item.getStyle().set("color", TEXT_PRIMARY);
+        item.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER, e -> {
+            item.getStyle().set(StyleConstants.CSS_BACKGROUND, SIDEBAR_HOVER);
+            item.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
         });
-        item.getElement().addEventListener("mouseleave", e -> {
-            item.getStyle().set("background", "transparent");
-            item.getStyle().set("color", SIDEBAR_TEXT);
+        item.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE, e -> {
+            item.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
+            item.getStyle().set(StyleConstants.CSS_COLOR, SIDEBAR_TEXT);
         });
 
         return item;

@@ -13,12 +13,13 @@ import java.util.*;
 
 @Component
 public class TranslationService implements I18NProvider {
+    private static final String LOCALE_KEY = "locale";
 
     private static final String BUNDLE_PREFIX = "messages";
     private static final Locale DEFAULT_LOCALE = new Locale("en");
 
-    private final SettingsService settingsService;
-    private final AuthenticationService authService;
+    private final transient SettingsService settingsService;
+    private final transient AuthenticationService authService;
 
     public TranslationService() {
         this.settingsService = new SettingsService();
@@ -70,7 +71,7 @@ public class TranslationService implements I18NProvider {
     public Locale getCurrentLocale() {
         // First check session
         Locale sessionLocale = VaadinSession.getCurrent() != null
-                ? (Locale) VaadinSession.getCurrent().getAttribute("locale")
+                ? (Locale) VaadinSession.getCurrent().getAttribute(LOCALE_KEY)
                 : null;
 
         if (sessionLocale != null) {
@@ -85,7 +86,7 @@ public class TranslationService implements I18NProvider {
                 Locale userLocale = parseLanguage(settings.getLanguage());
                 if (userLocale != null) {
                     // Store in session for next time
-                    VaadinSession.getCurrent().setAttribute("locale", userLocale);
+                    VaadinSession.getCurrent().setAttribute(LOCALE_KEY, userLocale);
                     return userLocale;
                 }
             }
@@ -97,7 +98,7 @@ public class TranslationService implements I18NProvider {
 
     public void setCurrentLocale(Locale locale) {
         if (VaadinSession.getCurrent() != null) {
-            VaadinSession.getCurrent().setAttribute("locale", locale);
+            VaadinSession.getCurrent().setAttribute(LOCALE_KEY, locale);
         }
 
         UI currentUI = UI.getCurrent();

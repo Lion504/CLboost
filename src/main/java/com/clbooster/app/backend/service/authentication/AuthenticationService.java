@@ -16,8 +16,15 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
+import java.util.regex.Pattern;
+
 public class AuthenticationService {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
+
+    private static final Pattern UPPERCASE_PATTERN = Pattern.compile("[A-Z]");
+    private static final Pattern LOWERCASE_PATTERN = Pattern.compile("[a-z]");
+    private static final Pattern DIGIT_PATTERN = Pattern.compile("\\d");
+    private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile("[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]");
 
     private UserDAO userDAO;
     private Map<String, Object> sessionStore;
@@ -118,9 +125,9 @@ public class AuthenticationService {
             log.warn("Registration rejected: username is required");
             return false;
         }
-        if (password == null || password.length() < 10 || !password.matches(".*[A-Z].*")
-                || !password.matches(".*[a-z].*") || !password.matches(".*\\d.*")
-                || !password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*")) {
+        if (password == null || password.length() < 10 || !UPPERCASE_PATTERN.matcher(password).find()
+                || !LOWERCASE_PATTERN.matcher(password).find() || !DIGIT_PATTERN.matcher(password).find()
+                || !SPECIAL_CHAR_PATTERN.matcher(password).find()) {
             log.warn("Registration rejected: password requirements not met");
             return false;
         }

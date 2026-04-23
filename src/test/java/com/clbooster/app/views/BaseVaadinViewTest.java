@@ -9,7 +9,7 @@ import org.mockito.MockedStatic;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 
-public class BaseVaadinViewTest {
+class BaseVaadinViewTest {
 
     protected static MockedStatic<VaadinServlet> vaadinServletMock;
     protected static MockedStatic<VaadinSession> vaadinSessionMock;
@@ -28,5 +28,25 @@ public class BaseVaadinViewTest {
         vaadinServletMock.when(VaadinServlet::getCurrent).thenReturn(mockServlet);
         vaadinSessionMock.when(VaadinSession::getCurrent).thenReturn(mockSession);
         vaadinServiceMock.when(VaadinService::getCurrent).thenReturn(mockService);
+    }
+
+    @org.junit.jupiter.api.Test
+    void testMocksInitialized() {
+        org.junit.jupiter.api.Assertions.assertNotNull(VaadinServlet.getCurrent());
+        org.junit.jupiter.api.Assertions.assertNotNull(VaadinSession.getCurrent());
+        org.junit.jupiter.api.Assertions.assertNotNull(VaadinService.getCurrent());
+    }
+
+    @org.junit.jupiter.api.AfterAll
+    static void tearDownVaadinMockEnvironment() {
+        if (vaadinServletMock != null && !vaadinServletMock.isClosed()) {
+            vaadinServletMock.close();
+        }
+        if (vaadinSessionMock != null && !vaadinSessionMock.isClosed()) {
+            vaadinSessionMock.close();
+        }
+        if (vaadinServiceMock != null && !vaadinServiceMock.isClosed()) {
+            vaadinServiceMock.close();
+        }
     }
 }

@@ -1,5 +1,8 @@
 package com.clbooster.app.views;
 
+import com.clbooster.app.views.util.StyleConstants;
+import com.clbooster.app.views.util.ViewComponents;
+
 import jakarta.annotation.security.PermitAll;
 import com.clbooster.app.backend.service.authentication.AuthenticationService;
 import com.clbooster.app.backend.service.profile.Profile;
@@ -25,11 +28,16 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import java.util.regex.Pattern;
 
 @Route(value = "profile", layout = MainLayout.class)
 @PageTitle("Profile | CL Booster")
 @PermitAll
 public class ProfileView extends VerticalLayout {
+    private static final String LETTER_SPACING = "0.05em";
+    private static final String BORDER_BOTTOM = "1px solid rgba(0, 0, 0, 0.05)";
+    private static final String INPUT_FIELD_BACKGROUND_VAR = "--vaadin-input-field-background";
+    private static final String INPUT_FIELD_BORDER_RADIUS_VAR = "--vaadin-input-field-border-radius";
 
     // Figma Design System Colors
     private static final String PRIMARY = "#007AFF";
@@ -38,11 +46,16 @@ public class ProfileView extends VerticalLayout {
     private static final String BG_WHITE = "#ffffff";
     private static final String BG_GRAY = "#f5f5f7";
 
-    private final AuthenticationService authService;
-    private final ProfileService profileService;
+    private static final Pattern UPPERCASE_PATTERN = Pattern.compile("[A-Z]");
+    private static final Pattern LOWERCASE_PATTERN = Pattern.compile("[a-z]");
+    private static final Pattern DIGIT_PATTERN = Pattern.compile("\\d");
+    private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile("[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]");
+
+    private final transient AuthenticationService authService;
+    private final transient ProfileService profileService;
     private final TranslationService translationService;
-    private User currentUser;
-    private Profile userProfile;
+    private transient User currentUser;
+    private transient Profile userProfile;
 
     // Form fields - stored as instance variables for save functionality
     private TextField firstNameField;
@@ -77,8 +90,8 @@ public class ProfileView extends VerticalLayout {
         setPadding(true);
         setSpacing(true);
         getStyle().set("gap", "32px");
-        getStyle().set("padding", "32px");
-        getStyle().set("background", BG_WHITE);
+        getStyle().set(StyleConstants.CSS_PADDING, "32px");
+        getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
         getStyle().set("font-family",
                 "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif");
         setSizeFull();
@@ -102,12 +115,12 @@ public class ProfileView extends VerticalLayout {
 
     private Div createProfileHeader() {
         Div card = new Div();
-        card.getStyle().set("background", BG_WHITE);
-        card.getStyle().set("border", "1px solid rgba(0, 0, 0, 0.05)");
-        card.getStyle().set("border-radius", "24px");
-        card.getStyle().set("padding", "32px");
-        card.getStyle().set("width", "100%");
-        card.getStyle().set("box-shadow", "0 2px 12px rgba(0, 0, 0, 0.04)");
+        card.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_WHITE);
+        card.getStyle().set(StyleConstants.CSS_BORDER, BORDER_BOTTOM);
+        card.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "24px");
+        card.getStyle().set(StyleConstants.CSS_PADDING, "32px");
+        card.getStyle().set(StyleConstants.CSS_WIDTH, "100%");
+        card.getStyle().set(StyleConstants.CSS_BOX_SHADOW, StyleConstants.VAL_0_2_12PX);
 
         HorizontalLayout header = new HorizontalLayout();
         header.setWidthFull();
@@ -128,8 +141,8 @@ public class ProfileView extends VerticalLayout {
         avatar.setColorIndex(2);
         avatar.setWidth("80px");
         avatar.setHeight("80px");
-        avatar.getStyle().set("border", "4px solid " + BG_WHITE);
-        avatar.getStyle().set("box-shadow", "0 4px 12px rgba(0, 0, 0, 0.1)");
+        avatar.getStyle().set(StyleConstants.CSS_BORDER, "4px solid " + BG_WHITE);
+        avatar.getStyle().set(StyleConstants.CSS_BOX_SHADOW, "0 4px 12px rgba(0, 0, 0, 0.1)");
 
         VerticalLayout nameGroup = new VerticalLayout();
         nameGroup.setPadding(false);
@@ -137,45 +150,45 @@ public class ProfileView extends VerticalLayout {
         nameGroup.getStyle().set("gap", "6px");
 
         H2 name = new H2(userFullName);
-        name.getStyle().set("font-size", "24px");
-        name.getStyle().set("font-weight", "700");
-        name.getStyle().set("color", TEXT_PRIMARY);
-        name.getStyle().set("margin", "0");
-        name.getStyle().set("letter-spacing", "-0.025em");
+        name.getStyle().set(StyleConstants.CSS_FONT_SIZE, "24px");
+        name.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        name.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        name.getStyle().set(StyleConstants.CSS_MARGIN, "0");
+        name.getStyle().set(StyleConstants.CSS_LETTER_SPACING, "-0.025em");
 
         Paragraph usernameLine = new Paragraph(username);
-        usernameLine.getStyle().set("font-size", "15px");
-        usernameLine.getStyle().set("color", TEXT_SECONDARY);
-        usernameLine.getStyle().set("margin", "0");
+        usernameLine.getStyle().set(StyleConstants.CSS_FONT_SIZE, "15px");
+        usernameLine.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        usernameLine.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         Paragraph emailLine = new Paragraph(userEmail);
-        emailLine.getStyle().set("font-size", "13px");
-        emailLine.getStyle().set("color", TEXT_SECONDARY);
-        emailLine.getStyle().set("opacity", "0.85");
-        emailLine.getStyle().set("margin", "0");
+        emailLine.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px");
+        emailLine.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        emailLine.getStyle().set(StyleConstants.CSS_OPACITY, "0.85");
+        emailLine.getStyle().set(StyleConstants.CSS_MARGIN, "0");
 
         // Plan badge
         HorizontalLayout badgeRow = new HorizontalLayout();
         badgeRow.getStyle().set("gap", "8px");
-        badgeRow.getStyle().set("margin-top", "4px");
+        badgeRow.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "4px");
 
         Span planBadge = new Span(translationService.translate("profile.standardAccount"));
-        planBadge.getStyle().set("font-size", "11px");
-        planBadge.getStyle().set("font-weight", "700");
-        planBadge.getStyle().set("padding", "4px 10px");
-        planBadge.getStyle().set("background", BG_GRAY);
-        planBadge.getStyle().set("color", TEXT_SECONDARY);
-        planBadge.getStyle().set("border-radius", "9999px");
-        planBadge.getStyle().set("letter-spacing", "0.05em");
+        planBadge.getStyle().set(StyleConstants.CSS_FONT_SIZE, "11px");
+        planBadge.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        planBadge.getStyle().set(StyleConstants.CSS_PADDING, "4px 10px");
+        planBadge.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
+        planBadge.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        planBadge.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+        planBadge.getStyle().set(StyleConstants.CSS_LETTER_SPACING, LETTER_SPACING);
 
         Span versionBadge = new Span(translationService.translate("profile.v4pro"));
-        versionBadge.getStyle().set("font-size", "11px");
-        versionBadge.getStyle().set("font-weight", "700");
-        versionBadge.getStyle().set("padding", "4px 10px");
-        versionBadge.getStyle().set("background", "rgba(0, 122, 255, 0.1)");
-        versionBadge.getStyle().set("color", PRIMARY);
-        versionBadge.getStyle().set("border-radius", "9999px");
-        versionBadge.getStyle().set("letter-spacing", "0.05em");
+        versionBadge.getStyle().set(StyleConstants.CSS_FONT_SIZE, "11px");
+        versionBadge.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        versionBadge.getStyle().set(StyleConstants.CSS_PADDING, "4px 10px");
+        versionBadge.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0, 122, 255, 0.1)");
+        versionBadge.getStyle().set(StyleConstants.CSS_COLOR, PRIMARY);
+        versionBadge.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+        versionBadge.getStyle().set(StyleConstants.CSS_LETTER_SPACING, LETTER_SPACING);
 
         badgeRow.add(planBadge, versionBadge);
         nameGroup.add(name, usernameLine, emailLine, badgeRow);
@@ -187,25 +200,24 @@ public class ProfileView extends VerticalLayout {
         actions.getStyle().set("gap", "12px");
 
         editBtn = new Button(translationService.translate("profile.editProfile"), VaadinIcon.PENCIL.create());
-        editBtn.getStyle().set("background", BG_GRAY);
-        editBtn.getStyle().set("color", TEXT_PRIMARY);
-        editBtn.getStyle().set("font-weight", "600");
-        editBtn.getStyle().set("border-radius", "9999px");
-        editBtn.getStyle().set("padding", "10px 20px");
-        editBtn.getStyle().set("border", "none");
-        editBtn.getStyle().set("transition", "all 0.2s");
-        editBtn.getStyle().set("cursor", "pointer");
+        editBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
+        editBtn.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        editBtn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        editBtn.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+        editBtn.getStyle().set(StyleConstants.CSS_PADDING, "10px 20px");
+        editBtn.getStyle().set(StyleConstants.CSS_BORDER, "none");
+        editBtn.getStyle().set(StyleConstants.CSS_TRANSITION, StyleConstants.VAL_ALL_0_2S);
+        editBtn.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
 
-        editBtn.getElement().addEventListener("mouseenter", e -> {
-            editBtn.getStyle().set("background", "rgba(0, 0, 0, 0.08)");
-        });
-        editBtn.getElement().addEventListener("mouseleave", e -> {
-            editBtn.getStyle().set("background", BG_GRAY);
-        });
+        editBtn.getElement().addEventListener(StyleConstants.VAL_MOUSEENTER,
+                e -> editBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0, 0, 0, 0.08)"));
+        editBtn.getElement().addEventListener(StyleConstants.VAL_MOUSELEAVE,
+                e -> editBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY));
 
         editBtn.addClickListener(e -> toggleEditMode());
 
-        saveBtn = createPrimaryButton(translationService.translate("profile.saveChanges"), this::saveProfile);
+        saveBtn = ViewComponents.createPrimaryButton(translationService.translate("profile.saveChanges"),
+                this::saveProfile);
         saveBtn.setVisible(false); // Hidden initially
 
         actions.add(editBtn, saveBtn);
@@ -221,14 +233,14 @@ public class ProfileView extends VerticalLayout {
     private Tabs createTabs() {
         Tabs tabs = new Tabs();
         tabs.setWidthFull();
-        tabs.getStyle().set("background", "transparent");
+        tabs.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
 
         Tab general = new Tab(translationService.translate("profile.general"));
         Tab security = new Tab(translationService.translate("profile.security"));
         // Notifications and Data & Privacy tabs removed - available via dedicated views
 
-        general.getStyle().set("font-weight", "600");
-        general.getStyle().set("font-size", "14px");
+        general.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        general.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
 
         tabs.add(general, security);
         tabs.setSelectedTab(general);
@@ -249,25 +261,9 @@ public class ProfileView extends VerticalLayout {
     }
 
     private Div createGeneralContent() {
-        Div card = new Div();
-        card.getStyle().set("background", BG_WHITE);
-        card.getStyle().set("border", "1px solid rgba(0, 0, 0, 0.05)");
-        card.getStyle().set("border-radius", "24px");
-        card.getStyle().set("padding", "32px");
-        card.getStyle().set("width", "100%");
-        card.getStyle().set("box-shadow", "0 2px 12px rgba(0, 0, 0, 0.04)");
-
-        // Section title
-        H3 title = new H3(translationService.translate("profile.accountDetails"));
-        title.getStyle().set("font-size", "20px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 8px 0");
-
-        Paragraph subtitle = new Paragraph(translationService.translate("profile.personalInfo"));
-        subtitle.getStyle().set("font-size", "14px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "0 0 32px 0");
+        Div card = ViewComponents.createSectionCard("profile.accountDetails", "profile.personalInfo",
+                translationService);
+        card.getStyle().set(StyleConstants.CSS_WIDTH, "100%");
 
         // Form grid
         HorizontalLayout formGrid = new HorizontalLayout();
@@ -323,60 +319,44 @@ public class ProfileView extends VerticalLayout {
         skillsArea = createTextArea(translationService.translate("profile.skills"), skills,
                 translationService.translate("profile.addSkills"));
         VerticalLayout skillsGroup = createFormGroup(translationService.translate("profile.skills"), skillsArea);
-        skillsGroup.getStyle().set("margin-top", "24px");
+        skillsGroup.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "24px");
 
         // Tools Section (from Profile)
         String tools = userProfile != null && userProfile.getTools() != null ? userProfile.getTools() : "";
         toolsArea = createTextArea(translationService.translate("profile.tools"), tools,
                 translationService.translate("profile.addTools"));
         VerticalLayout toolsGroup = createFormGroup(translationService.translate("profile.tools"), toolsArea);
-        toolsGroup.getStyle().set("margin-top", "16px");
+        toolsGroup.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "16px");
 
         // Profile Link (from Profile)
         String profileLink = userProfile != null && userProfile.getLink() != null ? userProfile.getLink() : "";
         linkField = createFormField(translationService.translate("profile.portfolio"), profileLink);
         VerticalLayout linkGroup = createFormGroup(translationService.translate("profile.portfolio"), linkField);
-        linkGroup.getStyle().set("margin-top", "16px");
+        linkGroup.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "16px");
 
-        card.add(title, subtitle, formGrid, skillsGroup, toolsGroup, linkGroup);
+        card.add(formGrid, skillsGroup, toolsGroup, linkGroup);
 
         return card;
     }
 
     private Div createSecurityContent() {
-        Div card = new Div();
-        card.getStyle().set("background", BG_WHITE);
-        card.getStyle().set("border", "1px solid rgba(0, 0, 0, 0.05)");
-        card.getStyle().set("border-radius", "24px");
-        card.getStyle().set("padding", "32px");
-        card.getStyle().set("width", "100%");
-        card.getStyle().set("box-shadow", "0 2px 12px rgba(0, 0, 0, 0.04)");
-
-        // Section title
-        H3 title = new H3(translationService.translate("profile.securitySettings"));
-        title.getStyle().set("font-size", "20px");
-        title.getStyle().set("font-weight", "700");
-        title.getStyle().set("color", TEXT_PRIMARY);
-        title.getStyle().set("margin", "0 0 8px 0");
-
-        Paragraph subtitle = new Paragraph(translationService.translate("profile.managePassword"));
-        subtitle.getStyle().set("font-size", "14px");
-        subtitle.getStyle().set("color", TEXT_SECONDARY);
-        subtitle.getStyle().set("margin", "0 0 32px 0");
+        Div card = ViewComponents.createSectionCard("profile.securitySettings", "profile.managePassword",
+                translationService);
+        card.getStyle().set(StyleConstants.CSS_WIDTH, "100%");
 
         // Change Password Section
         VerticalLayout passwordSection = new VerticalLayout();
         passwordSection.setPadding(false);
         passwordSection.setSpacing(false);
         passwordSection.getStyle().set("gap", "20px");
-        passwordSection.getStyle().set("max-width", "500px");
+        passwordSection.getStyle().set(StyleConstants.CSS_MAX_WIDTH, "500px");
 
         // Current Password
         currentPasswordField = new com.vaadin.flow.component.textfield.PasswordField();
         currentPasswordField.setPlaceholder(translationService.translate("profile.currentPassword"));
         currentPasswordField.setWidthFull();
-        currentPasswordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        currentPasswordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        currentPasswordField.getStyle().set(INPUT_FIELD_BACKGROUND_VAR, BG_GRAY);
+        currentPasswordField.getStyle().set(INPUT_FIELD_BORDER_RADIUS_VAR, "12px");
         passwordSection
                 .add(createFormGroup(translationService.translate("profile.currentPassword"), currentPasswordField));
 
@@ -384,45 +364,45 @@ public class ProfileView extends VerticalLayout {
         newPasswordField = new com.vaadin.flow.component.textfield.PasswordField();
         newPasswordField.setPlaceholder(translationService.translate("profile.newPassword"));
         newPasswordField.setWidthFull();
-        newPasswordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        newPasswordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        newPasswordField.getStyle().set(INPUT_FIELD_BACKGROUND_VAR, BG_GRAY);
+        newPasswordField.getStyle().set(INPUT_FIELD_BORDER_RADIUS_VAR, "12px");
         passwordSection.add(createFormGroup(translationService.translate("profile.newPassword"), newPasswordField));
 
         // Confirm Password
         confirmPasswordField = new com.vaadin.flow.component.textfield.PasswordField();
         confirmPasswordField.setPlaceholder(translationService.translate("profile.confirmPassword"));
         confirmPasswordField.setWidthFull();
-        confirmPasswordField.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        confirmPasswordField.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        confirmPasswordField.getStyle().set(INPUT_FIELD_BACKGROUND_VAR, BG_GRAY);
+        confirmPasswordField.getStyle().set(INPUT_FIELD_BORDER_RADIUS_VAR, "12px");
         passwordSection
                 .add(createFormGroup(translationService.translate("profile.confirmPassword"), confirmPasswordField));
 
         // Password requirements info
         Paragraph requirements = new Paragraph(translationService.translate("profile.passwordRequirements"));
-        requirements.getStyle().set("font-size", "12px");
-        requirements.getStyle().set("color", TEXT_SECONDARY);
-        requirements.getStyle().set("margin", "8px 0 0 0");
+        requirements.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
+        requirements.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        requirements.getStyle().set(StyleConstants.CSS_MARGIN, "8px 0 0 0");
         passwordSection.add(requirements);
 
         // Change Password Button
-        Button changePasswordBtn = createPrimaryButton(translationService.translate("profile.changePassword"),
-                this::changePassword);
-        changePasswordBtn.getStyle().set("margin-top", "16px");
+        Button changePasswordBtn = ViewComponents
+                .createPrimaryButton(translationService.translate("profile.changePassword"), this::changePassword);
+        changePasswordBtn.getStyle().set(StyleConstants.CSS_MARGIN_TOP, "16px");
         passwordSection.add(changePasswordBtn);
 
         // Divider
         Div divider = new Div();
-        divider.getStyle().set("width", "100%");
-        divider.getStyle().set("height", "1px");
-        divider.getStyle().set("background", "rgba(0, 0, 0, 0.05)");
-        divider.getStyle().set("margin", "32px 0");
+        divider.getStyle().set(StyleConstants.CSS_WIDTH, "100%");
+        divider.getStyle().set(StyleConstants.CSS_HEIGHT, "1px");
+        divider.getStyle().set(StyleConstants.CSS_BACKGROUND, "rgba(0, 0, 0, 0.05)");
+        divider.getStyle().set(StyleConstants.CSS_MARGIN, "32px 0");
 
         // Account Security Section
         H3 securityTitle = new H3(getTranslation("profile.securityTitle"));
-        securityTitle.getStyle().set("font-size", "18px");
-        securityTitle.getStyle().set("font-weight", "700");
-        securityTitle.getStyle().set("color", TEXT_PRIMARY);
-        securityTitle.getStyle().set("margin", "0 0 16px 0");
+        securityTitle.getStyle().set(StyleConstants.CSS_FONT_SIZE, "18px");
+        securityTitle.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        securityTitle.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
+        securityTitle.getStyle().set(StyleConstants.CSS_MARGIN, StyleConstants.VAL_0_0_16PX);
 
         VerticalLayout securityOptions = new VerticalLayout();
         securityOptions.setPadding(false);
@@ -444,7 +424,7 @@ public class ProfileView extends VerticalLayout {
                         Notification.Position.TOP_CENTER));
         securityOptions.add(loginNotifRow);
 
-        card.add(title, subtitle, passwordSection, divider, securityTitle, securityOptions);
+        card.add(passwordSection, divider, securityTitle, securityOptions);
 
         return card;
     }
@@ -454,9 +434,9 @@ public class ProfileView extends VerticalLayout {
         HorizontalLayout row = new HorizontalLayout();
         row.setWidthFull();
         row.setAlignItems(FlexComponent.Alignment.CENTER);
-        row.getStyle().set("padding", "16px");
-        row.getStyle().set("background", BG_GRAY);
-        row.getStyle().set("border-radius", "12px");
+        row.getStyle().set(StyleConstants.CSS_PADDING, "16px");
+        row.getStyle().set(StyleConstants.CSS_BACKGROUND, BG_GRAY);
+        row.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, "12px");
 
         VerticalLayout textGroup = new VerticalLayout();
         textGroup.setPadding(false);
@@ -464,24 +444,24 @@ public class ProfileView extends VerticalLayout {
         textGroup.getStyle().set("gap", "4px");
 
         Span titleSpan = new Span(title);
-        titleSpan.getStyle().set("font-weight", "600");
-        titleSpan.getStyle().set("font-size", "14px");
-        titleSpan.getStyle().set("color", TEXT_PRIMARY);
+        titleSpan.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        titleSpan.getStyle().set(StyleConstants.CSS_FONT_SIZE, "14px");
+        titleSpan.getStyle().set(StyleConstants.CSS_COLOR, TEXT_PRIMARY);
 
         Span descSpan = new Span(description);
-        descSpan.getStyle().set("font-size", "13px");
-        descSpan.getStyle().set("color", TEXT_SECONDARY);
+        descSpan.getStyle().set(StyleConstants.CSS_FONT_SIZE, "13px");
+        descSpan.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
 
         textGroup.add(titleSpan, descSpan);
 
         Button actionBtn = new Button(buttonText, e -> action.run());
-        actionBtn.getStyle().set("background", "transparent");
-        actionBtn.getStyle().set("color", PRIMARY);
-        actionBtn.getStyle().set("font-weight", "600");
-        actionBtn.getStyle().set("border", "1px solid " + PRIMARY);
-        actionBtn.getStyle().set("border-radius", "9999px");
-        actionBtn.getStyle().set("padding", "8px 16px");
-        actionBtn.getStyle().set("cursor", "pointer");
+        actionBtn.getStyle().set(StyleConstants.CSS_BACKGROUND, StyleConstants.VAL_TRANSPARENT);
+        actionBtn.getStyle().set(StyleConstants.CSS_COLOR, PRIMARY);
+        actionBtn.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "600");
+        actionBtn.getStyle().set(StyleConstants.CSS_BORDER, "1px solid " + PRIMARY);
+        actionBtn.getStyle().set(StyleConstants.CSS_BORDER_RADIUS, StyleConstants.VAL_9999PX);
+        actionBtn.getStyle().set(StyleConstants.CSS_PADDING, "8px 16px");
+        actionBtn.getStyle().set(StyleConstants.CSS_CURSOR, StyleConstants.VAL_POINTER);
 
         row.add(textGroup, actionBtn);
         row.expand(textGroup);
@@ -519,9 +499,7 @@ public class ProfileView extends VerticalLayout {
             return;
         }
 
-        // Check password requirements
-        if (newPwd.length() < 10 || !newPwd.matches(".*[A-Z].*") || !newPwd.matches(".*[a-z].*")
-                || !newPwd.matches(".*\\d.*") || !newPwd.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*")) {
+        if (!isStrongPassword(newPwd)) {
             Notification.show(translationService.translate("profile.passwordRequirementsError"), 5000,
                     Notification.Position.TOP_CENTER);
             return;
@@ -542,6 +520,12 @@ public class ProfileView extends VerticalLayout {
         }
     }
 
+    private boolean isStrongPassword(String password) {
+        return password.length() >= 10 && UPPERCASE_PATTERN.matcher(password).find()
+                && LOWERCASE_PATTERN.matcher(password).find() && DIGIT_PATTERN.matcher(password).find()
+                && SPECIAL_CHAR_PATTERN.matcher(password).find();
+    }
+
     private VerticalLayout createFormGroup(String label, com.vaadin.flow.component.Component field) {
         VerticalLayout group = new VerticalLayout();
         group.setPadding(false);
@@ -550,11 +534,11 @@ public class ProfileView extends VerticalLayout {
         group.setWidthFull();
 
         Span labelSpan = new Span(label);
-        labelSpan.getStyle().set("font-size", "12px");
-        labelSpan.getStyle().set("font-weight", "700");
-        labelSpan.getStyle().set("color", TEXT_SECONDARY);
-        labelSpan.getStyle().set("text-transform", "uppercase");
-        labelSpan.getStyle().set("letter-spacing", "0.05em");
+        labelSpan.getStyle().set(StyleConstants.CSS_FONT_SIZE, "12px");
+        labelSpan.getStyle().set(StyleConstants.CSS_FONT_WEIGHT, "700");
+        labelSpan.getStyle().set(StyleConstants.CSS_COLOR, TEXT_SECONDARY);
+        labelSpan.getStyle().set(StyleConstants.CSS_TEXT_TRANSFORM, "uppercase");
+        labelSpan.getStyle().set(StyleConstants.CSS_LETTER_SPACING, LETTER_SPACING);
 
         group.add(labelSpan, field);
         return group;
@@ -564,8 +548,8 @@ public class ProfileView extends VerticalLayout {
         TextField field = new TextField();
         field.setValue(value != null ? value : "");
         field.setWidthFull();
-        field.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        field.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        field.getStyle().set(INPUT_FIELD_BACKGROUND_VAR, BG_GRAY);
+        field.getStyle().set(INPUT_FIELD_BORDER_RADIUS_VAR, "12px");
         return field;
     }
 
@@ -573,8 +557,8 @@ public class ProfileView extends VerticalLayout {
         EmailField field = new EmailField();
         field.setValue(value != null ? value : "");
         field.setWidthFull();
-        field.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        field.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        field.getStyle().set(INPUT_FIELD_BACKGROUND_VAR, BG_GRAY);
+        field.getStyle().set(INPUT_FIELD_BORDER_RADIUS_VAR, "12px");
         return field;
     }
 
@@ -584,8 +568,8 @@ public class ProfileView extends VerticalLayout {
         area.setValue(value != null ? value : "");
         area.setWidthFull();
         area.setMinHeight("80px");
-        area.getStyle().set("--vaadin-input-field-background", BG_GRAY);
-        area.getStyle().set("--vaadin-input-field-border-radius", "12px");
+        area.getStyle().set(INPUT_FIELD_BACKGROUND_VAR, BG_GRAY);
+        area.getStyle().set(INPUT_FIELD_BORDER_RADIUS_VAR, "12px");
         return area;
     }
 
@@ -618,17 +602,21 @@ public class ProfileView extends VerticalLayout {
         linkField.setReadOnly(!editable);
     }
 
+    private String defaultIfNull(String value) {
+        return value != null ? value : "";
+    }
+
     private void reloadFieldValues() {
         if (currentUser != null) {
-            firstNameField.setValue(currentUser.getFirstName() != null ? currentUser.getFirstName() : "");
-            lastNameField.setValue(currentUser.getLastName() != null ? currentUser.getLastName() : "");
-            emailField.setValue(currentUser.getIdentityEmail() != null ? currentUser.getIdentityEmail() : "");
+            firstNameField.setValue(defaultIfNull(currentUser.getFirstName()));
+            lastNameField.setValue(defaultIfNull(currentUser.getLastName()));
+            emailField.setValue(defaultIfNull(currentUser.getIdentityEmail()));
         }
         if (userProfile != null) {
-            experienceField.setValue(userProfile.getExperienceLevel() != null ? userProfile.getExperienceLevel() : "");
-            skillsArea.setValue(userProfile.getSkills() != null ? userProfile.getSkills() : "");
-            toolsArea.setValue(userProfile.getTools() != null ? userProfile.getTools() : "");
-            linkField.setValue(userProfile.getLink() != null ? userProfile.getLink() : "");
+            experienceField.setValue(defaultIfNull(userProfile.getExperienceLevel()));
+            skillsArea.setValue(defaultIfNull(userProfile.getSkills()));
+            toolsArea.setValue(defaultIfNull(userProfile.getTools()));
+            linkField.setValue(defaultIfNull(userProfile.getLink()));
         }
     }
 
@@ -675,30 +663,5 @@ public class ProfileView extends VerticalLayout {
             Notification.show(translationService.translate("profile.saveFailed"), 3000,
                     Notification.Position.TOP_CENTER);
         }
-    }
-
-    private Button createPrimaryButton(String text, Runnable action) {
-        Button btn = new Button(text, e -> action.run());
-        btn.getStyle().set("background", "linear-gradient(135deg, " + PRIMARY + " 0%, #5AC8FA 100%)");
-        btn.getStyle().set("color", "white");
-        btn.getStyle().set("font-weight", "600");
-        btn.getStyle().set("font-size", "14px");
-        btn.getStyle().set("border-radius", "9999px");
-        btn.getStyle().set("border", "none");
-        btn.getStyle().set("padding", "10px 24px");
-        btn.getStyle().set("box-shadow", "0 10px 15px -3px rgba(0, 122, 255, 0.3)");
-        btn.getStyle().set("transition", "all 0.2s");
-        btn.getStyle().set("cursor", "pointer");
-
-        btn.getElement().addEventListener("mouseenter", e -> {
-            btn.getStyle().set("filter", "brightness(1.1)");
-            btn.getStyle().set("transform", "translateY(-1px)");
-        });
-        btn.getElement().addEventListener("mouseleave", e -> {
-            btn.getStyle().set("filter", "brightness(1)");
-            btn.getStyle().set("transform", "translateY(0)");
-        });
-
-        return btn;
     }
 }

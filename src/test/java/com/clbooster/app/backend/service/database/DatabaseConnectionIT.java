@@ -5,18 +5,19 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class DatabaseConnectionTest {
-    public static void main(String[] args) {
+import org.junit.jupiter.api.Test;
+
+class DatabaseConnectionIT {
+    @Test
+    void testConnection() {
         try {
             Connection conn = DatabaseConnection.getConnection();
             if (conn != null) {
-                System.out.println("✅ Connection successful!");
-                System.out.println("Database: " + conn.getCatalog());
+                assertFalse(conn.isClosed());
                 conn.close();
             }
         } catch (SQLException e) {
-            System.out.println("❌ Connection failed!");
-            e.printStackTrace();
+            fail("Connection failed: " + e.getMessage());
         }
     }
 }

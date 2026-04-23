@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -97,12 +98,12 @@ class CLgenerator_CLITest {
     void handleCoverLetterGeneration_handlesNotLoggedAndMissingProfile() throws Exception {
         when(authService.getCurrentUserPin()).thenReturn(-1);
         invokeStaticVoid("handleCoverLetterGeneration");
-        verify(profileService, never()).getProfile(anyInt());
+        verify(profileService, never()).getProfile(anyInt(), any(java.util.Locale.class));
 
         when(authService.getCurrentUserPin()).thenReturn(10);
-        when(profileService.getProfile(10)).thenReturn(null);
+        when(profileService.getProfile(eq(10), any(java.util.Locale.class))).thenReturn(null);
         invokeStaticVoid("handleCoverLetterGeneration");
-        verify(profileService).getProfile(10);
+        verify(profileService).getProfile(eq(10), any(java.util.Locale.class));
         verify(parser, never()).parseFileToJson(anyString());
     }
 
@@ -110,7 +111,7 @@ class CLgenerator_CLITest {
     void handleCoverLetterGeneration_successfullyParsesGeneratesAndExports() throws Exception {
         Profile profile = new Profile(77, "Senior", "Java", "Spring", "https://portfolio", "me@mail.com");
         when(authService.getCurrentUserPin()).thenReturn(77);
-        when(profileService.getProfile(77)).thenReturn(profile);
+        when(profileService.getProfile(eq(77), any(java.util.Locale.class))).thenReturn(profile);
         when(parser.parseFileToJson(anyString())).thenReturn("resume text");
         when(aiService.generateCoverLetter(anyString(), anyString())).thenReturn("cover letter body");
 
@@ -126,7 +127,7 @@ class CLgenerator_CLITest {
     void handleCoverLetterGeneration_handlesGenerationException() throws Exception {
         Profile profile = new Profile(77, "Senior", "Java", "Spring", "https://portfolio", "me@mail.com");
         when(authService.getCurrentUserPin()).thenReturn(77);
-        when(profileService.getProfile(77)).thenReturn(profile);
+        when(profileService.getProfile(eq(77), any(java.util.Locale.class))).thenReturn(profile);
         when(parser.parseFileToJson(anyString())).thenReturn("resume text");
         when(aiService.generateCoverLetter(anyString(), anyString())).thenThrow(new RuntimeException("fail"));
 
@@ -140,31 +141,32 @@ class CLgenerator_CLITest {
     void handleEditProfile_updatesWhenConfirmed() throws Exception {
         Profile profile = new Profile(12, "Mid", "Java", "Spring", "https://old", "old@mail.com");
         when(authService.getCurrentUserPin()).thenReturn(12);
-        when(profileService.getProfile(12)).thenReturn(profile);
+        when(profileService.getProfile(eq(12), any(java.util.Locale.class))).thenReturn(profile);
 
         setScannerInput("Senior\nJava,SQL\nSpring,Cloud\nhttps://new\nnew@mail.com\ny\n");
         invokeStaticVoid("handleEditProfile");
 
-        verify(profileService).updateProfile(12, "Senior", "Java,SQL", "Spring,Cloud", "https://new", "new@mail.com");
+        verify(profileService).updateProfile(eq(12), eq(""), eq(""), eq("Senior"), eq("Java,SQL"), eq("Spring,Cloud"),
+                eq("https://new"), eq("new@mail.com"), any(java.util.Locale.class));
     }
 
     @Test
     void handleEditProfile_coversNotLoggedMissingProfileAndDiscard() throws Exception {
         when(authService.getCurrentUserPin()).thenReturn(-1);
         invokeStaticVoid("handleEditProfile");
-        verify(profileService, never()).getProfile(anyInt());
+        verify(profileService, never()).getProfile(anyInt(), any(java.util.Locale.class));
 
         when(authService.getCurrentUserPin()).thenReturn(12);
-        when(profileService.getProfile(12)).thenReturn(null);
+        when(profileService.getProfile(eq(12), any(java.util.Locale.class))).thenReturn(null);
         invokeStaticVoid("handleEditProfile");
-        verify(profileService).getProfile(12);
+        verify(profileService).getProfile(eq(12), any(java.util.Locale.class));
 
         Profile profile = new Profile(12, "Mid", "Java", "Spring", "https://old", "old@mail.com");
-        when(profileService.getProfile(12)).thenReturn(profile);
+        when(profileService.getProfile(eq(12), any(java.util.Locale.class))).thenReturn(profile);
         setScannerInput("\n\n\n\n\nn\n");
         invokeStaticVoid("handleEditProfile");
         verify(profileService, never()).updateProfile(anyInt(), anyString(), anyString(), anyString(), anyString(),
-                anyString());
+                anyString(), anyString(), anyString(), any(java.util.Locale.class));
     }
 
     @Test
@@ -175,15 +177,15 @@ class CLgenerator_CLITest {
 
         when(authService.getCurrentUserPin()).thenReturn(12);
         Profile profile = new Profile(12, "Mid", "Java", "Spring", "https://old", "old@mail.com");
-        when(profileService.getProfile(12)).thenReturn(profile);
+        when(profileService.getProfile(eq(12), any(java.util.Locale.class))).thenReturn(profile);
 
         setScannerInput("2\ny\n4\n");
         keepRunning = invokeStatic("handleProfileMenu", Boolean.class);
         assertTrue(keepRunning);
         verify(profileService, atLeastOnce()).displayProfile(12);
-        verify(profileService, atLeastOnce()).getProfile(12);
+        verify(profileService, atLeastOnce()).getProfile(eq(12), any(java.util.Locale.class));
 
-        when(profileService.getProfile(12)).thenReturn(null);
+        when(profileService.getProfile(eq(12), any(java.util.Locale.class))).thenReturn(null);
         setScannerInput("2\n4\n");
         keepRunning = invokeStatic("handleProfileMenu", Boolean.class);
         assertTrue(keepRunning);
