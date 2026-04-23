@@ -33,3 +33,10 @@ test-jobads.md
 *.pdf
 
 bin/
+
+report
+documentation
+.sonarlint
+tests
+.github/instructions
+result.jtl
