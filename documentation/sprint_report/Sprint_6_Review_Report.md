@@ -53,6 +53,6 @@
 | Taysa Abinader   | Scrum Master and Statistical Code Review Report                              | 8            | Submitted |
 | Wang Yongzhi     | Code Clean Up and Refactoring, Database Localization, Code Coverage Frontend | 16           | Submitted |
 | Tamseela Mahmood | Code Coverage Backend, Statistic Code Review Report                          | 9            | Submitted |
-| Kiavash Montazeri| Linked in API, and PDF scanned library                                       | 12           | Not Submitted |
+| Kiavash Montazeri| Linked in API, and PDF scanned library                                       | 12           | Submitted |
 
 
