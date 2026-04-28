@@ -59,6 +59,6 @@
 | Taysa Abinader   | Create comprehensive test report,    Heuristic Evaluation + Report, Functional testing for UAT                                     |                | Submitted |
 | Wang Yongzhi     | Scrum Master, Conduct final Unit testing, Configure jenkins for sonarqube, Update readme, heuristic evaluation, Functional testing |               | Submitted |
 | Tamseela Mahmood | Refine user stories with latest functionality, Update all project documentation (Jira, GitHub), UAT report, Functional testing     | 9                | Submitted |
-| Kiavash Montazeri|      User acceptance testing                                                                                                                              | 8              | Not Submitted |
+| Kiavash Montazeri|      User acceptance testing                                                                                                                              | 8              | Submitted |
 
 
