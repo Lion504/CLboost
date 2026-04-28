@@ -1,14 +1,14 @@
-# Sprint 6 Review Report
+# Sprint 7 Review Report
 
 ## Sprint Goal
 
 1. Test Plan Document (Objective, Resources, Test Environment, test tasks)
 2. Unit Testing Results and Coverage Report
-3. Bug Tracking Table with resolution status (Important)
+3. Bug Tracking Table with resolution status (Important)?
 4. SonarQube Report (via Jenkins) with all grades A or minimum B, successful project build, and Docker deployment
 5. Heuristic Evaluation Report (4 pts)
 6. User Acceptance Test (UAT) Results Report (3 pts)
-7. Technical Changes Documentation (spec and architecture) (1 pt)
+7. Technical Changes Documentation (spec and architecture) (1 pt)?
 8. Updated Jira board with Sprint 7 tasks and user stories
 9. Updated GitHub repository with documentation changes
 10. Sprint 7 Review Report completed
@@ -31,7 +31,6 @@
 - CLGEN-166 Conduct Functional Testing task and Inform of issue if faced - Tamseela Mahmood
 - CLGEN-167 Conduct Functional Testing task and Inform of issue if faced - Kiavash Monterzi
 
-
 ---
 
 ## What Went Well
@@ -46,19 +45,17 @@
 
 - Active Participation could be improved through more updates on everyone's tasks status.
 
-
 ---
+
 **Total Sprint Hours Spend by Team: x hours**
 
 ---
 
 ## Sprint Task Submission
 
-| Team Member Name | Assigned Tasks                                                                                                                     | Time Spent (hrs) | In-class Tasks |
-|------------------|------------------------------------------------------------------------------------------------------------------------------------|------------------| ------------- |
-| Taysa Abinader   | Create comprehensive test report,    Heuristic Evaluation + Report, Functional testing for UAT                                     |                | Submitted |
-| Wang Yongzhi     | Scrum Master, Conduct final Unit testing, Configure jenkins for sonarqube, Update readme, heuristic evaluation, Functional testing |               | Submitted |
-| Tamseela Mahmood | Refine user stories with latest functionality, Update all project documentation (Jira, GitHub), UAT report, Functional testing     | 9                | Submitted |
-| Kiavash Montazeri|      User acceptance testing                                                                                                                              | 8              | Submitted |
-
-
+| Team Member Name  | Assigned Tasks                                                                                                                     | Time Spent (hrs) | In-class Tasks |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ---------------- | -------------- |
+| Taysa Abinader    | Create comprehensive test report, Heuristic Evaluation + Report, Functional testing for UAT                                        |                  | Submitted      |
+| Wang Yongzhi      | Scrum Master, Conduct final Unit testing, Configure jenkins for sonarqube, Update readme, heuristic evaluation, Functional testing | 16               | Submitted      |
+| Tamseela Mahmood  | Refine user stories with latest functionality, Update all project documentation (Jira, GitHub), UAT report, Functional testing     | 9                | Submitted      |
+| Kiavash Montazeri | User acceptance testing                                                                                                            | 8                | Submitted      |
