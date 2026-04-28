@@ -32,3 +32,6 @@ test-jobads.md
 documentation/wdiagrams
 .github/instructions/*
 .sonarlint/*
+report
+tests/performance/result_local.jtl
+result.jtl
