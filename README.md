@@ -3,34 +3,260 @@
 [![Java](https://img.shields.io/badge/Java-21+-blue.svg)](https://openjdk.java.net/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5+-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Vaadin](https://img.shields.io/badge/Vaadin-24.9+-blue.svg)](https://vaadin.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 
-CL Booster is an intelligent cover letter generation tool that leverages AI to create personalized, professional cover letters tailored to each job application.
+<details>
+<summary><b>Table of Contents</b></summary>
 
-## 🚀 Quick Start
+- [CL Booster - AI-Powered Cover Letter Generator](#cl-booster---ai-powered-cover-letter-generator)
+  - [1. Project Overview](#1-project-overview)
+  - [2. Product Vision](#2-product-vision)
+  - [3. Project Plan \& Sprint Structure](#3-project-plan--sprint-structure)
+    - [Sprint 1 – Project Planning \& Vision](#sprint-1--project-planning--vision)
+    - [Sprint 2 – Requirements \& Database](#sprint-2--requirements--database)
+    - [Sprint 3 – UI Implementation \& CI](#sprint-3--ui-implementation--ci)
+    - [Sprint 4 – Docker Containerization](#sprint-4--docker-containerization)
+    - [Sprint 5 – UI Localization \& Kubernetes](#sprint-5--ui-localization--kubernetes)
+    - [Sprint 6 – Database Localization](#sprint-6--database-localization)
+    - [Sprint 7 – Quality Assurance](#sprint-7--quality-assurance)
+    - [Sprint 8 – Documentation \& Finalization](#sprint-8--documentation--finalization)
+  - [4. How to Run the Project](#4-how-to-run-the-project)
+    - [Prerequisites](#prerequisites)
+    - [Environment Setup](#environment-setup)
+    - [Docker Commands](#docker-commands)
+    - [How to Access the Application](#how-to-access-the-application)
+  - [5. Testing Instructions](#5-testing-instructions)
+    - [How to Run Unit Tests](#how-to-run-unit-tests)
+    - [Test Coverage Access](#test-coverage-access)
+    - [Performance Testing](#performance-testing)
+  - [6. Repository Structure](#6-repository-structure)
+  - [7. Features](#7-features)
+  - [8. Architecture](#8-architecture)
+    - [Backend](#backend)
+    - [AI Pipeline](#ai-pipeline)
+    - [DevOps](#devops)
+  - [9. Localization Framework](#9-localization-framework)
+    - [Architecture](#architecture)
+    - [Supported Languages](#supported-languages)
+  - [10. RTL Support](#10-rtl-support)
+    - [How RTL Works](#how-rtl-works)
+    - [What Flips Automatically](#what-flips-automatically)
+    - [RTL Font Fallbacks](#rtl-font-fallbacks)
+    - [Testing RTL](#testing-rtl)
+  - [11. Development](#11-development)
+    - [Unit and Coverage Testing](#unit-and-coverage-testing)
+    - [SonarQube (Static Code Analysis)](#sonarqube-static-code-analysis)
+  - [12. Performance Testing](#12-performance-testing)
+    - [Test Plan Location](#test-plan-location)
+    - [Test Scenarios](#test-scenarios)
+    - [Running Locally](#running-locally)
+    - [CI Integration](#ci-integration)
+    - [Interpreting Results](#interpreting-results)
+  - [13. Authors](#13-authors)
+  - [License](#license)
+  - [Acknowledgments](#acknowledgments)
+
+</details>
+
+## 1. Project Overview
+
+**CL Booster** is an intelligent cover letter generation tool that leverages AI to create personalized, professional cover letters tailored to each job application. The system solves the "lose-lose" dilemma faced by job seekers: manual writing is incredibly time-consuming, but generic AI output is often low-quality, robotic, or fails to address specific job nuances. Built for global job seekers looking to increase their interview conversion rates, the application is powered by **Java 21+**, **Spring Boot 3.5+**, **Vaadin Flow 24.9+**, and **Google Gemini AI**. The project was developed over **8 sprints × 2 weeks** using Agile/Scrum methodology.
+
+## 2. Product Vision
+
+- **Vision statement**: "Our vision is to make the job application process more dynamic and high-quality. By providing software that facilitates the creation of tailored cover letters for diverse positions, we aim to empower users to apply more effectively and efficiently using specialized AI functionalities."
+- **Main goals**: Increase hiring success rate by 30%, streamline the cover letter creation process for efficiency, and increase job application volume by 15% through smart automation.
+- **Key features**:
+  - **Profile Management** — Create, view, and update a comprehensive user profile
+  - **Resume Vault** — Upload and manage different versions of resumes tailored to various industries or roles
+  - **AI Context Scanner** — Use advanced AI to scan resumes and target job descriptions to extract key selling points
+  - **Application History** — A timestamped log of generated cover letters paired with their respective job positions
+  - **LinkedIn Integration** — Sync the app profile directly with a user's LinkedIn profile for seamless data entry
+- **Definition of success**: Balancing speed with bespoke quality to save time while increasing the quality of job applications.
+
+## 3. Project Plan & Sprint Structure
+
+- **Development methodology**: Agile / Scrum
+- **Sprint length**: 2 weeks
+- **Overview of all 8 sprints**:
+
+| Sprint   | Focus Area                                                                                                              |
+| -------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Sprint 1 | Project Planning & Vision — foundational planning artifacts, backlog creation, vision validation, risk/scope definition |
+| Sprint 2 | Requirements & Database — data design, ER diagram, database implementation, unit testing strategy                       |
+| Sprint 3 | UI Implementation & CI — Vaadin UI framework, JaCoCo coverage goals, CI/CD pipeline (Build, Test, Coverage)             |
+| Sprint 4 | Docker Containerization — containerized services, Docker Hub deployment, installer creation                             |
+| Sprint 5 | UI Localization & Kubernetes — multilingual support (6 languages), RTL/LTR layout handling                              |
+| Sprint 6 | Database Localization — schema updates for multilingual content, code review and refactoring                            |
+| Sprint 7 | Quality Assurance — SonarQube analysis, heuristic evaluation, UAT, performance testing                                  |
+| Sprint 8 | Documentation & Finalization — polishing documentation, finalizing repository structure                                 |
+
+### Sprint 1 – Project Planning & Vision
+
+The first sprint focused on establishing the foundational planning artifacts and defining the project's direction. Key activities included:
+
+- **Project plan summary**: Defined the overall project scope, timeline, and resource allocation for the 16-week development cycle
+- **Backlog creation**: Created the initial product backlog in Jira with user stories covering resume scanning, cover letter generation, profile management, LinkedIn integration, export functionality, ATS compliance, history management, and quality requirements
+- **Vision validation**: Developed and validated the product vision statement through team collaboration
+- **Risk and scope definition**: Identified key risks, defined project boundaries, and established success criteria
+- **Technology selection**: Chose the technology stack (Java, Spring Boot, Vaadin, MariaDB, Google Gemini AI)
+- **Use case diagram**: Designed the high-level use case diagram capturing system actors and their interactions
+
+📄 [Sprint 1 Review Report](documentation/sprint_report/Sprint_1_Review_Report.md) | [Project Vision](documentation/ProjectVision.md)
+
+### Sprint 2 – Requirements & Database
+
+This sprint focused on defining system requirements, data design, and establishing the database foundation.
+
+- **Functional requirements summary**: Captured core requirements including resume parsing, information extraction, LLM-based cover letter generation, form auto-filling, PDF/DOCX export, and user authentication (register/login)
+- **Use Case Diagram**: Designed to illustrate system actors and their interactions with the system
+- **ER Diagram**: Developed the Entity-Relationship model for Users, Profiles, Cover Letters, and Settings
+- **Database technology**: MariaDB selected as the primary database with JDBC connectivity
+- **Database implementation overview**: Schema created, migrated, and tested with DAO and service layers
+- **Unit testing strategy**: JUnit test framework integrated with JaCoCo for code coverage reporting
+
+📄 [Sprint 2 Planning Report](documentation/sprint_report/Sprint_2_Planning_Report.md) | [Sprint 2 Review Report](documentation/sprint_report/Sprint_2_Review_Report.md)
+
+**Diagrams:**
+
+- [Use Case Diagram](documentation/diagrams/UseCaseDiagram-old.jpg)
+- [ER Diagram](documentation/diagrams/ER-Model.png)
+- [Activity Diagram](documentation/diagrams/ActivityDiagramCLBoost.png) ![Activity Diagram](documentation/diagrams/ActivityDiagramCLBoost.png)
+- [Relational Schema](documentation/diagrams/Relational-Schema.png) ![Relational Schema](documentation/diagrams/Relational-Schema.png)
+
+### Sprint 3 – UI Implementation & CI
+
+This sprint focused on implementing the user interface and setting up continuous integration automation.
+
+- **UI framework and design approach**: Built a complete graphical user interface using Vaadin Flow framework with server-side Java UI components and database interaction
+- **Screens implemented**: Registration/Login, Dashboard, Profile Management, Resume Upload/Scanning, Cover Letter Generation Wizard, History
+- **Code coverage goals and tools**: Integrated JaCoCo HTML coverage reports with a target of comprehensive code coverage across all layers
+- **Jenkins pipeline description**:
+  - **Build**: Automatic Maven build triggered on code commits to the main branch
+  - **Test**: JUnit test execution with detailed reporting
+  - **Coverage**: JaCoCo coverage report generation and publishing
+- **Docker preparation**: Dockerfile created and Docker Compose configured for local development testing
+
+**Diagrams:**
+
+- [Class Diagram](documentation/diagrams/CLBoostClassDiagram.png)
+- [Package Diagram](documentation/diagrams/PackageDiagram2.0V.jpg)
+
+📄 [Sprint 3 Review Report](documentation/sprint_report/Sprint_3_Review_Report.md)
+
+### Sprint 4 – Docker Containerization
+
+This sprint focused on containerizing the application services to ensure reproducible environments and easy deployment.
+
+- **Purpose of Docker in the project**: Ensured consistent environments across development, testing, and production, eliminated "works on my machine" issues, and simplified deployment
+- **Services containerized**: Web Application (Spring Boot + Vaadin) and MariaDB database
+- **Dockerfile and compose overview**: Multi-stage Dockerfile for optimized image size; Docker Compose configuration for local development with both services
+- **How containers are used**: Docker image built and tested locally, pushed to Docker Hub (`timo2233/clboost`), and shared with classmates for feedback; app setup installer created for Windows distribution
+- **Additional features**: History access functionality implemented for viewing and managing previously generated cover letters; resume text extraction library integrated for improved parsing
+
+📄 [Sprint 4 Planning Report](documentation/sprint_report/Sprint_4_Planning_Report.md) | [Sprint 4 Review Report](documentation/sprint_report/Sprint_4_Review_Report.md)
+
+### Sprint 5 – UI Localization & Kubernetes
+
+This sprint focused on making the application globally accessible through multilingual support.
+
+- **Supported UI languages**: English (en), Finnish (fi), Portuguese (pt), Chinese (zh), Urdu (ur), Persian (fa)
+- **Localization approach**: Java `ResourceBundle`-based localization system integrated with Vaadin's `I18NProvider` interface; all static UI text externalized to `.properties` resource files; dynamic locale switching with session-based locale persistence
+- **RTL/LTR layout support**: Right-to-left (RTL) layout support implemented for Urdu and Persian using `dir="rtl"` attribute on `<html>` element; Vaadin auto-flips `AppLayout` drawer position, navbar order, and component flow direction; custom CSS overrides for cards, forms, navigation items, and toggle switches
+- **Kubernetes usage** (prepared but not fully deployed): Application structure prepared for scalable container orchestration; deployment strategy documented for future scaling
+
+📄 [Sprint 5 Planning Report](documentation/sprint_report/Sprint_5_Planning_Report.md) | [Sprint 5 Review Report](documentation/sprint_report/Sprint_5_Review_Report.md)
+
+### Sprint 6 – Database Localization
+
+This sprint extended localization down to the database level.
+
+- **Language- or region-specific data handling**: Designed and implemented a localization strategy for database content to store multilingual data entries
+- **Migration or schema changes**: Updated ER diagram to accommodate multilingual content; configured UTF-8 encoding and locale settings for proper character support across all languages
+- **Validation approach**: Validated data retrieval and display across all supported languages (Portuguese, Chinese, Urdu, Persian, English)
+- **Code quality improvements**: Conducted static code analysis using SonarQube; identified and resolved code violations, complexity issues, redundant logic, and potential bugs; code clean-up and refactoring for improved readability and maintainability
+- **Acceptance test planning**: Defined functional requirements, performance expectations, and usability standards for the acceptance phase
+- **Architecture documentation**: Updated ER Diagram, Sequence Diagram, and UML diagrams
+
+**Diagrams:**
+
+- [Updated ER Diagram](documentation/diagrams/update-ER-diagram.png)
+- [Updated Relational Schema](documentation/diagrams/update-relation-schema.png)
+- [Sequence Diagram](documentation/diagrams/SequenceDiagramCLBoost.png)
+- [Updated Class Diagram](documentation/diagrams/ClassDiagram-2.0V.jpg)
+
+📄 [Sprint 6 Planning Report](documentation/sprint_report/Sprint_6_Planning_Report.md) | [Sprint 6 Review Report](documentation/sprint_report/Sprint_6_Review_Report.md)
+
+**Reports:**
+
+- [Statistical Code Review Report](documentation/UpdatedStatisticalCodeReviewReportCLBoost.pdf)
+- [Acceptance Test Plan](documentation/Acceptance_Test_Plan.md)
+
+### Sprint 7 – Quality Assurance
+
+This sprint ensured project robustness through comprehensive testing and quality analysis.
+
+- **SonarQube usage and metrics**: Configured Jenkins integration with SonarQube static code analysis; achieved Grade A across all quality metrics including cyclomatic complexity, code smells, duplications, and security hotspots
+- **Code quality goals**: All code quality gates passed with Grade A (minimum Grade B required); successful build and Docker deployment through Jenkins pipeline
+- **JMeter test scenarios**: Performance test plan created at `tests/performance/clboost_performance.jmx` simulating 10 concurrent users performing typical navigation (landing, login, dashboard, editor, history) with 5 iterations and 2-second think times
+- **Functional and non-functional testing**:
+  - **Functional testing**: Comprehensive test plan with unit tests, integration tests, and regression tests for all user stories; detailed bug tracking table with resolution status
+  - **Heuristic evaluation**: Usability assessment conducted following lecture instructions
+  - **User Acceptance Testing (UAT)**: Conducted based on Sprint 6 acceptance criteria with results documented
+
+📄 [Sprint 7 Planning Report](documentation/sprint_report/Sprint_7_Planning_Report.md) | [Sprint 7 Review Report](documentation/sprint_report/Sprint_7_Review_Report.md)
+
+**Reports:**
+
+- [Comprehensive Test Plan](documentation/ComprehensiveTestPlanCLBooster.pdf)
+- [Heuristic Report](documentation/V2HeuristicReportCLBoostNew%20-%20Sheet1.pdf)
+- [UAT Report](documentation/UAT%20Report.pdf)
+
+### Sprint 8 – Documentation & Finalization
+
+This final sprint focused on polishing all project documentation and finalizing the system.
+
+- **Technical documentation**: Maintained and updated repository structure with accurate documentation across all modules; finalized developer setup instructions
+- **User documentation**: Updated README with comprehensive setup, usage, and testing guides; created localization documentation with language spreadsheets
+- **API documentation**: Documented backend service interfaces, DAO patterns, and AI pipeline integration
+- **Final system architecture**: Complete architecture encompassing all implemented features including AI pipeline, localization framework, CI/CD pipeline, and database layer
+
+---
+
+## 4. How to Run the Project
 
 ### Prerequisites
 
 - Java 21+
 - Maven 3.6+
 - Docker & Docker Compose
-- Google Gemini API key ([get one here](https://aistudio.google.com))
+- Google Gemini API key ([get one here](https://console.cloud.google.com)) or Google cloud project ID
 
-### Quick Start (Docker Hub)
+### Environment Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Lion504/CLboost
+   cd cl-booster
+   ```
+2. Copy the environment template and fill in your API key:
+   ```bash
+   cp .env.example .env
+   # Edit .env — add your GEMINI_API_KEY and GOOGLE_PROJECT_ID
+   ```
+
+### Docker Commands
 
 **Option A - Docker Compose (recommended):**
 
 ```bash
-git clone <repository-url>
-cd cl-booster
-cp .env.example .env
-# Edit .env — add your GEMINI_API_KEY and GOOGLE_PROJECT_ID
 docker-compose up -d
 ```
 
 **Option B - Pull from Docker Hub:**
 
 ```bash
-docker pull timo2233/clboost:v1.0.4
+docker pull timo2233/clboost:latest
 docker run -d -p 8080:8080 --name clboost-app \
   -e GEMINI_API_KEY=your_api_key \
   -e DB_HOST=db \
@@ -41,7 +267,7 @@ docker run -d -p 8080:8080 --name clboost-app \
   timo2233/clboost:v1.0.4
 ```
 
-**Option C - Build locally:**
+**Option C - Build and run locally:**
 
 ```bash
 docker build -t clboost-app .
@@ -55,9 +281,80 @@ docker run -d -p 8080:8080 --name clboost-app \
   clboost-app
 ```
 
-Access the application at http://localhost:8080
+### How to Access the Application
 
-## ✨ Features
+Open your browser and navigate to [http://localhost:8080](http://localhost:8080). The application will load the landing page where you can register a new account or log in.
+
+---
+
+## 5. Testing Instructions
+
+### How to Run Unit Tests
+
+Execute the following command to run all unit tests:
+
+```bash
+mvn clean test
+```
+
+### Test Coverage Access
+
+Run the full verification to generate JaCoCo coverage reports:
+
+```bash
+mvn clean verify
+```
+
+The HTML coverage report is then accessible at `target/site/jacoco/index.html`.
+
+### Performance Testing
+
+CLboost includes an Apache JMeter test plan for load testing the web application.
+
+**Test plan location:** `tests/performance/clboost_performance.jmx`
+
+**Test scenarios:** Simulates 10 concurrent users performing typical navigation (landing, login, dashboard, editor, history, etc.) with 5 iterations and 2-second think times.
+
+**Running performance tests locally:**
+
+1. Install JMeter 5.6.3+ ([download](https://jmeter.apache.org/download_jmeter.cgi))
+2. Start the application (Docker or `mvn spring-boot:run`) on port 8080
+3. Execute the test:
+   ```bash
+   jmeter -n -t tests/performance/clboost_performance.jmx -l result.jtl -Jport=8080 -e -o report/
+   ```
+4. View the report: Open `report/index.html` in a browser
+
+**CI integration:** Performance tests are part of the Jenkins pipeline (`Jenkinsfile`), running automatically on every build.
+
+---
+
+## 6. Repository Structure
+
+```
+cl-booster/
+├── src/
+│   └── main/
+│       ├── frontend/                       # Frontend assets (themes, styles)
+│       ├── java/com/clbooster/
+│       │   ├── aiservice/                  # AIService, Exporter, Parser
+│       │   └── app/
+│       │       ├── backend/                # DAO, services, security, i18n
+│       │       └── views/                  # All Vaadin UI views
+│       └── resources/                      # application.properties, translations
+├── tests/                                  # Performance test plans (JMeter)
+├── installer/                              # Windows installer and setup scripts
+├── documentation/                          # Sprint reports, diagrams, localization docs
+├── uploads/                                # Runtime file storage (resumes, cover letters)
+├── docker-compose.yml                      # Docker Compose configuration
+├── Dockerfile                              # Multi-stage Docker build
+├── Jenkinsfile                             # CI/CD pipeline definition
+└── pom.xml                                 # Maven build configuration
+```
+
+---
+
+## 7. Features
 
 - **5-step wizard** — job details → resume import → skills → summary → inline editor
 - **AI generation** — Google Gemini writes personalized cover letters using your profile + resume
@@ -67,7 +364,7 @@ Access the application at http://localhost:8080
 - **Multi-language UI** — English, Finnish, Chinese, Urdu, Persian, Portuguese
 - **Export** — DOCX and PDF from the editor
 
-## 🏗️ Architecture
+## 8. Architecture
 
 ### Backend
 
@@ -92,31 +389,7 @@ Access the application at http://localhost:8080
 - **Maven** — build automation
 - **spring-dotenv** — `.env` file support
 
-## 📁 Project Structure
-
-```
-cl-booster/
-├── src/main/java/com/clbooster/
-│   ├── aiservice/                          # AIService, Exporter, Parser
-│   └── app/
-│       ├── Application.java
-│       ├── backend/
-│       │   ├── config/                     # SecurityConfig, AiConfig
-│       │   └── service/
-│       │       ├── authentication/         # AuthenticationService
-│       │       ├── database/               # UserDAO, SQL scripts
-│       │       ├── document/               # DocumentService
-│       │       └── profile/                # ProfileService, UserService, User
-│       └── views/                          # All Vaadin views
-├── src/main/resources/
-│   ├── application.properties
-│   └── messages*.properties                # en, fi, zh, ur, fa, pt translations
-├── uploads/                                # Runtime file storage (gitignored)
-├── .env                                    # Local secrets (gitignored)
-└── .env.example                            # Template
-```
-
-## 🌐 Localization Framework
+## 9. Localization Framework
 
 CL Booster uses a **Java `ResourceBundle`-based localization system** integrated with **Vaadin's `I18NProvider`** interface for seamless server-side UI translation.
 
@@ -147,7 +420,7 @@ messages*.properties  (en, fi, zh, ur, fa, pt)
 | Urdu       | `ur` | `messages_ur.properties` | Arabic    | RTL       |
 | Persian    | `fa` | `messages_fa.properties` | Arabic    | RTL       |
 
-## 🔀 RTL Support
+## 10. RTL Support
 
 Urdu (اردو) and Persian (فارسی) use **right-to-left (RTL)** text direction. The application handles RTL through three layers:
 
@@ -178,13 +451,20 @@ RTL languages use Arabic-script fonts with cascading fallbacks: `Noto Sans Arabi
 4. Verify: sidebar moves right, all text aligns right, toggle switches flip, no overlapping or clipped content
 5. Switch back to English — verify everything flips back to LTR
 
-## 🧪 Testing & Code Quality
+---
+
+## 11. Development
+
+### Unit and Coverage Testing
+
+- **How to run unit tests**: Run `mvn clean test`
+- **Test coverage access**: Run `mvn clean verify` to generate the JaCoCo coverage report, accessible at `target/site/jacoco/index.html`.
 
 ### SonarQube (Static Code Analysis)
 
 SonarQube provides continuous inspection of code quality, security, and maintainability.
 
-#### Quick Start with Docker
+**Quick Start with Docker**
 
 ```bash
 # Start SonarQube container (runs on http://localhost:9000)
@@ -196,22 +476,7 @@ docker run -d --name sonarqube \
 # http://localhost:9000 | admin / admin
 ```
 
-#### Linux Installation (Manual / Systemd)
-
-# 1. Start SonarQube
-
-sudo -u sonar /opt/sonarqube/bin/linux-x86-64/sonar.sh start
-
-# Check logs on first run
-
-sudo -u sonar /opt/sonarqube/bin/linux-x86-64/sonar.sh status
-tail -f /opt/sonarqube/logs/sonar.log
-
-# 2. Access at http://localhost:9000
-
-# Default credentials: admin / admin (change on first login)
-
-#### Run Analysis
+**Run Analysis**
 
 ```bash
 # Full build with tests + coverage + Sonar analysis
@@ -219,12 +484,9 @@ mvn clean verify sonar:sonar
 
 # Or run analysis only (skip tests)
 mvn compile sonar:sonar
-
-# Or
-mvn clean jacoco:prepare-agent test jacoco:report sonar:sonar -Dmaven.test.failure.ignore=true
 ```
 
-## 🚀 Performance Testing
+## 12. Performance Testing
 
 CLboost includes an Apache JMeter test plan for load testing the web application, helping evaluate responsiveness and stability under concurrent user load.
 
@@ -251,7 +513,7 @@ CLboost includes an Apache JMeter test plan for load testing the web application
 jmeter -n -t tests/performance/clboost_performance.jmx -l result.jtl -Jport=8080 -e -o report/
 ```
 
-1. **View the report:** Open `report/index.html` in a browser.
+4. **View the report:** Open `report/index.html` in a browser.
 
 ### CI Integration
 
@@ -263,21 +525,21 @@ Performance tests are part of the Jenkins pipeline (`Jenkinsfile`). The **Perfor
 - **Err %** – error rate. Should be ≤ 5% (5xx responses or assertion failures).
 - **Throughput** – requests/second; higher is better.
 
-### Current Limitations
-
-JMeter simulates HTTP requests only; it does not execute JavaScript or Vaadin client-side interactions. Tests focus on server response times for page bootstrap. For full browser-level performance, consider Vaadin TestBench with Selenium Grid.
-
----
-
-## 🔧 Development
-
 See [dev_instructions.md](dev_instructions.md) for full setup, CLI usage, Docker, and deployment details.
 
-## 📄 License
+## 13. Authors
+
+- **Wang Yongzhi** — Frontend & DevOps Lead (Vaadin UI, Docker, CI/CD, Localization)
+- **Taysa Abinader** — Project Manager & QA Lead (Scrum Master, Documentation, Testing, Heuristic Evaluation)
+- **Tamseela Mahmood** — Backend & QA (Authentication, Database, Code Coverage, UAT)
+- **Kiavash Montazeri** — Integration & Testing (Docker, LinkedIn API, PDF Libraries, Functional Testing)
+- **Course**: Software Engineering Project 1 (TX00EY27-3011) & Software Engineering Project 2 (TX00EY30-3011), Spring 2026
+
+## License
 
 This project is licensed under the MIT License — see [LICENSE.md](LICENSE.md) for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [Vaadin](https://vaadin.com/) for the excellent web framework
 - [Spring Boot](https://spring.io/projects/spring-boot) for the application framework

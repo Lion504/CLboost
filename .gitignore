@@ -30,9 +30,9 @@ src/main/java/com/clbooster/app/backend/service/database/DatabaseConnection.java
 uploads/resumes/*
 test-jobads.md
 *.docx
-*.pdf
+
 bin/
-documentation/*
+documentation/wdiagrams
 .github/instructions/sonarqube_mcp.instructions.md
 .sonarlint/connectedMode.json
 tests/performance/result_local.jtl
