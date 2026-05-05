@@ -6,6 +6,78 @@
 
 CL Booster is an intelligent cover letter generation tool that leverages AI to create personalized, professional cover letters tailored to each job application.
 
+### Project Overview
+
+- **Problem being solved**: Job seekers face a "lose-lose" dilemma: manual writing is incredibly time-consuming, but generic AI output is often low-quality, robotic, or fails to address specific job nuances. CL Booster solves this.
+- **Target users**: Global job seekers looking for a convenient way to generate professional, tailored cover letters that increase their interview conversion rates.
+- **Overall duration**: 8 sprints × 2 weeks
+
+## Product Vision
+
+- **Vision statement**: "Our vision is to make the job application process more dynamic and high-quality. By providing software that facilitates the creation of tailored cover letters for diverse positions, we aim to empower users to apply more effectively and efficiently using specialized AI functionalities."
+- **Main goals**: Increase hiring success rate by 30%, streamline the cover letter creation process for efficiency, and increase job application volume by 15% through smart automation.
+- **Key features**: Profile Management, Resume Vault, AI Context Scanner, Application History, and LinkedIn Integration.
+- **Definition of success**: Balancing speed with bespoke quality to save time while increasing the quality of job applications.
+
+## Project Plan & Sprint Structure
+
+- **Development methodology**: Agile / Scrum
+- **Sprint length**: 2 weeks
+
+### Sprint 1 – Project Planning & Vision
+
+Defined foundational planning artifacts, backlog creation, vision validation, and risk/scope definition.
+
+- [Sprint 1 Review Report](documentation/sprint_report/Sprint_1_Review_Report.md)
+- [Project Vision](documentation/ProjectVision.md)
+
+### Sprint 2 – Requirements & Database
+
+Defined system requirements, data design, ER Diagram, Database tech (MariaDB), and unit testing strategy.
+
+- [Sprint 2 Planning Report](documentation/sprint_report/Sprint_2_Planning_Report.md)
+- [Sprint 2 Review Report](documentation/sprint_report/Sprint_2_Review_Report.md)
+- [Use Case Diagram](documentation/class_diagram.jpg)
+- [ER Diagram](documentation/database_er_diagram.jpg)
+
+### Sprint 3 – UI Implementation & CI
+
+Implemented Vaadin UI framework, UI screens, JaCoCo coverage goals, and a CI/CD pipeline (Build, Test, Coverage).
+
+- [Sprint 3 Review Report](documentation/sprint_report/Sprint_3_Review_Report.md)
+
+### Sprint 4 – Docker Containerization
+
+Containerized the application services (Web App + MariaDB) to ensure reproducible environments.
+
+- [Sprint 4 Planning Report](documentation/sprint_report/Sprint_4_Planning_Report.md)
+- [Sprint 4 Review Report](documentation/sprint_report/Sprint_4_Review_Report.md)
+
+### Sprint 5 – UI Localization & Kubernetes
+
+Added multilingual support (English, Finnish, Persian, Portuguese, Urdu, Chinese) using Spring Boot resource files. Application prepared for scalable deployment.
+
+- [Sprint 5 Planning Report](documentation/sprint_report/Sprint_5_Planning_Report.md)
+- [Sprint 5 Review Report](documentation/sprint_report/Sprint_5_Review_Report.md)
+
+### Sprint 6 – Database Localization
+
+Extended localization safely down to the database level, ensuring language-specific data is accommodated correctly.
+
+- [Sprint 6 Planning Report](documentation/sprint_report/Sprint_6_Planning_Report.md)
+- [Sprint 6 Review Report](documentation/sprint_report/Sprint_6_Review_Report.md)
+
+### Sprint 7 – Quality Assurance
+
+Assured project robustness via SonarQube metrics, performance testing (JMeter), and functional testing using Playwright.
+
+- [Sprint 7 Planning Report](documentation/sprint_report/Sprint_7_Planning_Report.md)
+- [Sprint 7 Review Report](documentation/sprint_report/Sprint_7_Review_Report.md)
+
+### Sprint 8 – Documentation & Finalization
+
+Polishing technical documentation, maintaining repository structure, and finalizing the system.
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -180,6 +252,11 @@ RTL languages use Arabic-script fonts with cascading fallbacks: `Noto Sans Arabi
 
 ## 🧪 Testing & Code Quality
 
+### Unit and Coverage Testing
+
+- **How to run unit tests**: Run `mvn clean test`
+- **Test coverage access**: Run `mvn clean verify` to generate the JaCoCo coverage report, accessible at `target/site/jacoco/index.html`.
+
 ### SonarQube (Static Code Analysis)
 
 SonarQube provides continuous inspection of code quality, security, and maintainability.
@@ -286,3 +363,9 @@ This project is licensed under the MIT License — see [LICENSE.md](LICENSE.md) 
 ---
 
 **Made with ❤️ using Vaadin + Spring Boot**
+
+## Authors
+
+- **[Author 1 Name]** - [Author 1 Role]
+- **[Author 2 Name]** - [Author 2 Role]
+- **Course**: [Insert Course Name], Spring 2026
