@@ -5,9 +5,64 @@
 [![Vaadin](https://img.shields.io/badge/Vaadin-24.9+-blue.svg)](https://vaadin.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 
+<details>
+<summary><b>Table of Contents</b></summary>
+
+- [CL Booster - AI-Powered Cover Letter Generator](#cl-booster---ai-powered-cover-letter-generator)
+  - [1. Project Overview](#1-project-overview)
+  - [2. Product Vision](#2-product-vision)
+  - [3. Project Plan \& Sprint Structure](#3-project-plan--sprint-structure)
+    - [Sprint 1 – Project Planning \& Vision](#sprint-1--project-planning--vision)
+    - [Sprint 2 – Requirements \& Database](#sprint-2--requirements--database)
+    - [Sprint 3 – UI Implementation \& CI](#sprint-3--ui-implementation--ci)
+    - [Sprint 4 – Docker Containerization](#sprint-4--docker-containerization)
+    - [Sprint 5 – UI Localization \& Kubernetes](#sprint-5--ui-localization--kubernetes)
+    - [Sprint 6 – Database Localization](#sprint-6--database-localization)
+    - [Sprint 7 – Quality Assurance](#sprint-7--quality-assurance)
+    - [Sprint 8 – Documentation \& Finalization](#sprint-8--documentation--finalization)
+  - [4. How to Run the Project](#4-how-to-run-the-project)
+    - [Prerequisites](#prerequisites)
+    - [Environment Setup](#environment-setup)
+    - [Docker Commands](#docker-commands)
+    - [How to Access the Application](#how-to-access-the-application)
+  - [5. Testing Instructions](#5-testing-instructions)
+    - [How to Run Unit Tests](#how-to-run-unit-tests)
+    - [Test Coverage Access](#test-coverage-access)
+    - [Performance Testing](#performance-testing)
+  - [6. Repository Structure](#6-repository-structure)
+  - [7. Features](#7-features)
+  - [8. Architecture](#8-architecture)
+    - [Backend](#backend)
+    - [AI Pipeline](#ai-pipeline)
+    - [DevOps](#devops)
+  - [9. Localization Framework](#9-localization-framework)
+    - [Architecture](#architecture)
+    - [Supported Languages](#supported-languages)
+  - [10. RTL Support](#10-rtl-support)
+    - [How RTL Works](#how-rtl-works)
+    - [What Flips Automatically](#what-flips-automatically)
+    - [RTL Font Fallbacks](#rtl-font-fallbacks)
+    - [Testing RTL](#testing-rtl)
+  - [11. Development](#11-development)
+    - [Unit and Coverage Testing](#unit-and-coverage-testing)
+    - [SonarQube (Static Code Analysis)](#sonarqube-static-code-analysis)
+  - [12. Performance Testing](#12-performance-testing)
+    - [Test Plan Location](#test-plan-location)
+    - [Test Scenarios](#test-scenarios)
+    - [Running Locally](#running-locally)
+    - [CI Integration](#ci-integration)
+    - [Interpreting Results](#interpreting-results)
+  - [13. Authors](#13-authors)
+  - [License](#license)
+  - [Acknowledgments](#acknowledgments)
+
+</details>
+
+## 1. Project Overview
+
 **CL Booster** is an intelligent cover letter generation tool that leverages AI to create personalized, professional cover letters tailored to each job application. The system solves the "lose-lose" dilemma faced by job seekers: manual writing is incredibly time-consuming, but generic AI output is often low-quality, robotic, or fails to address specific job nuances. Built for global job seekers looking to increase their interview conversion rates, the application is powered by **Java 21+**, **Spring Boot 3.5+**, **Vaadin Flow 24.9+**, and **Google Gemini AI**. The project was developed over **8 sprints × 2 weeks** using Agile/Scrum methodology.
 
-## Product Vision
+## 2. Product Vision
 
 - **Vision statement**: "Our vision is to make the job application process more dynamic and high-quality. By providing software that facilitates the creation of tailored cover letters for diverse positions, we aim to empower users to apply more effectively and efficiently using specialized AI functionalities."
 - **Main goals**: Increase hiring success rate by 30%, streamline the cover letter creation process for efficiency, and increase job application volume by 15% through smart automation.
@@ -19,7 +74,7 @@
   - **LinkedIn Integration** — Sync the app profile directly with a user's LinkedIn profile for seamless data entry
 - **Definition of success**: Balancing speed with bespoke quality to save time while increasing the quality of job applications.
 
-## Project Plan & Sprint Structure
+## 3. Project Plan & Sprint Structure
 
 - **Development methodology**: Agile / Scrum
 - **Sprint length**: 2 weeks
@@ -168,31 +223,40 @@ This final sprint focused on polishing all project documentation and finalizing 
 
 ---
 
-## 🚀 Quick Start
+## 4. How to Run the Project
 
 ### Prerequisites
 
 - Java 21+
 - Maven 3.6+
 - Docker & Docker Compose
-- Google Gemini API key ([get one here](https://aistudio.google.com))
+- Google Gemini API key ([get one here](https://console.cloud.google.com)) or Google cloud project ID
 
-### Quick Start (Docker Hub)
+### Environment Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Lion504/CLboost
+   cd cl-booster
+   ```
+2. Copy the environment template and fill in your API key:
+   ```bash
+   cp .env.example .env
+   # Edit .env — add your GEMINI_API_KEY and GOOGLE_PROJECT_ID
+   ```
+
+### Docker Commands
 
 **Option A - Docker Compose (recommended):**
 
 ```bash
-git clone <repository-url>
-cd cl-booster
-cp .env.example .env
-# Edit .env — add your GEMINI_API_KEY and GOOGLE_PROJECT_ID
 docker-compose up -d
 ```
 
 **Option B - Pull from Docker Hub:**
 
 ```bash
-docker pull timo2233/clboost:v1.0.4
+docker pull timo2233/clboost:latest
 docker run -d -p 8080:8080 --name clboost-app \
   -e GEMINI_API_KEY=your_api_key \
   -e DB_HOST=db \
@@ -203,7 +267,7 @@ docker run -d -p 8080:8080 --name clboost-app \
   timo2233/clboost:v1.0.4
 ```
 
-**Option C - Build locally:**
+**Option C - Build and run locally:**
 
 ```bash
 docker build -t clboost-app .
@@ -217,9 +281,80 @@ docker run -d -p 8080:8080 --name clboost-app \
   clboost-app
 ```
 
-Access the application at http://localhost:8080
+### How to Access the Application
 
-## ✨ Features
+Open your browser and navigate to [http://localhost:8080](http://localhost:8080). The application will load the landing page where you can register a new account or log in.
+
+---
+
+## 5. Testing Instructions
+
+### How to Run Unit Tests
+
+Execute the following command to run all unit tests:
+
+```bash
+mvn clean test
+```
+
+### Test Coverage Access
+
+Run the full verification to generate JaCoCo coverage reports:
+
+```bash
+mvn clean verify
+```
+
+The HTML coverage report is then accessible at `target/site/jacoco/index.html`.
+
+### Performance Testing
+
+CLboost includes an Apache JMeter test plan for load testing the web application.
+
+**Test plan location:** `tests/performance/clboost_performance.jmx`
+
+**Test scenarios:** Simulates 10 concurrent users performing typical navigation (landing, login, dashboard, editor, history, etc.) with 5 iterations and 2-second think times.
+
+**Running performance tests locally:**
+
+1. Install JMeter 5.6.3+ ([download](https://jmeter.apache.org/download_jmeter.cgi))
+2. Start the application (Docker or `mvn spring-boot:run`) on port 8080
+3. Execute the test:
+   ```bash
+   jmeter -n -t tests/performance/clboost_performance.jmx -l result.jtl -Jport=8080 -e -o report/
+   ```
+4. View the report: Open `report/index.html` in a browser
+
+**CI integration:** Performance tests are part of the Jenkins pipeline (`Jenkinsfile`), running automatically on every build.
+
+---
+
+## 6. Repository Structure
+
+```
+cl-booster/
+├── src/
+│   └── main/
+│       ├── frontend/                       # Frontend assets (themes, styles)
+│       ├── java/com/clbooster/
+│       │   ├── aiservice/                  # AIService, Exporter, Parser
+│       │   └── app/
+│       │       ├── backend/                # DAO, services, security, i18n
+│       │       └── views/                  # All Vaadin UI views
+│       └── resources/                      # application.properties, translations
+├── tests/                                  # Performance test plans (JMeter)
+├── installer/                              # Windows installer and setup scripts
+├── documentation/                          # Sprint reports, diagrams, localization docs
+├── uploads/                                # Runtime file storage (resumes, cover letters)
+├── docker-compose.yml                      # Docker Compose configuration
+├── Dockerfile                              # Multi-stage Docker build
+├── Jenkinsfile                             # CI/CD pipeline definition
+└── pom.xml                                 # Maven build configuration
+```
+
+---
+
+## 7. Features
 
 - **5-step wizard** — job details → resume import → skills → summary → inline editor
 - **AI generation** — Google Gemini writes personalized cover letters using your profile + resume
@@ -229,7 +364,7 @@ Access the application at http://localhost:8080
 - **Multi-language UI** — English, Finnish, Chinese, Urdu, Persian, Portuguese
 - **Export** — DOCX and PDF from the editor
 
-## 🏗️ Architecture
+## 8. Architecture
 
 ### Backend
 
@@ -254,31 +389,7 @@ Access the application at http://localhost:8080
 - **Maven** — build automation
 - **spring-dotenv** — `.env` file support
 
-## 📁 Project Structure
-
-```
-cl-booster/
-├── src/main/java/com/clbooster/
-│   ├── aiservice/                          # AIService, Exporter, Parser
-│   └── app/
-│       ├── Application.java
-│       ├── backend/
-│       │   ├── config/                     # SecurityConfig, AiConfig
-│       │   └── service/
-│       │       ├── authentication/         # AuthenticationService
-│       │       ├── database/               # UserDAO, SQL scripts
-│       │       ├── document/               # DocumentService
-│       │       └── profile/                # ProfileService, UserService, User
-│       └── views/                          # All Vaadin views
-├── src/main/resources/
-│   ├── application.properties
-│   └── messages*.properties                # en, fi, zh, ur, fa, pt translations
-├── uploads/                                # Runtime file storage (gitignored)
-├── .env                                    # Local secrets (gitignored)
-└── .env.example                            # Template
-```
-
-## 🌐 Localization Framework
+## 9. Localization Framework
 
 CL Booster uses a **Java `ResourceBundle`-based localization system** integrated with **Vaadin's `I18NProvider`** interface for seamless server-side UI translation.
 
@@ -309,7 +420,7 @@ messages*.properties  (en, fi, zh, ur, fa, pt)
 | Urdu       | `ur` | `messages_ur.properties` | Arabic    | RTL       |
 | Persian    | `fa` | `messages_fa.properties` | Arabic    | RTL       |
 
-## 🔀 RTL Support
+## 10. RTL Support
 
 Urdu (اردو) and Persian (فارسی) use **right-to-left (RTL)** text direction. The application handles RTL through three layers:
 
@@ -340,7 +451,9 @@ RTL languages use Arabic-script fonts with cascading fallbacks: `Noto Sans Arabi
 4. Verify: sidebar moves right, all text aligns right, toggle switches flip, no overlapping or clipped content
 5. Switch back to English — verify everything flips back to LTR
 
-## 🧪 Testing & Code Quality
+---
+
+## 11. Development
 
 ### Unit and Coverage Testing
 
@@ -351,7 +464,7 @@ RTL languages use Arabic-script fonts with cascading fallbacks: `Noto Sans Arabi
 
 SonarQube provides continuous inspection of code quality, security, and maintainability.
 
-#### Quick Start with Docker
+**Quick Start with Docker**
 
 ```bash
 # Start SonarQube container (runs on http://localhost:9000)
@@ -363,7 +476,7 @@ docker run -d --name sonarqube \
 # http://localhost:9000 | admin / admin
 ```
 
-#### Run Analysis
+**Run Analysis**
 
 ```bash
 # Full build with tests + coverage + Sonar analysis
@@ -373,7 +486,7 @@ mvn clean verify sonar:sonar
 mvn compile sonar:sonar
 ```
 
-## 🚀 Performance Testing
+## 12. Performance Testing
 
 CLboost includes an Apache JMeter test plan for load testing the web application, helping evaluate responsiveness and stability under concurrent user load.
 
@@ -412,17 +525,21 @@ Performance tests are part of the Jenkins pipeline (`Jenkinsfile`). The **Perfor
 - **Err %** – error rate. Should be ≤ 5% (5xx responses or assertion failures).
 - **Throughput** – requests/second; higher is better.
 
----
-
-## 🔧 Development
-
 See [dev_instructions.md](dev_instructions.md) for full setup, CLI usage, Docker, and deployment details.
 
-## 📄 License
+## 13. Authors
+
+- **Wang Yongzhi** — Frontend & DevOps Lead (Vaadin UI, Docker, CI/CD, Localization)
+- **Taysa Abinader** — Project Manager & QA Lead (Scrum Master, Documentation, Testing, Heuristic Evaluation)
+- **Tamseela Mahmood** — Backend & QA (Authentication, Database, Code Coverage, UAT)
+- **Kiavash Montazeri** — Integration & Testing (Docker, LinkedIn API, PDF Libraries, Functional Testing)
+- **Course**: Software Engineering Project 1 (TX00EY27-3011) & Software Engineering Project 2 (TX00EY30-3011), Spring 2026
+
+## License
 
 This project is licensed under the MIT License — see [LICENSE.md](LICENSE.md) for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [Vaadin](https://vaadin.com/) for the excellent web framework
 - [Spring Boot](https://spring.io/projects/spring-boot) for the application framework
@@ -431,11 +548,3 @@ This project is licensed under the MIT License — see [LICENSE.md](LICENSE.md) 
 ---
 
 **Made with ❤️ using Vaadin + Spring Boot**
-
-## Authors
-
-- **Wang Yongzhi** — Frontend & DevOps Lead (Vaadin UI, Docker, CI/CD, Localization)
-- **Taysa Abinader** — Project Manager & QA Lead (Scrum Master, Documentation, Testing, Heuristic Evaluation)
-- **Tamseela Mahmood** — Backend & QA (Authentication, Database, Code Coverage, UAT)
-- **Kiavash Montazeri** — Integration & Testing (Docker, LinkedIn API, PDF Libraries, Functional Testing)
-- **Course**: Software Engineering Project 1 (TX00EY27-3011) & Software Engineering Project 2 (TX00EY30-3011), Spring 2026
